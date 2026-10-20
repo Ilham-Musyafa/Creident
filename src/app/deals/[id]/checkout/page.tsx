@@ -3,7 +3,7 @@ import { StatusPill } from '../../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ActionButton, PayButton } from '../../../../components/client';
 import { money, shortHash } from '../../../../components/view';
-import { data, getRole, isUuid } from '../../../_server';
+import { data, getRole, isUuid, simulatedPayPal } from '../../../_server';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +14,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   const tx = ctx.repo.loadTransaction(id);
   if (!tx) notFound();
   const role = await getRole();
+  const simulated = simulatedPayPal();
   const terms = JSON.parse(tx.termsJson) as Record<string, unknown>;
   const { shipByDays, inspectionDays } = ctx.time;
   const accepted = tx.status === 'DRAFT' ? ctx.repo.listAcceptances(id) : [];
@@ -43,12 +44,12 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
           ))}
         </ol>
 
-        <Notice>Sandbox demo. HalcyVault is a dispute-mediation prototype, not a licensed escrow service.</Notice>
+        <Notice tone={simulated ? 'warning' : 'info'}>{simulated ? 'Simulated PayPal mode: no real or Sandbox money moves. ' : 'Sandbox demo. '}HalcyVault is a dispute-mediation prototype, not a licensed escrow service.</Notice>
 
         {role !== 'buyer' ? <Notice>Only the buyer pays. Switch to Buyer in Menu.</Notice>
           : tx.status === 'DRAFT' && accepted.includes('buyer') ? <Notice>You accepted the terms. Waiting for the seller to accept.</Notice>
           : tx.status === 'DRAFT' ? <ActionButton path={`/api/transactions/${id}/accept`} role="buyer" label="Accept terms" fullWidth/>
-          : tx.status === 'TERMS_LOCKED' ? <><PayButton txId={id}/><p className="text-center text-xs text-muted">You will approve the payment on PayPal and come back here.</p></>
+          : tx.status === 'TERMS_LOCKED' ? <><PayButton txId={id} simulated={simulated}/><p className="text-center text-xs text-muted">You will approve the payment on PayPal and come back here.</p></>
           : <Notice>Payment is already past this step. Open the deal to see its status.</Notice>}
       </div>
     </AppShell>

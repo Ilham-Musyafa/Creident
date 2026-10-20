@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
 import { ActionButton, CopyLinkButton, ShipForm } from '../../../components/client';
-import { money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
+import { isSimulatedDeal, money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +15,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   if (!tx) notFound();
   const role = await getRole();
   const created = (await searchParams).created === '1';
+  const simulated = isSimulatedDeal(tx);
   const now = ctx.now();
   const terms = JSON.parse(tx.termsJson) as Record<string, unknown>;
   const criteria = Array.isArray(terms.criteria) ? terms.criteria as string[] : [];
@@ -37,6 +38,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {created && role === 'seller' && (
             <div className="mb-4 space-y-2"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></div>
           )}
+          {simulated && <div className="mb-4"><Notice tone="warning">Simulated payment. The PayPal steps of this deal were simulated: nothing was sent to PayPal and no money moved.</Notice></div>}
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
@@ -68,7 +70,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'A PayPal dispute or reversal is open. Nothing moves until PayPal resolves it.' : 'Nothing to do for your role right now. Switch role in Menu to act as another party.'}</Notice>}
 
           <KeyValue items={[
-            { label: 'PayPal fee', value: tx.captured ? 'See PayPal capture' : 'Shown after capture' },
+            { label: 'PayPal fee', value: simulated ? 'None (simulated)' : tx.captured ? 'See PayPal capture' : 'Shown after capture' },
             { label: 'Fee on refund borne by', value: 'TBD' },
           ]}/>
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>

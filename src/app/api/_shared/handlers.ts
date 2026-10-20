@@ -6,7 +6,7 @@ import type { StoredTx } from '../../../lib/repository';
 import { addDays } from '../../../lib/timeConfig';
 import { prepareReview } from '../../../lib/reviewPipeline';
 import { seedDemoData } from '../../../lib/demoSeed';
-import { getApiContext, getPayPal, type ApiContext } from './context';
+import { getApiContext, getPaymentGateway, isSimulatedPayPal, type ApiContext } from './context';
 import { errorResponse, HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField, unwrap, type Role } from './http';
 
 function hash(text: string): string {
@@ -28,9 +28,12 @@ async function emptyBody(request: Request): Promise<void> {
 }
 
 function deps(context: ApiContext, actor: Role, payment = false, extra: Partial<OrchestratorDeps> = {}): OrchestratorDeps {
+  // In simulated mode every money step is labelled in the audit log.
+  const simulated = payment && isSimulatedPayPal();
   return {
     repo: context.repo, actor, now: context.now,
-    ...(payment ? { paypal: getPayPal(context) } : {}), ...extra,
+    ...(payment ? { paypal: getPaymentGateway(context) } : {}), ...extra,
+    ...(simulated ? { eventPayload: { ...extra.eventPayload, simulated: true, paypalMode: 'simulated' } } : {}),
   };
 }
 
@@ -108,7 +111,7 @@ export function paypalReturn(request: Request): Promise<Response> {
     }
     if (tx.status !== 'AWAITING_APPROVAL') return json({ transaction: tx });
     if (!tx.paypalOrderId || params.get('token') !== tx.paypalOrderId) throw new HttpError(400, 'ORDER_MISMATCH', 'PayPal order token does not match');
-    const paypal = getPayPal(context);
+    const paypal = getPaymentGateway(context);
     const orderStatus = await paypal.getOrderStatus(tx.paypalOrderId);
     if (orderStatus !== 'APPROVED') throw new HttpError(409, 'ORDER_NOT_APPROVED', 'Buyer has not approved the PayPal order');
     const result = unwrap(await applyTrigger(id, { type: 'BUYER_APPROVED', orderApproved: true },

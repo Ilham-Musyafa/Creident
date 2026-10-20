@@ -4,7 +4,7 @@ import { AmountCard, DealListItem, StatusPill } from '../components/ui';
 import { AppShell, Card, EmptyState, Notice, SectionTitle } from '../components/layout';
 import { SeedButton } from '../components/client';
 import { isActive, isReserved, money, nextAction, timeLeft } from '../components/view';
-import { data, getRole } from './_server';
+import { data, getRole, simulatedPayPal } from './_server';
 
 export const dynamic = 'force-dynamic';
 
@@ -94,6 +94,7 @@ export default async function HomePage() {
             </Card>
           )}
 
+          {simulatedPayPal() && <Notice tone="warning">Simulated PayPal mode is on. Money steps are recorded as simulated; nothing is sent to PayPal.</Notice>}
           <Notice>Sandbox demo. HalcyVault is a dispute-mediation prototype, not a licensed escrow service, and does not handle real money.</Notice>
         </aside>
       </div>

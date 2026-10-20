@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import { openDatabase } from '../../../lib/db';
 import { PayPalClient } from '../../../lib/paypal/client';
+import { createSimulatedPayPal, payPalMode, type PaymentGateway } from '../../../lib/paypal/simulated';
 import { TransactionRepository } from '../../../lib/repository';
 import { getTimeConfig, type TimeConfig } from '../../../lib/timeConfig';
 import type { AiEvidenceProvider } from '../../../lib/ai/evidence';
@@ -9,6 +10,7 @@ export interface ApiContext {
   db: DatabaseSync;
   repo: TransactionRepository;
   paypal?: PayPalClient;
+  simulatedPayPal?: PaymentGateway;
   now: () => string;
   time: TimeConfig;
   aiProvider?: AiEvidenceProvider;
@@ -48,6 +50,17 @@ export function getPayPal(context: ApiContext): PayPalClient {
   }
   context.paypal = new PayPalClient({ baseUrl, clientId, clientSecret });
   return context.paypal;
+}
+
+/** Client for money steps: the labelled simulation when PAYPAL_MODE=simulated, else Sandbox. */
+export function getPaymentGateway(context: ApiContext): PaymentGateway {
+  if (payPalMode() !== 'simulated') return getPayPal(context);
+  context.simulatedPayPal ??= createSimulatedPayPal();
+  return context.simulatedPayPal;
+}
+
+export function isSimulatedPayPal(): boolean {
+  return payPalMode() === 'simulated';
 }
 
 export class ApiSetupError extends Error {}

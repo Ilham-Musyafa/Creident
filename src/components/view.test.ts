@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventTitle, evidenceCode, isReserved, money, nextAction, timeLeft, timelineFor } from './view';
+import { eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor } from './view';
 
 describe('view helpers', () => {
   it('formats money and time left', () => {
@@ -35,5 +35,14 @@ describe('view helpers', () => {
     expect(eventTitle('BUYER_APPROVED')).toBe('Payment authorized');
     expect(eventTitle('SOMETHING_NEW')).toBe('something new');
     expect(evidenceCode('8c1e0000-0000-0000-0000-00000000a7f2')).toBe('HV-8C1E · A7F2');
+  });
+});
+
+describe('isSimulatedDeal', () => {
+  it('flags demo and simulated PayPal ids only', () => {
+    expect(isSimulatedDeal({ paypalOrderId: 'SIM-ORDER-1' })).toBe(true);
+    expect(isSimulatedDeal({ paypalOrderId: 'DEMO-ORDER-1' })).toBe(true);
+    expect(isSimulatedDeal({ paypalOrderId: '5O190127TN364715T' })).toBe(false);
+    expect(isSimulatedDeal({})).toBe(false);
   });
 });

@@ -5,7 +5,7 @@ import { PayPalReturn } from '../../../components/client';
 export default function PayPalReturnPage() {
   return (
     <AppShell active="Deals">
-      <PageHeader title="Back from PayPal (Sandbox)"/>
+      <PageHeader title="Back from PayPal"/>
       <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}><PayPalReturn/></Suspense>
     </AppShell>
   );
