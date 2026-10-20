@@ -63,7 +63,7 @@
 }
 
 body { background: var(--bg); color: var(--text); font-family: var(--font-jakarta), sans-serif; }
-button, input { font: inherit; }
-button, a, input { outline-offset: 3px; }
-:where(button, a, input):focus-visible { outline: 3px solid var(--inspection-text); }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { outline-offset: 3px; }
+:where(button, a, input, textarea, select):focus-visible { outline: 3px solid var(--inspection-text); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }

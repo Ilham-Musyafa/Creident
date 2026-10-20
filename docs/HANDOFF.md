@@ -150,6 +150,18 @@ Still open:
   Open: demo role header/cookie is not authentication; real Sandbox webhook
   delivery still needs owner testing. `npm test`, `npm run typecheck`, and
   `npm run build` passed on this branch.
+- 2026-10-21 05:31 WIB (Codex, C3): ran the app with `PAYPAL_MODE=simulated`,
+  loaded demo deals through Menu, and checked Home, Deals, New deal, deal detail,
+  checkout, evidence, review, audit index/detail, Menu, About, and simulated
+  approval at 360px and 1440px in light and dark. Also checked seller, buyer, and
+  reviewer form states. Fixed mobile overflow from deal cards, clipped deal/audit
+  text, undersized Home and desktop brand links, and keyboard focus on textareas
+  and selects. Rechecks found no horizontal scroll, clipped text, unlabeled
+  inputs, undersized interactive targets, or browser console errors/warnings.
+  Remaining: approved light-theme `--muted` token contrasts at 4.43:1 on `--bg`
+  and 4.34:1 on `--surface-2`, below the 4.5:1 text target; token colors were not
+  changed under the C3 constraint. `npm test`, `npm run typecheck`, and
+  `npm run build` passed. No dependencies added.
 - 2026-10-21 02:55 WIB (Claude): recorded owner decisions (fee on refund: platform;
   deadlines 3/2/2; hosting later) in UI, README, DESIGN, UI.md, .env.example. Earlier this
   session: PR #11 marks simulated events in the audit log.

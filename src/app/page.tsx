@@ -39,7 +39,7 @@ export default async function HomePage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div>
+        <div className="min-w-0">
           <AmountCard
             amount={money(reserved)}
             stats={[{ label: 'Active', value: String(active) }, { label: 'In dispute', value: String(inDispute) }, { label: 'Completed', value: String(completed) }]}
@@ -48,7 +48,7 @@ export default async function HomePage() {
               : { actionHref: '/deals', actionLabel: 'View my deals' })}
           />
 
-          <SectionTitle right={<Link href="/deals" className="text-sm font-semibold text-heading underline-offset-4 hover:underline">See all</Link>}>
+          <SectionTitle right={<Link href="/deals" className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-heading underline-offset-4 hover:underline">See all</Link>}>
             {role === 'reviewer' && reviewQueue.length ? 'Waiting for review' : 'Recent deals'}
           </SectionTitle>
           {shown.length === 0 ? (
@@ -63,7 +63,7 @@ export default async function HomePage() {
           )}
         </div>
 
-        <aside className="space-y-4">
+        <aside className="min-w-0 space-y-4">
           <div>
             <SectionTitle>Needs your action</SectionTitle>
             {todo.length === 0 ? <Notice>Nothing waiting for the demo {role}. Switch role in Menu to act as another party.</Notice> : (
@@ -74,7 +74,7 @@ export default async function HomePage() {
                     <li key={d.id}>
                       <Link href={action === 'review' ? `/deals/${d.id}/review` : action === 'add-evidence' ? `/deals/${d.id}/evidence` : action === 'pay' || (action === 'accept-terms' && role === 'buyer') ? `/deals/${d.id}/checkout` : `/deals/${d.id}`}
                         className="flex min-h-[60px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
-                        <span className="min-w-0"><span className="block truncate text-sm font-bold text-heading">{ACTION_LABEL[action]}</span><span className="block truncate text-xs text-muted">{d.item}{left ? ` · ${left}` : ''}</span></span>
+                        <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{ACTION_LABEL[action]}</span><span className="block break-words text-xs text-muted">{d.item}{left ? ` · ${left}` : ''}</span></span>
                         <StatusPill status={d.status}/>
                       </Link>
                     </li>
