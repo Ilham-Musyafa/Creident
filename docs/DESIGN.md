@@ -141,6 +141,11 @@ Human override requires a written reason and is recorded; in the demo a second r
 confirmation is simulated. A solo operator cannot make this independent in reality; say
 so in the pitch.
 
+An AI summary and rule recommendation are stored when a transaction enters
+`UNDER_REVIEW`; the recommendation cannot move funds. A human may record a `SPLIT`
+decision with a reason, but it remains pending and moves no funds because the split
+amount and payment treatment are not yet defined by the owner.
+
 ## 6. Role of the AI
 
 - Input: evidence items (text, in-app photos, tracking data) wrapped as **data**.
@@ -180,7 +185,9 @@ so in the pitch.
   paypal_capture_id, created_at, updated_at).
 - `evidence` (id, tx_id, submitted_by, kind: photo|tracking|chat|note, content_ref,
   content_hash, created_at).
-- `decisions` (id, tx_id, rule_id, outcome, ai_summary_json, reviewer_id, reason, created_at).
+- `decisions` (id, tx_id, rule_id, outcome, ai_summary_json, action, reasons_json,
+  requires_human, reviewer_id, reason, created_at). One rule recommendation per
+  transaction; human decisions are separate rows.
 - `events` (audit log, section 7).
 - `paypal_events` (event_id UNIQUE, type, received_at, processed_at) for webhook de-duplication.
 - `idempotency` (key UNIQUE, tx_id, action, result).
@@ -193,7 +200,8 @@ so in the pitch.
 - `POST /api/transactions/:id/ship` seller adds tracking
 - `POST /api/transactions/:id/confirm` buyer confirms receipt
 - `POST /api/transactions/:id/dispute`, `POST .../evidence`
-- `POST /api/transactions/:id/review` human decision with reason
+- `GET /api/transactions/:id/review` stored recommendation;
+  `POST /api/transactions/:id/review` human decision with reason
 - `POST /api/webhooks/paypal` signature verification, de-duplication, state freeze
 - `GET /api/audit/:id` and `GET /api/audit/verify`
 - Mock courier: `GET /api/mock-courier/:tracking`

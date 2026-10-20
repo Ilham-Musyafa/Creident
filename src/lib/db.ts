@@ -88,6 +88,9 @@ export function migrate(db: DatabaseSync): void {
       rule_id TEXT NOT NULL,
       outcome TEXT NOT NULL,
       ai_summary_json TEXT CHECK (ai_summary_json IS NULL OR json_valid(ai_summary_json)),
+      action TEXT,
+      reasons_json TEXT CHECK (reasons_json IS NULL OR json_valid(reasons_json)),
+      requires_human INTEGER CHECK (requires_human IS NULL OR requires_human IN (0, 1)),
       reviewer_id TEXT REFERENCES users(id),
       reason TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -149,4 +152,15 @@ export function migrate(db: DatabaseSync): void {
   if (!paypalEventColumns.some((column) => column.name === 'resource_id')) {
     db.exec('ALTER TABLE paypal_events ADD COLUMN resource_id TEXT');
   }
+  const decisionColumns = db.prepare('PRAGMA table_info(decisions)').all() as { name: string }[];
+  if (!decisionColumns.some((column) => column.name === 'action')) {
+    db.exec('ALTER TABLE decisions ADD COLUMN action TEXT');
+  }
+  if (!decisionColumns.some((column) => column.name === 'reasons_json')) {
+    db.exec('ALTER TABLE decisions ADD COLUMN reasons_json TEXT CHECK (reasons_json IS NULL OR json_valid(reasons_json))');
+  }
+  if (!decisionColumns.some((column) => column.name === 'requires_human')) {
+    db.exec('ALTER TABLE decisions ADD COLUMN requires_human INTEGER CHECK (requires_human IS NULL OR requires_human IN (0, 1))');
+  }
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS one_recommendation_per_tx ON decisions(tx_id) WHERE rule_id <> 'HUMAN_REVIEW'");
 }

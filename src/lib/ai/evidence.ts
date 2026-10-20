@@ -137,11 +137,31 @@ function promptFor(input: EvidenceRequest): ChatMessage[] {
 }
 
 function replay(input: EvidenceRequest, cases: Record<string, ReplayCase>): AiSummary | null {
-  const found = input.caseId ? cases[input.caseId] : undefined;
-  if (!found || JSON.stringify(found.criteria) !== JSON.stringify(input.criteria) ||
-    JSON.stringify(found.evidence.map((item) => [item.id, item.submittedBy, item.kind, item.content])) !==
-      JSON.stringify(input.evidence.map((item) => [item.id, item.submittedBy, item.kind, item.content]))) return null;
-  return validateAiSummary(found.summary, { ...input, criteria: input.criteria.map((criterion) => maskNames(criterion, input)) });
+  const candidates = input.caseId ? [cases[input.caseId]].filter((item) => item !== undefined) : Object.values(cases);
+  for (const found of candidates) {
+    if (JSON.stringify(found.criteria) !== JSON.stringify(input.criteria) ||
+      found.evidence.length !== input.evidence.length) continue;
+    const remaining = [...input.evidence];
+    const idMap = new Map<string, string>();
+    for (const recorded of found.evidence) {
+      const index = remaining.findIndex((item) => item.submittedBy === recorded.submittedBy &&
+        item.kind === recorded.kind && item.content === recorded.content);
+      if (index < 0) break;
+      const [actual] = remaining.splice(index, 1);
+      idMap.set(recorded.id, actual!.id);
+    }
+    if (remaining.length !== 0 || idMap.size !== found.evidence.length) continue;
+    const valid = validateAiSummary(found.summary, found);
+    if (!valid) return null;
+    const mapped: AiSummary = {
+      missingEvidence: valid.missingEvidence,
+      findings: valid.findings.map((finding) => ({
+        ...finding, evidenceIds: finding.evidenceIds.map((id) => idMap.get(id)!),
+      })),
+    };
+    return validateAiSummary(mapped, { ...input, criteria: input.criteria.map((criterion) => maskNames(criterion, input)) });
+  }
+  return null;
 }
 
 export async function summarizeEvidence(input: EvidenceRequest, options: SummarizeOptions = {}): Promise<EvidenceResult> {
@@ -190,6 +210,7 @@ export class OpenAiCompatibleProvider implements AiEvidenceProvider {
   async complete(messages: ChatMessage[]): Promise<string> {
     const response = await this.fetchImpl(this.endpoint, {
       method: 'POST',
+      signal: AbortSignal.timeout(10_000),
       headers: { Authorization: `Bearer ${this.key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: this.model, messages, temperature: 0 }),
     });
