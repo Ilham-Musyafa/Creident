@@ -16,6 +16,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const role = await getRole();
   const created = (await searchParams).created === '1';
   const simulated = isSimulatedDeal(tx);
+  const hasDecision = ctx.repo.loadDecisions(id).length > 0;
   const events = tx.captured && tx.trackingNumber ? ctx.repo.readEvents(id) : [];
   const trackingOnPayPal = !tx.captured || !tx.trackingNumber ? null
     : events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED') ? (simulated ? 'Sent (simulated)' : 'Sent')
@@ -79,6 +80,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             { label: 'Fee on refund borne by', value: 'Platform (buyer refunded in full)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
+          {hasDecision && <ButtonLink href={`/deals/${id}/decision`} fullWidth>Decision receipt</ButtonLink>}
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>
           <p className="text-center text-xs text-muted">Every action is recorded in the audit log.</p>
         </aside>

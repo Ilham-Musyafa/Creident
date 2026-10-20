@@ -343,3 +343,16 @@ describe('PayPal tracking after capture', () => {
     expect(calls.filter((c) => c.path.endsWith('/track'))).toHaveLength(3);
   });
 });
+
+describe('decision receipt data', () => {
+  it('stores the human decision with its reason and links it to the audit event', async () => {
+    useAiResult('seller');
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
+    const decided = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' }), param(id));
+    expect(decided.status).toBe(200);
+    expect(repo.loadDecisions(id)).toEqual([expect.objectContaining({ outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' })]);
+    const event = repo.readEvents(id).find((e) => e.type === 'DECISION');
+    expect(event?.payload).toMatchObject({ effect: 'PAYPAL_CAPTURE', outcome: 'RELEASE' });
+  });
+});
