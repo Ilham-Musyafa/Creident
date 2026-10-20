@@ -1,0 +1,234 @@
+<!-- Source of docs/ui/halcyvault-ui-*.png. Open with #light or #dark at the end of the URL. Concept mockup only, not app code. -->
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:PJS;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5/files/plus-jakarta-sans-latin-400-normal.woff2)}
+@font-face{font-family:PJS;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5/files/plus-jakarta-sans-latin-500-normal.woff2)}
+@font-face{font-family:PJS;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5/files/plus-jakarta-sans-latin-600-normal.woff2)}
+@font-face{font-family:PJS;font-weight:700;src:url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5/files/plus-jakarta-sans-latin-700-normal.woff2)}
+@font-face{font-family:PJS;font-weight:800;src:url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5/files/plus-jakarta-sans-latin-800-normal.woff2)}
+
+/* ---- Design tokens (same names as docs/UI.md) ---- */
+.light{--page:#ECEDE7;--bg:#F7F7F4;--surface:#FFFFFF;--surface-2:#F1F5F9;--line:#E5E7EB;--text:#0F172A;--muted:#64748B;--heading:#172554;
+--hero:#172554;--hero-text:#FFFFFF;--hero-sub:#C7D2FE;--hero-tile:rgba(255,255,255,.08);
+--accent:#5EEAD4;--on-accent:#172554;--strong:#172554;--on-strong:#FFFFFF;--frame:#111827;
+--await-bg:#FEF3C7;--await:#B45309;--auth-bg:#E0E7FF;--auth:#4338CA;--insp-bg:#DBEAFE;--insp:#1D4ED8;--disp-bg:#FFE4E6;--disp:#BE123C;
+--done-bg:#D1FAE5;--done:#047857;--froz-bg:#EDE9FE;--froz:#6D28D9;--void-bg:#F1F5F9;--void:#475569;
+--warn-bg:#FFF7ED;--warn-line:#FED7AA;--warn:#9A3412;--ok-bg:#ECFDF5;--ok-line:#A7F3D0;--ok:#065F46}
+.dark{--page:#05070F;--bg:#0B1020;--surface:#121A33;--surface-2:#1A2444;--line:#26325A;--text:#E5E7EB;--muted:#94A3B8;--heading:#E0E7FF;
+--hero:#1B2A63;--hero-text:#FFFFFF;--hero-sub:#A5B4FC;--hero-tile:rgba(255,255,255,.07);
+--accent:#5EEAD4;--on-accent:#0B1020;--strong:#E0E7FF;--on-strong:#0B1020;--frame:#1F2937;
+--await-bg:rgba(245,158,11,.16);--await:#FCD34D;--auth-bg:rgba(99,102,241,.2);--auth:#A5B4FC;--insp-bg:rgba(59,130,246,.18);--insp:#93C5FD;
+--disp-bg:rgba(225,29,72,.18);--disp:#FDA4AF;--done-bg:rgba(16,185,129,.16);--done:#6EE7B7;--froz-bg:rgba(124,58,237,.2);--froz:#C4B5FD;--void-bg:rgba(148,163,184,.14);--void:#CBD5E1;
+--warn-bg:rgba(249,115,22,.12);--warn-line:rgba(249,115,22,.35);--warn:#FDBA74;--ok-bg:rgba(16,185,129,.12);--ok-line:rgba(16,185,129,.35);--ok:#6EE7B7}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:PJS,system-ui,sans-serif;background:var(--page);color:var(--text);width:1840px;padding:48px 64px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:50px;height:50px;border-radius:16px;background:#172554;display:grid;place-items:center;border:1px solid var(--line)}
+.logo span{width:19px;height:19px;border-radius:6px;background:var(--accent);transform:rotate(45deg)}
+h1{font-size:40px;font-weight:800;letter-spacing:-1.1px;color:var(--heading)}
+.sub{color:var(--muted);font-size:16px;margin-top:4px}
+.pal{display:flex;gap:8px}
+.sw{width:104px;border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.sw i{display:block;height:46px}
+.sw b{display:block;font-size:11px;padding:7px 9px 0;color:var(--text)}
+.sw small{display:block;font-size:10px;color:var(--muted);padding:1px 9px 8px}
+.grid{display:grid;grid-template-columns:repeat(4,390px);gap:44px 36px;justify-content:space-between}
+.phone{width:390px;height:820px;background:var(--bg);border-radius:44px;border:10px solid var(--frame);overflow:hidden;position:relative;box-shadow:0 30px 60px -30px rgba(23,37,84,.45)}
+.cap{font-size:14px;font-weight:700;color:var(--heading);margin:14px 0 0 8px}
+.capd{font-size:12.5px;color:var(--muted);margin:2px 0 0 8px}
+.sb{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:13px;font-weight:700;color:var(--text)}
+.pad{padding:14px 20px}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;justify-content:space-between;align-items:center}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C7D2FE,#5EEAD4);display:grid;place-items:center;font-weight:800;color:#172554}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center}
+.small{font-size:12px;color:var(--muted)}
+.t{font-size:14px;font-weight:700;color:var(--text)}
+h3{font-size:15px;font-weight:700;color:var(--heading)}
+.hero{margin-top:14px;background:var(--hero);border-radius:26px;padding:20px;color:var(--hero-text);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-50px;top:-50px;width:160px;height:160px;border-radius:50%;background:var(--accent);opacity:.12}
+.hero .lbl{font-size:12px;color:var(--hero-sub)}
+.amt{font-size:32px;font-weight:800;letter-spacing:-1px;margin-top:3px}
+.stats{display:flex;gap:8px;margin-top:14px}
+.stat{flex:1;background:var(--hero-tile);border-radius:14px;padding:9px 11px}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:10.5px;color:var(--hero-sub)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;font-weight:700;font-size:14px}
+.accent{background:var(--accent);color:var(--on-accent)}
+.ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--heading)}
+.strong{background:var(--strong);color:var(--on-strong)}
+.full{width:100%}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}
+.link{font-size:13px;font-weight:600;color:var(--insp)}
+.item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:11px 13px;margin-bottom:9px}
+.ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.grow{flex:1;min-width:0}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.await{background:var(--await-bg);color:var(--await)}.auth{background:var(--auth-bg);color:var(--auth)}.insp{background:var(--insp-bg);color:var(--insp)}
+.disp{background:var(--disp-bg);color:var(--disp)}.done{background:var(--done-bg);color:var(--done)}.froz{background:var(--froz-bg);color:var(--froz)}.void{background:var(--void-bg);color:var(--void)}
+.price{font-weight:800;font-size:14px;color:var(--text)}
+.nav{position:absolute;left:0;right:0;bottom:0;height:80px;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding-top:12px}
+.nv{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--muted);width:56px}
+.nv.on{color:var(--heading)}
+.nv svg{stroke:currentColor}
+.fab{width:54px;height:54px;border-radius:50%;background:var(--accent);display:grid;place-items:center;margin-top:-28px;box-shadow:0 10px 20px -8px rgba(23,37,84,.4)}
+.back{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--heading)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:15px}
+.st{display:flex;gap:12px;position:relative;padding-bottom:14px}
+.st:not(:last-child):before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--line)}
+.st.dn:not(:last-child):before{background:var(--heading)}
+.dot{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;border:2px solid var(--line);background:var(--surface)}
+.dn .dot{background:var(--heading);border-color:var(--heading)}
+.dn .dot svg{stroke:var(--accent)}
+.nw .dot{border-color:var(--insp);background:var(--insp-bg)}
+.st .t{font-size:13px}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line);color:var(--text)}
+.kv:last-child{border:0}
+.kv span{color:var(--muted)}
+.note{font-size:11px;color:var(--muted);line-height:1.5}
+.find{border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:8px;background:var(--surface)}
+.chip{display:inline-block;font-size:11px;font-weight:600;background:var(--surface-2);border-radius:8px;padding:3px 7px;margin:6px 4px 0 0;color:var(--heading)}
+.rule{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:16px;padding:11px;font-size:12px;color:var(--warn);line-height:1.45}
+.ev{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.ev:last-child{border:0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--muted)}
+.ok{background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--ok);border-radius:18px;padding:13px;display:flex;gap:10px;align-items:center}
+.ok .t{color:var(--ok)}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.input{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;height:44px;padding:0 13px;display:flex;align-items:center;font-size:14px;color:var(--text)}
+.input.ph{color:var(--muted)}
+.two{display:flex;gap:10px}.two>*{flex:1}
+.thumbs{display:flex;gap:8px}
+.th{width:64px;height:64px;border-radius:14px;background:var(--surface-2);border:1.5px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:22px}
+.th.img{border:0;background:linear-gradient(135deg,#94A3B8,#CBD5E1)}
+.seg{display:flex;background:var(--surface-2);border-radius:999px;padding:4px}
+.seg span{flex:1;text-align:center;font-size:13px;font-weight:700;padding:8px 0;border-radius:999px;color:var(--muted)}
+.seg span.on{background:var(--surface);color:var(--heading);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mi{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mi:last-child{border:0}
+.mi .ic{width:36px;height:36px;border-radius:12px;background:var(--surface-2)}
+.chev{color:var(--muted);font-size:18px}
+.step{display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.num{width:24px;height:24px;border-radius:50%;background:var(--surface-2);color:var(--heading);font-size:12px;font-weight:800;display:grid;place-items:center;flex:none}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:800;font-size:20px;letter-spacing:2px;color:var(--heading);background:var(--surface-2);border-radius:12px;padding:8px 12px;display:inline-block}
+.foot{margin-top:30px;display:flex;justify-content:space-between;color:var(--muted);font-size:13px}
+</style></head><body>
+<div id="root"></div>
+<script>
+const theme = location.hash.slice(1) || 'light';
+document.body.className = theme;
+const I = {
+ home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ deals:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+ audit:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+ menu:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+ check:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="4"><path d="M5 12l5 5 9-10"/></svg>',
+};
+const nav = on => `<div class="nav">
+ <div class="nv ${on==='home'?'on':''}">${I.home}Home</div><div class="nv ${on==='deals'?'on':''}">${I.deals}Deals</div>
+ <div class="fab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></div>
+ <div class="nv ${on==='audit'?'on':''}">${I.audit}Audit</div><div class="nv ${on==='menu'?'on':''}">${I.menu}Menu</div></div>`;
+const sb = '<div class="sb"><span>9:41</span><span>●●● ▮</span></div>';
+const icon = (bg,stroke,path)=>`<div class="ic" style="background:var(--${bg})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--${stroke})" stroke-width="2">${path}</svg></div>`;
+
+const screens = [
+['1 · Home', 'Amount card, one mint action, deals with labelled status.', `${sb}<div class="pad">
+ <div class="between"><div class="row"><div class="av">R</div><div><div class="small">Seller · demo account</div><div class="t">Hi, Rina</div></div></div><div class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heading)" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21h4"/></svg></div></div>
+ <div class="hero"><div class="lbl">Authorized via PayPal, not yet captured</div><div class="amt">$245.00</div>
+  <div class="stats"><div class="stat"><b>3</b><span>Active</span></div><div class="stat"><b>1</b><span>In dispute</span></div><div class="stat"><b>12</b><span>Completed</span></div></div>
+  <div style="margin-top:14px"><span class="btn accent">+ New deal</span></div></div>
+ <div class="sec"><h3>Your deals</h3><span class="link">See all</span></div>
+ <div class="item">${icon('insp-bg','insp','<rect x="7" y="2" width="10" height="20" rx="2"/>')}<div class="grow"><div class="t">Used phone, 128 GB</div><span class="pill insp">Inspection · 1d 4h</span></div><div class="price">$120.00</div></div>
+ <div class="item">${icon('disp-bg','disp','<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16v.5"/>')}<div class="grow"><div class="t">Film camera</div><span class="pill disp">Disputed</span></div><div class="price">$85.00</div></div>
+ <div class="item">${icon('auth-bg','auth','<path d="M3 7h18v12H3zM3 7l3-4h12l3 4"/>')}<div class="grow"><div class="t">Mechanical keyboard</div><span class="pill auth">Authorized · ship by Fri</span></div><div class="price">$40.00</div></div>
+</div>${nav('home')}`],
+
+['2 · Deal detail', 'Timeline answers "where is my money?" at a glance.', `${sb}<div class="pad">
+ <div class="back">← Deal #HV-1042</div>
+ <div style="text-align:center;margin:16px 0 12px"><div class="small">Used phone, 128 GB</div><div class="amt" style="color:var(--heading)">$120.00</div><span class="pill insp">Inspection window · 1d 4h left</span></div>
+ <div class="card"><h3 style="font-size:14px;margin-bottom:12px">Progress</h3>
+  <div class="st dn"><div class="dot">${I.check}</div><div><div class="t">Terms locked</div><div class="small">Both parties agreed · Oct 18</div></div></div>
+  <div class="st dn"><div class="dot">${I.check}</div><div><div class="t">Payment authorized</div><div class="small">Funds reserved, not captured · Oct 18</div></div></div>
+  <div class="st dn"><div class="dot">${I.check}</div><div><div class="t">Shipped</div><div class="small">Tracking JNE-7781 · delivered to Bogor</div></div></div>
+  <div class="st nw"><div class="dot"></div><div><div class="t">Buyer inspection</div><div class="small">Confirm or open a dispute before Oct 22</div></div></div>
+  <div class="st"><div class="dot"></div><div><div class="t" style="color:var(--muted)">Released to seller</div></div></div></div>
+ <div class="card" style="margin-top:10px;padding:10px 15px"><div class="kv"><span>PayPal fee (estimate)</span><b>$0.64</b></div><div class="kv"><span>Fee on refund borne by</span><b>TBD</b></div></div>
+ <div style="display:flex;gap:10px;margin-top:14px"><span class="btn ghost" style="flex:1">Open dispute</span><span class="btn accent" style="flex:1.3">Confirm receipt</span></div>
+ <p class="note" style="margin-top:9px;text-align:center">Every action is recorded in the audit log.</p></div>`],
+
+['3 · Dispute review', 'Rules first: AI shows findings with evidence, a human decides grey cases.', `${sb}<div class="pad">
+ <div class="back">← Dispute review</div>
+ <div class="between" style="margin:12px 0 10px"><div><div class="t">Film camera · $85.00</div><div class="small">Buyer: "lens has fungus, not as described"</div></div><span class="pill disp">Disputed</span></div>
+ <h3 style="font-size:14px;margin-bottom:8px">AI evidence summary</h3>
+ <div class="find"><div class="between"><div class="t" style="font-size:13px">Condition matches listing</div><span class="pill disp">Supports buyer</span></div><span class="chip">photo E3</span><span class="chip">listing text</span></div>
+ <div class="find"><div class="between"><div class="t" style="font-size:13px">Delivered to agreed address</div><span class="pill done">Supports seller</span></div><span class="chip">tracking E1</span></div>
+ <div class="find"><div class="between"><div class="t" style="font-size:13px">Damage in transit</div><span class="pill void">Unclear</span></div><span class="chip">photo E4</span></div>
+ <div class="rule" style="margin-top:8px"><b>Rule R5 · Escalated to a human.</b> Findings point to different sides. The AI only summarises; it cannot release or refund.</div>
+ <div class="card" style="margin-top:10px;padding:11px"><div class="small" style="margin-bottom:6px">Reviewer decision (reason required)</div><div class="input ph" style="font-size:12px">Write the reason for this decision…</div></div>
+ <div style="display:flex;gap:8px;margin-top:11px"><span class="btn ghost" style="flex:1;font-size:13px">Release</span><span class="btn ghost" style="flex:1;font-size:13px">Split</span><span class="btn strong" style="flex:1;font-size:13px">Refund</span></div></div>`],
+
+['4 · Audit log', '"Every action is recorded" made visible, with an honest limit note.', `${sb}<div class="pad">
+ <div class="back">← Audit log</div>
+ <div class="ok" style="margin-top:14px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><div><div class="t">Chain verified · 9 events</div><div class="mono">head 3f9a…c21e</div></div></div>
+ <div class="card" style="margin-top:12px;padding:4px 14px">
+  ${[['#9','Dispute escalated (R5)','system · Oct 21 09:12 · prev a71c…'],['#8','Evidence added: photo E4','seller · Oct 21 08:40 · prev 09be…'],['#7','Dispute opened','buyer · Oct 20 19:05 · prev 5d02…'],['#4','PayPal authorization created','system · Oct 18 · debug_id stored'],['#1','Terms created','seller · Oct 18 · prev 0000…']].map(e=>`<div class="ev"><span class="pill void">${e[0]}</span><div class="grow"><div class="t" style="font-size:13px">${e[1]}</div><div class="mono">${e[2]}</div></div></div>`).join('')}</div>
+ <p class="note" style="margin-top:10px">Each event stores the hash of the previous one. Editing, deleting or reordering an event breaks the chain and shows here. The operator still runs the database, so the head hash is also published outside it.</p>
+ <div style="margin-top:12px"><span class="btn ghost full">Export audit log</span></div></div>${nav('audit')}`],
+
+['5 · New deal (seller)', 'Terms are set before payment and locked when both accept.', `${sb}<div class="pad">
+ <div class="back">← New deal</div>
+ <div class="small" style="margin:10px 0 12px">Step 1 of 2 · Terms</div>
+ <div class="field"><label>Item</label><div class="input">Used phone, 128 GB</div></div>
+ <div class="two"><div class="field"><label>Price (USD)</label><div class="input">120.00</div></div><div class="field"><label>Condition</label><div class="input">Good</div></div></div>
+ <div class="field"><label>Photos (taken in the app)</label><div class="thumbs"><div class="th img"></div><div class="th img" style="background:linear-gradient(135deg,#A5B4FC,#5EEAD4)"></div><div class="th">+</div></div></div>
+ <div class="two"><div class="field"><label>Ship within</label><div class="input">3 days</div></div><div class="field"><label>Inspection</label><div class="input">2 days</div></div></div>
+ <div class="field"><label>Delivery city / postcode</label><div class="input ph">Set by the buyer when accepting</div></div>
+ <div class="card" style="padding:10px 14px;margin-top:2px"><div class="kv"><span>PayPal fee (estimate)</span><b>$0.64</b></div><div class="kv"><span>You receive (estimate)</span><b>$119.36</b></div></div>
+ <div style="margin-top:12px"><span class="btn accent full">Create & share link</span></div></div>`],
+
+['6 · Buyer checkout', 'Clear promise before paying: what happens to the money and when.', `${sb}<div class="pad">
+ <div class="back">← Review & pay</div>
+ <div class="card" style="margin-top:14px"><div class="between"><div><div class="t">Used phone, 128 GB</div><div class="small">Seller: Rina · Bandung</div></div><div class="price" style="font-size:18px">$120.00</div></div>
+  <div style="margin-top:10px"><span class="pill done">Terms locked</span> <span class="mono" style="margin-left:6px">terms #8c1e…</span></div></div>
+ <h3 style="font-size:14px;margin:16px 0 4px">How it works</h3>
+ <div class="step"><div class="num">1</div><div><div class="t" style="font-size:13px">PayPal authorizes $120.00</div><div class="small">The money is reserved, not taken yet.</div></div></div>
+ <div class="step"><div class="num">2</div><div><div class="t" style="font-size:13px">Seller ships within 3 days</div><div class="small">No tracking in time: the authorization is voided.</div></div></div>
+ <div class="step"><div class="num">3</div><div><div class="t" style="font-size:13px">You inspect for 2 days</div><div class="small">Confirm, or open a dispute with evidence.</div></div></div>
+ <div class="rule" style="margin-top:14px;background:var(--surface-2);border-color:var(--line);color:var(--muted)">Sandbox demo. HalcyVault is a dispute-mediation prototype, not a licensed escrow service.</div>
+ <div style="margin-top:14px"><span class="btn accent full">Continue to PayPal (Sandbox)</span></div>
+ <p class="note" style="text-align:center;margin-top:8px">You will approve the payment on PayPal and come back here.</p></div>`],
+
+['7 · Add evidence', 'In-app photos with a one-time code; only in-platform chat counts.', `${sb}<div class="pad">
+ <div class="back">← Add evidence</div>
+ <div class="between" style="margin:12px 0"><div class="t">Film camera · dispute</div><span class="pill await">23h left</span></div>
+ <div class="card"><div class="small">Write this code on paper and keep it visible in every photo</div><div style="margin-top:8px"><span class="code">HV-1042 · 7K2Q</span></div>
+  <div style="margin-top:12px"><span class="btn accent full">Take photo</span></div>
+  <p class="note" style="margin-top:8px">Gallery uploads are not accepted for this step.</p></div>
+ <div class="sec"><h3>Submitted</h3><span class="small">3 items</span></div>
+ <div class="item"><div class="th img" style="width:44px;height:44px;border-radius:12px"></div><div class="grow"><div class="t" style="font-size:13px">Photo E3 · lens close-up</div><div class="mono">sha256 51ab…e09f</div></div></div>
+ <div class="item"><div class="th img" style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#A5B4FC,#5EEAD4)"></div><div class="grow"><div class="t" style="font-size:13px">Photo E4 · box on arrival</div><div class="mono">sha256 c7d2…1a44</div></div></div>
+ <div class="item">${icon('surface-2','heading','<path d="M4 5h16v11H8l-4 4z"/>')}<div class="grow"><div class="t" style="font-size:13px">Chat excerpt · in-platform</div><div class="mono">messages #14–#18</div></div></div></div>`],
+
+['8 · Menu & appearance', 'Light, dark or system theme; demo role switch; honest "limitations" page.', `${sb}<div class="pad">
+ <div class="row" style="margin-top:6px"><div class="av" style="width:52px;height:52px">R</div><div><div class="t" style="font-size:16px">Rina</div><div class="small">Demo account</div></div></div>
+ <div class="card" style="margin-top:16px"><div class="small" style="margin-bottom:8px">Act as (demo)</div><div class="seg"><span>Buyer</span><span class="on">Seller</span><span>Reviewer</span></div></div>
+ <div class="card" style="margin-top:12px"><div class="small" style="margin-bottom:8px">Appearance</div><div class="seg"><span class="${theme==='light'?'on':''}">Light</span><span class="${theme==='dark'?'on':''}">Dark</span><span>System</span></div></div>
+ <div class="card" style="margin-top:12px;padding:4px 15px">
+  ${[['How decisions are made','Rules R1–R7, role of the AI'],['Audit & verification','Check the hash chain'],['Limitations','Sandbox demo, not an escrow service'],['About HalcyVault','PayPal AI Hackathon 2026']].map(m=>`<div class="mi"><div class="ic"></div><div class="grow"><div class="t" style="font-size:13px">${m[0]}</div><div class="small">${m[1]}</div></div><span class="chev">›</span></div>`).join('')}</div>
+</div>${nav('menu')}`],
+];
+
+const sw = [['Midnight Ink','#172554'],['Mint (action)','#5EEAD4'],[theme==='dark'?'Background':'Canvas', theme==='dark'?'#0B1020':'#F7F7F4'],[theme==='dark'?'Surface':'Text', theme==='dark'?'#121A33':'#0F172A'],['Muted', theme==='dark'?'#94A3B8':'#64748B']];
+document.getElementById('root').innerHTML = `
+<div class="top"><div class="brand"><div class="logo"><span></span></div><div><h1>HalcyVault · ${theme==='dark'?'Dark':'Light'} mode</h1><div class="sub">UI direction: Midnight Ink + Mint. Clean, modern, simple, fast. Concept mockup with sample data.</div></div></div>
+<div><div class="pal">${sw.map(s=>`<div class="sw"><i style="background:${s[1]}"></i><b>${s[0]}</b><small>${s[1]}</small></div>`).join('')}</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px"><span class="pill await">Awaiting approval</span><span class="pill auth">Authorized</span><span class="pill insp">Inspection</span><span class="pill disp">Disputed</span><span class="pill done">Completed</span><span class="pill froz">Frozen by PayPal</span><span class="pill void">Voided</span></div></div></div>
+<div class="grid">${screens.map(s=>`<div><div class="phone">${s[2]}</div><div class="cap">${s[0]}</div><div class="capd">${s[1]}</div></div>`).join('')}</div>
+<div class="foot"><span>Plus Jakarta Sans (OFL) · Corners 14–26px · Pill buttons · Mint only for the main action · Status always has a label, never colour alone · All colours are tokens</span><span>Sandbox demo · sample data</span></div>`;
+</script>
+</body></html>
