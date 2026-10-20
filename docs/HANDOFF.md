@@ -33,13 +33,19 @@ Done:
   - 55 unit tests pass (`npm test`), `npm run typecheck` passes. The PayPal client is only
     tested with a fake fetch; it has not been run against the real Sandbox yet.
 - Dev dependencies only: typescript, vitest, @types/node.
+- On `feat/sandbox-smoke`: a PowerShell-friendly `npm run smoke` script uses the
+  existing PayPal client and `.env` for a Sandbox-only order, buyer approval, and
+  either void or capture plus refund. Its flow is tested with fake fetch responses;
+  59 tests pass in total. The owner still needs to run it against the real Sandbox
+  on Windows.
 
 ## How to run
 
 ```
-npm install
+npm ci
 npm test
 npm run typecheck
+npm run build
 ```
 
 ## Next steps
@@ -56,8 +62,8 @@ npm run typecheck
    PayPal effect with `requestIdFor()`, then atomically save the new status and append an
    audit event (include PayPal `debug_id` on errors). If the effect fails, do not change
    the status.
-6. A local smoke script that runs the real Sandbox flow (create order, open approval URL,
-   authorize, void) using `.env`, so the client is verified end to end.
+6. Owner: run `npm run smoke` on Windows for both paths and record actual Sandbox
+   results in `docs/SANDBOX-NOTES.md`. Fake-fetch tests do not verify live behavior.
 7. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
 
 ## Decisions waiting for the owner
@@ -83,6 +89,8 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): added the local Sandbox smoke script on `feat/sandbox-smoke`;
+  live Sandbox execution is pending the owner's Windows run.
 - 2026-10-20 22:30 WIB (Claude): built the core domain on `feat/core-domain`
   (state machine, audit chain, rules, PayPal client, 55 tests). Not pushed anywhere yet;
   the repo exists only as a local git repository delivered to the owner as a zip.
