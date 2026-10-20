@@ -55,6 +55,10 @@ Use `details[].issue` as the machine-readable code and store `debug_id` in the a
 ## Not tested yet (as of 2026-10-20)
 
 - Webhooks (which events arrive for authorize/capture/refund/void).
+- The new webhook handler's signature verification, dispute freeze, and resume paths
+  have only been tested with fake PayPal verification responses. The owner still needs
+  to test real Sandbox webhook delivery; PayPal needs a public HTTPS callback URL and
+  the matching `PP_WEBHOOK_ID` from the Sandbox app.
 - Disputes (can a dispute be simulated on a sandbox transaction?).
 - A `Platform`-type app, delayed disbursement, multiparty, Payouts (may need partner
   approval).

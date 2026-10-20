@@ -46,6 +46,12 @@ Done:
   audit logs/verification, and deadline tick. No UI pages or real authentication.
   Handler tests use an in-memory database and fake PayPal fetch. Live route calls
   against the PayPal Sandbox remain to be tested by the owner.
+- On `feat/paypal-webhook`: `POST /api/webhooks/paypal` asks PayPal to verify every
+  signature, rejects failures, and de-duplicates verified event ids in SQLite.
+  Recognized dispute/reversal events freeze the matched transaction, including a
+  completed capture; resolution restores the prior status. Other matched events are
+  audit-only. The new branch includes the orchestrator and API route commits because
+  `origin/main` still contains only the core domain. Tests use fake PayPal responses.
 
 ## How to run
 
@@ -63,9 +69,9 @@ npm run build
    branch was not integrated; this task adds the required Next.js runtime without pages.
 2. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
    Payouts), then record results in `docs/SANDBOX-NOTES.md`.
-3. Add the PayPal webhook endpoint with signature verification, event-id de-duplication,
-   and external dispute/reversal freeze. This remains separate from the role-based demo
-   requests because PayPal sends the webhook.
+3. Owner: configure a public HTTPS callback URL and matching Sandbox `PP_WEBHOOK_ID`,
+   then test real webhook delivery and payload mapping. The webhook is separate from
+   role-based demo requests because PayPal sends it.
 4. Run the local Sandbox smoke script on the owner's PC and test the JSON routes against
    the real Sandbox; fake fetch tests do not verify network or account configuration.
 5. Add UI pages in their own task and replace declared demo roles with authentication
@@ -95,6 +101,10 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): added the signed PayPal webhook route on `feat/paypal-webhook`,
+  including verified de-duplication, audit events, freeze/resume, and handling of
+  capture reversals after completion. `npm test` passed 73 tests, and
+  `npm run typecheck` and `npm run build` passed. Real webhook delivery is pending.
 - 2026-10-20 (Codex): implemented and tested the JSON API on `feat/api-routes`, with
   demo roles, fixed simulated courier data, configurable placeholder deadlines, and
   direct handler tests. `npm test` passed 68 tests, and `npm run typecheck` and

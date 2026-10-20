@@ -115,6 +115,8 @@ export function migrate(db: DatabaseSync): void {
     CREATE TABLE IF NOT EXISTS paypal_events (
       event_id TEXT PRIMARY KEY,
       type TEXT NOT NULL,
+      tx_id TEXT REFERENCES transactions(id),
+      resource_id TEXT,
       received_at TEXT NOT NULL DEFAULT (datetime('now')),
       processed_at TEXT
     );
@@ -139,5 +141,12 @@ export function migrate(db: DatabaseSync): void {
   }
   if (!txColumns.some((column) => column.name === 'tracking_number')) {
     db.exec('ALTER TABLE transactions ADD COLUMN tracking_number TEXT');
+  }
+  const paypalEventColumns = db.prepare('PRAGMA table_info(paypal_events)').all() as { name: string }[];
+  if (!paypalEventColumns.some((column) => column.name === 'tx_id')) {
+    db.exec('ALTER TABLE paypal_events ADD COLUMN tx_id TEXT REFERENCES transactions(id)');
+  }
+  if (!paypalEventColumns.some((column) => column.name === 'resource_id')) {
+    db.exec('ALTER TABLE paypal_events ADD COLUMN resource_id TEXT');
   }
 }
