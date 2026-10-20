@@ -1,5 +1,5 @@
 import { ApiSetupError, getApiContext, getPayPal } from './context';
-import { HttpError, json, route } from './http';
+import { HttpError, json, readBodyLimited, route } from './http';
 import type { WebhookSignature } from '../../../lib/paypal/client';
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -50,11 +50,7 @@ export function paypalWebhook(request: Request): Promise<Response> {
     if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
       throw new HttpError(415, 'JSON_REQUIRED', 'Send application/json');
     }
-    if (Number(request.headers.get('content-length') ?? 0) > 1_048_576) {
-      throw new HttpError(413, 'BODY_TOO_LARGE', 'Webhook exceeds 1 MB');
-    }
-    const raw = await request.text();
-    if (new TextEncoder().encode(raw).length > 1_048_576) throw new HttpError(413, 'BODY_TOO_LARGE', 'Webhook exceeds 1 MB');
+    const raw = await readBodyLimited(request, 1_048_576, 'Webhook exceeds 1 MB');
     let parsed: unknown;
     try { parsed = JSON.parse(raw); } catch { throw new HttpError(400, 'INVALID_JSON', 'Invalid webhook JSON'); }
     const body = record(parsed);

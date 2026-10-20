@@ -10,7 +10,7 @@ export function AppShell({ active, children }: { active?: Active; children: Reac
     <div className="min-h-screen bg-bg lg:flex">
       <div className="fixed inset-x-0 bottom-0 z-20 lg:sticky lg:top-0 lg:h-screen lg:self-start lg:border-r lg:border-line lg:bg-surface">
         <div className="hidden px-6 pt-6 lg:block">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex min-h-11 items-center gap-3">
             <span aria-hidden="true" className="grid size-9 place-items-center rounded-xl bg-hero"><span className="size-3.5 rotate-45 rounded-[4px] bg-accent"/></span>
             <span className="text-lg font-extrabold tracking-tight text-heading">HalcyVault</span>
           </Link>

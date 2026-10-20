@@ -115,6 +115,28 @@ describe('PayPal webhook route', () => {
     expect(verificationCalls).toHaveLength(0);
   });
 
+  it('rejects an oversized chunked payload before signature verification or database writes', async () => {
+    const txId = transaction();
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array(600_000));
+        controller.enqueue(new Uint8Array(600_000));
+      },
+      cancel() { cancelled = true; },
+    });
+    const request = new Request('http://localhost:3000/api/webhooks/paypal', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body, duplex: 'half',
+    } as RequestInit & { duplex: 'half' });
+    const response = await POST(request);
+    expect(response.status).toBe(413);
+    expect(cancelled).toBe(true);
+    expect(verificationCalls).toHaveLength(0);
+    expect(repo.readEvents(txId)).toHaveLength(0);
+  });
+
   it('freezes a completed capture reversal, then resumes using its dispute id', async () => {
     const txId = transaction('COMPLETED');
     const reversed = await POST(webhook(event('reversal', 'PAYMENT.CAPTURE.REVERSED', { id: 'capture-1' })));

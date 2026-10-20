@@ -21,7 +21,7 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
 }
 export function StatusPill({ status, suffix }: { status: TxStatus; suffix?: string }) {
   const { label, tone } = statusMap[status];
-  return <span className="inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold" style={toneStyle(tone)}><span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-current"/><span>{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  return <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold" style={toneStyle(tone)}><span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-current"/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
 export function AmountCard({ amount, label = 'Authorized via PayPal, not yet captured', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
@@ -44,7 +44,7 @@ export function ButtonLink({ href, variant = 'accent', fullWidth = false, classN
 }
 export function DealListItem({ title, amount, status, href, icon = '◇' }: { title: string; amount: string; status: TxStatus; href: string; icon?: ReactNode }) {
   const tone = statusMap[status].tone;
-  return <Link href={href} className="flex min-h-[72px] items-center gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2"><span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-[14px] text-xl" style={toneStyle(tone)}>{icon}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-heading">{title}</span><StatusPill status={status}/></span><strong className="shrink-0 text-sm tabular-nums">{amount}</strong></Link>;
+  return <Link href={href} className="flex min-h-[72px] min-w-0 items-center gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2"><span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-[14px] text-xl" style={toneStyle(tone)}>{icon}</span><span className="min-w-0 flex-1"><span className="block break-words text-sm font-bold text-heading">{title}</span><StatusPill status={status}/></span><strong className="shrink-0 text-sm tabular-nums">{amount}</strong></Link>;
 }
 export function Timeline({ steps }: { steps: { title: string; detail?: string; state: 'done' | 'current' | 'upcoming' }[] }) {
   return <ol className="space-y-0">{steps.map((s, i) => <li key={`${s.title}-${i}`} className="flex gap-3"><div className="flex flex-col items-center"><span className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-xs font-bold ${s.state === 'done' ? 'border-heading bg-heading text-on-strong' : s.state === 'current' ? 'border-[var(--inspection-text)] bg-[var(--inspection-bg)] text-[var(--inspection-text)]' : 'border-line text-muted'}`}>{s.state === 'done' ? '✓' : i + 1}</span>{i < steps.length - 1 && <span className="h-8 w-px bg-line"/>}</div><div className="pb-4"><p className="text-sm font-semibold text-heading">{s.title}</p>{s.detail && <p className="text-xs text-muted">{s.detail}</p>}</div></li>)}</ol>;

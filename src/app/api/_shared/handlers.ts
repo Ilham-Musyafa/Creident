@@ -8,7 +8,7 @@ import { prepareReview } from '../../../lib/reviewPipeline';
 import { seedDemoData } from '../../../lib/demoSeed';
 import { sendTrackingToPayPal, type TrackingOutcome } from '../../../lib/paypalTracking';
 import { getApiContext, getPaymentGateway, isSimulatedPayPal, type ApiContext } from './context';
-import { errorResponse, HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField, unwrap, type Role } from './http';
+import { errorResponse, HttpError, json, jsonBody, noExtraFields, readBodyLimited, requireRole, route, stringField, unwrap, type Role } from './http';
 
 function hash(text: string): string {
   return createHash('sha256').update(text).digest('hex');
@@ -22,7 +22,7 @@ function requireTx(context: ApiContext, id: string): StoredTx {
 }
 
 async function emptyBody(request: Request): Promise<void> {
-  const raw = await request.text();
+  const raw = await readBodyLimited(request, 16_384, 'JSON body exceeds 16 KB');
   if (!raw) return;
   if (!request.headers.get('content-type')?.startsWith('application/json')) throw new HttpError(415, 'JSON_REQUIRED', 'Send application/json');
   if (raw.length > 2 || raw.trim() !== '{}') throw new HttpError(400, 'INVALID_INPUT', 'Expected an empty JSON object');

@@ -26,7 +26,7 @@ export default function AuditIndexPage() {
           {rows.map(({ tx, check }) => (
             <li key={tx.id}>
               <Link href={`/audit/${tx.id}`} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
-                <span className="min-w-0"><span className="block truncate text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/></span>
+                <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/></span>
                 <span className="shrink-0 text-right text-xs font-semibold" style={{ color: check.ok ? 'var(--success-text)' : 'var(--warning-text)' }}>
                   {check.ok ? `Verified · ${check.length} events` : `Broken at #${check.brokenAtSeq}`}
                 </span>
