@@ -88,8 +88,8 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 4. Owner: review every evaluation label and rationale; then expand the set toward the
    size proposed in DESIGN section 10 and run once with the chosen live provider.
 5. Owner: public HTTPS URL + `PP_WEBHOOK_ID`, then test real webhook delivery.
-6. README for judges (English): problem, how it works, what is simulated, run steps,
-   eval results with limits, production path.
+6. Done (branch `docs/readme-judges`): README for judges. Update section 5 once the
+   live-model eval and the owner's `npm run smoke` results exist.
 
 ## Decisions
 
@@ -116,6 +116,9 @@ Still open:
 
 ## Log
 
+- 2026-10-21 02:45 WIB (Claude): merged PR #8 (simulated PayPal mode) after verifying main
+  (106 tests, typecheck, build). Rewrote README for judges on `docs/readme-judges`; every
+  statement checked against the code, claim-rule wording scanned.
 - 2026-10-21 02:30 WIB (Claude): merged PR #7 (UI screens) after verifying main. Built the
   simulated PayPal mode on `feat/demo-paypal-mode` (owner approved the plan: demo mode
   first, then README). No new dependency. Checks listed under Current status.
