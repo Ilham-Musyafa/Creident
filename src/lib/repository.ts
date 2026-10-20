@@ -202,6 +202,12 @@ export class TransactionRepository {
     });
   }
 
+  /** Which parties have accepted the terms of a DRAFT transaction. */
+  listAcceptances(txId: string): Array<'buyer' | 'seller'> {
+    return this.db.prepare('SELECT role FROM term_acceptances WHERE tx_id = ? ORDER BY role').all(txId)
+      .map((row) => row.role as 'buyer' | 'seller');
+  }
+
   recordAcceptance(txId: string, role: 'buyer' | 'seller', termsHash: string, ts: string): boolean {
     return transaction(this.db, () => {
       const tx = this.loadTransaction(txId);
@@ -307,6 +313,12 @@ export class TransactionRepository {
   listDue(status: TxStatus, column: 'ship_by' | 'inspection_until' | 'evidence_until', now: string): StoredTx[] {
     return this.db.prepare(`SELECT * FROM transactions WHERE status = ? AND ${column} <= ?`)
       .all(status, now).map(fromRow);
+  }
+
+  /** Most recently updated first; used by the UI lists. */
+  listTransactions(limit = 200): StoredTx[] {
+    return this.db.prepare('SELECT * FROM transactions ORDER BY updated_at DESC, created_at DESC LIMIT ?')
+      .all(limit).map(fromRow);
   }
 
   listByStatus(status: TxStatus): StoredTx[] {
