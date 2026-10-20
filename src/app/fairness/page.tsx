@@ -6,7 +6,11 @@ import data from '../../../eval/results.json';
 // Static: the numbers come from the committed eval/results.json (npm run eval).
 const results = data as FairnessResults;
 
-function Metric({ label, value, detail, good }: { label: string; value: string; detail: string; good?: boolean }) {
+// Colour signals pass/fail only for live-model runs; replay numbers stay neutral.
+const coloured = (data as FairnessResults).mode === 'live';
+
+function Metric({ label, value, detail, good: goodIn }: { label: string; value: string; detail: string; good?: boolean }) {
+  const good = coloured ? goodIn : undefined;
   return (
     <Card className="min-w-0">
       <p className="text-xs text-muted">{label}</p>
