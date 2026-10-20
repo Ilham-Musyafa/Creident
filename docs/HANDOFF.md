@@ -132,6 +132,14 @@ Still open:
 
 ## Log
 
+- 2026-10-21 05:36 WIB (Codex, C4): seeded `COMPLETED` demo deal now calls the
+  existing tracking helper after buyer confirmation. Its PayPal stub returns a
+  `DEMO-TRACKER` id, and the `PAYPAL_TRACKING_ADDED` audit event has
+  `simulated: true`, so the audit screen shows "Tracking sent to PayPal" as a
+  simulated step. Tests check the event follows capture, its label and tracker
+  id, and every demo chain. `npm test`, `npm run typecheck`, and `npm run build`
+  passed. No dependencies added; state machine, rules, and tracking helper are
+  unchanged.
 - 2026-10-21 05:18 WIB (Codex, C1): checked README Option A from a fresh clone on
   `codex/c1-readme-check`: `npm ci`, copied `.env.example`, set `PAYPAL_MODE=simulated`,
   and ran `npm run dev`. Browser created a synthetic deal, buyer accepted terms and
