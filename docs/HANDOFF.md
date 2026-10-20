@@ -33,6 +33,11 @@ Done:
   - 55 unit tests pass (`npm test`), `npm run typecheck` passes. The PayPal client is only
     tested with a fake fetch; it has not been run against the real Sandbox yet.
 - Dev dependencies only: typescript, vitest, @types/node.
+- On `feat/orchestrator`: SQLite schema and repository, audit sequence numbers per
+  transaction, and `applyTrigger()` connecting the state machine to the PayPal client.
+  Request ids are claimed before calls; success or PayPal failure is recorded with an
+  audit event. Interrupted calls remain pending for reconciliation instead of being
+  sent twice. No UI, live PayPal calls, or new dependencies were added.
 
 ## How to run
 
@@ -40,25 +45,20 @@ Done:
 npm install
 npm test
 npm run typecheck
+npm run build
 ```
 
 ## Next steps
 
-1. Owner: create the public GitHub repo, push `main`, push `feat/core-domain` and open a
-   pull request. Make sure `.env` is not committed (`git status` must not list it).
+1. Review and merge `feat/orchestrator` after checks. The app scaffold remains separate
+   from `main` and must be integrated in its own task.
 2. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
    Payouts), then record results in `docs/SANDBOX-NOTES.md`.
-3. Scaffold the Next.js app (App Router, TypeScript, Tailwind) around `src/lib/`.
-   Keep `src/lib/` free of Next.js imports so it stays unit-testable.
-4. Persistence: SQLite repository for transactions, evidence, decisions, audit events,
-   `paypal_events` (unique event id) and idempotency keys (docs/DESIGN.md section 8).
-5. Orchestrator: `applyTrigger(txId, trigger)` = load tx, `transition()`, perform the
-   PayPal effect with `requestIdFor()`, then atomically save the new status and append an
-   audit event (include PayPal `debug_id` on errors). If the effect fails, do not change
-   the status.
-6. A local smoke script that runs the real Sandbox flow (create order, open approval URL,
+3. Connect the repository and orchestrator to app routes without importing Next.js into
+   `src/lib/`.
+4. A local smoke script that runs the real Sandbox flow (create order, open approval URL,
    authorize, void) using `.env`, so the client is verified end to end.
-7. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
+5. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
 
 ## Decisions waiting for the owner
 
@@ -83,6 +83,8 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): implemented SQLite persistence and the PayPal orchestrator on
+  `feat/orchestrator`, with in-memory tests and no live credentials.
 - 2026-10-20 22:30 WIB (Claude): built the core domain on `feat/core-domain`
   (state machine, audit chain, rules, PayPal client, 55 tests). Not pushed anywhere yet;
   the repo exists only as a local git repository delivered to the owner as a zip.
