@@ -1,13 +1,69 @@
 {
   "delivered_sample": {
-    "criteria": ["Delivery to agreed destination"],
+    "criteria": [
+      "Delivery to agreed destination"
+    ],
     "evidence": [
-      { "id": "buyer-note", "submittedBy": "buyer", "kind": "note", "content": "The sample parcel arrived at the agreed address." },
-      { "id": "seller-tracking", "submittedBy": "seller", "kind": "tracking", "content": "DEMO-DELIVERED shows delivery to the agreed address." }
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "The sample parcel arrived at the agreed address."
+      },
+      {
+        "id": "seller-tracking",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "DEMO-DELIVERED shows delivery to the agreed address."
+      }
     ],
     "summary": {
       "findings": [
-        { "criterion": "Delivery to agreed destination", "supports": "seller", "evidenceIds": ["buyer-note", "seller-tracking"] }
+        {
+          "criterion": "Delivery to agreed destination",
+          "supports": "seller",
+          "evidenceIds": [
+            "buyer-note",
+            "seller-tracking"
+          ]
+        }
+      ],
+      "missingEvidence": false
+    }
+  },
+  "demo_smartwatch": {
+    "criteria": [
+      "Screen has no cracks",
+      "Strap included"
+    ],
+    "evidence": [
+      {
+        "id": "buyer-photo",
+        "submittedBy": "buyer",
+        "kind": "photo",
+        "content": "Photo of the watch face: a crack runs across the upper left corner. The one-time code is visible on paper."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "The watch was packed in bubble wrap; the listing photos showed no crack before shipping."
+      }
+    ],
+    "summary": {
+      "findings": [
+        {
+          "criterion": "Screen has no cracks",
+          "supports": "buyer",
+          "evidenceIds": [
+            "buyer-photo"
+          ]
+        },
+        {
+          "criterion": "Strap included",
+          "supports": "unclear",
+          "evidenceIds": []
+        }
       ],
       "missingEvidence": false
     }

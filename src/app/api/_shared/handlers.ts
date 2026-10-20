@@ -5,6 +5,7 @@ import { applyTrigger, type OrchestratorDeps } from '../../../lib/orchestrator';
 import type { StoredTx } from '../../../lib/repository';
 import { addDays } from '../../../lib/timeConfig';
 import { prepareReview } from '../../../lib/reviewPipeline';
+import { seedDemoData } from '../../../lib/demoSeed';
 import { getApiContext, getPayPal, type ApiContext } from './context';
 import { errorResponse, HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField, unwrap, type Role } from './http';
 
@@ -82,7 +83,8 @@ export function pay(request: Request, id: string): Promise<Response> {
     await emptyBody(request);
     const context = getApiContext();
     requireTx(context, id);
-    const returnUrl = new URL('/api/paypal/return', request.url);
+    // The buyer lands on a UI page that calls GET /api/paypal/return and then shows the deal.
+    const returnUrl = new URL('/paypal/return', request.url);
     returnUrl.searchParams.set('txId', id);
     returnUrl.searchParams.set('role', 'buyer');
     const cancelUrl = new URL(returnUrl);
@@ -285,5 +287,19 @@ export function tick(request: Request): Promise<Response> {
       }
     }
     return json({ checkedAt: now, results });
+  });
+}
+
+/** Seeds labelled demo transactions (simulated PayPal) so every screen can be shown. */
+export function seedDemo(request: Request): Promise<Response> {
+  return route(async () => {
+    requireRole(request, ['buyer', 'seller', 'reviewer']);
+    await emptyBody(request);
+    const context = getApiContext();
+    const result = await seedDemoData({
+      repo: context.repo, time: context.time, now: context.now,
+      onUnderReview: (txId) => prepareReview(txId, context),
+    });
+    return json(result, result.skipped ? 200 : 201);
   });
 }
