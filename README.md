@@ -84,6 +84,29 @@ The harness also generates name, evidence-order, narrative-length, and language-
 variants automatically. Labels and rationales are draft and need owner review.
 Replay summaries were authored from those draft labels, so replay metrics describe
 the harness and rules, not live model performance. All cases are synthetic.
+## How to run the Sandbox smoke test
+
+On a Windows PC with Node.js 22.13 or newer, open PowerShell in this repository:
+
+```powershell
+npm ci
+Copy-Item .env.example .env
+```
+
+Edit `.env` with the **Sandbox** app's `PP_ID` and `PP_SECRET`. Keep
+`PP_URL=https://api-m.sandbox.paypal.com`. The script rejects the Live API URL.
+Do not commit `.env` or share its contents. Then run:
+
+```powershell
+npm run smoke
+```
+
+The script creates a 10.00 USD AUTHORIZE order and prints the buyer approval URL.
+Open that URL, sign in with the Sandbox Personal account, and confirm the purchase.
+Return to PowerShell and press Enter. Choose **a** to void the authorization and
+verify `VOIDED`, or **b** to capture, view the fee breakdown, then issue a full refund
+and verify `COMPLETED`. Run the script again for the other path; each run creates a
+new Sandbox order. No global TypeScript runner is needed.
 
 ## License
 

@@ -64,11 +64,16 @@ Done:
   completed capture; resolution restores the prior status. Other matched events are
   audit-only. The new branch includes the orchestrator and API route commits because
   `origin/main` still contains only the core domain. Tests use fake PayPal responses.
+- On `feat/sandbox-smoke`: a PowerShell-friendly `npm run smoke` script uses the
+  existing PayPal client and `.env` for a Sandbox-only order, buyer approval, and
+  either void or capture plus refund. Its flow is tested with fake fetch responses;
+  59 tests pass in total. The owner still needs to run it against the real Sandbox
+  on Windows.
 
 ## How to run
 
 ```
-npm install
+npm ci
 npm test
 npm run typecheck
 npm run build
@@ -96,6 +101,17 @@ npm run build
    behaviour and terms before using it outside the replay cases.
 7. Owner: review every evaluation label and rationale before treating any live-run
    metric as evidence. Expand the set toward the larger sample proposed in DESIGN 10.
+3. Scaffold the Next.js app (App Router, TypeScript, Tailwind) around `src/lib/`.
+   Keep `src/lib/` free of Next.js imports so it stays unit-testable.
+4. Persistence: SQLite repository for transactions, evidence, decisions, audit events,
+   `paypal_events` (unique event id) and idempotency keys (docs/DESIGN.md section 8).
+5. Orchestrator: `applyTrigger(txId, trigger)` = load tx, `transition()`, perform the
+   PayPal effect with `requestIdFor()`, then atomically save the new status and append an
+   audit event (include PayPal `debug_id` on errors). If the effect fails, do not change
+   the status.
+6. Owner: run `npm run smoke` on Windows for both paths and record actual Sandbox
+   results in `docs/SANDBOX-NOTES.md`. Fake-fetch tests do not verify live behavior.
+7. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
 
 ## Decisions waiting for the owner
 
@@ -139,6 +155,8 @@ Still open:
   `npm run build` passed. No live PayPal calls were made.
 - 2026-10-20 (Codex): implemented SQLite persistence and the PayPal orchestrator on
   `feat/orchestrator`, with in-memory tests and no live credentials.
+- 2026-10-20 (Codex): added the local Sandbox smoke script on `feat/sandbox-smoke`;
+  live Sandbox execution is pending the owner's Windows run.
 - 2026-10-20 22:30 WIB (Claude): built the core domain on `feat/core-domain`
   (state machine, audit chain, rules, PayPal client, 55 tests). Not pushed anywhere yet;
   the repo exists only as a local git repository delivered to the owner as a zip.

@@ -10,11 +10,12 @@
   },
   "scripts": {
     "dev": "next dev",
-    "test": "vitest run src",
+    "test": "vitest run",
     "eval": "node --env-file-if-exists=.env --experimental-strip-types eval/run.ts",
     "typecheck": "tsc --noEmit",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "smoke": "node --experimental-transform-types --env-file=.env scripts/sandbox-smoke.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
