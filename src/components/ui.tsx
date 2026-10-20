@@ -37,7 +37,8 @@ export function KeyValue({ items }: { items: { label: string; value: ReactNode }
   return <dl className="rounded-[22px] border border-line bg-surface p-4">{items.map(item => <div key={item.label} className="flex justify-between gap-4 border-b border-dashed border-line py-2 last:border-0"><dt className="text-sm text-muted">{item.label}</dt><dd className="text-right text-sm font-semibold tabular-nums">{item.value}</dd></div>)}</dl>;
 }
 export function FindingCard({ criterion, supports, evidenceIds }: { criterion: string; supports: 'buyer' | 'seller' | 'unclear'; evidenceIds: string[] }) {
-  const tone = supports === 'unclear' ? 'void' : 'completed';
+  // Matches docs/UI.md mockups: buyer = disputed tone, seller = completed tone, unclear = neutral.
+  const tone: Tone = supports === 'unclear' ? 'void' : supports === 'buyer' ? 'disputed' : 'completed';
   return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-[11px] font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 font-mono text-[11px] text-muted">{id}</span>)}</div></article>;
 }
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
