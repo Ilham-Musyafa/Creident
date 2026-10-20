@@ -132,6 +132,15 @@ Still open:
 
 ## Log
 
+- 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
+  documentation-only proposal for resolving PayPal actions left pending after a
+  crash. It maps read-only checks for orders, authorizations, captures, voids,
+  refunds, and tracking; defines evidence needed before applying or replaying an
+  action with the same request ID; and proposes audit events, reviewer controls,
+  and unit/Sandbox tests. It marks persistence, reviewer-triggered replay, and
+  any state-machine change as requiring owner approval under `AGENTS.md`.
+  Existing Sandbox notes do not establish same-ID replay or resource recovery.
+  No code, dependency, or live PayPal call was changed or made.
 - 2026-10-21 05:36 WIB (Codex, C4): seeded `COMPLETED` demo deal now calls the
   existing tracking helper after buyer confirmation. Its PayPal stub returns a
   `DEMO-TRACKER` id, and the `PAYPAL_TRACKING_ADDED` audit event has
