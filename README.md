@@ -5,7 +5,7 @@ PayPal AI Hackathon 2026. Terms are locked before payment, PayPal only authorize
 funds, deterministic rules decide, AI summarises evidence against the criteria, and every
 action is written to an auditable hash-chained log.
 
-> Status: work in progress. This README is a stub and will be completed before submission.
+> Status: initial application scaffold. Payment and dispute flows are not implemented yet.
 
 **This is a hackathon demo on the PayPal Sandbox. It is not a licensed escrow service and
 does not handle real money.**
@@ -26,6 +26,17 @@ does not handle real money.**
 - `docs/DESIGN.md` — design
 - `docs/SANDBOX-NOTES.md` — what was tested against the PayPal Sandbox
 - `docs/HANDOFF.md` — working notes for contributors and AI agents
+
+## Local development
+
+Use Node.js 22.13 or newer (Node.js 24 is used in development). Run `npm ci`, then
+`npm run dev`. The app is available at `http://localhost:3000`. Run `npm test`,
+`npm run typecheck`, and `npm run build` to check the scaffold.
+
+The SQLite database uses `data/halcyvault.sqlite` by default. Set
+`HALCYVAULT_DB_PATH` to use another location. The database schema is initialized by
+`openDatabase()` in `src/lib/db.ts`; application routes have not been connected to it yet.
+No PayPal or AI credentials are needed for the current landing page and database tests.
 
 ## License
 

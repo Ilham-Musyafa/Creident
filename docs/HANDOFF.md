@@ -24,16 +24,20 @@ Done:
 - Official rules read (deadline, eligibility, requirements, judging criteria).
 - Design draft v0.1 written.
 
-Nothing has been built yet. The repo has no code.
+The `feat/app-scaffold` branch now has a Next.js App Router, TypeScript, and Tailwind
+scaffold, plus a SQLite schema for the section 8 tables. `src/lib/db.ts` has no Next.js
+imports. The landing page runs without credentials; payment and dispute flows are still
+unimplemented. This branch started from the documentation-only `main`: there was no
+pre-existing `src/lib/` or 55-test suite to preserve. The new database test passes,
+as do typecheck and the production build.
 
 ## Next steps
 
 1. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
    Payouts), then record results in `docs/SANDBOX-NOTES.md`.
-2. Owner: create the public repo, pick the license, add these files, make sure `.env` is
-   ignored before the first commit.
-3. Review and approve `docs/DESIGN.md` (especially the [OPEN] items).
-4. Scaffold the app (after the stack is approved), then the state machine with unit tests.
+2. Owner: review the remaining [OPEN] decisions in `docs/DESIGN.md`; the approved stack,
+   fund model, and license are recorded there. The public repo and MIT license exist.
+3. Implement the state machine with unit tests, then connect the app to the SQLite layer.
 5. PayPal service wrapper (token, order, authorize, capture, void, refund) with
    idempotency keys.
 6. Audit log with hash chain and verification page.

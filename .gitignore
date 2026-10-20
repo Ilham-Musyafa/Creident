@@ -14,6 +14,12 @@ build/
 *.sqlite
 *.sqlite3
 *.db
+data/
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal
+tsconfig.tsbuildinfo
 uploads/
 
 # Logs and editor/OS files
