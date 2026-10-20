@@ -239,6 +239,17 @@ describe('JSON route handlers', () => {
     expect(repo.loadRecommendation(id)).toMatchObject({ ruleId: 'R7', action: 'ESCALATE_HUMAN' });
   });
 
+  it('stores the human decision with its reason and links it to the audit event', async () => {
+    useAiResult('seller');
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
+    const decided = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' }), param(id));
+    expect(decided.status).toBe(200);
+    expect(repo.loadDecisions(id)).toEqual([expect.objectContaining({ outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' })]);
+    const event = repo.readEvents(id).find((e) => e.type === 'DECISION');
+    expect(event?.payload).toMatchObject({ effect: 'PAYPAL_CAPTURE', outcome: 'RELEASE' });
+  });
+
   it('requires a human reason and records SPLIT as pending without a PayPal call', async () => {
     useAiResult('seller');
     const id = await createReadyTransaction();
@@ -341,18 +352,5 @@ describe('PayPal tracking after capture', () => {
     await tick(post('/api/jobs/tick', 'reviewer'));
     expect(repo.readEvents(id).filter((e) => e.type === 'PAYPAL_TRACKING_FAILED')).toHaveLength(3);
     expect(calls.filter((c) => c.path.endsWith('/track'))).toHaveLength(3);
-  });
-});
-
-describe('decision receipt data', () => {
-  it('stores the human decision with its reason and links it to the audit event', async () => {
-    useAiResult('seller');
-    const id = await createReadyTransaction();
-    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
-    const decided = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' }), param(id));
-    expect(decided.status).toBe(200);
-    expect(repo.loadDecisions(id)).toEqual([expect.objectContaining({ outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' })]);
-    const event = repo.readEvents(id).find((e) => e.type === 'DECISION');
-    expect(event?.payload).toMatchObject({ effect: 'PAYPAL_CAPTURE', outcome: 'RELEASE' });
   });
 });
