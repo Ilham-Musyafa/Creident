@@ -4,7 +4,7 @@ export interface TimeConfig {
   evidenceDays: number;
 }
 
-// Placeholder defaults until the owner decides the final durations.
+// Defaults decided by the owner on 2026-10-21: ship-by 3, inspection 2, evidence 2 days.
 export function getTimeConfig(env: NodeJS.ProcessEnv = process.env): TimeConfig {
   function days(name: string, fallback: number): number {
     const raw = env[name];

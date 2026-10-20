@@ -130,7 +130,7 @@ Optional settings in `.env`:
 
 - `AI_MODE=live`, `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`: use a live OpenAI-compatible
   model for evidence summaries instead of the recorded replays.
-- `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`: deadlines (placeholders 3, 2, 2).
+- `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`: deadlines (defaults 3, 2, 2).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
 - `HALCYVAULT_DB_PATH`: SQLite file location (default `data/halcyvault.sqlite`).
 
@@ -177,8 +177,9 @@ A run with a live model, with reviewed labels and its sample size, is planned.
 - An authorization has a 3-day honor period and expires after 29 days, so long shipping
   times need a different fund model (capture first, refund on dispute), which brings
   custody questions.
-- Split outcomes are recorded but not paid out; who bears the PayPal fee on a refund is
-  not decided yet.
+- Split outcomes are recorded but not paid out.
+- PayPal does not return its fee on a refund (seen in the Sandbox). The platform bears it,
+  so a buyer who is refunded gets the full amount back.
 - No real sign-in, file upload, courier integration or seller payout.
 - A real launch would need funds held by a licensed party (for example a PayPal
   partner product with delayed disbursement, or a licensed payment provider), PayPal's

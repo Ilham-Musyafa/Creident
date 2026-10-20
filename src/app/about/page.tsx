@@ -32,7 +32,7 @@ export default function AboutPage() {
             <li>Courier tracking and seller payouts are simulated. Demo deals use a simulated PayPal.</li>
             <li>Demo roles replace real sign-in.</li>
             <li>Fake photos may not be detected. Evaluation results are indicative, based on synthetic cases.</li>
-            <li>Time windows and who bears PayPal fees on refunds are placeholders.</li>
+            <li>On a refund the platform bears the PayPal fee; the buyer is refunded in full.</li>
           </ul>
         </Card>
       </div>
