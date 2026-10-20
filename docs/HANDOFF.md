@@ -132,6 +132,16 @@ Still open:
 
 ## Log
 
+- 2026-10-21 05:18 WIB (Codex, C1): checked README Option A from a fresh clone on
+  `codex/c1-readme-check`: `npm ci`, copied `.env.example`, set `PAYPAL_MODE=simulated`,
+  and ran `npm run dev`. Browser created a synthetic deal, buyer accepted terms and
+  approved simulated payment. Browser automation then raced hydration at the tracking
+  step, so the JSON API with `x-demo-role` completed `DEMO-DELIVERED` shipping, buyer
+  confirmation (`COMPLETED`), and demo seeding (10 deals). `npm test` passed 110/110;
+  typecheck and build passed. `npm run eval` initially failed because the copied
+  `.env.example` leaves `EVAL_K` blank; after setting `EVAL_K=3`, replay evaluation
+  passed (50 cases). README now documents that value and correctly says the seed
+  creates ten main-status examples. No code changes or Sandbox calls.
 - 2026-10-21 02:55 WIB (Claude): recorded owner decisions (fee on refund: platform;
   deadlines 3/2/2; hosting later) in UI, README, DESIGN, UI.md, .env.example. Earlier this
   session: PR #11 marks simulated events in the audit log.

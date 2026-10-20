@@ -114,12 +114,14 @@ cp .env.example .env        # Windows PowerShell: Copy-Item .env.example .env
 
 ```
 PAYPAL_MODE=simulated
+EVAL_K=3
 ```
 
 Then `npm run dev` and open http://localhost:3000. Pick a role in Menu, create a deal as
 the seller, switch to the buyer to accept and pay, back to the seller to add tracking
 `DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Menu > "Load demo deals"
-fills every status at once, including a dispute ready for the reviewer.
+adds ten labelled sample deals across the main statuses, including a dispute ready for
+the reviewer.
 
 **Option B: PayPal Sandbox.** Create a Sandbox app at developer.paypal.com and set
 `PP_ID`, `PP_SECRET` and `PP_URL=https://api-m.sandbox.paypal.com` in `.env` (leave
@@ -130,6 +132,8 @@ Optional settings in `.env`:
 
 - `AI_MODE=live`, `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`: use a live OpenAI-compatible
   model for evidence summaries instead of the recorded replays.
+- `EVAL_K`: number of consistency runs for `npm run eval` (1–20). Keep it set to `3`
+  for the copied `.env.example`; an empty value makes the evaluation command fail.
 - `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`: deadlines (defaults 3, 2, 2).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
 - `HALCYVAULT_DB_PATH`: SQLite file location (default `data/halcyvault.sqlite`).
