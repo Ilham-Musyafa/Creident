@@ -1,15 +1,11 @@
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { createRequire } from "node:module";
-import type { DatabaseSync as Database } from "node:sqlite";
-
-// Vite 5 does not recognize the newer node:sqlite built-in during test transforms.
-const { DatabaseSync } = createRequire(import.meta.url)('node:sqlite') as typeof import('node:sqlite');
+import { DatabaseSync } from "node:sqlite";
 
 // This module has no framework imports so the persistence layer can be tested directly.
-export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/halcyvault.sqlite"): Database {
+export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/halcyvault.sqlite"): DatabaseSync {
   if (filename !== ":memory:") {
-    const path = resolve(filename);
+    const path = resolve(/*turbopackIgnore: true*/ filename);
     mkdirSync(dirname(path), { recursive: true });
     filename = path;
   }
@@ -22,7 +18,7 @@ export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/
   return db;
 }
 
-export function migrate(db: Database): void {
+export function migrate(db: DatabaseSync): void {
   const existingEvents = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
   if (existingEvents) {
     const columns = db.prepare("PRAGMA table_info(events)").all() as { name: string }[];
@@ -55,6 +51,8 @@ export function migrate(db: Database): void {
       terms_hash TEXT,
       ship_by TEXT,
       inspection_until TEXT,
+      evidence_until TEXT,
+      tracking_number TEXT,
       paypal_order_id TEXT UNIQUE,
       paypal_auth_id TEXT UNIQUE,
       paypal_capture_id TEXT UNIQUE,
@@ -75,6 +73,14 @@ export function migrate(db: Database): void {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS evidence_tx_id ON evidence(tx_id);
+
+    CREATE TABLE IF NOT EXISTS term_acceptances (
+      tx_id TEXT NOT NULL REFERENCES transactions(id),
+      role TEXT NOT NULL CHECK (role IN ('buyer', 'seller')),
+      terms_hash TEXT NOT NULL,
+      accepted_at TEXT NOT NULL,
+      PRIMARY KEY (tx_id, role)
+    );
 
     CREATE TABLE IF NOT EXISTS decisions (
       id TEXT PRIMARY KEY,
@@ -127,5 +133,11 @@ export function migrate(db: Database): void {
   }
   if (!txColumns.some((column) => column.name === 'frozen_from')) {
     db.exec('ALTER TABLE transactions ADD COLUMN frozen_from TEXT');
+  }
+  if (!txColumns.some((column) => column.name === 'evidence_until')) {
+    db.exec('ALTER TABLE transactions ADD COLUMN evidence_until TEXT');
+  }
+  if (!txColumns.some((column) => column.name === 'tracking_number')) {
+    db.exec('ALTER TABLE transactions ADD COLUMN tracking_number TEXT');
   }
 }
