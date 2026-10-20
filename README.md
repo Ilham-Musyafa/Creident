@@ -1,144 +1,196 @@
 # HalcyVault (working name)
 
-A prototype dispute-mediation layer for peer-to-peer sales, built for the
-PayPal AI Hackathon 2026. Terms are locked before payment, PayPal only authorizes the
-funds, deterministic rules decide, AI summarises evidence against the criteria, and every
-action is written to an auditable hash-chained log.
+**A dispute-mediation prototype for peer-to-peer sales of physical goods.**
+Rules first, AI summarises evidence, a human confirms every dispute outcome, and every
+action is recorded in a hash-chained, auditable log. Built for the PayPal AI Hackathon 2026
+on the **PayPal Sandbox**.
 
-> Status: initial application scaffold. Payment and dispute flows are not implemented yet.
+> This is a hackathon prototype. It is not a licensed escrow service, it does not hold
+> anyone's money, and it does not handle real payments. PayPal authorizes the payment;
+> the platform calls capture, void or refund according to the rules.
 
-**This is a hackathon demo on the PayPal Sandbox. It is not a licensed escrow service and
-does not handle real money.**
+![HalcyVault screens, light theme](docs/ui/app-screens-light.png)
 
-## Planned sections
+## 1. The problem
 
-1. The problem and who it is for
-2. How it works (state machine, rules, role of the AI)
-3. What is real and what is simulated (seller payout, courier tracking)
-4. Run it yourself (prerequisites, `.env` setup, install, run, test accounts)
-5. Test results (fairness and robustness report)
-6. Limitations and the production path
-7. Tech stack and AI tools used
-8. License
+In Indonesia, people buying second-hand goods from strangers often use a *rekber*
+(rekening bersama, "joint account"): an admin holds the buyer's money until the item
+arrives. It works when the admin is honest. When something goes wrong, the buyer and the
+seller rely on one person's judgment, there is usually no record of why a decision was
+made, and admins who side with a seller have been reported.
 
-## Docs
+HalcyVault explores a different shape for the same job:
 
-- `docs/DESIGN.md` — design
-- `docs/SANDBOX-NOTES.md` — what was tested against the PayPal Sandbox
-- `docs/HANDOFF.md` — working notes for contributors and AI agents
+- the terms (item, condition, checks) are **locked and hashed before payment**,
+- PayPal only **authorizes** the payment until the rules say release or refund,
+- **deterministic rules** recommend the outcome; the AI only **summarises evidence**
+  against the agreed checks and cannot move money,
+- a **human reviewer** confirms every dispute outcome and must write a reason,
+- every step is written to an **append-only, hash-chained audit log** that anyone with
+  access can verify,
+- the AI step is **tested for bias and prompt injection**, and the results are published
+  with their limits.
 
-## JSON API demo
+## 2. How it works
 
-Use Node.js 22.13 or newer. Copy `.env.example` to `.env`, fill in the Sandbox
-PayPal credentials, then run `npm install` and `npm run dev`. The API stores data
-in `data/halcyvault.sqlite` by default; `HALCYVAULT_DB_PATH` can change that path.
-There are no UI pages or real authentication yet. Each request must declare its
-demo role with `x-demo-role: buyer`, `seller`, or `reviewer`; the PayPal return URL
-uses `role=buyer` instead. The server checks which demo role may perform each action.
-Use synthetic item descriptions and evidence only.
+```
+Seller writes terms ─▶ both accept (terms hash) ─▶ buyer approves on PayPal
+   ─▶ AUTHORIZED (funds reserved, not captured)
+   ─▶ seller adds tracking ─▶ buyer inspects
+        ├─ confirms ─────────────────────────────▶ capture ─▶ COMPLETED
+        ├─ no tracking by deadline ──────────────▶ void    ─▶ VOIDED
+        └─ opens dispute ─▶ evidence from both sides
+              ─▶ AI evidence summary ─▶ rules R1–R7 recommend
+              ─▶ human reviewer decides (reason required)
+                   ├─ release ─▶ capture ─▶ COMPLETED
+                   ├─ refund  ─▶ void (or refund if captured)
+                   └─ split   ─▶ recorded as pending, no money moves
+A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's decision wins)
+```
 
-Create a transaction with `POST /api/transactions` as seller, using JSON fields
-`item`, `amount` (for example `"10.00"`), and `terms` (an object). Both seller and
-buyer call `POST /api/transactions/{id}/accept`; the second acceptance locks the
-terms. The buyer then calls `POST /api/transactions/{id}/pay` and opens the returned
-`approvalUrl` in a Sandbox Personal account. The PayPal return endpoint checks the
-order status and authorizes it. The seller calls `POST /api/transactions/{id}/ship`
-with `{"tracking":"DEMO-DELIVERED"}`. Other simulated samples are
-`DEMO-IN-TRANSIT` and `DEMO-WRONG-DESTINATION` (also available at
-`GET /api/mock-courier/{tracking}`). The buyer can call `POST .../confirm` or
-`POST .../dispute`; buyer and seller submit `POST .../evidence` with `kind` and
-`content`. A reviewer can call `POST .../review` with `outcome` (`RELEASE` or
-`REFUND`) and a required `reason`. `GET .../review` returns the stored AI summary
-and rule recommendation after review preparation. A reviewer may also POST `SPLIT`
-with a reason; this records a pending decision and moves no funds while split payment
-rules remain undecided. See `docs/DESIGN.md` for the state machine.
+- **State machine** (`src/lib/domain/stateMachine.ts`): pure TypeScript. Each transition
+  returns the one PayPal call it requires. Full table in [`docs/DESIGN.md`](docs/DESIGN.md#4-state-machine).
+- **PayPal** (`src/lib/paypal/client.ts`): Orders v2 with `intent: AUTHORIZE`, then
+  authorize, capture, void and refund. Every money-moving call sends a unique
+  `PayPal-Request-Id`, the id is reserved in our database before the call, and an
+  interrupted call is never sent twice. Webhooks are checked with PayPal's signature
+  verification API and de-duplicated by event id.
+- **Rules** (`src/lib/rules/engine.ts`):
 
-Call `POST /api/jobs/tick` as reviewer to process due shipping, inspection, and
-evidence deadlines. The placeholder defaults are 3, 2, and 2 days, respectively;
-set `SHIP_BY_DAYS`, `INSPECTION_DAYS`, and `EVIDENCE_DAYS` to change them. Audit
-events are available at `GET /api/audit/{id}`, and `GET /api/audit/verify` checks
-all transaction chains. The courier responses are fixed, simulated data.
+  | Rule | Situation | Recommendation |
+  | --- | --- | --- |
+  | R1 | No tracking by the ship-by deadline | Void (no funds moved) |
+  | R2 | Delivered to the agreed destination, no dispute in the window | Release |
+  | R3 | Tracking destination or date inconsistent with the order | Human review |
+  | R4 | Both sides gave evidence and the summary clearly supports one side | Recommend that side; a human confirms |
+  | R5 | Evidence missing, contradictory, partial delivery or damage, or no usable AI summary | Human review (split possible) |
+  | R6 | PayPal dispute or reversal event | Freeze |
+  | R7 | Evidence looks like instructions aimed at the AI | Flag, ignore for scoring, human review |
 
-## AI evidence summary
+- **AI evidence summary** (`src/lib/ai/evidence.ts`): for each agreed check the model
+  returns strict JSON (which side the evidence supports, which evidence items, what is
+  missing). Evidence is passed as quoted data, names are replaced by "Buyer" and
+  "Seller", the order is shuffled with a seed, and invalid output is retried once and
+  then treated as "no summary" (rule R5). The model has no tools: it cannot call PayPal
+  or change a transaction.
+- **Audit log** (`src/lib/audit/chain.ts`): each event stores
+  `hash = SHA-256(prevHash + "\n" + canonical JSON of the event)`. The Audit screen recomputes
+  every chain and shows the head hash. Honest limit: the operator still runs the server
+  and holds the PayPal keys, so the log makes changes **detectable**, not impossible.
 
-`src/lib/ai/evidence.ts` produces a validated `AiSummary` for the deterministic
-rules engine. It does not call PayPal or change transaction status. Evidence is
-treated as quoted data, party names are replaced with Buyer and Seller, and a seed
-sets the presentation order. Suspected prompt injection is flagged for human review.
-Invalid model output is retried once; a second invalid result yields `null`, so the
-rules escalate.
+## 3. What is real and what is simulated
 
-With no `AI_API_KEY`, the module defaults to replay mode and reads synthetic cases
-from `src/lib/ai/replay-cases.json`. Only an exact recorded case gets a replayed
-summary. For a compatible live chat-completions service, set `AI_MODE=live`,
-`AI_BASE_URL` (API base, such as a URL ending in `/v1`), `AI_API_KEY`, and `AI_MODEL`
-in `.env`. The provider and model are not fixed by this project. Use synthetic
-evidence only. Review preparation calls this module when a transaction enters
-`UNDER_REVIEW`. If no recorded replay case matches the stored evidence, or if a
-live provider fails, the rules store an R5 recommendation for human review. Run
-`npm test` to exercise the replay and fake-provider paths.
+| Part | In this prototype |
+| --- | --- |
+| PayPal authorize, capture, void, refund | Real **Sandbox** API calls when Sandbox keys are set |
+| PayPal (optional) | `PAYPAL_MODE=simulated`: a clearly labelled local simulation, no PayPal calls, ids start with `SIM-` |
+| Demo deals (Menu > "Load demo deals") | Simulated PayPal stub, ids start with `DEMO-`, items start with `[Demo]`; audit chains are real |
+| Courier tracking | Simulated (`DEMO-DELIVERED`, `DEMO-IN-TRANSIT`, `DEMO-WRONG-DESTINATION`) |
+| Seller payout | Not implemented. "Released" means captured to the platform's Sandbox merchant account |
+| Photo evidence | Described in text; in-app camera capture is not built |
+| Sign-in | Demo roles (buyer, seller, reviewer) chosen in Menu |
+| AI summary | Replay of recorded outputs by default; live mode with any OpenAI-compatible API |
+| Currency | USD only (the Sandbox flow was tested in USD) |
 
-## Synthetic evaluation
+Every simulated money step carries `simulated: true` in the audit log, and deal pages show
+a "Simulated payment" notice.
 
-Run `npm run eval` to evaluate 40 draft dispute cases and 10 draft prompt-injection
-cases from `eval/cases/*.json`. The command writes `eval/report.md`. It runs in replay
-mode when `AI_API_KEY` is empty; set `AI_MODE=replay` to force replay even when a key
-is configured. Set `AI_MODE=live` with the AI variables above to test a compatible
-provider. `EVAL_K` controls repeated runs per base case (default 3, range 1-20).
-The harness also generates name, evidence-order, narrative-length, and language-style
-variants automatically. Labels and rationales are draft and need owner review.
-Replay summaries were authored from those draft labels, so replay metrics describe
-the harness and rules, not live model performance. All cases are synthetic.
-## How to run the Sandbox smoke test
+## 4. Run it yourself
 
-On a Windows PC with Node.js 22.13 or newer, open PowerShell in this repository:
+Requirements: **Node.js 22.13 or newer** (uses the built-in `node:sqlite`).
 
-```powershell
+```bash
+git clone https://github.com/Ilham-Musyafa/HalcyVault.git
+cd HalcyVault
 npm ci
-Copy-Item .env.example .env
+cp .env.example .env        # Windows PowerShell: Copy-Item .env.example .env
 ```
 
-Edit `.env` with the **Sandbox** app's `PP_ID` and `PP_SECRET`. Keep
-`PP_URL=https://api-m.sandbox.paypal.com`. The script rejects the Live API URL.
-Do not commit `.env` or share its contents. Then run:
+**Option A: no keys (fastest).** In `.env` set:
 
-```powershell
-npm run smoke
+```
+PAYPAL_MODE=simulated
 ```
 
-The script creates a 10.00 USD AUTHORIZE order and prints the buyer approval URL.
-Open that URL, sign in with the Sandbox Personal account, and confirm the purchase.
-Return to PowerShell and press Enter. Choose **a** to void the authorization and
-verify `VOIDED`, or **b** to capture, view the fee breakdown, then issue a full refund
-and verify `COMPLETED`. Run the script again for the other path; each run creates a
-new Sandbox order. No global TypeScript runner is needed.
+Then `npm run dev` and open http://localhost:3000. Pick a role in Menu, create a deal as
+the seller, switch to the buyer to accept and pay, back to the seller to add tracking
+`DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Menu > "Load demo deals"
+fills every status at once, including a dispute ready for the reviewer.
 
-## Screens
+**Option B: PayPal Sandbox.** Create a Sandbox app at developer.paypal.com and set
+`PP_ID`, `PP_SECRET` and `PP_URL=https://api-m.sandbox.paypal.com` in `.env` (leave
+`PAYPAL_MODE` empty). The buyer approves with a Sandbox **Personal** account. The client
+refuses any URL other than the Sandbox. Never commit `.env`.
 
-Mobile-first web app with light, dark and system themes (`docs/UI.md`).
-Screenshots from the running app: `docs/ui/app-screens-light.png`, `docs/ui/app-screens-dark.png`.
+Optional settings in `.env`:
 
-- `/` home (role-aware), `/deals`, `/deals/new` (seller), `/deals/[id]` (timeline and next step),
-  `/deals/[id]/checkout` (buyer), `/deals/[id]/evidence`, `/deals/[id]/review` (reviewer),
-  `/audit` and `/audit/[id]` (hash-chain verification), `/menu`, `/about`.
-- Choose the demo role (buyer, seller, reviewer) in Menu. Roles replace sign-in in this demo.
-- Menu > "Load demo deals" creates ten labelled `[Demo]` deals across the statuses. They use a
-  simulated PayPal stub (ids start with `DEMO-`); their audit chains are real.
-- Payment, confirm and dispute decisions call the PayPal Sandbox and need `PP_ID`/`PP_SECRET`
-  in `.env`. Without them the screens show a clear message.
+- `AI_MODE=live`, `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`: use a live OpenAI-compatible
+  model for evidence summaries instead of the recorded replays.
+- `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`: deadlines (placeholders 3, 2, 2).
+- `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
+- `HALCYVAULT_DB_PATH`: SQLite file location (default `data/halcyvault.sqlite`).
 
-## Local development
+Checks:
 
-Use Node.js 22.13 or newer (Node.js 24 is used in development). Run `npm ci`, then
-`npm run dev`. The app is available at `http://localhost:3000`. Run `npm test`,
-`npm run typecheck`, and `npm run build` to check the project.
+```bash
+npm test            # unit and route tests, no keys needed
+npm run typecheck
+npm run build
+npm run eval        # writes eval/report.md (replay mode without an AI key)
+npm run smoke       # real PayPal Sandbox walk-through from the terminal, reads .env
+```
 
-The SQLite database uses `data/halcyvault.sqlite` by default. Set
-`HALCYVAULT_DB_PATH` to use another location. The database schema is initialized by
-`openDatabase()` in `src/lib/db.ts` and used by the JSON API routes.
-No PayPal or AI credentials are needed to run the tests or the evaluation in replay mode.
+The JSON API behind the screens lives in `src/app/api/**` (for example
+`POST /api/transactions`, `.../accept`, `.../pay`, `.../ship`, `.../confirm`,
+`.../dispute`, `.../evidence`, `.../review`, `GET /api/audit/{id}`,
+`GET /api/audit/verify`). Each request names its demo role in the `x-demo-role` header.
 
-## License
+## 5. Test results
 
-MIT (chosen 2026-10-20; see `LICENSE`). A license file is required by the
-hackathon rules and must be visible at the top of the repository.
+**PayPal Sandbox** ([`docs/SANDBOX-NOTES.md`](docs/SANDBOX-NOTES.md)): create order
+(AUTHORIZE), buyer approval, authorize, capture, full refund and void were tested by hand
+against the Sandbox. Void after capture is rejected (`PREVIOUSLY_CAPTURED`) and authorize
+before approval is rejected (`ORDER_NOT_APPROVED`); the state machine is built around both.
+A 10.00 USD capture showed a 0.64 USD fee that did not appear to be returned on refund.
+
+**Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 50 synthetic
+cases (40 disputes, 10 prompt-injection attempts), each also run with six counterfactual
+variants (swapped names, reversed evidence order, longer and shorter stories, formal and
+informal wording). It measures false-release and false-refund rates and the gap between
+them, how often a variant changes the outcome, consistency over repeated runs,
+escalation rate, and injection success.
+
+Read these numbers with their limits: the current report runs in **replay mode**, the
+labels are drafts, and the replayed summaries were written from those labels. It checks
+the harness, the rules and the injection flag. It does **not** yet measure a live model.
+A run with a live model, with reviewed labels and its sample size, is planned.
+
+## 6. Limitations and production path
+
+- The platform operator is still trusted: it runs the server, holds the PayPal keys and
+  calls capture or refund. The audit log makes its actions checkable, not impossible to
+  misuse.
+- An authorization has a 3-day honor period and expires after 29 days, so long shipping
+  times need a different fund model (capture first, refund on dispute), which brings
+  custody questions.
+- Split outcomes are recorded but not paid out; who bears the PayPal fee on a refund is
+  not decided yet.
+- No real sign-in, file upload, courier integration or seller payout.
+- A real launch would need funds held by a licensed party (for example a PayPal
+  partner product with delayed disbursement, or a licensed payment provider), PayPal's
+  approval (its Acceptable Use Policy lists escrow services and marketplaces as needing
+  pre-approval), and local licensing review in Indonesia. This is not legal advice.
+
+## 7. Tech stack and AI tools
+
+- Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, SQLite through
+  `node:sqlite`, Vitest. Three runtime dependencies: `next`, `react`, `react-dom`.
+- Plus Jakarta Sans, self-hosted under the SIL Open Font License.
+- Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).
+  Agent rules are in [`AGENTS.md`](AGENTS.md); working notes in
+  [`docs/HANDOFF.md`](docs/HANDOFF.md).
+- Design docs: [`docs/DESIGN.md`](docs/DESIGN.md), [`docs/UI.md`](docs/UI.md).
+
+## 8. License
+
+[MIT](LICENSE).
