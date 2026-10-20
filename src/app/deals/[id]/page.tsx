@@ -4,6 +4,7 @@ import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../compo
 import { ActionButton, CopyLinkButton, ShipForm } from '../../../components/client';
 import { isSimulatedDeal, money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
+import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +49,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
+            ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
             { label: 'Condition', value: String(terms.condition ?? '—') },
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
