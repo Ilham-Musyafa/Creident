@@ -132,3 +132,8 @@ export function evidenceCode(txId: string): string {
   const compact = txId.replace(/-/g, '').toUpperCase();
   return `HV-${compact.slice(0, 4)} · ${compact.slice(-4)}`;
 }
+
+/** Money steps of this deal ran against the demo stub or the simulated PayPal, not the Sandbox. */
+export function isSimulatedDeal(tx: { paypalOrderId?: string | null }): boolean {
+  return /^(SIM|DEMO)-/.test(tx.paypalOrderId ?? '');
+}

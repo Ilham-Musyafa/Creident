@@ -14,7 +14,7 @@ export class ApiError extends Error {
 }
 
 const FRIENDLY: Record<string, string> = {
-  SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, or add PP_ID and PP_SECRET to .env.',
+  SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, add PP_ID and PP_SECRET to .env, or set PAYPAL_MODE=simulated for a labelled simulation.',
   ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Menu.',
   EVIDENCE_CLOSED: 'The evidence window is closed.',
   ORDER_NOT_APPROVED: 'The payment has not been approved on PayPal yet.',
@@ -87,14 +87,14 @@ export function RoleSwitch({ current }: { current: Role }) {
   }}/>;
 }
 
-export function PayButton({ txId }: { txId: string }) {
+export function PayButton({ txId, simulated = false }: { txId: string; simulated?: boolean }) {
   const { busy, error, run } = useAction();
   return (
     <div>
       <Button fullWidth disabled={busy} onClick={() => run(async () => {
         const data = await callApi<{ approvalUrl?: string }>(`/api/transactions/${txId}/pay`, 'buyer', {});
         if (data.approvalUrl) window.location.href = data.approvalUrl;
-      })}>{busy ? 'Opening PayPal…' : 'Continue to PayPal (Sandbox)'}</Button>
+      })}>{busy ? 'Opening PayPal…' : simulated ? 'Continue to simulated PayPal' : 'Continue to PayPal (Sandbox)'}</Button>
       <ErrorNote error={error}/>
     </div>
   );
@@ -233,7 +233,7 @@ export function PayPalReturn() {
   }, [params, router, txId]);
   return (
     <div className="rounded-[22px] border border-line bg-surface p-5">
-      {!error && <p className="text-sm text-muted" role="status">Confirming your PayPal (Sandbox) approval…</p>}
+      {!error && <p className="text-sm text-muted" role="status">Confirming your PayPal approval…</p>}
       <ErrorNote error={error}/>
       {error && txId && <a className="mt-3 inline-block text-sm font-semibold text-heading underline" href={`/deals/${txId}`}>Back to the deal</a>}
     </div>

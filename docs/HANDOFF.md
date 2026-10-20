@@ -42,13 +42,17 @@ Built (all on `integrate/codex-batch` until merged):
   six counterfactual variants each, report in `eval/report.md`. Labels are drafts that
   need owner review; replay results check the harness and rules, not a live model.
 - Sandbox smoke script (`npm run smoke`) for the owner's PC.
-- App shell (`src/app/layout.tsx`, `page.tsx`, Tailwind 4). **No UI screens yet.**
-- On `feat/ui-foundation`: UI tokens, system/light/dark theme, self-hosted Plus Jakarta
-  Sans, reusable components, and `/styleguide` previews. Full product screens are
-  still pending.
+- UI (merged PR #7): eight main screens plus Deals list, About, PayPal return, two-column
+  desktop home, light/dark/system theme, demo seed (`[Demo]` deals, `DEMO-*` ids).
+- Simulated PayPal mode (`PAYPAL_MODE=simulated`, branch `feat/demo-paypal-mode`): money
+  steps use `src/lib/paypal/simulated.ts` (no network, `SIM-*` ids); the buyer approves on
+  the labelled page `/paypal/simulated`; every money event carries `simulated: true` and
+  `paypalMode: "simulated"`; deal pages show a "Simulated payment" notice for `SIM-`/`DEMO-`
+  deals. Default stays the real Sandbox. Webhooks always use the real Sandbox client.
 
-Checks on 2026-10-21: `npm test` 89 passed (10 files), `npm run typecheck` passed,
-`npm run build` passed, `npm run eval` ran in replay mode.
+Checks on 2026-10-21: `npm test` 106 passed (14 files), typecheck and build passed; full
+simulated flow clicked in Chromium (390px): create, accept, pay, approve, ship, confirm,
+audit chain verified, no console errors.
 
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
@@ -60,7 +64,8 @@ npm ci
 npm test
 npm run typecheck
 npm run build
-npm run dev        # http://localhost:3000 (API only for now)
+npm run dev        # http://localhost:3000
+# PAYPAL_MODE=simulated npm run dev   # whole flow without Sandbox keys (labelled simulation)
 npm run eval       # writes eval/report.md (replay mode without an AI key)
 npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 ```
@@ -78,8 +83,8 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
    (`POST /api/demo/seed`, labelled `[Demo]`, simulated PayPal stub, real audit chains).
    Without Sandbox keys, money-moving actions (pay, confirm, decisions) show a clear
    "keys not set" message; non-money steps (ship, dispute, evidence, split) work.
-   Open question for the owner: a server-wide "demo PayPal" mode so judges can click the
-   whole flow without keys (must be clearly labelled as simulated).
+   Done: labelled simulated PayPal mode (`PAYPAL_MODE=simulated`) so judges can click the
+   whole flow without keys.
 4. Owner: review every evaluation label and rationale; then expand the set toward the
    size proposed in DESIGN section 10 and run once with the chosen live provider.
 5. Owner: public HTTPS URL + `PP_WEBHOOK_ID`, then test real webhook delivery.
@@ -111,6 +116,9 @@ Still open:
 
 ## Log
 
+- 2026-10-21 02:30 WIB (Claude): merged PR #7 (UI screens) after verifying main. Built the
+  simulated PayPal mode on `feat/demo-paypal-mode` (owner approved the plan: demo mode
+  first, then README). No new dependency. Checks listed under Current status.
 - 2026-10-21 02:00 WIB (Claude, Prompt 9 while Codex was out of quota): built the UI
   screens on `feat/ui-screens`. Added `listTransactions`/`listAcceptances` to the
   repository, `src/lib/demoSeed.ts` (+ tests) and `POST /api/demo/seed`, pure view helpers

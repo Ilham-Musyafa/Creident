@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { openDatabase } from '../../lib/db';
 import { PayPalClient } from '../../lib/paypal/client';
+import { verifyChain } from '../../lib/audit/chain';
 import { TransactionRepository, type StoredTx } from '../../lib/repository';
 import { getApiContext, seedDemoUsers, setApiContextForTests } from './_shared/context';
 import { POST as create } from './transactions/route';
@@ -253,5 +254,35 @@ describe('JSON route handlers', () => {
     expect(returned.status).toBe(400);
     expect(repo.loadTransaction(id)?.status).toBe('AWAITING_APPROVAL');
     expect(calls.some((call) => call.path.endsWith('/authorize'))).toBe(false);
+  });
+});
+
+describe('simulated PayPal mode', () => {
+  afterEach(() => { delete process.env.PAYPAL_MODE; });
+
+  it('runs the whole flow without PayPal calls and labels every money step as simulated', async () => {
+    process.env.PAYPAL_MODE = 'simulated';
+    const created = await create(post('/api/transactions', 'seller', { item: 'Simulated camera', amount: '12.00', terms: {} }));
+    const id = ((await created.json()) as { transaction: StoredTx }).transaction.id;
+    await accept(post(`/api/transactions/${id}/accept`, 'seller'), param(id));
+    await accept(post(`/api/transactions/${id}/accept`, 'buyer'), param(id));
+    const payment = await (await pay(post(`/api/transactions/${id}/pay`, 'buyer'), param(id))).json() as { approvalUrl: string };
+    const approval = new URL(payment.approvalUrl);
+    expect(approval.pathname).toBe('/paypal/simulated');
+    const token = approval.searchParams.get('token')!;
+    expect(token).toMatch(/^SIM-ORDER-/);
+    const returned = await paypalReturn(request(`/api/paypal/return?txId=${id}&role=buyer&token=${token}`));
+    expect((await returned.json()).transaction).toMatchObject({ status: 'AUTHORIZED' });
+    await ship(post(`/api/transactions/${id}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(id));
+    const confirmed = await (await confirm(post(`/api/transactions/${id}/confirm`, 'buyer'), param(id))).json();
+    expect(confirmed.transaction.status).toBe('COMPLETED');
+    expect(confirmed.transaction.paypalCaptureId).toMatch(/^SIM-CAPTURE-/);
+
+    expect(calls).toHaveLength(0);
+    const events = repo.readEvents(id);
+    for (const type of ['START_PAYMENT', 'BUYER_APPROVED', 'BUYER_CONFIRM']) {
+      expect(events.find((e) => e.type === type)?.payload).toMatchObject({ simulated: true, paypalMode: 'simulated' });
+    }
+    expect(verifyChain(events).ok).toBe(true);
   });
 });
