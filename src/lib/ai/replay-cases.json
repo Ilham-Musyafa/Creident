@@ -1,0 +1,15 @@
+{
+  "delivered_sample": {
+    "criteria": ["Delivery to agreed destination"],
+    "evidence": [
+      { "id": "buyer-note", "submittedBy": "buyer", "kind": "note", "content": "The sample parcel arrived at the agreed address." },
+      { "id": "seller-tracking", "submittedBy": "seller", "kind": "tracking", "content": "DEMO-DELIVERED shows delivery to the agreed address." }
+    ],
+    "summary": {
+      "findings": [
+        { "criterion": "Delivery to agreed destination", "supports": "seller", "evidenceIds": ["buyer-note", "seller-tracking"] }
+      ],
+      "missingEvidence": false
+    }
+  }
+}

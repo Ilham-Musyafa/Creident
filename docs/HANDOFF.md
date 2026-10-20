@@ -46,6 +46,12 @@ Done:
   audit logs/verification, and deadline tick. No UI pages or real authentication.
   Handler tests use an in-memory database and fake PayPal fetch. Live route calls
   against the PayPal Sandbox remain to be tested by the owner.
+- On `feat/ai-evidence`: provider-neutral evidence summarization feeds the existing
+  `AiSummary` type, with an OpenAI-compatible fetch adapter, strict schema and reference
+  checks, one retry for invalid output, name masking, seeded evidence order, a simple
+  injection flag, and exact-case JSON replay by default without an API key. It has no
+  tools or transaction write path. The branch includes orchestrator and API commits
+  because `origin/main` still lacks a build script. No live AI provider was called.
 
 ## How to run
 
@@ -70,6 +76,9 @@ npm run build
    the real Sandbox; fake fetch tests do not verify network or account configuration.
 5. Add UI pages in their own task and replace declared demo roles with authentication
    before any deployment beyond the controlled demo.
+6. Wire the evidence summarizer into review preparation, keeping the rules and human
+   confirmation as the only path to a decision. Test the chosen provider's strict JSON
+   behaviour and terms before using it outside the replay cases.
 
 ## Decisions waiting for the owner
 
@@ -95,6 +104,9 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): added the AI evidence-summary module on `feat/ai-evidence` with
+  fake-provider and replay tests. No new dependencies or live AI calls. `npm test`
+  passed 76 tests, and `npm run typecheck` and `npm run build` passed.
 - 2026-10-20 (Codex): implemented and tested the JSON API on `feat/api-routes`, with
   demo roles, fixed simulated courier data, configurable placeholder deadlines, and
   direct handler tests. `npm test` passed 68 tests, and `npm run typecheck` and

@@ -56,6 +56,23 @@ set `SHIP_BY_DAYS`, `INSPECTION_DAYS`, and `EVIDENCE_DAYS` to change them. Audit
 events are available at `GET /api/audit/{id}`, and `GET /api/audit/verify` checks
 all transaction chains. The courier responses are fixed, simulated data.
 
+## AI evidence summary
+
+`src/lib/ai/evidence.ts` produces a validated `AiSummary` for the deterministic
+rules engine. It does not call PayPal or change transaction status. Evidence is
+treated as quoted data, party names are replaced with Buyer and Seller, and a seed
+sets the presentation order. Suspected prompt injection is flagged for human review.
+Invalid model output is retried once; a second invalid result yields `null`, so the
+rules escalate.
+
+With no `AI_API_KEY`, the module defaults to replay mode and reads synthetic cases
+from `src/lib/ai/replay-cases.json`. Only an exact recorded case gets a replayed
+summary. For a compatible live chat-completions service, set `AI_MODE=live`,
+`AI_BASE_URL` (API base, such as a URL ending in `/v1`), `AI_API_KEY`, and `AI_MODEL`
+in `.env`. The provider and model are not fixed by this project. Use synthetic
+evidence only. This module is not yet connected to a review API route; run `npm test`
+to exercise its replay and fake-provider paths.
+
 ## License
 
 MIT (chosen 2026-10-20; see `LICENSE`). A license file is required by the
