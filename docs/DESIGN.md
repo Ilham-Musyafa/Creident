@@ -105,17 +105,23 @@ Transitions (guards in italics):
 | `UNDER_REVIEW` | `COMPLETED` | Rule outcome RELEASE | capture |
 | `UNDER_REVIEW` | `VOIDED` | Rule outcome REFUND while still only authorized | void |
 | `UNDER_REVIEW` | `REFUNDED` | Rule outcome REFUND after capture | refund |
-| any non-final | `FROZEN_EXTERNAL` | `CUSTOMER.DISPUTE.CREATED` or `PAYMENT.CAPTURE.REVERSED` webhook | none |
+| any state, including a completed capture | `FROZEN_EXTERNAL` | Verified `CUSTOMER.DISPUTE.CREATED` or `PAYMENT.CAPTURE.REVERSED` webhook | none |
 | `FROZEN_EXTERNAL` | previous or final | PayPal's decision overrides ours | none |
+
+External dispute/reversal webhooks can arrive after capture and completion. The webhook
+therefore freezes a completed transaction too, preserving its prior status for a later
+`CUSTOMER.DISPUTE.RESOLVED` event. A verified resolution resumes that prior status;
+the demo does not infer a refund or release from the notification alone.
 
 Rules that come from tested Sandbox behaviour:
 - Authorize is only called after the buyer approved the order (`ORDER_NOT_APPROVED`).
 - Once captured, only refund is possible (`PREVIOUSLY_CAPTURED`).
 - Refund total must not exceed the captured amount.
 
-Time parameters (ship-by days, inspection window, evidence deadline, silence meaning)
-are configuration values, not constants in code **[OPEN: values]**. A silent buyer
-means "accept" only if tracking shows delivery to the agreed destination.
+Time parameters are configurable. **Placeholder defaults, not final owner decisions:**
+ship-by 3 days (`SHIP_BY_DAYS`), inspection 2 days (`INSPECTION_DAYS`), and evidence
+2 days (`EVIDENCE_DAYS`). The owner still needs to decide the final values. A silent
+buyer means "accept" only if tracking shows delivery to the agreed destination.
 
 ## 5. Decision rules (rules first)
 
