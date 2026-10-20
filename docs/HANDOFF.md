@@ -132,6 +132,14 @@ Still open:
 
 ## Log
 
+- 2026-10-21 05:25 WIB (Codex, C2): reviewed all API routes, PayPal webhook,
+  user-text rendering, AI evidence quoting, 235 blobs of Git history, and
+  `npm audit` (0 reported vulnerabilities). No suspected committed secrets found.
+  Fixed streamed request-size enforcement and AI evidence delimiter escaping in
+  separate commits, each with regression tests. Wrote `docs/SECURITY-REVIEW.md`.
+  Open: demo role header/cookie is not authentication; real Sandbox webhook
+  delivery still needs owner testing. `npm test`, `npm run typecheck`, and
+  `npm run build` passed on this branch.
 - 2026-10-21 02:55 WIB (Claude): recorded owner decisions (fee on refund: platform;
   deadlines 3/2/2; hosting later) in UI, README, DESIGN, UI.md, .env.example. Earlier this
   session: PR #11 marks simulated events in the audit log.
