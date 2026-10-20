@@ -132,6 +132,14 @@ Still open:
 
 ## Log
 
+- 2026-10-21 05:36 WIB (Codex, C4): seeded `COMPLETED` demo deal now calls the
+  existing tracking helper after buyer confirmation. Its PayPal stub returns a
+  `DEMO-TRACKER` id, and the `PAYPAL_TRACKING_ADDED` audit event has
+  `simulated: true`, so the audit screen shows "Tracking sent to PayPal" as a
+  simulated step. Tests check the event follows capture, its label and tracker
+  id, and every demo chain. `npm test`, `npm run typecheck`, and `npm run build`
+  passed. No dependencies added; state machine, rules, and tracking helper are
+  unchanged.
 - 2026-10-21 06:05 WIB (Claude, owner-approved "1-4"): merged Codex C1-C3 (PR #14). Added
   `/fairness` (eval writes `eval/results.json`; empty `EVAL_K` now defaults to 3), decision
   receipt `/deals/[id]/decision` (+ `loadDecisions`), item-type checklist templates

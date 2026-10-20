@@ -33,7 +33,15 @@ describe('demo seed', () => {
     expect(reviewed).toHaveLength(1);
     const completed = all.find((tx) => tx.status === 'COMPLETED')!;
     expect(completed.paypalCaptureId).toMatch(/^DEMO-CAPTURE-/);
-    expect(repo.readEvents(completed.id).some((e) => e.payload.simulated === true)).toBe(true);
+    const events = repo.readEvents(completed.id);
+    const captured = events.findIndex((e) => e.type === 'BUYER_CONFIRM');
+    const tracking = events.findIndex((e) => e.type === 'PAYPAL_TRACKING_ADDED');
+    expect(captured).toBeGreaterThanOrEqual(0);
+    expect(tracking).toBeGreaterThan(captured);
+    expect(events[tracking]?.payload).toMatchObject({
+      simulated: true, trackingNumber: 'DEMO-DELIVERED', trackerId: expect.stringMatching(/^DEMO-TRACKER-/),
+    });
+    expect(verifyChain(events).ok).toBe(true);
   });
 
   it('does not seed twice', async () => {
