@@ -24,6 +24,8 @@ let db: DatabaseSync;
 let repo: TransactionRepository;
 let calls: Array<{ path: string; method: string }>;
 let currentTime: string;
+let trackBodies: Array<Record<string, unknown>>;
+let trackFailures: number;
 
 function request(path: string, role?: string, body?: unknown): Request {
   return new Request(`http://localhost:3000${path}`, {
@@ -65,6 +67,8 @@ beforeEach(() => {
   seedDemoUsers(db);
   repo = new TransactionRepository(db);
   calls = [];
+  trackBodies = [];
+  trackFailures = 0;
   currentTime = '2026-10-20T00:00:00.000Z';
   const fetchImpl = (async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(String(input));
@@ -80,6 +84,14 @@ beforeEach(() => {
       status = 201; body = { status: 'COMPLETED', purchase_units: [{ payments: { authorizations: [{ id: 'auth-1', status: 'CREATED' }] } }] };
     } else if (/^\/v2\/payments\/authorizations\/auth-[12]\/capture$/.test(url.pathname)) {
       status = 201; body = { id: url.pathname.includes('auth-2') ? 'capture-2' : 'capture-1', status: 'COMPLETED' };
+    } else if (url.pathname === '/v2/checkout/orders/order-1/track' && method === 'POST') {
+      if (trackFailures > 0) {
+        trackFailures -= 1;
+        return new Response(JSON.stringify({ name: 'INTERNAL_SERVER_ERROR', debug_id: 'dbg-track' }), { status: 500 });
+      }
+      const sent = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      trackBodies.push(sent);
+      status = 201; body = { id: 'order-1', purchase_units: [{ shipping: { trackers: [{ id: `${sent.capture_id}-${sent.tracking_number}` }] } }] };
     } else if (/^\/v2\/payments\/authorizations\/auth-[12]\/void$/.test(url.pathname)) {
       return new Response(null, { status: 204 });
     } else throw new Error(`Unexpected fake PayPal request: ${url.pathname}`);
@@ -280,9 +292,54 @@ describe('simulated PayPal mode', () => {
 
     expect(calls).toHaveLength(0);
     const events = repo.readEvents(id);
+    expect(events.find((e) => e.type === 'PAYPAL_TRACKING_ADDED')?.payload).toMatchObject({ simulated: true, trackingNumber: 'DEMO-DELIVERED' });
     for (const type of ['START_PAYMENT', 'BUYER_APPROVED', 'BUYER_CONFIRM']) {
       expect(events.find((e) => e.type === type)?.payload).toMatchObject({ simulated: true, paypalMode: 'simulated' });
     }
     expect(verifyChain(events).ok).toBe(true);
+  });
+});
+
+describe('PayPal tracking after capture', () => {
+  async function shipAndConfirm(): Promise<string> {
+    const id = await createReadyTransaction();
+    await ship(post(`/api/transactions/${id}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(id));
+    const confirmed = await confirm(post(`/api/transactions/${id}/confirm`, 'buyer'), param(id));
+    expect(confirmed.status).toBe(200);
+    return id;
+  }
+
+  it('sends the tracking number to the captured PayPal order and records it', async () => {
+    const id = await shipAndConfirm();
+    expect(trackBodies).toEqual([{
+      capture_id: 'capture-1', tracking_number: 'DEMO-DELIVERED', carrier: 'OTHER',
+      carrier_name_other: 'HalcyVault demo courier', notify_payer: false,
+    }]);
+    const event = repo.readEvents(id).find((e) => e.type === 'PAYPAL_TRACKING_ADDED');
+    expect(event?.payload).toMatchObject({ trackerId: 'capture-1-DEMO-DELIVERED', attempt: 1 });
+    // Running the deadline job again does not send it twice.
+    await tick(post('/api/jobs/tick', 'reviewer'));
+    expect(trackBodies).toHaveLength(1);
+  });
+
+  it('keeps the deal completed when PayPal rejects tracking, then retries from the deadline job', async () => {
+    trackFailures = 1;
+    const id = await shipAndConfirm();
+    expect(repo.loadTransaction(id)?.status).toBe('COMPLETED');
+    expect(repo.readEvents(id).find((e) => e.type === 'PAYPAL_TRACKING_FAILED')?.payload).toMatchObject({ attempt: 1, debug_id: 'dbg-track' });
+    const ticked = await (await tick(post('/api/jobs/tick', 'reviewer'))).json() as { results: Array<{ txId: string; paypalTracking?: string }> };
+    expect(ticked.results.find((r) => r.txId === id)?.paypalTracking).toBe('sent');
+    expect(repo.readEvents(id).find((e) => e.type === 'PAYPAL_TRACKING_ADDED')?.payload).toMatchObject({ attempt: 2 });
+    expect(verifyChain(repo.readEvents(id)).ok).toBe(true);
+  });
+
+  it('stops retrying after three failed attempts', async () => {
+    trackFailures = 10;
+    const id = await shipAndConfirm();
+    await tick(post('/api/jobs/tick', 'reviewer'));
+    await tick(post('/api/jobs/tick', 'reviewer'));
+    await tick(post('/api/jobs/tick', 'reviewer'));
+    expect(repo.readEvents(id).filter((e) => e.type === 'PAYPAL_TRACKING_FAILED')).toHaveLength(3);
+    expect(calls.filter((c) => c.path.endsWith('/track'))).toHaveLength(3);
   });
 });

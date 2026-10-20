@@ -54,7 +54,11 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
   authorize, capture, void and refund. Every money-moving call sends a unique
   `PayPal-Request-Id`, the id is reserved in our database before the call, and an
   interrupted call is never sent twice. Webhooks are checked with PayPal's signature
-  verification API and de-duplicated by event id.
+  verification API and de-duplicated by event id. Right after a capture, the seller's
+  tracking number is attached to the PayPal order (Orders v2 `/track`, carrier `OTHER`
+  because the courier is simulated), so the PayPal transaction carries proof of shipment
+  if the buyer later disputes there. PayPal only accepts tracking after capture; a failure
+  never undoes the capture, is logged, and is retried up to three times.
 - **Rules** (`src/lib/rules/engine.ts`):
 
   | Rule | Situation | Recommendation |
@@ -85,7 +89,7 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
 | PayPal authorize, capture, void, refund | Real **Sandbox** API calls when Sandbox keys are set |
 | PayPal (optional) | `PAYPAL_MODE=simulated`: a clearly labelled local simulation, no PayPal calls, ids start with `SIM-` |
 | Demo deals (Menu > "Load demo deals") | Simulated PayPal stub, ids start with `DEMO-`, items start with `[Demo]`; audit chains are real |
-| Courier tracking | Simulated (`DEMO-DELIVERED`, `DEMO-IN-TRANSIT`, `DEMO-WRONG-DESTINATION`) |
+| Courier tracking | Simulated (`DEMO-DELIVERED`, `DEMO-IN-TRANSIT`, `DEMO-WRONG-DESTINATION`); the number is still sent to the PayPal Sandbox after capture |
 | Seller payout | Not implemented. "Released" means captured to the platform's Sandbox merchant account |
 | Photo evidence | Described in text; in-app camera capture is not built |
 | Sign-in | Demo roles (buyer, seller, reviewer) chosen in Menu |

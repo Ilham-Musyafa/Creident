@@ -113,6 +113,13 @@ therefore freezes a completed transaction too, preserving its prior status for a
 `CUSTOMER.DISPUTE.RESOLVED` event. A verified resolution resumes that prior status;
 the demo does not infer a refund or release from the notification alone.
 
+After any transition that captures (`COMPLETED`), the seller's tracking number is attached
+to the PayPal order with Orders v2 `POST /v2/checkout/orders/{id}/track` (carrier `OTHER`,
+`notify_payer: false`). It is a side step, not a transition: it never changes the status, a
+failure is written to the audit log (`PAYPAL_TRACKING_FAILED`) and retried by the deadline job
+up to three times. PayPal documents that tracking is accepted only after capture (added
+2026-10-21, owner approved).
+
 Rules that come from tested Sandbox behaviour:
 - Authorize is only called after the buyer approved the order (`ORDER_NOT_APPROVED`).
 - Once captured, only refund is possible (`PREVIOUSLY_CAPTURED`).

@@ -6,6 +6,7 @@ import type { StoredTx } from '../../../lib/repository';
 import { addDays } from '../../../lib/timeConfig';
 import { prepareReview } from '../../../lib/reviewPipeline';
 import { seedDemoData } from '../../../lib/demoSeed';
+import { sendTrackingToPayPal, type TrackingOutcome } from '../../../lib/paypalTracking';
 import { getApiContext, getPaymentGateway, isSimulatedPayPal, type ApiContext } from './context';
 import { errorResponse, HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField, unwrap, type Role } from './http';
 
@@ -35,6 +36,15 @@ function deps(context: ApiContext, actor: Role, payment = false, extra: Partial<
     ...(payment ? { paypal: getPaymentGateway(context) } : {}), ...extra,
     ...(simulated ? { eventPayload: { ...extra.eventPayload, simulated: true, paypalMode: 'simulated' } } : {}),
   };
+}
+
+/** After a capture, attach the tracking number to the PayPal order. Never fails the request. */
+async function afterCapture(context: ApiContext, tx: StoredTx, actor: Role): Promise<TrackingOutcome> {
+  if (!tx.captured || tx.status !== 'COMPLETED') return 'skipped';
+  return sendTrackingToPayPal(tx.id, {
+    repo: context.repo, paypal: getPaymentGateway(context), now: context.now, actor,
+    ...(isSimulatedPayPal() ? { eventPayload: { simulated: true, paypalMode: 'simulated' } } : {}),
+  });
 }
 
 export function createTransaction(request: Request): Promise<Response> {
@@ -150,7 +160,8 @@ export function confirmReceipt(request: Request, id: string): Promise<Response> 
     const context = getApiContext();
     requireTx(context, id);
     const result = unwrap(await applyTrigger(id, { type: 'BUYER_CONFIRM', externalDisputeOpen: false }, deps(context, role, true)));
-    return json({ transaction: result.tx });
+    const tracking = await afterCapture(context, result.tx, role);
+    return json({ transaction: result.tx, paypalTracking: tracking });
   });
 }
 
@@ -208,7 +219,8 @@ export function review(request: Request, id: string): Promise<Response> {
         extras: { decision: { outcome: body.outcome, reviewerId: 'reviewer', reason } },
         eventPayload: { reason, outcome: body.outcome },
       })));
-    return json({ transaction: result.tx });
+    const tracking = await afterCapture(context, result.tx, role);
+    return json({ transaction: result.tx, paypalTracking: tracking });
   });
 }
 
@@ -270,7 +282,8 @@ export function tick(request: Request): Promise<Response> {
         const payment = trigger.type !== 'EVIDENCE_COMPLETE';
         const applied = unwrap(await applyTrigger(tx.id, trigger, deps(context, role, payment)));
         if (applied.tx.status === 'UNDER_REVIEW') await prepareReview(tx.id, context);
-        results.push({ txId: tx.id, status: applied.tx.status, ok: true });
+        const tracking = await afterCapture(context, applied.tx, role);
+        results.push({ txId: tx.id, status: applied.tx.status, ok: true, ...(tracking !== 'skipped' ? { paypalTracking: tracking } : {}) });
       } catch (error) {
         const response = errorResponse(error);
         const body = await response.json() as { error: string };
@@ -287,6 +300,18 @@ export function tick(request: Request): Promise<Response> {
           const body = await response.json() as { error: string };
           results.push({ txId: tx.id, ok: false, error: body.error });
         }
+      }
+    }
+    // Retry tracking that failed earlier (bounded by MAX_ATTEMPTS inside the helper).
+    for (const tx of context.repo.listByStatus('COMPLETED')) {
+      if (!tx.trackingNumber || !tx.paypalCaptureId) continue;
+      const events = context.repo.readEvents(tx.id);
+      if (!events.some((e) => e.type === 'PAYPAL_TRACKING_FAILED') || events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED')) continue;
+      try {
+        results.push({ txId: tx.id, status: tx.status, ok: true, paypalTracking: await afterCapture(context, tx, role) });
+      } catch (error) {
+        const body = await errorResponse(error).json() as { error: string };
+        results.push({ txId: tx.id, ok: false, error: body.error });
       }
     }
     return json({ checkedAt: now, results });

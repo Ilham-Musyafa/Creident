@@ -63,14 +63,31 @@ describe('Sandbox smoke script with fake fetch', () => {
         paypal_fee: { currency_code: 'USD', value: '0.64' },
         net_amount: { currency_code: 'USD', value: '9.36' },
       } } },
+      { status: 201, body: { id: 'order-1', purchase_units: [{ shipping: { trackers: [{ id: 'capture-1-HV-SMOKE-test-run' }] } }] } },
       { status: 201, body: { id: 'refund-1', status: 'COMPLETED' } },
     ], ['', 'b']);
     await runSandboxSmoke(f.client, f.ask, f.log, 'test-run-2');
     expect(f.lines).toContain('Fee breakdown: gross 10.00 USD, fee 0.64 USD, net 9.36 USD.');
     expect(f.lines).toContain('Refund: COMPLETED (confirmed).');
+    expect(f.lines).toContain('Tracking: added to the PayPal order (tracker capture-1-HV-SMOKE-test-run).');
+    const trackCall = f.calls.find((c) => c.url.endsWith('/v2/checkout/orders/order-1/track'))!;
+    expect(JSON.parse(String(trackCall.init.body))).toMatchObject({ capture_id: 'capture-1', carrier: 'OTHER', carrier_name_other: 'HalcyVault demo courier' });
     expect(f.calls.at(-1)?.url).toContain('/v2/payments/captures/capture-1/refund');
     const writeIds = f.calls.map(({ init }) => (init.headers as Record<string, string>)?.['PayPal-Request-Id']).filter(Boolean);
-    expect(new Set(writeIds).size).toBe(4);
+    expect(new Set(writeIds).size).toBe(5);
+  });
+
+  it('still refunds when the Sandbox rejects the tracking number', async () => {
+    const f = fixture([
+      token, order, approved, authorized,
+      { status: 201, body: { id: 'capture-1', status: 'COMPLETED' } },
+      { status: 500 },
+      { status: 422, body: { name: 'UNPROCESSABLE_ENTITY', details: [{ issue: 'INVALID_TRACKING', description: 'Tracking number is invalid' }] } },
+      { status: 201, body: { id: 'refund-1', status: 'COMPLETED' } },
+    ], ['', 'b']);
+    await runSandboxSmoke(f.client, f.ask, f.log, 'test-run-3');
+    expect(f.lines.some((l) => l.startsWith('Tracking: rejected by PayPal (Tracking number is invalid)'))).toBe(true);
+    expect(f.lines).toContain('Refund: COMPLETED (confirmed).');
   });
 
   it('does not authorize an order that the buyer has not approved', async () => {
