@@ -73,6 +73,18 @@ in `.env`. The provider and model are not fixed by this project. Use synthetic
 evidence only. This module is not yet connected to a review API route; run `npm test`
 to exercise its replay and fake-provider paths.
 
+## Synthetic evaluation
+
+Run `npm run eval` to evaluate 40 draft dispute cases and 10 draft prompt-injection
+cases from `eval/cases/*.json`. The command writes `eval/report.md`. It runs in replay
+mode when `AI_API_KEY` is empty; set `AI_MODE=replay` to force replay even when a key
+is configured. Set `AI_MODE=live` with the AI variables above to test a compatible
+provider. `EVAL_K` controls repeated runs per base case (default 3, range 1-20).
+The harness also generates name, evidence-order, narrative-length, and language-style
+variants automatically. Labels and rationales are draft and need owner review.
+Replay summaries were authored from those draft labels, so replay metrics describe
+the harness and rules, not live model performance. All cases are synthetic.
+
 ## License
 
 MIT (chosen 2026-10-20; see `LICENSE`). A license file is required by the

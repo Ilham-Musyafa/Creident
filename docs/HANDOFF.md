@@ -52,6 +52,12 @@ Done:
   injection flag, and exact-case JSON replay by default without an API key. It has no
   tools or transaction write path. The branch includes orchestrator and API commits
   because `origin/main` still lacks a build script. No live AI provider was called.
+- On `feat/eval`: `npm run eval` reads 40 synthetic dispute cases (18 buyer-right,
+  18 seller-right, 4 unclear) and 10 injection cases, generates six presentation
+  variants each, repeats base cases with configurable `EVAL_K`, and writes
+  `eval/report.md`. Replay summaries were authored from draft labels, so the replay
+  report checks the harness and rules, not live model quality. All 50 labels need
+  owner review. This branch includes the orchestrator, API, and AI prerequisite commits.
 
 ## How to run
 
@@ -79,6 +85,8 @@ npm run build
 6. Wire the evidence summarizer into review preparation, keeping the rules and human
    confirmation as the only path to a decision. Test the chosen provider's strict JSON
    behaviour and terms before using it outside the replay cases.
+7. Owner: review every evaluation label and rationale before treating any live-run
+   metric as evidence. Expand the set toward the larger sample proposed in DESIGN 10.
 
 ## Decisions waiting for the owner
 
@@ -104,6 +112,11 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): added the synthetic evaluation harness on `feat/eval`, with
+  draft balanced labels, generated counterfactuals, replay/live execution, and an
+  indicative report. The first replay run exposed a missed forged role delimiter;
+  its detector and regression test were fixed. `npm run eval`, `npm test` (80 passed),
+  `npm run typecheck`, and `npm run build` passed. No new dependencies or live AI calls.
 - 2026-10-20 (Codex): added the AI evidence-summary module on `feat/ai-evidence` with
   fake-provider and replay tests. No new dependencies or live AI calls. `npm test`
   passed 76 tests, and `npm run typecheck` and `npm run build` passed.

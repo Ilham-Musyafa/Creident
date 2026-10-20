@@ -25,11 +25,13 @@
     "allowJs": true,
     "incremental": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true
   },
   "include": [
     "next-env.d.ts",
     "src",
+    "eval",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

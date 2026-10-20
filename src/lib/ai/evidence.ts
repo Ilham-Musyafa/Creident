@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { AiSummary, Side } from '../rules/engine';
-import recordedCases from './replay-cases.json';
+import recordedCases from './replay-cases.json' with { type: 'json' };
 
 export interface EvidenceItem {
   id: string;
@@ -51,7 +51,7 @@ const injectionPatterns = [
   /(?:disregard|override)\s+(?:the\s+)?(?:system|developer|previous|prior)?\s*(?:instructions|rules|prompt)/i,
   /(?:system|developer)\s+(?:prompt|message|instruction)/i,
   /(?:you\s+are\s+now|act\s+as)\s+(?:the\s+)?(?:system|developer|assistant|ai)/i,
-  /<\|(?:im_start|im_end|system|developer)\|>/i,
+  /<\|(?:im_start|im_end|system|developer)\|/i,
   /\b(?:jailbreak|prompt\s*injection)\b/i,
 ];
 

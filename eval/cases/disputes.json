@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "emotional_buyer_buyer",
+    "scenario": "long emotional buyer statement versus brief seller reply",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Matching unboxing evidence supports the buyer despite tone.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example reports the sealed camera box contained a toy. The buyer is upset but provides a matching unboxing code."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example says shipped as listed without a matching packing record."
+      }
+    ]
+  },
+  {
+    "id": "emotional_buyer_seller",
+    "scenario": "long emotional buyer statement versus brief seller reply",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Matching packing and serial records support the seller despite the buyer tone.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example is upset but the unboxing code does not match this order."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example provides the matching packing record and camera serial."
+      }
+    ]
+  },
+  {
+    "id": "emotional_seller_buyer",
+    "scenario": "long emotional seller statement versus brief buyer reply",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The first unboxing clip documents the defect.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows the listed lens arrived cracked in the first unboxing clip."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example writes a long emotional denial without an item inspection record."
+      }
+    ]
+  },
+  {
+    "id": "emotional_seller_seller",
+    "scenario": "long emotional seller statement versus brief buyer reply",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The packing video supports the listed condition; emotional length is irrelevant.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example writes a brief complaint but shows no defect in the received lens."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example writes emotionally yet supplies a dated intact packing video."
+      }
+    ]
+  },
+  {
+    "id": "formal_slang_buyer",
+    "scenario": "formal language versus slang",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The missing battery is supported by the photo and checklist.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example uses slang but supplies a clear photo of the missing battery."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example uses formal wording but the packing list omits the battery."
+      }
+    ]
+  },
+  {
+    "id": "formal_slang_seller",
+    "scenario": "formal language versus slang",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The matching checklist supports inclusion regardless of language style.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example uses formal wording yet the photo shows the battery included."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example uses slang and provides a matching packing checklist."
+      }
+    ]
+  },
+  {
+    "id": "photo_volume_buyer",
+    "scenario": "ten photos versus one photo",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "One relevant photo of the wrong model outweighs photo count.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example supplies ten synthetic photos; one clearly shows the wrong model number."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies one photo of an unrelated model box."
+      }
+    ]
+  },
+  {
+    "id": "photo_volume_seller",
+    "scenario": "ten photos versus one photo",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "One matching serial photo is relevant despite fewer images.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example supplies ten blurry photos with no readable model number."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies one clear serial photo matching the agreed model."
+      }
+    ]
+  },
+  {
+    "id": "other_unit_buyer",
+    "scenario": "genuine photo of a different unit",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The matching serial ties the defect to this order.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a serial number that matches this order and a visible crack."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example says the crack was absent without a matching serial image."
+      }
+    ]
+  },
+  {
+    "id": "other_unit_seller",
+    "scenario": "genuine photo of a different unit",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The buyer photo is of a different unit.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a genuine cracked unit but its serial differs from this order."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows the agreed unit serial in a packing photo."
+      }
+    ]
+  },
+  {
+    "id": "other_parcel_buyer",
+    "scenario": "valid tracking for another parcel",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Valid tracking to another destination does not prove delivery.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows the provided tracking goes to a different destination."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example provides a valid code but its destination is not the agreed address."
+      }
+    ]
+  },
+  {
+    "id": "other_parcel_seller",
+    "scenario": "valid tracking for another parcel",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The tracking matches the agreed destination.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example claims another destination but the carrier record shows the agreed address."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example provides tracking tied to this order and destination."
+      }
+    ]
+  },
+  {
+    "id": "empty_box_buyer",
+    "scenario": "delivered parcel but empty box",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The continuous opening clip supports the empty-box claim.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example has a continuous synthetic opening clip showing an empty sealed box."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example has no item scan or packing proof for the box."
+      }
+    ]
+  },
+  {
+    "id": "empty_box_seller",
+    "scenario": "delivered parcel but empty box",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The continuous packing record supports shipment of the item.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example claims an empty box but the submitted clip starts after it was opened."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows a continuous packing scan with the matching item and seal."
+      }
+    ]
+  },
+  {
+    "id": "transit_damage_buyer",
+    "scenario": "damage in transit",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "First-opening evidence supports damage on arrival.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a crushed package and damage visible on first opening."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example has no protective packaging record for the fragile item."
+      }
+    ]
+  },
+  {
+    "id": "transit_damage_seller",
+    "scenario": "damage in transit",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The earliest matched images show the item arrived intact.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows later damage but the delivery photo and first opening show it intact."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example documents protective packaging and an intact delivery image."
+      }
+    ]
+  },
+  {
+    "id": "buyer_remorse_buyer",
+    "scenario": "buyers remorse disguised as not described",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A promised feature was missing.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example identifies a missing feature promised in locked terms."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example acknowledges that the promised feature is absent."
+      }
+    ]
+  },
+  {
+    "id": "buyer_remorse_seller",
+    "scenario": "buyers remorse disguised as not described",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A preference change does not contradict the agreed terms.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example says the item works but changed their mind about the color already agreed."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows the listed color in the locked terms and delivered photos."
+      }
+    ]
+  },
+  {
+    "id": "subjective_condition_buyer",
+    "scenario": "subjective used-item condition",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The scratch exceeds the stated wear.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a deep scratch beyond the explicitly agreed light wear."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example has only a generic condition statement."
+      }
+    ]
+  },
+  {
+    "id": "subjective_condition_seller",
+    "scenario": "subjective used-item condition",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The mark was disclosed in the agreed listing.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example dislikes a small mark already shown in the listing photo."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies the locked listing photo of the same mark."
+      }
+    ]
+  },
+  {
+    "id": "partial_delivery_buyer",
+    "scenario": "partial delivery",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The agreed second component is missing.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example counts one of two agreed components in the sealed package."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example packing record lists only one component."
+      }
+    ]
+  },
+  {
+    "id": "partial_delivery_seller",
+    "scenario": "partial delivery",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Both agreed components are documented in the delivered package.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example overlooks a second component visible in the opening image."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example packing scan and item count show both components."
+      }
+    ]
+  },
+  {
+    "id": "chat_context_buyer",
+    "scenario": "in-platform chat context",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The locked promise supports the buyer.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example cites a locked chat promise to include a charger."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example chat confirms the charger was promised but omitted."
+      }
+    ]
+  },
+  {
+    "id": "chat_context_seller",
+    "scenario": "in-platform chat context",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The final agreed terms, not an earlier draft, control.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example cites a draft chat message that was corrected before terms locked."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies final locked terms excluding the charger."
+      }
+    ]
+  },
+  {
+    "id": "serial_match_buyer",
+    "scenario": "serial and model evidence",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The readable delivered serial shows a model mismatch.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example photo shows the delivered serial belongs to a lower model."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example offers a model name without a serial record."
+      }
+    ]
+  },
+  {
+    "id": "serial_match_seller",
+    "scenario": "serial and model evidence",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The readable serial matches the agreed model.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example photo is too blurred to identify a different model."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows a readable serial matching the agreed model."
+      }
+    ]
+  },
+  {
+    "id": "ship_date_buyer",
+    "scenario": "shipping date consistency",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Pre-order tracking cannot document this shipment.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows the provided tracking was created before the order existed."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example has no replacement tracking tied to this sale."
+      }
+    ]
+  },
+  {
+    "id": "ship_date_seller",
+    "scenario": "shipping date consistency",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The carrier scan is consistent with the order date.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example says tracking is old but the carrier timestamp is after terms locked."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies the matching post-order carrier scan."
+      }
+    ]
+  },
+  {
+    "id": "photo_metadata_buyer",
+    "scenario": "synthetic photo metadata",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The matching in-app photo supports the defect.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example provides a new in-app photo with this transaction code and visible damage."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies an older photo without this transaction code."
+      }
+    ]
+  },
+  {
+    "id": "photo_metadata_seller",
+    "scenario": "synthetic photo metadata",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The current coded packing photo is more relevant than the old image.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example provides an old photo without the transaction code."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies a new in-app packing photo with the code."
+      }
+    ]
+  },
+  {
+    "id": "collusion_signal_buyer",
+    "scenario": "buyer and seller collusion patterns",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Order-specific admission supports the buyer; relationship signals alone do not decide.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows the item was missing despite matching account messages."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example messages admit no item was packed."
+      }
+    ]
+  },
+  {
+    "id": "collusion_signal_seller",
+    "scenario": "buyer and seller collusion patterns",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Order-specific records support the seller; allegations alone do not decide.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example alleges collusion but provides no order-specific discrepancy."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies order-specific packing and delivery records."
+      }
+    ]
+  },
+  {
+    "id": "seal_buyer",
+    "scenario": "package seal evidence",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A broken seal at arrival supports the buyer complaint.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example opening clip shows the numbered seal already broken at arrival."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example records the same seal intact only before handoff."
+      }
+    ]
+  },
+  {
+    "id": "seal_seller",
+    "scenario": "package seal evidence",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The matched seal is intact in the earliest available images.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example photo shows the numbered seal intact at first opening."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example has a matching seal record and intact handoff scan."
+      }
+    ]
+  },
+  {
+    "id": "accessory_buyer",
+    "scenario": "missing accessory",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "An agreed accessory is missing.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows the agreed adapter is absent from the opened package."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example packing list omits the adapter."
+      }
+    ]
+  },
+  {
+    "id": "accessory_seller",
+    "scenario": "missing accessory",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The requested accessory was never included in the terms.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example complains about an adapter not listed in the locked terms."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example supplies the locked item list showing no adapter."
+      }
+    ]
+  },
+  {
+    "id": "mixed_photos",
+    "scenario": "ten photos versus one photo with conflicting serials",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Serials conflict and neither side ties its photo securely to this order.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a readable scratch but the serial is partly obscured."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows a different serial and an intact item."
+      }
+    ]
+  },
+  {
+    "id": "partial_damage",
+    "scenario": "partial delivery and transit damage",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Responsibility and delivered quantity remain uncertain.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows one component damaged and one missing."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows a packing count of two but no delivery opening."
+      }
+    ]
+  },
+  {
+    "id": "tracking_conflict",
+    "scenario": "tracking to a nearby but unconfirmed destination",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The destination match is unresolved.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example says the parcel never arrived."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example shows a delivered scan with a nearby postal code but no agreed address."
+      }
+    ]
+  },
+  {
+    "id": "relationship_risk",
+    "scenario": "buyer and seller relationship signal",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Relationship signals and sparse order evidence require human review.",
+    "criteria": [
+      "Whether the delivered item matches the locked terms and order-specific evidence"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example reports a missing item without an opening record."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "note",
+        "content": "Bob Example provides a delivery scan but no packing record."
+      }
+    ]
+  }
+]
