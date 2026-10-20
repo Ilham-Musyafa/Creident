@@ -23,20 +23,42 @@ Done:
   refund, void before capture. Error cases captured. Details in `docs/SANDBOX-NOTES.md`.
 - Official rules read (deadline, eligibility, requirements, judging criteria).
 - Design draft v0.1 written.
+- Core domain built on branch `feat/core-domain` (pure TypeScript, no UI, no database yet):
+  - `src/lib/domain/` state machine (`transition(tx, trigger)` returns the next state and
+    the PayPal effect the caller must perform before committing).
+  - `src/lib/audit/chain.ts` hash-chained audit log with `appendEvent` and `verifyChain`.
+  - `src/lib/rules/engine.ts` rules R1-R7 (`decide(input)`), deterministic, with reasons.
+  - `src/lib/paypal/client.ts` fetch-based PayPal client (token, AUTHORIZE order,
+    authorize, capture, void, refund, capture fee breakdown) with `PayPal-Request-Id`.
+  - 55 unit tests pass (`npm test`), `npm run typecheck` passes. The PayPal client is only
+    tested with a fake fetch; it has not been run against the real Sandbox yet.
+- Dev dependencies only: typescript, vitest, @types/node.
 
-Nothing has been built yet. The repo has no code.
+## How to run
+
+```
+npm install
+npm test
+npm run typecheck
+```
 
 ## Next steps
 
-1. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
+1. Owner: create the public GitHub repo, push `main`, push `feat/core-domain` and open a
+   pull request. Make sure `.env` is not committed (`git status` must not list it).
+2. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
    Payouts), then record results in `docs/SANDBOX-NOTES.md`.
-2. Owner: create the public repo, pick the license, add these files, make sure `.env` is
-   ignored before the first commit.
-3. Review and approve `docs/DESIGN.md` (especially the [OPEN] items).
-4. Scaffold the app (after the stack is approved), then the state machine with unit tests.
-5. PayPal service wrapper (token, order, authorize, capture, void, refund) with
-   idempotency keys.
-6. Audit log with hash chain and verification page.
+3. Scaffold the Next.js app (App Router, TypeScript, Tailwind) around `src/lib/`.
+   Keep `src/lib/` free of Next.js imports so it stays unit-testable.
+4. Persistence: SQLite repository for transactions, evidence, decisions, audit events,
+   `paypal_events` (unique event id) and idempotency keys (docs/DESIGN.md section 8).
+5. Orchestrator: `applyTrigger(txId, trigger)` = load tx, `transition()`, perform the
+   PayPal effect with `requestIdFor()`, then atomically save the new status and append an
+   audit event (include PayPal `debug_id` on errors). If the effect fails, do not change
+   the status.
+6. A local smoke script that runs the real Sandbox flow (create order, open approval URL,
+   authorize, void) using `.env`, so the client is verified end to end.
+7. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
 
 ## Decisions waiting for the owner
 
@@ -61,6 +83,9 @@ Still open:
 
 ## Log
 
+- 2026-10-20 22:30 WIB (Claude): built the core domain on `feat/core-domain`
+  (state machine, audit chain, rules, PayPal client, 55 tests). Not pushed anywhere yet;
+  the repo exists only as a local git repository delivered to the owner as a zip.
 - 2026-10-20 (Claude, later): recorded owner decisions (model A, MIT, stack, tentative
   AI provider), added `LICENSE` (MIT). Still not committed to any repo.
 - 2026-10-20 (Claude): drafted `AGENTS.md`, `CLAUDE.md`, `docs/DESIGN.md`,
@@ -69,7 +94,7 @@ Still open:
 
 ---
 
-Ringkasan singkat (Bahasa Indonesia, untuk Ilham): proyek sudah terkunci, uji Sandbox
-untuk authorize/capture/refund/void sudah lolos, belum ada kode. Langkah berikutnya:
-selesaikan uji webhook dan dispute, buat repo publik, setujui keputusan terbuka di
-`docs/DESIGN.md`, lalu mulai membangun.
+Ringkasan singkat (Bahasa Indonesia, untuk Ilham): proyek terkunci, uji Sandbox
+authorize/capture/refund/void lolos, dan inti logika sudah dibangun dengan 55 uji yang
+lolos (belum ada tampilan dan database). Langkah berikutnya: buat repo publik dan
+unggah, lalu kerangka Next.js, database SQLite, dan penghubung antara logika dan PayPal.
