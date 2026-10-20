@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
-import { ActionButton, CopyLinkButton, ShipForm } from '../../../components/client';
+import { ActionButton, CopyLinkButton, DisputeForm, ShipForm } from '../../../components/client';
 import { isSimulatedDeal, money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
+import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const role = await getRole();
   const created = (await searchParams).created === '1';
   const simulated = isSimulatedDeal(tx);
+  const hasDecision = ctx.repo.loadDecisions(id).length > 0;
   const events = tx.captured && tx.trackingNumber ? ctx.repo.readEvents(id) : [];
   const trackingOnPayPal = !tx.captured || !tx.trackingNumber ? null
     : events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED') ? (simulated ? 'Sent (simulated)' : 'Sent')
@@ -47,6 +49,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
+            ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
             { label: 'Condition', value: String(terms.condition ?? '—') },
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
@@ -64,9 +67,9 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {action === 'wait-approval' && <Notice>Waiting for your approval on PayPal (Sandbox). If you closed the PayPal window, start again from the checkout screen after it expires.</Notice>}
           {action === 'ship' && <Card><ShipForm txId={id}/></Card>}
           {action === 'confirm-or-dispute' && (
-            <div className="grid grid-cols-[1fr_1.3fr] gap-2">
-              <ActionButton path={`/api/transactions/${id}/dispute`} role="buyer" label="Open dispute" variant="ghost" fullWidth/>
+            <div className="space-y-3">
               <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth/>
+              <Card><DisputeForm txId={id}/></Card>
             </div>
           )}
           {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}
@@ -79,6 +82,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             { label: 'Fee on refund borne by', value: 'Platform (buyer refunded in full)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
+          {hasDecision && <ButtonLink href={`/deals/${id}/decision`} fullWidth>Decision receipt</ButtonLink>}
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>
           <p className="text-center text-xs text-muted">Every action is recorded in the audit log.</p>
         </aside>

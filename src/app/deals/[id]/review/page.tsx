@@ -4,6 +4,7 @@ import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '..
 import { ReviewForm } from '../../../../components/client';
 import { money } from '../../../../components/view';
 import { data, getRole, isUuid } from '../../../_server';
+import { disputeType } from '../../../../lib/disputeTypes';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +24,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   const pendingSplit = ctx.repo.hasPendingSplit(id);
   const evidence = ctx.repo.loadEvidence(id);
   const ruleId = rec && rec.ruleId !== 'NONE' ? rec.ruleId : null;
+  const dtype = disputeType(ctx.repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE')?.payload.disputeType);
   // Show evidence as E1, E2… instead of raw ids.
   const label = new Map(evidence.map((e, i) => [e.id, `E${i + 1}`]));
 
@@ -46,6 +48,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             { label: 'Rule', value: rec ? rec.ruleId : '—' },
             { label: 'Recommended', value: rec ? ACTION_TEXT[rec.action] ?? rec.action : '—' },
             { label: 'Human required', value: rec ? (rec.requiresHuman ? 'Yes' : 'No') : '—' },
+            ...(dtype ? [{ label: 'Dispute type', value: dtype.label }] : []),
           ]}/>
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>

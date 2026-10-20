@@ -239,6 +239,28 @@ describe('JSON route handlers', () => {
     expect(repo.loadRecommendation(id)).toMatchObject({ ruleId: 'R7', action: 'ESCALATE_HUMAN' });
   });
 
+  it('stores the human decision with its reason and links it to the audit event', async () => {
+    useAiResult('seller');
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
+    const decided = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' }), param(id));
+    expect(decided.status).toBe(200);
+    expect(repo.loadDecisions(id)).toEqual([expect.objectContaining({ outcome: 'RELEASE', reason: 'Packing video matches the locked terms.' })]);
+    const event = repo.readEvents(id).find((e) => e.type === 'DECISION');
+    expect(event?.payload).toMatchObject({ effect: 'PAYPAL_CAPTURE', outcome: 'RELEASE' });
+  });
+
+  it('records an optional dispute type and rejects unknown types', async () => {
+    const id = await createReadyTransaction();
+    await ship(post(`/api/transactions/${id}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(id));
+    const bad = await dispute(post(`/api/transactions/${id}/dispute`, 'buyer', { type: 'changed_mind' }), param(id));
+    expect(bad.status).toBe(400);
+    expect(repo.loadTransaction(id)?.status).toBe('IN_INSPECTION');
+    const opened = await dispute(post(`/api/transactions/${id}/dispute`, 'buyer', { type: 'damaged' }), param(id));
+    expect(opened.status).toBe(200);
+    expect(repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE')?.payload).toMatchObject({ disputeType: 'damaged' });
+  });
+
   it('requires a human reason and records SPLIT as pending without a PayPal call', async () => {
     useAiResult('seller');
     const id = await createReadyTransaction();

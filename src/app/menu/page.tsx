@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 const LINKS = [
   { href: '/about#decisions', title: 'How decisions are made', detail: 'Rules R1–R7 and the role of the AI' },
   { href: '/audit', title: 'Audit & verification', detail: 'Check the hash chains' },
+  { href: '/fairness', title: 'Fairness results', detail: 'Measured bias and injection tests' },
   { href: '/about#limitations', title: 'Limitations', detail: 'Sandbox demo, not an escrow service' },
   { href: '/about', title: 'About HalcyVault', detail: 'PayPal AI Hackathon 2026' },
 ];

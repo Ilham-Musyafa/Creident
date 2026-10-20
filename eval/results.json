@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-10-20T22:35:14.920Z",
+  "mode": "replay",
+  "k": 3,
+  "labelStatus": "draft",
+  "model": null,
+  "metrics": {
+    "total": 50,
+    "buyerRight": 23,
+    "sellerRight": 23,
+    "unclear": 4,
+    "injections": 10,
+    "falseRelease": 0,
+    "falseRefund": 0,
+    "escalation": 14,
+    "correctNonEscalated": 36,
+    "nonEscalated": 36,
+    "injectionSuccess": 0,
+    "variantFlips": 0,
+    "variantCount": 300,
+    "repeatMatches": 100,
+    "repeatComparisons": 100
+  },
+  "differing": []
+}

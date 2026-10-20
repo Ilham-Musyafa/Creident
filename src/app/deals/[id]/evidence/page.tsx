@@ -4,6 +4,7 @@ import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '..
 import { EvidenceForm } from '../../../../components/client';
 import { evidenceCode, shortHash, timeLeft } from '../../../../components/view';
 import { data, getRole, isUuid, sha256 } from '../../../_server';
+import { disputeType } from '../../../../lib/disputeTypes';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,9 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
   const evidence = ctx.repo.loadEvidence(id);
   const left = timeLeft(tx.evidenceUntil, ctx.now());
   const open = tx.status === 'DISPUTED' && !!left;
+  const opened = ctx.repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE');
+  const type = disputeType(opened?.payload.disputeType);
+  const tips = type ? (role === 'seller' ? type.seller : role === 'buyer' ? type.buyer : [...type.buyer, ...type.seller]) : [];
 
   return (
     <AppShell active="Deals">
@@ -28,6 +32,14 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
             <div className="mt-2"><CodeBadge code={evidenceCode(id)}/></div>
             <p className="mt-3 text-xs text-muted">In the real flow photos are taken in the app (no gallery uploads). In this demo, describe what the photo shows.</p>
           </Card>
+          {type && (
+            <Card>
+              <p className="text-xs text-muted">Dispute type</p>
+              <p className="mt-1 text-sm font-bold text-heading">{type.label}</p>
+              <p className="mt-3 text-xs text-muted">{role === 'reviewer' ? 'Evidence that usually settles this kind of case' : 'Evidence that usually helps in this kind of case'}</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">{tips.map((t) => <li key={t}>{t}</li>)}</ul>
+            </Card>
+          )}
           {role === 'reviewer' ? <Notice>Reviewers do not add evidence. Switch to Buyer or Seller in Menu.</Notice>
             : open ? <Card><EvidenceForm txId={id} role={role}/></Card>
             : <Notice>The evidence window is closed for this deal.</Notice>}

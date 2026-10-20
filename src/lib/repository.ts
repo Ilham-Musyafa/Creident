@@ -55,6 +55,13 @@ export interface StoredEvidence {
   content: string;
 }
 
+export interface StoredDecision {
+  outcome: 'RELEASE' | 'REFUND' | 'SPLIT';
+  reviewerId: string;
+  reason: string;
+  createdAt: string;
+}
+
 export interface StoredRecommendation {
   txId: string;
   aiSummary: AiSummary | null;
@@ -286,6 +293,15 @@ export class TransactionRepository {
       });
       return this.loadRecommendation(txId)!;
     });
+  }
+
+  /** Human decisions for a transaction, oldest first (a pending SPLIT can precede the final one). */
+  loadDecisions(txId: string): StoredDecision[] {
+    return this.db.prepare(`SELECT outcome, reviewer_id, reason, created_at FROM decisions
+      WHERE tx_id = ? AND rule_id = 'HUMAN_REVIEW' ORDER BY created_at, id`).all(txId).map((row) => ({
+      outcome: String(row.outcome) as StoredDecision['outcome'], reviewerId: String(row.reviewer_id),
+      reason: String(row.reason), createdAt: String(row.created_at),
+    }));
   }
 
   hasPendingSplit(txId: string): boolean {
