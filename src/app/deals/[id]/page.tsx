@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
-import { ActionButton, CopyLinkButton, ShipForm } from '../../../components/client';
+import { ActionButton, CopyLinkButton, DisputeForm, ShipForm } from '../../../components/client';
 import { isSimulatedDeal, money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
 import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
@@ -67,9 +67,9 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {action === 'wait-approval' && <Notice>Waiting for your approval on PayPal (Sandbox). If you closed the PayPal window, start again from the checkout screen after it expires.</Notice>}
           {action === 'ship' && <Card><ShipForm txId={id}/></Card>}
           {action === 'confirm-or-dispute' && (
-            <div className="grid grid-cols-[1fr_1.3fr] gap-2">
-              <ActionButton path={`/api/transactions/${id}/dispute`} role="buyer" label="Open dispute" variant="ghost" fullWidth/>
+            <div className="space-y-3">
               <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth/>
+              <Card><DisputeForm txId={id}/></Card>
             </div>
           )}
           {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}

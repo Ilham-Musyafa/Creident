@@ -6,6 +6,7 @@ import type { StoredTx } from '../../../lib/repository';
 import { addDays } from '../../../lib/timeConfig';
 import { prepareReview } from '../../../lib/reviewPipeline';
 import { seedDemoData } from '../../../lib/demoSeed';
+import { isDisputeType } from '../../../lib/disputeTypes';
 import { sendTrackingToPayPal, type TrackingOutcome } from '../../../lib/paypalTracking';
 import { getApiContext, getPaymentGateway, isSimulatedPayPal, type ApiContext } from './context';
 import { errorResponse, HttpError, json, jsonBody, noExtraFields, readBodyLimited, requireRole, route, stringField, unwrap, type Role } from './http';
@@ -168,11 +169,21 @@ export function confirmReceipt(request: Request, id: string): Promise<Response> 
 export function openDispute(request: Request, id: string): Promise<Response> {
   return route(async () => {
     const role = requireRole(request, ['buyer']);
-    await emptyBody(request);
+    // Optional { "type": "not_received" | "not_as_described" | "damaged" | "incomplete" }.
+    let disputeType: string | undefined;
+    if (request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
+      const body = await jsonBody(request);
+      noExtraFields(body, ['type']);
+      if (body.type !== undefined && !isDisputeType(body.type)) throw new HttpError(400, 'INVALID_DISPUTE_TYPE', 'type must be not_received, not_as_described, damaged, or incomplete');
+      disputeType = body.type as string | undefined;
+    } else await emptyBody(request);
     const context = getApiContext();
     requireTx(context, id);
     const result = unwrap(await applyTrigger(id, { type: 'OPEN_DISPUTE', now: context.now() },
-      deps(context, role, false, { extras: { evidenceUntil: addDays(context.now(), context.time.evidenceDays) } })));
+      deps(context, role, false, {
+        extras: { evidenceUntil: addDays(context.now(), context.time.evidenceDays) },
+        ...(disputeType ? { eventPayload: { disputeType } } : {}),
+      })));
     return json({ transaction: result.tx });
   });
 }

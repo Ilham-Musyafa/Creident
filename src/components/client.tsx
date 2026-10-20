@@ -7,6 +7,7 @@ import { Button } from './ui';
 import { SegmentedControl } from './SegmentedControl';
 import type { Role } from './view';
 import { mergeCriteria, TERMS_TEMPLATES } from '../lib/termsTemplates';
+import { DISPUTE_TYPES } from '../lib/disputeTypes';
 
 export class ApiError extends Error {
   constructor(readonly code: string, message: string, readonly debugId?: string) {
@@ -148,6 +149,24 @@ export function NewDealForm() {
       </div>
       <div><Label htmlFor="criteria" hint="optional, one per line">What the buyer can check</Label><textarea id="criteria" maxLength={1500} rows={3} className={`${fieldClass} py-3`} placeholder={'Battery health at least 85%\nScreen has no cracks'} value={form.criteria} onChange={set('criteria')}/></div>
       <Button type="submit" fullWidth disabled={busy}>{busy ? 'Creating…' : 'Create & share link'}</Button>
+      <ErrorNote error={error}/>
+    </form>
+  );
+}
+
+export function DisputeForm({ txId }: { txId: string }) {
+  const { busy, error, run } = useAction();
+  const router = useRouter();
+  const [type, setType] = useState<string>('not_as_described');
+  return (
+    <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(async () => { await callApi(`/api/transactions/${txId}/dispute`, 'buyer', { type }); router.push(`/deals/${txId}/evidence`); }); }}>
+      <div>
+        <Label htmlFor="dispute-type">What went wrong?</Label>
+        <select id="dispute-type" className={fieldClass} value={type} onChange={(e) => setType(e.target.value)}>
+          {DISPUTE_TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+        </select>
+      </div>
+      <Button type="submit" variant="ghost" fullWidth disabled={busy}>{busy ? 'Opening…' : 'Open dispute'}</Button>
       <ErrorNote error={error}/>
     </form>
   );
