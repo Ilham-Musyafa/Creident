@@ -24,11 +24,11 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
         <Card className="px-4 py-1">
           <ol>
             {[...events].reverse().map((e) => (
-              <AuditEvent key={e.seq} seq={e.seq} title={eventTitle(e.type)} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)}/>
+              <AuditEvent key={e.seq} seq={e.seq} title={eventTitle(e.type)} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} simulated={e.payload.simulated === true}/>
             ))}
           </ol>
         </Card>
-        <Notice>Each event stores the hash of the previous one. Editing, deleting or reordering an event breaks the chain and shows here. Events marked simulated come from demo data, not from PayPal.</Notice>
+        <Notice>Each event stores the hash of the previous one. Editing, deleting or reordering an event breaks the chain and shows here. Events marked Simulated come from the simulated PayPal, demo data or the simulated courier, not from PayPal.</Notice>
       </div>
     </AppShell>
   );
