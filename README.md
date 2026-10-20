@@ -113,6 +113,20 @@ verify `VOIDED`, or **b** to capture, view the fee breakdown, then issue a full 
 and verify `COMPLETED`. Run the script again for the other path; each run creates a
 new Sandbox order. No global TypeScript runner is needed.
 
+## Screens
+
+Mobile-first web app with light, dark and system themes (`docs/UI.md`).
+Screenshots from the running app: `docs/ui/app-screens-light.png`, `docs/ui/app-screens-dark.png`.
+
+- `/` home (role-aware), `/deals`, `/deals/new` (seller), `/deals/[id]` (timeline and next step),
+  `/deals/[id]/checkout` (buyer), `/deals/[id]/evidence`, `/deals/[id]/review` (reviewer),
+  `/audit` and `/audit/[id]` (hash-chain verification), `/menu`, `/about`.
+- Choose the demo role (buyer, seller, reviewer) in Menu. Roles replace sign-in in this demo.
+- Menu > "Load demo deals" creates ten labelled `[Demo]` deals across the statuses. They use a
+  simulated PayPal stub (ids start with `DEMO-`); their audit chains are real.
+- Payment, confirm and dispute decisions call the PayPal Sandbox and need `PP_ID`/`PP_SECRET`
+  in `.env`. Without them the screens show a clear message.
+
 ## Local development
 
 Use Node.js 22.13 or newer (Node.js 24 is used in development). Run `npm ci`, then

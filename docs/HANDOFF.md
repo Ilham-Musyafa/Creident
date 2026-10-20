@@ -72,8 +72,14 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 2. Done: AI evidence summary wired into review preparation (PR #5). Only the human review
    POST executes RELEASE or REFUND for disputed transactions. The owner still needs to
    define the amount and payment treatment of a pending SPLIT decision.
-3. Build the eight UI screens in `docs/UI.md` using `src/components` (PR #6) and the
-   existing JSON API. Keep `src/lib/` free of UI imports.
+3. Done: the eight UI screens (PR "UI screens"), plus Deals list, About, PayPal return
+   page, loading/error/not-found states. Pages read through `src/app/_server.ts`; every
+   change goes through the JSON API. Demo deals: Menu > "Load demo deals"
+   (`POST /api/demo/seed`, labelled `[Demo]`, simulated PayPal stub, real audit chains).
+   Without Sandbox keys, money-moving actions (pay, confirm, decisions) show a clear
+   "keys not set" message; non-money steps (ship, dispute, evidence, split) work.
+   Open question for the owner: a server-wide "demo PayPal" mode so judges can click the
+   whole flow without keys (must be clearly labelled as simulated).
 4. Owner: review every evaluation label and rationale; then expand the set toward the
    size proposed in DESIGN section 10 and run once with the chosen live provider.
 5. Owner: public HTTPS URL + `PP_WEBHOOK_ID`, then test real webhook delivery.
@@ -104,6 +110,16 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-21 02:00 WIB (Claude, Prompt 9 while Codex was out of quota): built the UI
+  screens on `feat/ui-screens`. Added `listTransactions`/`listAcceptances` to the
+  repository, `src/lib/demoSeed.ts` (+ tests) and `POST /api/demo/seed`, pure view helpers
+  in `src/components/view.ts` (+ tests), client actions in `src/components/client.tsx`.
+  The PayPal return URL now points to the UI page `/paypal/return`, which calls the
+  existing API route. Added a replay case so the seeded dispute shows AI findings.
+  Checked: npm test, typecheck, build; Playwright walk-through of every screen at 390px in
+  light and dark and at 1280px: no console errors; flows tested: create deal, ship,
+  add evidence, split (pending), pay without keys (friendly error).
 
 - 2026-10-21 (Codex): created `feat/ui-foundation` from the latest `origin/main`.
   Added exact light/dark tokens mapped to Tailwind 4, pre-paint theme selection with
