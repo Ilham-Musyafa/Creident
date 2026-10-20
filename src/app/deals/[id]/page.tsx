@@ -76,7 +76,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
 
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (simulated)' : tx.captured ? 'See PayPal capture' : 'Shown after capture' },
-            { label: 'Fee on refund borne by', value: 'TBD' },
+            { label: 'Fee on refund borne by', value: 'Platform (buyer refunded in full)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>

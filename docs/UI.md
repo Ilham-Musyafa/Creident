@@ -128,8 +128,8 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 8. Menu: demo role switch, appearance (Light/Dark/System), "How decisions are made",
    "Audit & verification", "Limitations", "About"
 
-Time values shown (3 days ship-by, 2 days inspection) are placeholders until the owner
-decides them. "Fee on refund borne by" stays "TBD" until decided.
+Time values (3 days ship-by, 2 days inspection, 2 days evidence) and "Fee on refund borne
+by: Platform" were decided by the owner on 2026-10-21.
 
 ## 8. Copy rules
 

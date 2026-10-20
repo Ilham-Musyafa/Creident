@@ -105,11 +105,14 @@ capture); license MIT; visual direction Midnight Ink + Mint with light/dark/syst
 Tentative: AI provider DeepSeek V4.1 Flash via the owner's Hive API key (verify model name,
 API terms, strict-JSON reliability, image support).
 
+Decided 2026-10-21: the platform bears the PayPal fee on a refund (buyer refunded in full);
+deadlines ship-by 3, inspection 2, evidence 2 days (env-configurable).
+
 Still open:
-- Who bears the fee on a refund.
-- Final time parameters (temporary: ship-by 3 days, inspection 2 days, evidence 2 days;
-  configurable via environment variables).
-- Final public name (the word "Vault" suggests custody) and hosting.
+- Final public name (the word "Vault" suggests custody; temporary, owner will rename later).
+- Hosting / public demo link: owner chose "decide later" (after smoke test and video).
+- Five draft eval labels conflict with rules R3/R5 (flagged on the label-review page);
+  owner reviews before the live-model eval.
 
 ## Do not forget
 
@@ -121,6 +124,9 @@ Still open:
 
 ## Log
 
+- 2026-10-21 02:55 WIB (Claude): recorded owner decisions (fee on refund: platform;
+  deadlines 3/2/2; hosting later) in UI, README, DESIGN, UI.md, .env.example. Earlier this
+  session: PR #11 marks simulated events in the audit log.
 - 2026-10-21 02:45 WIB (Claude): PayPal tracking after capture (owner approved). Docs say
   `/track` needs a captured order, so it runs after capture, not at shipping. Unknown until
   the owner runs `npm run smoke` (path b): whether the Sandbox accepts a made-up number with

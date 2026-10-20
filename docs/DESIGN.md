@@ -64,8 +64,8 @@ Both are documented honestly in the pitch. The demo implements Model A. Seller p
 disbursement proves usable in the Sandbox (not tested yet).
 
 Fees: the Sandbox showed a 0.64 USD fee on a 10.00 USD sale, apparently not returned on
-refund. The UI shows fees before payment and the rules state who bears the fee on a
-refund **[OPEN]**.
+refund. The UI shows fees before payment. **Decided 2026-10-21: the platform bears the fee
+on a refund**, so the buyer is refunded in full.
 
 ## 4. State machine
 
@@ -125,9 +125,10 @@ Rules that come from tested Sandbox behaviour:
 - Once captured, only refund is possible (`PREVIOUSLY_CAPTURED`).
 - Refund total must not exceed the captured amount.
 
-Time parameters are configurable. **Placeholder defaults, not final owner decisions:**
-ship-by 3 days (`SHIP_BY_DAYS`), inspection 2 days (`INSPECTION_DAYS`), and evidence
-2 days (`EVIDENCE_DAYS`). The owner still needs to decide the final values. A silent
+Time parameters are configurable. **Decided 2026-10-21:** ship-by 3 days (`SHIP_BY_DAYS`),
+inspection 2 days (`INSPECTION_DAYS`), and evidence 2 days (`EVIDENCE_DAYS`). Capture can
+therefore land after PayPal's 3-day honor period; it usually still succeeds within the
+29-day validity, but that is not guaranteed and a failure is logged. A silent
 buyer means "accept" only if tracking shows delivery to the agreed destination.
 
 ## 5. Decision rules (rules first)
@@ -248,8 +249,8 @@ Hosting **[OPEN]**: run-instructions in the README are enough for the rules; a h
 
 ## 12. Open decisions
 
-- Fund model: **A decided** (2026-10-20). Still open: who bears the fee on a refund.
-- Time parameters in the state machine.
+- Fund model: **A decided** (2026-10-20). Fee on a refund: platform (decided 2026-10-21).
+- Time parameters: 3 / 2 / 2 days (decided 2026-10-21).
 - AI provider: tentative DeepSeek V4.1 Flash via Hive; verify before building (section 6).
 - Final project name (the word "Vault" suggests custody; consider before submitting).
 - Hosting. (License: MIT chosen; the owner may relicense his own code later. Database:
