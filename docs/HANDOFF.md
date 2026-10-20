@@ -31,8 +31,13 @@ Built (all on `integrate/codex-batch` until merged):
   deadline tick, PayPal webhook. Demo roles via `x-demo-role`; no real authentication.
 - AI evidence summary (`src/lib/ai/evidence.ts`): OpenAI-compatible adapter (env
   `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`), strict schema, one retry, name masking,
-  seeded order, injection flag, replay mode by default without a key. **Not yet wired into
-  the review flow.**
+  seeded order, injection flag, replay mode by default without a key. On
+  `feat/review-pipeline`, it is wired into review preparation at all three paths to
+  `UNDER_REVIEW`: evidence complete, evidence deadline, and tracking mismatch. The
+  stored recommendation includes the AI summary or null, rule, action, reasons, and
+  human-review requirement, plus an audit event. GET `/api/transactions/:id/review`
+  reads it. AI failure becomes an R5 human escalation. `SPLIT` with a human reason is
+  recorded as pending without moving funds.
 - Evaluation (`eval/`, `npm run eval`): 40 synthetic dispute cases + 10 injection cases,
   six counterfactual variants each, report in `eval/report.md`. Labels are drafts that
   need owner review; replay results check the harness and rules, not a live model.
@@ -61,9 +66,9 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 
 1. Owner: run `npm run smoke` on Windows for both paths (void; capture + refund) and record
    the results in `docs/SANDBOX-NOTES.md`.
-2. Wire the evidence summarizer into review preparation (dispute -> evidence complete ->
-   AI summary -> `decide()` -> human confirmation). The rules and the human stay the only
-   path to a money-moving decision.
+2. Review `feat/review-pipeline`, then merge it after checks. Only the human review
+   POST executes RELEASE or REFUND for disputed transactions. The owner still needs
+   to define the amount and payment treatment of a pending SPLIT decision.
 3. UI screens following `docs/UI.md` (tokens, light/dark/system, 8 screens), calling the
    existing JSON API. Keep `src/lib/` free of UI imports.
 4. Owner: review every evaluation label and rationale; then expand the set toward the
@@ -97,6 +102,12 @@ Still open:
 
 ## Log
 
+- 2026-10-21 (Codex): wired the AI evidence summary and deterministic rules into
+  review preparation on `feat/review-pipeline`. Recommendations are stored once with
+  audit events; GET exposes them, and reviewer POST keeps the money-moving gate.
+  Provider failure and injection escalate; SPLIT is a reasoned pending decision with
+  no payment call. No new dependencies or live provider calls. Verification:
+  `npm test` (94/94), `npm run typecheck`, and `npm run build` all passed.
 - 2026-10-21 01:20 WIB (Claude): integrated the Codex branches. They had been created from
   `main` before the app scaffold was merged and were stacked on each other, so they were
   merged into `integrate/codex-batch` (eval + webhook + sandbox-smoke + app-scaffold).

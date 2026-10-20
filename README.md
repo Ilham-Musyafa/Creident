@@ -48,7 +48,10 @@ with `{"tracking":"DEMO-DELIVERED"}`. Other simulated samples are
 `GET /api/mock-courier/{tracking}`). The buyer can call `POST .../confirm` or
 `POST .../dispute`; buyer and seller submit `POST .../evidence` with `kind` and
 `content`. A reviewer can call `POST .../review` with `outcome` (`RELEASE` or
-`REFUND`) and a required `reason`. See `docs/DESIGN.md` for the state machine.
+`REFUND`) and a required `reason`. `GET .../review` returns the stored AI summary
+and rule recommendation after review preparation. A reviewer may also POST `SPLIT`
+with a reason; this records a pending decision and moves no funds while split payment
+rules remain undecided. See `docs/DESIGN.md` for the state machine.
 
 Call `POST /api/jobs/tick` as reviewer to process due shipping, inspection, and
 evidence deadlines. The placeholder defaults are 3, 2, and 2 days, respectively;
@@ -70,8 +73,10 @@ from `src/lib/ai/replay-cases.json`. Only an exact recorded case gets a replayed
 summary. For a compatible live chat-completions service, set `AI_MODE=live`,
 `AI_BASE_URL` (API base, such as a URL ending in `/v1`), `AI_API_KEY`, and `AI_MODEL`
 in `.env`. The provider and model are not fixed by this project. Use synthetic
-evidence only. This module is not yet connected to a review API route; run `npm test`
-to exercise its replay and fake-provider paths.
+evidence only. Review preparation calls this module when a transaction enters
+`UNDER_REVIEW`. If no recorded replay case matches the stored evidence, or if a
+live provider fails, the rules store an R5 recommendation for human review. Run
+`npm test` to exercise the replay and fake-provider paths.
 
 ## Synthetic evaluation
 
