@@ -38,6 +38,9 @@ Built (all on `integrate/codex-batch` until merged):
   need owner review; replay results check the harness and rules, not a live model.
 - Sandbox smoke script (`npm run smoke`) for the owner's PC.
 - App shell (`src/app/layout.tsx`, `page.tsx`, Tailwind 4). **No UI screens yet.**
+- On `feat/ui-foundation`: UI tokens, system/light/dark theme, self-hosted Plus Jakarta
+  Sans, reusable components, and `/styleguide` previews. Full product screens are
+  still pending.
 
 Checks on 2026-10-21: `npm test` 89 passed (10 files), `npm run typecheck` passed,
 `npm run build` passed, `npm run eval` ran in replay mode.
@@ -64,8 +67,8 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 2. Wire the evidence summarizer into review preparation (dispute -> evidence complete ->
    AI summary -> `decide()` -> human confirmation). The rules and the human stay the only
    path to a money-moving decision.
-3. UI screens following `docs/UI.md` (tokens, light/dark/system, 8 screens), calling the
-   existing JSON API. Keep `src/lib/` free of UI imports.
+3. Review and merge `feat/ui-foundation`, then build the eight UI screens in `docs/UI.md`
+   using its components and the existing JSON API. Keep `src/lib/` free of UI imports.
 4. Owner: review every evaluation label and rationale; then expand the set toward the
    size proposed in DESIGN section 10 and run once with the chosen live provider.
 5. Owner: public HTTPS URL + `PP_WEBHOOK_ID`, then test real webhook delivery.
@@ -97,6 +100,13 @@ Still open:
 
 ## Log
 
+- 2026-10-21 (Codex): created `feat/ui-foundation` from the latest `origin/main`.
+  Added exact light/dark tokens mapped to Tailwind 4, pre-paint theme selection with
+  guarded localStorage, self-hosted Plus Jakarta Sans through `next/font/local`, all
+  section 6 components, and a two-theme `/styleguide`. The font is bundled under its
+  OFL license because the build environment cannot reach Google Fonts. No dependency
+  was added. `npm test` (89/89), typecheck, and build passed; the local styleguide
+  rendered in Chromium and theme persistence was checked.
 - 2026-10-21 01:20 WIB (Claude): integrated the Codex branches. They had been created from
   `main` before the app scaffold was merged and were stacked on each other, so they were
   merged into `integrate/codex-batch` (eval + webhook + sandbox-smoke + app-scaffold).
