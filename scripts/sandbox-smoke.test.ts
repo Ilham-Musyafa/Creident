@@ -80,7 +80,7 @@ describe('Sandbox smoke script with fake fetch', () => {
   });
 
   it('rejects missing credentials and Live URLs before any request', () => {
-    expect(() => clientFromEnv({ PP_ID: '', PP_SECRET: '', PP_URL: '' })).toThrow('Set PP_ID');
-    expect(() => clientFromEnv({ PP_ID: 'id', PP_SECRET: 'secret', PP_URL: 'https://api-m.paypal.com' })).toThrow('Sandbox only');
+    expect(() => clientFromEnv({ PP_ID: '', PP_SECRET: '', PP_URL: '' } as unknown as NodeJS.ProcessEnv)).toThrow('Set PP_ID');
+    expect(() => clientFromEnv({ PP_ID: 'id', PP_SECRET: 'secret', PP_URL: 'https://api-m.paypal.com' } as unknown as NodeJS.ProcessEnv)).toThrow('Sandbox only');
   });
 });
