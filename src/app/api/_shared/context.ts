@@ -3,6 +3,7 @@ import { openDatabase } from '../../../lib/db';
 import { PayPalClient } from '../../../lib/paypal/client';
 import { TransactionRepository } from '../../../lib/repository';
 import { getTimeConfig, type TimeConfig } from '../../../lib/timeConfig';
+import type { AiEvidenceProvider } from '../../../lib/ai/evidence';
 
 export interface ApiContext {
   db: DatabaseSync;
@@ -10,6 +11,8 @@ export interface ApiContext {
   paypal?: PayPalClient;
   now: () => string;
   time: TimeConfig;
+  aiProvider?: AiEvidenceProvider;
+  aiEnv?: Record<string, string | undefined>;
 }
 
 let instance: ApiContext | null = null;

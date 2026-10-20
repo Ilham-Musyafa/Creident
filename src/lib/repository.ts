@@ -3,6 +3,7 @@ import type { DatabaseSync } from 'node:sqlite';
 import { appendEvent, type AuditEvent, type AuditEventInput } from './audit/chain';
 import type { Tx, TxStatus } from './domain/types';
 import { transition } from './domain/stateMachine';
+import type { AiSummary, RuleAction, RuleDecision, RuleId } from './rules/engine';
 
 export interface StoredTx extends Tx {
   buyerId: string;
@@ -45,6 +46,23 @@ export interface WebhookResult {
   duplicate: boolean;
   txId: string | null;
   status?: TxStatus;
+}
+
+export interface StoredEvidence {
+  id: string;
+  submittedBy: 'buyer' | 'seller';
+  kind: 'photo' | 'tracking' | 'chat' | 'note';
+  content: string;
+}
+
+export interface StoredRecommendation {
+  txId: string;
+  aiSummary: AiSummary | null;
+  ruleId: RuleId | 'NONE';
+  action: RuleAction;
+  reasons: string[];
+  requiresHuman: boolean;
+  createdAt: string;
 }
 
 function transaction<T>(db: DatabaseSync, work: () => T): T {
@@ -215,6 +233,75 @@ export class TransactionRepository {
   bothSidesSubmitted(txId: string): boolean {
     const row = this.db.prepare('SELECT COUNT(DISTINCT submitted_by) AS count FROM evidence WHERE tx_id = ?').get(txId);
     return Number(row?.count) === 2;
+  }
+
+  loadEvidence(txId: string): StoredEvidence[] {
+    return this.db.prepare(`SELECT id, submitted_by, kind, content_ref FROM evidence
+      WHERE tx_id = ? ORDER BY created_at, id`).all(txId).map((row) => ({
+      id: String(row.id), submittedBy: String(row.submitted_by) as StoredEvidence['submittedBy'],
+      kind: String(row.kind) as StoredEvidence['kind'], content: String(row.content_ref),
+    }));
+  }
+
+  loadRecommendation(txId: string): StoredRecommendation | null {
+    const row = this.db.prepare(`SELECT rule_id, action, reasons_json, requires_human,
+      ai_summary_json, created_at FROM decisions WHERE tx_id = ? AND rule_id <> 'HUMAN_REVIEW'
+      LIMIT 1`).get(txId);
+    if (!row) return null;
+    return {
+      txId, ruleId: String(row.rule_id) as StoredRecommendation['ruleId'],
+      action: String(row.action) as RuleAction,
+      reasons: JSON.parse(String(row.reasons_json)) as string[],
+      requiresHuman: Boolean(row.requires_human),
+      aiSummary: row.ai_summary_json ? JSON.parse(String(row.ai_summary_json)) as AiSummary : null,
+      createdAt: String(row.created_at),
+    };
+  }
+
+  saveRecommendation(txId: string, aiSummary: AiSummary | null, decision: RuleDecision, ts: string): StoredRecommendation {
+    return transaction(this.db, () => {
+      const existing = this.loadRecommendation(txId);
+      if (existing) return existing;
+      const tx = this.loadTransaction(txId);
+      if (!tx || tx.status !== 'UNDER_REVIEW') throw new Error('Recommendation requires UNDER_REVIEW');
+      this.db.prepare(`INSERT INTO decisions
+        (id, tx_id, rule_id, outcome, ai_summary_json, action, reasons_json, requires_human, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+        randomUUID(), txId, decision.rule, decision.action,
+        aiSummary ? JSON.stringify(aiSummary) : null, decision.action,
+        JSON.stringify(decision.reasons), decision.requiresHuman ? 1 : 0, ts,
+      );
+      this.appendInTransaction({
+        txId, ts, actor: 'system', type: 'RECOMMENDATION_RECORDED',
+        payload: {
+          ruleId: decision.rule, action: decision.action, reasons: decision.reasons,
+          requiresHuman: decision.requiresHuman, aiSummary,
+        },
+      });
+      return this.loadRecommendation(txId)!;
+    });
+  }
+
+  hasPendingSplit(txId: string): boolean {
+    return !!this.db.prepare(`SELECT 1 FROM decisions WHERE tx_id = ?
+      AND rule_id = 'HUMAN_REVIEW' AND outcome = 'SPLIT' LIMIT 1`).get(txId);
+  }
+
+  recordPendingSplit(txId: string, reviewerId: string, reason: string, ts: string): void {
+    transaction(this.db, () => {
+      if (this.hasPendingSplit(txId)) return;
+      const tx = this.loadTransaction(txId);
+      if (!tx || tx.status !== 'UNDER_REVIEW') throw new Error('Split requires UNDER_REVIEW');
+      this.db.prepare(`INSERT INTO decisions
+        (id, tx_id, rule_id, outcome, reviewer_id, reason, created_at)
+        VALUES (?, ?, 'HUMAN_REVIEW', 'SPLIT', ?, ?, ?)`).run(
+        randomUUID(), txId, reviewerId, reason, ts,
+      );
+      this.appendInTransaction({
+        txId, ts, actor: reviewerId, type: 'HUMAN_SPLIT_PENDING',
+        payload: { reason, fundsMoved: false },
+      });
+    });
   }
 
   listDue(status: TxStatus, column: 'ship_by' | 'inspection_until' | 'evidence_until', now: string): StoredTx[] {

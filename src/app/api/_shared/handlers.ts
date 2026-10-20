@@ -4,6 +4,7 @@ import { mockShipment } from '../../../lib/mockCourier';
 import { applyTrigger, type OrchestratorDeps } from '../../../lib/orchestrator';
 import type { StoredTx } from '../../../lib/repository';
 import { addDays } from '../../../lib/timeConfig';
+import { prepareReview } from '../../../lib/reviewPipeline';
 import { getApiContext, getPayPal, type ApiContext } from './context';
 import { errorResponse, HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField, unwrap, type Role } from './http';
 
@@ -132,6 +133,7 @@ export function ship(request: Request, id: string): Promise<Response> {
         extras: shipment.destinationMatches ? { inspectionUntil: addDays(context.now(), context.time.inspectionDays) } : {},
         eventPayload: { tracking, simulated: true, destinationMatches: shipment.destinationMatches },
       })));
+    if (delivered.tx.status === 'UNDER_REVIEW') await prepareReview(id, context);
     return json({ transaction: delivered.tx, courier: shipment });
   });
 }
@@ -175,6 +177,7 @@ export function submitEvidence(request: Request, id: string): Promise<Response> 
     const evidenceId = context.repo.recordEvidence({ txId: id, submittedBy: role, kind, content, contentHash: hash(content), ts: context.now() });
     if (!context.repo.bothSidesSubmitted(id)) return json({ evidenceId, transaction: context.repo.loadTransaction(id) }, 201);
     const result = unwrap(await applyTrigger(id, { type: 'EVIDENCE_COMPLETE' }, deps(context, role)));
+    await prepareReview(id, context);
     return json({ evidenceId, transaction: result.tx }, 201);
   });
 }
@@ -184,16 +187,34 @@ export function review(request: Request, id: string): Promise<Response> {
     const role = requireRole(request, ['reviewer']);
     const body = await jsonBody(request);
     noExtraFields(body, ['outcome', 'reason']);
-    if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE or REFUND');
+    if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND' && body.outcome !== 'SPLIT') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE, REFUND, or SPLIT');
     const reason = stringField(body, 'reason', 2000);
     const context = getApiContext();
-    requireTx(context, id);
+    const tx = requireTx(context, id);
+    if (tx.status === 'UNDER_REVIEW') await prepareReview(id, context);
+    if (body.outcome === 'SPLIT') {
+      if (tx.status !== 'UNDER_REVIEW') throw new HttpError(409, 'INVALID_STATE', 'Split requires human review');
+      context.repo.recordPendingSplit(id, 'reviewer', reason, context.now());
+      return json({ transaction: context.repo.loadTransaction(id), pendingSplit: true });
+    }
+    if (context.repo.hasPendingSplit(id)) throw new HttpError(409, 'SPLIT_PENDING', 'A pending split must be resolved before another decision');
     const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome },
       deps(context, role, true, {
         extras: { decision: { outcome: body.outcome, reviewerId: 'reviewer', reason } },
         eventPayload: { reason, outcome: body.outcome },
       })));
     return json({ transaction: result.tx });
+  });
+}
+
+export function getReview(request: Request, id: string): Promise<Response> {
+  return route(() => {
+    requireRole(request, ['reviewer']);
+    const context = getApiContext();
+    const tx = requireTx(context, id);
+    const recommendation = context.repo.loadRecommendation(id);
+    return json({ transaction: tx, recommendation, pendingSplit: context.repo.hasPendingSplit(id) },
+      recommendation ? 200 : 202);
   });
 }
 
@@ -243,11 +264,24 @@ export function tick(request: Request): Promise<Response> {
       try {
         const payment = trigger.type !== 'EVIDENCE_COMPLETE';
         const applied = unwrap(await applyTrigger(tx.id, trigger, deps(context, role, payment)));
+        if (applied.tx.status === 'UNDER_REVIEW') await prepareReview(tx.id, context);
         results.push({ txId: tx.id, status: applied.tx.status, ok: true });
       } catch (error) {
         const response = errorResponse(error);
         const body = await response.json() as { error: string };
         results.push({ txId: tx.id, ok: false, error: body.error });
+      }
+    }
+    for (const tx of context.repo.listByStatus('UNDER_REVIEW')) {
+      if (!context.repo.loadRecommendation(tx.id)) {
+        try {
+          await prepareReview(tx.id, context);
+          results.push({ txId: tx.id, status: tx.status, ok: true });
+        } catch (error) {
+          const response = errorResponse(error);
+          const body = await response.json() as { error: string };
+          results.push({ txId: tx.id, ok: false, error: body.error });
+        }
       }
     }
     return json({ checkedAt: now, results });
