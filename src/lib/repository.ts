@@ -384,6 +384,16 @@ export class TransactionRepository {
     });
   }
 
+  /** Finish a claimed PayPal call that does not change the transaction status. */
+  saveSideEffect(requestId: string, txId: string, event: AuditEventInput): void {
+    transaction(this.db, () => {
+      const updated = this.db.prepare('UPDATE idempotency SET result = ? WHERE key = ? AND result = ?')
+        .run(JSON.stringify({ state: 'success', tx: this.loadTransaction(txId) }), requestId, JSON.stringify({ state: 'pending' }));
+      if (updated.changes !== 1) throw new Error('Action claim was lost');
+      this.appendInTransaction(event);
+    });
+  }
+
   savePayPalFailure(requestId: string, error: ActionRecord & { state: 'error' }, event: AuditEventInput): void {
     transaction(this.db, () => {
       const updated = this.db.prepare('UPDATE idempotency SET result = ? WHERE key = ? AND result = ?')

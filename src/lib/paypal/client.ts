@@ -166,6 +166,27 @@ export class PayPalClient {
     return { refundId: String(data?.id), status: String(data?.status) };
   }
 
+  /**
+   * Attach shipment tracking to a captured order (Orders v2 `/track`). PayPal only accepts it
+   * after capture. Unknown couriers use carrier OTHER plus a name. Idempotent per capture and
+   * tracking number on PayPal's side; we also send a request id.
+   */
+  async addTracking(args: { orderId: string; captureId: string; trackingNumber: string; carrierName: string; requestId: string }) {
+    const data = await this.request('POST', `/v2/checkout/orders/${encodeURIComponent(args.orderId)}/track`, {
+      requestId: args.requestId,
+      body: {
+        capture_id: args.captureId,
+        tracking_number: args.trackingNumber,
+        carrier: 'OTHER',
+        carrier_name_other: args.carrierName,
+        notify_payer: false,
+      },
+    });
+    const trackers: Json[] = data?.purchase_units?.[0]?.shipping?.trackers ?? [];
+    const tracker = trackers.find((t) => String(t.id ?? '').endsWith(args.trackingNumber)) ?? trackers.at(-1);
+    return { trackerId: tracker?.id ? String(tracker.id) : `${args.captureId}-${args.trackingNumber}` };
+  }
+
   /** Capture details including the fee breakdown (seen in the Sandbox: 10.00 gross, 0.64 fee, 9.36 net). */
   async getCapture(captureId: string) {
     const data = await this.request('GET', `/v2/payments/captures/${encodeURIComponent(captureId)}`);

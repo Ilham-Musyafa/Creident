@@ -69,6 +69,17 @@ export async function runSandboxSmoke(client: PayPalClient, ask: Ask, log: Log, 
   } catch {
     log('Fee breakdown could not be read; attempting the full refund anyway.');
   }
+  // The app sends the seller's tracking number to PayPal right after capture. Check that the
+  // Sandbox accepts a made-up number with carrier OTHER. A rejection is reported, not fatal.
+  try {
+    const tracking = await client.addTracking({
+      orderId: order.orderId, captureId: capture.captureId, trackingNumber: `HV-SMOKE-${runId.slice(0, 8)}`,
+      carrierName: 'HalcyVault demo courier', requestId: requestIdFor(runId, 'add-tracking'),
+    });
+    log(`Tracking: added to the PayPal order (tracker ${tracking.trackerId}).`);
+  } catch (error) {
+    log(`Tracking: rejected by PayPal (${error instanceof Error ? error.message : String(error)}). Refunding anyway.`);
+  }
   const refund = await client.refundCapture(capture.captureId, requestIdFor(runId, 'refund'));
   if (refund.status !== 'COMPLETED') throw new Error(`Refund status is ${refund.status}, not COMPLETED.`);
   log('Refund: COMPLETED (confirmed).');

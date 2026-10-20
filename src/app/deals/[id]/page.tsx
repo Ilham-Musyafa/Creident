@@ -16,6 +16,11 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const role = await getRole();
   const created = (await searchParams).created === '1';
   const simulated = isSimulatedDeal(tx);
+  const events = tx.captured && tx.trackingNumber ? ctx.repo.readEvents(id) : [];
+  const trackingOnPayPal = !tx.captured || !tx.trackingNumber ? null
+    : events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED') ? (simulated ? 'Sent (simulated)' : 'Sent')
+    : events.some((e) => e.type === 'PAYPAL_TRACKING_FAILED') ? 'Failed, retried automatically'
+    : 'Not sent yet';
   const now = ctx.now();
   const terms = JSON.parse(tx.termsJson) as Record<string, unknown>;
   const criteria = Array.isArray(terms.criteria) ? terms.criteria as string[] : [];
@@ -72,6 +77,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (simulated)' : tx.captured ? 'See PayPal capture' : 'Shown after capture' },
             { label: 'Fee on refund borne by', value: 'TBD' },
+            ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>
           <p className="text-center text-xs text-muted">Every action is recorded in the audit log.</p>

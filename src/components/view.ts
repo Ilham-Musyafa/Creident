@@ -102,6 +102,8 @@ const EVENT_TITLES: Record<string, string> = {
   EXTERNAL_RESOLVED: 'PayPal dispute resolved',
   PAYPAL_WEBHOOK: 'PayPal webhook received',
   PAYPAL_ERROR: 'PayPal error',
+  PAYPAL_TRACKING_ADDED: 'Tracking sent to PayPal',
+  PAYPAL_TRACKING_FAILED: 'Sending tracking to PayPal failed',
   CANCEL: 'Cancelled',
 };
 

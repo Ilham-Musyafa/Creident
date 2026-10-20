@@ -50,7 +50,12 @@ Built (all on `integrate/codex-batch` until merged):
   `paypalMode: "simulated"`; deal pages show a "Simulated payment" notice for `SIM-`/`DEMO-`
   deals. Default stays the real Sandbox. Webhooks always use the real Sandbox client.
 
-Checks on 2026-10-21: `npm test` 106 passed (14 files), typecheck and build passed; full
+- PayPal tracking after capture (`src/lib/paypalTracking.ts`, branch `feat/paypal-tracking`):
+  confirm, reviewer RELEASE and the inspection deadline call Orders v2 `/track` with the
+  stored tracking number; idempotent per attempt, failures retried by `/api/jobs/tick`
+  (max 3). `npm run smoke` path b now also tests it against the real Sandbox.
+
+Checks on 2026-10-21: `npm test` 110 passed (14 files); earlier: `npm test` 106 passed (14 files), typecheck and build passed; full
 simulated flow clicked in Chromium (390px): create, accept, pay, approve, ship, confirm,
 audit chain verified, no console errors.
 
@@ -116,6 +121,10 @@ Still open:
 
 ## Log
 
+- 2026-10-21 02:45 WIB (Claude): PayPal tracking after capture (owner approved). Docs say
+  `/track` needs a captured order, so it runs after capture, not at shipping. Unknown until
+  the owner runs `npm run smoke` (path b): whether the Sandbox accepts a made-up number with
+  carrier OTHER. Also published a label-review page and a video/Devpost draft (outside the repo).
 - 2026-10-21 02:45 WIB (Claude): merged PR #8 (simulated PayPal mode) after verifying main
   (106 tests, typecheck, build). Rewrote README for judges on `docs/readme-judges`; every
   statement checked against the code, claim-rule wording scanned.

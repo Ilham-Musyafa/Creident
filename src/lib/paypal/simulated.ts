@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 import type { PayPalClient } from './client';
 
 export type PaymentGateway = Pick<PayPalClient,
-  'createAuthorizeOrder' | 'authorizeOrder' | 'captureAuthorization' | 'voidAuthorization' | 'refundCapture' | 'getOrderStatus'>;
+  'createAuthorizeOrder' | 'authorizeOrder' | 'captureAuthorization' | 'voidAuthorization' | 'refundCapture' | 'getOrderStatus' | 'addTracking'>;
 
 export type PayPalMode = 'sandbox' | 'simulated';
 
@@ -37,5 +37,6 @@ export function createSimulatedPayPal(): PaymentGateway {
     async captureAuthorization() { return { captureId: id('CAPTURE'), status: 'COMPLETED' }; },
     async voidAuthorization() { return undefined; },
     async refundCapture() { return { refundId: id('REFUND'), status: 'COMPLETED' }; },
+    async addTracking({ trackingNumber }) { return { trackerId: `${id('TRACKER')}-${trackingNumber}` }; },
   };
 }
