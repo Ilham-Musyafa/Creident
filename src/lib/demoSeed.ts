@@ -9,17 +9,19 @@ import { canonicalJson } from './audit/chain';
 import { applyTrigger, type OrchestratorDeps } from './orchestrator';
 import type { TransactionRepository, StoredTx } from './repository';
 import type { Trigger } from './domain/types';
+import { sendTrackingToPayPal, type TrackingClient } from './paypalTracking';
 import { addDays, type TimeConfig } from './timeConfig';
 
 type PaymentStub = NonNullable<OrchestratorDeps['paypal']>;
 
-function stubPayPal(prefix: string): PaymentStub {
+function stubPayPal(prefix: string): PaymentStub & TrackingClient {
   return {
     createAuthorizeOrder: async () => ({ orderId: `DEMO-ORDER-${prefix}`, status: 'PAYER_ACTION_REQUIRED', approvalUrl: '#demo' }),
     authorizeOrder: async () => ({ orderStatus: 'COMPLETED', authorizationId: `DEMO-AUTH-${prefix}`, authorizationStatus: 'CREATED' }),
     captureAuthorization: async () => ({ captureId: `DEMO-CAPTURE-${prefix}`, status: 'COMPLETED' }),
     voidAuthorization: async () => undefined,
     refundCapture: async () => ({ refundId: `DEMO-REFUND-${prefix}`, status: 'COMPLETED' }),
+    addTracking: async () => ({ trackerId: `DEMO-TRACKER-${prefix}` }),
   };
 }
 
@@ -81,8 +83,9 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
     // A seller always accepts their own terms when creating a deal (as the UI does).
     if (spec.steps[0] !== 'accept') repo.recordAcceptance(id, 'seller', hash(termsJson), now());
 
+    const paypal = stubPayPal(id.slice(0, 8));
     const deps = (actor: string, extra: Partial<OrchestratorDeps> = {}): OrchestratorDeps => ({
-      repo, actor, now, paypal: stubPayPal(id.slice(0, 8)),
+      repo, actor, now, paypal,
       returnUrl: 'https://example.com/demo-return', cancelUrl: 'https://example.com/demo-cancel',
       eventPayload: { simulated: true }, ...extra,
     });
@@ -122,6 +125,10 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         const actor = step.type === 'BUYER_CONFIRM' || step.type === 'CANCEL' || step.type === 'START_PAYMENT' || step.type === 'BUYER_APPROVED' ? 'buyer'
           : step.type === 'EXTERNAL_DISPUTE' ? 'paypal' : 'system';
         await run(step, actor, step.type === 'BUYER_APPROVED' ? { extras: { shipBy: addDays(now(), time.shipByDays) } } : {});
+        if (step.type === 'BUYER_CONFIRM') {
+          const tracking = await sendTrackingToPayPal(id, { repo, paypal, now, actor, eventPayload: { simulated: true } });
+          if (tracking !== 'sent') throw new Error(`Demo seed tracking was ${tracking}`);
+        }
       }
     }
   }
