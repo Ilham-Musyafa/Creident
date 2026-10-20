@@ -113,9 +113,10 @@ Rules that come from tested Sandbox behaviour:
 - Once captured, only refund is possible (`PREVIOUSLY_CAPTURED`).
 - Refund total must not exceed the captured amount.
 
-Time parameters (ship-by days, inspection window, evidence deadline, silence meaning)
-are configuration values, not constants in code **[OPEN: values]**. A silent buyer
-means "accept" only if tracking shows delivery to the agreed destination.
+Time parameters are configurable. **Placeholder defaults, not final owner decisions:**
+ship-by 3 days (`SHIP_BY_DAYS`), inspection 2 days (`INSPECTION_DAYS`), and evidence
+2 days (`EVIDENCE_DAYS`). The owner still needs to decide the final values. A silent
+buyer means "accept" only if tracking shows delivery to the agreed destination.
 
 ## 5. Decision rules (rules first)
 

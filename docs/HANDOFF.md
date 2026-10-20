@@ -38,6 +38,14 @@ Done:
   Request ids are claimed before calls; success or PayPal failure is recorded with an
   audit event. Interrupted calls remain pending for reconciliation instead of being
   sent twice. No UI, live PayPal calls, or new dependencies were added.
+- On `feat/api-routes`: the orchestrator is integrated into Next.js App Router JSON
+  handlers. Demo buyer/seller/reviewer users are seeded in SQLite; `x-demo-role` (or
+  `role=buyer` on PayPal return) declares the actor and each route checks its allowed
+  role. Routes cover transaction creation, two-party terms acceptance, payment and
+  return, simulated tracking, receipt confirmation, dispute/evidence, human review,
+  audit logs/verification, and deadline tick. No UI pages or real authentication.
+  Handler tests use an in-memory database and fake PayPal fetch. Live route calls
+  against the PayPal Sandbox remain to be tested by the owner.
 
 ## How to run
 
@@ -50,15 +58,18 @@ npm run build
 
 ## Next steps
 
-1. Review and merge `feat/orchestrator` after checks. The app scaffold remains separate
-   from `main` and must be integrated in its own task.
+1. Review `feat/api-routes` alongside `feat/orchestrator`. The API branch includes the
+   orchestrator commit because `main` did not yet contain it. The separate UI scaffold
+   branch was not integrated; this task adds the required Next.js runtime without pages.
 2. Owner: finish remaining Sandbox tests (webhooks, dispute simulation, Platform app /
    Payouts), then record results in `docs/SANDBOX-NOTES.md`.
-3. Connect the repository and orchestrator to app routes without importing Next.js into
-   `src/lib/`.
-4. A local smoke script that runs the real Sandbox flow (create order, open approval URL,
-   authorize, void) using `.env`, so the client is verified end to end.
-5. Webhook endpoint (signature verification, de-duplication, freeze on dispute/reversal).
+3. Add the PayPal webhook endpoint with signature verification, event-id de-duplication,
+   and external dispute/reversal freeze. This remains separate from the role-based demo
+   requests because PayPal sends the webhook.
+4. Run the local Sandbox smoke script on the owner's PC and test the JSON routes against
+   the real Sandbox; fake fetch tests do not verify network or account configuration.
+5. Add UI pages in their own task and replace declared demo roles with authentication
+   before any deployment beyond the controlled demo.
 
 ## Decisions waiting for the owner
 
@@ -71,7 +82,8 @@ Verify the model name, API terms, strict-JSON reliability and image support firs
 
 Still open:
 - Who bears the fee on a refund.
-- Time parameters (ship-by, inspection window, evidence deadline).
+- Final time parameters (temporary defaults: ship-by 3 days, inspection 2 days,
+  evidence 2 days; configurable via environment variables).
 - Final public name (the word "Vault" suggests custody) and hosting.
 
 ## Do not forget
@@ -83,6 +95,10 @@ Still open:
 
 ## Log
 
+- 2026-10-20 (Codex): implemented and tested the JSON API on `feat/api-routes`, with
+  demo roles, fixed simulated courier data, configurable placeholder deadlines, and
+  direct handler tests. `npm test` passed 68 tests, and `npm run typecheck` and
+  `npm run build` passed. No live PayPal calls were made.
 - 2026-10-20 (Codex): implemented SQLite persistence and the PayPal orchestrator on
   `feat/orchestrator`, with in-memory tests and no live credentials.
 - 2026-10-20 22:30 WIB (Claude): built the core domain on `feat/core-domain`

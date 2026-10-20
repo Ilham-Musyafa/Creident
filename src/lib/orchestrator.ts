@@ -1,18 +1,20 @@
 import type { Trigger, Effect } from './domain/types';
 import { transition } from './domain/stateMachine';
 import { PayPalError, requestIdFor, type PayPalClient } from './paypal/client';
-import { TransactionRepository, type ActionRecord, type StoredTx } from './repository';
+import { TransactionRepository, type ActionRecord, type StoredTx, type TransitionExtras } from './repository';
 
 type PaymentClient = Pick<PayPalClient,
   'createAuthorizeOrder' | 'authorizeOrder' | 'captureAuthorization' | 'voidAuthorization' | 'refundCapture'>;
 
 export interface OrchestratorDeps {
   repo: TransactionRepository;
-  paypal: PaymentClient;
+  paypal?: PaymentClient;
   actor?: string;
   now?: () => string;
   returnUrl?: string;
   cancelUrl?: string;
+  extras?: TransitionExtras;
+  eventPayload?: Record<string, unknown>;
 }
 
 export class DomainError extends Error {
@@ -52,11 +54,13 @@ function cachedResult(record: ActionRecord): ApplyResult {
 async function performEffect(
   effect: Effect['kind'], tx: StoredTx, requestId: string, deps: OrchestratorDeps,
 ): Promise<{ ids: Partial<Pick<StoredTx, 'paypalOrderId' | 'paypalAuthId' | 'paypalCaptureId'>>; approvalUrl?: string }> {
+  if (effect !== 'NONE' && !deps.paypal) throw new DomainError('PAYPAL_UNAVAILABLE', 'PayPal client is required for this action');
+  const paypal = deps.paypal!;
   switch (effect) {
     case 'NONE': return { ids: {} };
     case 'PAYPAL_CREATE_ORDER': {
       if (!deps.returnUrl || !deps.cancelUrl) throw new DomainError('MISSING_PAYMENT_URLS', 'Payment return and cancel URLs are required');
-      const result = await deps.paypal.createAuthorizeOrder({
+      const result = await paypal.createAuthorizeOrder({
         amount: { currency: tx.currency, value: tx.amount },
         returnUrl: deps.returnUrl, cancelUrl: deps.cancelUrl, requestId,
       });
@@ -64,23 +68,23 @@ async function performEffect(
     }
     case 'PAYPAL_AUTHORIZE': {
       if (!tx.paypalOrderId) throw new DomainError('MISSING_ORDER_ID', 'Transaction has no PayPal order');
-      const result = await deps.paypal.authorizeOrder(tx.paypalOrderId, requestId);
+      const result = await paypal.authorizeOrder(tx.paypalOrderId, requestId);
       return { ids: { paypalAuthId: result.authorizationId } };
     }
     case 'PAYPAL_CAPTURE': {
       if (!tx.paypalAuthId) throw new DomainError('MISSING_AUTH_ID', 'Transaction has no PayPal authorization');
-      const result = await deps.paypal.captureAuthorization(tx.paypalAuthId, requestId);
+      const result = await paypal.captureAuthorization(tx.paypalAuthId, requestId);
       if (!result.captureId || result.captureId === 'undefined') throw new Error('PayPal capture response has no capture id');
       return { ids: { paypalCaptureId: result.captureId } };
     }
     case 'PAYPAL_VOID': {
       if (!tx.paypalAuthId) throw new DomainError('MISSING_AUTH_ID', 'Transaction has no PayPal authorization');
-      await deps.paypal.voidAuthorization(tx.paypalAuthId, requestId);
+      await paypal.voidAuthorization(tx.paypalAuthId, requestId);
       return { ids: {} };
     }
     case 'PAYPAL_REFUND': {
       if (!tx.paypalCaptureId) throw new DomainError('MISSING_CAPTURE_ID', 'Transaction has no PayPal capture');
-      await deps.paypal.refundCapture(tx.paypalCaptureId, requestId);
+      await paypal.refundCapture(tx.paypalCaptureId, requestId);
       return { ids: {} };
     }
   }
@@ -101,6 +105,9 @@ export async function applyTrigger(txId: string, trigger: Trigger, deps: Orchest
   if (!result.ok) return { ok: false, error: new DomainError(result.code, result.message) };
   if (result.effect.kind !== 'NONE' && result.effect.kind !== action) {
     throw new Error('Trigger-to-effect mapping does not match the state machine');
+  }
+  if (result.effect.kind !== 'NONE' && !deps.paypal) {
+    return { ok: false, error: new DomainError('PAYPAL_UNAVAILABLE', 'PayPal client is required for this action') };
   }
 
   if (requestId && result.effect.kind !== 'NONE') {
@@ -127,8 +134,9 @@ export async function applyTrigger(txId: string, trigger: Trigger, deps: Orchest
         from: tx.status, to: result.tx.status, effect: result.effect.kind,
         ...(requestId ? { requestId } : {}),
         ...payment.ids,
+        ...deps.eventPayload,
       },
-    }, requestId, payment.approvalUrl);
+    }, requestId, payment.approvalUrl, deps.extras);
     return { ok: true, tx: saved, approvalUrl: payment.approvalUrl };
   } catch (error) {
     if (!(error instanceof PayPalError) || !requestId) throw error;
