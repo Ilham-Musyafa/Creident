@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { appendEvent, type AuditEvent, type AuditEventInput } from './audit/chain';
 import type { Tx, TxStatus } from './domain/types';
+import { transition } from './domain/stateMachine';
 
 export interface StoredTx extends Tx {
   buyerId: string;
@@ -31,6 +32,20 @@ export type ActionRecord =
   | { state: 'pending' }
   | { state: 'success'; tx: StoredTx; approvalUrl?: string }
   | { state: 'error'; status: number; code: string; issue?: string; debugId?: string; message: string };
+
+export interface VerifiedWebhookEvent {
+  id: string;
+  type: string;
+  resourceId?: string;
+  relatedIds: string[];
+  receivedAt: string;
+}
+
+export interface WebhookResult {
+  duplicate: boolean;
+  txId: string | null;
+  status?: TxStatus;
+}
 
 function transaction<T>(db: DatabaseSync, work: () => T): T {
   db.exec('BEGIN IMMEDIATE');
@@ -114,6 +129,52 @@ export class TransactionRepository {
 
   appendAuditEvent(input: AuditEventInput): AuditEvent {
     return transaction(this.db, () => this.appendInTransaction(input));
+  }
+
+  processVerifiedWebhook(event: VerifiedWebhookEvent): WebhookResult {
+    return transaction(this.db, () => {
+      if (this.db.prepare('SELECT 1 FROM paypal_events WHERE event_id = ?').get(event.id)) {
+        return { duplicate: true, txId: null };
+      }
+      const found = new Set<string>();
+      for (const id of new Set(event.relatedIds)) {
+        const rows = this.db.prepare(`SELECT id FROM transactions
+          WHERE paypal_order_id = ? OR paypal_auth_id = ? OR paypal_capture_id = ?`).all(id, id, id);
+        for (const row of rows) found.add(String(row.id));
+      }
+      // A resolved dispute may carry only its dispute id, so retain the mapping from
+      // the previously verified creation notification.
+      if (event.type === 'CUSTOMER.DISPUTE.RESOLVED' && event.resourceId) {
+        const rows = this.db.prepare(`SELECT tx_id FROM paypal_events
+          WHERE type = 'CUSTOMER.DISPUTE.CREATED' AND resource_id = ? AND tx_id IS NOT NULL`).all(event.resourceId);
+        for (const row of rows) found.add(String(row.tx_id));
+      }
+      if (found.size > 1) throw new Error('PayPal webhook maps to multiple transactions');
+      const txId = found.values().next().value as string | undefined;
+      this.db.prepare(`INSERT INTO paypal_events (event_id, type, tx_id, resource_id, received_at, processed_at)
+        VALUES (?, ?, ?, ?, ?, ?)`).run(event.id, event.type, txId ?? null, event.resourceId ?? null, event.receivedAt, event.receivedAt);
+      if (!txId) return { duplicate: false, txId: null };
+
+      const tx = this.loadTransaction(txId)!;
+      const trigger = event.type === 'CUSTOMER.DISPUTE.CREATED' || event.type === 'PAYMENT.CAPTURE.REVERSED'
+        ? { type: 'EXTERNAL_DISPUTE' as const }
+        : event.type === 'CUSTOMER.DISPUTE.RESOLVED' ? { type: 'EXTERNAL_RESOLVED' as const } : null;
+      const changed = trigger ? transition(tx, trigger) : null;
+      if (changed?.ok) {
+        const update = this.db.prepare(`UPDATE transactions SET status = ?, frozen_from = ?, updated_at = datetime('now')
+          WHERE id = ? AND status = ?`).run(changed.tx.status, changed.tx.frozenFrom ?? null, txId, tx.status);
+        if (update.changes !== 1) throw new Error('Transaction status changed concurrently');
+      }
+      this.appendInTransaction({
+        txId, ts: event.receivedAt, actor: 'paypal', type: 'PAYPAL_WEBHOOK',
+        payload: {
+          eventId: event.id, eventType: event.type, resourceId: event.resourceId ?? null,
+          from: tx.status, to: changed?.ok ? changed.tx.status : tx.status,
+          ...(changed && !changed.ok ? { ignoredReason: changed.code } : {}),
+        },
+      });
+      return { duplicate: false, txId, status: changed?.ok ? changed.tx.status : tx.status };
+    });
   }
 
   createTransaction(tx: StoredTx, event: AuditEventInput): void {

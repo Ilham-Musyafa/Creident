@@ -35,6 +35,14 @@ export interface Money {
   value: string;
 }
 
+export interface WebhookSignature {
+  authAlgo: string;
+  certUrl: string;
+  transmissionId: string;
+  transmissionSig: string;
+  transmissionTime: string;
+}
+
 const MONEY_RE = /^\d+\.\d{2}$/;
 
 /** Deterministic idempotency key: the same action on the same transaction reuses the same id. */
@@ -168,6 +176,23 @@ export class PayPalClient {
       fee: toMoney(b?.paypal_fee),
       net: toMoney(b?.net_amount),
     };
+  }
+
+  /** Ask PayPal to verify the signed notification against this Sandbox webhook id. */
+  async verifyWebhookSignature(webhookId: string, signature: WebhookSignature, webhookEvent: unknown): Promise<boolean> {
+    if (!webhookId) throw new Error('PayPal webhook id is required');
+    const data = await this.request('POST', '/v1/notifications/verify-webhook-signature', {
+      body: {
+        auth_algo: signature.authAlgo,
+        cert_url: signature.certUrl,
+        transmission_id: signature.transmissionId,
+        transmission_sig: signature.transmissionSig,
+        transmission_time: signature.transmissionTime,
+        webhook_id: webhookId,
+        webhook_event: webhookEvent,
+      },
+    });
+    return data?.verification_status === 'SUCCESS';
   }
 }
 

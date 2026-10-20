@@ -31,8 +31,7 @@ const at = (iso: string): number => {
 };
 
 export function transition(tx: Tx, trigger: Trigger): TransitionResult {
-  if (isFinal(tx.status)) {
-    // Limitation: a PayPal dispute after capture (COMPLETED) is not modelled yet.
+  if (isFinal(tx.status) && trigger.type !== 'EXTERNAL_DISPUTE') {
     return fail('FINAL_STATE', `Transaction is already ${tx.status}`);
   }
 
