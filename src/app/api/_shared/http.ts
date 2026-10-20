@@ -19,12 +19,36 @@ export function requireRole(request: Request, allowed: readonly Role[], queryRol
   return role as Role;
 }
 
+/** Stop reading at the configured byte limit, including chunked bodies without Content-Length. */
+export async function readBodyLimited(request: Request, maxBytes: number, message: string): Promise<string> {
+  const length = Number(request.headers.get('content-length'));
+  if (Number.isFinite(length) && length > maxBytes) throw new HttpError(413, 'BODY_TOO_LARGE', message);
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let bytes = 0;
+  let text = '';
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) return text + decoder.decode();
+      bytes += value.byteLength;
+      if (bytes > maxBytes) {
+        await reader.cancel();
+        throw new HttpError(413, 'BODY_TOO_LARGE', message);
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 export async function jsonBody(request: Request): Promise<Record<string, unknown>> {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
     throw new HttpError(415, 'JSON_REQUIRED', 'Send application/json');
   }
-  const raw = await request.text();
-  if (raw.length > 16_384) throw new HttpError(413, 'BODY_TOO_LARGE', 'JSON body exceeds 16 KB');
+  const raw = await readBodyLimited(request, 16_384, 'JSON body exceeds 16 KB');
   let parsed: unknown;
   try { parsed = JSON.parse(raw); } catch { throw new HttpError(400, 'INVALID_JSON', 'Invalid JSON body'); }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new HttpError(400, 'INVALID_JSON', 'Expected a JSON object');
