@@ -62,6 +62,14 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
+## Active agent (2026-10-21 05:10 WIB)
+
+**Codex** works through prompts C1-C5 until about 10:00 WIB; Claude is inactive meanwhile.
+Each prompt: branch from the latest `origin/main` (never from another task branch), push the
+branch, and add a log entry here. Claude opens and merges the PRs afterwards.
+C1 fresh-clone README check · C2 security pass · C3 accessibility and mobile pass ·
+C4 tracking event in demo seed · C5 reconciliation proposal (docs only).
+
 ## How to run
 
 ```
