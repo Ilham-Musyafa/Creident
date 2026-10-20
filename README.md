@@ -31,6 +31,12 @@ HalcyVault explores a different shape for the same job:
 - the AI step is **tested for bias and prompt injection**, and the results are published
   with their limits.
 
+**How it's different.** HalcyVault is built for the everyday case: two strangers trading a
+used item over chat. There is no marketplace account and no listing, just a shared link.
+Rules recommend, a person decides every dispute with a written reason, and we publish how
+often the recommended outcome changes when only names, evidence order or writing style
+change.
+
 ## 2. How it works
 
 ```
@@ -81,6 +87,14 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
   `hash = SHA-256(prevHash + "\n" + canonical JSON of the event)`. The Audit screen recomputes
   every chain and shows the head hash. Honest limit: the operator still runs the server
   and holds the PayPal keys, so the log makes changes **detectable**, not impossible.
+- **Making disputes easier to settle**: the seller can add a ready-made checklist per item
+  type (phone, laptop, camera, headphones or speaker, game console), each check provable
+  with a photo or video. The buyer picks a dispute type (not received, not as described,
+  damaged, parts missing) and both sides see which evidence usually settles it. Neither
+  changes the rules.
+- **Decision receipt** (`/deals/[id]/decision`): after a dispute, both parties see the
+  outcome, the reviewer's reason, what the rules recommended, the evidence with content
+  hashes, and the decision's event in the audit chain.
 
 ## 3. What is real and what is simulated
 
@@ -173,6 +187,9 @@ labels are drafts, and the replayed summaries were written from those labels. It
 the harness, the rules and the injection flag. It does **not** yet measure a live model.
 A run with a live model, with reviewed labels and its sample size, is planned.
 
+The same numbers are shown in the app on the **Fairness results** page (`/fairness`, from
+`eval/results.json`), with the same limits stated on the page.
+
 ## 6. Limitations and production path
 
 - The platform operator is still trusted: it runs the server, holds the PayPal keys and
@@ -184,11 +201,14 @@ A run with a live model, with reviewed labels and its sample size, is planned.
 - Split outcomes are recorded but not paid out.
 - PayPal does not return its fee on a refund (seen in the Sandbox). The platform bears it,
   so a buyer who is refunded gets the full amount back.
-- No real sign-in, file upload, courier integration or seller payout.
+- No real sign-in, file upload, courier integration or seller payout. Real tracking would
+  use a multi-carrier tracking API with the courier chosen by the seller.
 - A real launch would need funds held by a licensed party (for example a PayPal
   partner product with delayed disbursement, or a licensed payment provider), PayPal's
   approval (its Acceptable Use Policy lists escrow services and marketplaces as needing
   pre-approval), and local licensing review in Indonesia. This is not legal advice.
+- Later, the same rules-first pattern could extend to milestone-based services, such as
+  home renovation paid per stage, with one PayPal order per milestone.
 
 ## 7. Tech stack and AI tools
 

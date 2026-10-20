@@ -132,6 +132,16 @@ Still open:
 
 ## Log
 
+- 2026-10-21 06:05 WIB (Claude, owner-approved "1-4"): merged Codex C1-C3 (PR #14). Added
+  `/fairness` (eval writes `eval/results.json`; empty `EVAL_K` now defaults to 3), decision
+  receipt `/deals/[id]/decision` (+ `loadDecisions`), item-type checklist templates
+  (`src/lib/termsTemplates.ts`), dispute types with evidence guidance
+  (`src/lib/disputeTypes.ts`, optional `type` on POST dispute). Rules unchanged. 123 tests,
+  typecheck, build; Chromium walk-through of all four at 360/390/1440px, no console errors.
+  Next owner-requested batch "CloneIDE": decisions bound to terms and evidence hashes,
+  signed head hash published outside the server, audit CSV export (do only when asked).
+  Open for the owner: C3 found light `--muted` contrast 4.43:1 (below AA); token change
+  needs approval.
 - 2026-10-21 05:18 WIB (Codex, C1): checked README Option A from a fresh clone on
   `codex/c1-readme-check`: `npm ci`, copied `.env.example`, set `PAYPAL_MODE=simulated`,
   and ran `npm run dev`. Browser created a synthetic deal, buyer accepted terms and
