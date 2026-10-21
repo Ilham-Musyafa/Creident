@@ -38,6 +38,27 @@ async function showDispute(client: PayPalClient, id: string, log: Log) {
 export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Log, disputeId: string): Promise<void> {
   log(`Resuming dispute ${disputeId}`);
   let d = await showDispute(client, disputeId, log);
+  if (d.actions.includes('send_message')) {
+    try {
+      await client.sendDisputeMessage(disputeId, 'HalcyVault: the terms were locked before payment and the item shipped with tracking. A decision receipt and the audit log are available. (Synthetic Sandbox test.)');
+      log('Message to buyer (inquiry stage): sent.');
+    } catch (error) { log(`Message to buyer: rejected: ${describe(error)}`); }
+  }
+  if (d.actions.includes('escalate') && !d.actions.includes('provide_evidence')) {
+    const go = (await ask('Escalate this inquiry to a PayPal claim as the seller, so evidence can be sent? [y/n]: ')).trim().toLowerCase();
+    if (go === 'y') {
+      try {
+        await client.escalateDispute(disputeId, 'Escalated by HalcyVault to submit locked evidence. Synthetic Sandbox test.');
+        log('Escalated to a claim.');
+      } catch (error) { log(`Escalate: rejected: ${describe(error)}`); }
+      for (let i = 0; i < 6; i++) {
+        d = await showDispute(client, disputeId, log);
+        if (d.stage !== 'INQUIRY' && (d.actions.includes('require_evidence') || d.actions.includes('provide_evidence'))) break;
+        const again = (await ask('PayPal may need a few minutes. Press Enter to check again (or type skip): ')).trim().toLowerCase();
+        if (again === 'skip') break;
+      }
+    }
+  }
   if (!d.actions.includes('provide_evidence')) {
     try {
       await client.sandboxRequireEvidence(disputeId, 'SELLER_EVIDENCE');

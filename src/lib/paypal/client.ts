@@ -244,6 +244,11 @@ export class PayPalClient {
     return this.request('POST', `/v1/customer/disputes/${encodeURIComponent(disputeId)}/send-message`, { body: { message } });
   }
 
+  /** Merchant escalates an inquiry to a PayPal claim, where evidence can be provided. */
+  async escalateDispute(disputeId: string, note: string) {
+    return this.request('POST', `/v1/customer/disputes/${encodeURIComponent(disputeId)}/escalate`, { body: { note } });
+  }
+
   /** Sandbox only: move a dispute to waiting for seller (or buyer) evidence. */
   async sandboxRequireEvidence(disputeId: string, action: 'SELLER_EVIDENCE' | 'BUYER_EVIDENCE') {
     this.assertSandbox();
