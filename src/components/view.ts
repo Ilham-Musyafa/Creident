@@ -146,3 +146,17 @@ export function evidenceCode(txId: string): string {
 export function isSimulatedDeal(tx: { paypalOrderId?: string | null }): boolean {
   return /^(SIM|DEMO)-/.test(tx.paypalOrderId ?? '');
 }
+
+const DAY = 86_400_000;
+
+/**
+ * PayPal honours an authorization for 3 days; after that a capture usually still works until
+ * day 29 but is not guaranteed (docs/DESIGN.md section 3).
+ */
+export function authorizationWindow(authorizedAt: string, now: string): { honorEndsAt: string; expiresAt: string; phase: 'honor' | 'after-honor' | 'expired' } {
+  const start = Date.parse(authorizedAt);
+  const honorEndsAt = new Date(start + 3 * DAY).toISOString();
+  const expiresAt = new Date(start + 29 * DAY).toISOString();
+  const t = Date.parse(now);
+  return { honorEndsAt, expiresAt, phase: t < start + 3 * DAY ? 'honor' : t < start + 29 * DAY ? 'after-honor' : 'expired' };
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor } from './view';
+import { authorizationWindow, eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor } from './view';
 
 describe('view helpers', () => {
   it('formats money and time left', () => {
@@ -44,5 +44,14 @@ describe('isSimulatedDeal', () => {
     expect(isSimulatedDeal({ paypalOrderId: 'DEMO-ORDER-1' })).toBe(true);
     expect(isSimulatedDeal({ paypalOrderId: '5O190127TN364715T' })).toBe(false);
     expect(isSimulatedDeal({})).toBe(false);
+  });
+});
+
+describe('authorizationWindow', () => {
+  it('marks the 3-day honor period and the 29-day expiry', () => {
+    const at = '2026-10-01T00:00:00.000Z';
+    expect(authorizationWindow(at, '2026-10-03T23:00:00.000Z')).toMatchObject({ phase: 'honor', honorEndsAt: '2026-10-04T00:00:00.000Z' });
+    expect(authorizationWindow(at, '2026-10-05T00:00:00.000Z').phase).toBe('after-honor');
+    expect(authorizationWindow(at, '2026-10-30T00:00:00.000Z')).toMatchObject({ phase: 'expired', expiresAt: '2026-10-30T00:00:00.000Z' });
   });
 });
