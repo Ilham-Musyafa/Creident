@@ -1,7 +1,7 @@
 # Sandbox notes
 
 Results of hands-on tests against the **PayPal Sandbox** (`https://api-m.sandbox.paypal.com`).
-Date: 2026-10-20. Tested by the owner with PowerShell, using a Merchant-type sandbox app and
+Dates: 2026-10-20–21. Tested by the owner with PowerShell, using a Merchant-type sandbox app and
 the default Business + Personal sandbox accounts. No secrets are recorded here.
 
 Sandbox figures (fees, behaviour) are not guaranteed to match production.
@@ -41,14 +41,15 @@ Learned: approving with the Sandbox **Business** account fails ("you are logged 
 seller account"); the buyer must use the Personal account. On Windows, run `npm.cmd`
 when PowerShell blocks `npm.ps1`.
 
-## Disputes API probe (`npm run dispute-probe`, pending owner run)
+## Disputes API probe (`npm run dispute-probe`, owner run 2026-10-21)
 
 Docs (checked 2026-10-21): creating a dispute through the API needs the `DISPUTE_CREATE`
 scope from a PayPal account manager, so the buyer opens it by hand in the Sandbox
 Resolution Center. Merchant calls (list, show, provide-evidence, send-message) and the
-Sandbox-only simulations `require-evidence` and `adjudicate` should work with the app's own
-token. The docs disagree on the provide-evidence body (multipart file vs JSON); the probe
-tries a PDF as multipart first, then JSON notes, and prints which one PayPal accepted.
+Sandbox-only simulations `require-evidence` and `adjudicate` were candidates to test
+with the app's token, not established capabilities. The docs disagree on the
+provide-evidence body (multipart file vs JSON); the probe tries multipart first,
+then JSON notes. The observed stage restrictions and accepted format are below.
 
 First owner run (2026-10-21): the buyer opened dispute `PP-R-OIU-10193936` (SNAD) in the
 Sandbox Resolution Center. Listing and reading disputes with the app's own token **works**
@@ -89,7 +90,8 @@ UNDER_REVIEW. Each change took about 3 minutes to appear.
   `total_refunded_amount` field was cut off in the output, so treat this as likely, not
   confirmed.
 - Design consequence: the UI must show fees before payment, and the dispute rules must say
-  who bears the fee on a refund.
+  who bears the fee on a refund. The owner decided on 2026-10-21 that the platform
+  bears it and the buyer gets a full refund; this policy does not prove PayPal fee treatment.
 
 ## Error shape
 
@@ -111,14 +113,20 @@ Use `details[].issue` as the machine-readable code and store `debug_id` in the a
 - A new order needs a new `PayPal-Request-Id`.
 - Every money-moving call should send its own unique `PayPal-Request-Id`.
 
-## Not tested yet (as of 2026-10-20)
+## Not tested yet (updated 2026-10-21)
 
 - Webhooks (which events arrive for authorize/capture/refund/void).
 - The new webhook handler's signature verification, dispute freeze, and resume paths
   have only been tested with fake PayPal verification responses. The owner still needs
   to test real Sandbox webhook delivery; PayPal needs a public HTTPS callback URL and
   the matching `PP_WEBHOOK_ID` from the Sandbox app.
-- Disputes (can a dispute be simulated on a sandbox transaction?).
+- The integrated PayPal dispute bridge from PR #31: polling/webhook coexistence,
+  freeze/resume and evidence/message/escalation are covered by fake-client and
+  labelled local-simulation tests. An owner-run integrated real Sandbox check is
+  still pending. The successful separate client probe above does not prove it.
+- Real PayPal dispute resolution/adjudication and financial-outcome reconciliation.
+  The observed case ended UNDER_REVIEW; no final outcome was tested. Local
+  EXTERNAL_RESOLVED resumes the prior status and does not infer refund/capture.
 - A `Platform`-type app, delayed disbursement, multiparty, Payouts (may need partner
   approval).
 - Re-authorization, expiry of authorization (29 days), partial capture, partial refund.
@@ -132,4 +140,4 @@ Use `details[].issue` as the machine-readable code and store `debug_id` in the a
 - Refund is allowed within 180 days of the capture.
 - PayPal's Acceptable Use Policy lists escrow services and marketplaces as requiring
   pre-approval. This is why the project is framed as a prototype and why the production
-  path would be a licensed partner.
+  path would require an appropriately authorized payment partner and regulatory review.

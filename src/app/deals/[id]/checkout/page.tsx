@@ -44,7 +44,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
           ))}
         </ol>
 
-        <Notice tone={simulated ? 'warning' : 'info'}>{simulated ? 'Simulated PayPal mode: no real or Sandbox money moves. ' : 'Sandbox demo. '}HalcyVault is a dispute-mediation prototype, not a licensed escrow service.</Notice>
+        <Notice tone={simulated ? 'warning' : 'info'}>{simulated ? 'Simulated PayPal mode: no real or Sandbox money moves. ' : 'Sandbox demo. '}HalcyVault is a dispute-mediation prototype, not an escrow service.</Notice>
 
         {role !== 'buyer' ? <Notice>Only the buyer pays. Switch to Buyer in Menu.</Notice>
           : tx.status === 'DRAFT' && accepted.includes('buyer') ? <Notice>You accepted the terms. Waiting for the seller to accept.</Notice>

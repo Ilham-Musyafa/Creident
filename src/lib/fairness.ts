@@ -33,7 +33,7 @@ export function formatRate(r: Rate): string {
   return r.percent === null ? 'n/a' : `${r.percent.toFixed(1)}%`;
 }
 
-/** Absolute gap in percentage points between false-release and false-refund rates. */
+/** Magnitude of the gap in percentage points between false-release and false-refund rates. */
 export function errorGap(m: FairnessMetrics): number | null {
   const a = rate(m.falseRelease, m.buyerRight).percent;
   const b = rate(m.falseRefund, m.sellerRight).percent;
