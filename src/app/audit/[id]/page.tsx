@@ -1,9 +1,10 @@
+import { AuditExportButton } from '../../../components/client';
 import { notFound } from 'next/navigation';
 import { verifyChain } from '../../../lib/audit/chain';
 import { AuditEvent, ChainStatus } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader } from '../../../components/layout';
 import { eventTitle, shortDate, shortHash } from '../../../components/view';
-import { data, isUuid } from '../../_server';
+import { data, getRole, isUuid } from '../../_server';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
   const ctx = data();
   const tx = ctx.repo.loadTransaction(id);
   if (!tx) notFound();
+  const role = await getRole();
   const events = ctx.repo.readEvents(id);
   const check = verifyChain(events);
 
@@ -20,6 +22,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
     <AppShell active="Audit">
       <PageHeader title="Audit log" back={`/deals/${id}`} subtitle={tx.item}/>
       <div className="mx-auto max-w-2xl space-y-4">
+        <AuditExportButton txId={id} role={role}/>
         <ChainStatus verified={check.ok} count={events.length} headHash={check.ok ? shortHash(check.head, 6) : `Mismatch at event #${check.brokenAtSeq}: ${check.reason}`}/>
         <Card className="px-4 py-1">
           <ol>

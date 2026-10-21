@@ -1,3 +1,5 @@
+import { GET as exportAudit } from './audit/[id]/export/route';
+import { canonicalJson } from '../../lib/audit/chain';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
@@ -108,7 +110,54 @@ afterEach(() => {
   db.close();
 });
 
+// Decode quoted records so embedded newlines do not masquerade as extra events.
+function csvRecords(csv: string): string[][] {
+  const records: string[][] = [];
+  let record: string[] = [], field = '', quoted = false;
+  for (let i = 0; i < csv.length; i++) {
+    const char = csv[i]!;
+    if (char === '"') {
+      if (quoted && csv[i + 1] === '"') { field += '"'; i++; }
+      else quoted = !quoted;
+    } else if (char === ',' && !quoted) { record.push(field); field = ''; }
+    else if (char === '\r' && csv[i + 1] === '\n' && !quoted) {
+      record.push(field); records.push(record); record = []; field = ''; i++;
+    } else field += char;
+  }
+  return records;
+}
+
 describe('JSON route handlers', () => {
+  it.each(['buyer', 'seller', 'reviewer'])('exports audit events safely for the %s role', async role => {
+    const id = await createReadyTransaction();
+    const payload = { z: '=HYPERLINK("synthetic")', a: 'A comma, a "quote", and a newline\nend', simulated: true };
+    repo.appendAuditEvent({ txId: id, ts: currentTime, actor: '=1+1', type: 'Synthetic, "quoted"\r\nevent', payload });
+    const before = repo.readEvents(id);
+    const response = await exportAudit(request(`/api/audit/${id}/export`, role), param(id));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('text/csv; charset=utf-8');
+    expect(response.headers.get('content-disposition')).toBe(`attachment; filename="audit-${id}.csv"`);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    const records = csvRecords(await response.text());
+    expect(records[0]).toEqual(['seq', 'ts', 'actor', 'type', 'simulated', 'prevHash', 'hash', 'payload']);
+    expect(records).toHaveLength(before.length + 1);
+    expect(records.at(-1)).toEqual([
+      String(before.at(-1)!.seq), currentTime, "'=1+1", 'Synthetic, "quoted"\r\nevent',
+      'true', before.at(-1)!.prevHash, before.at(-1)!.hash, canonicalJson(payload),
+    ]);
+    expect(records[1]![4]).toBe('false');
+    expect(repo.readEvents(id)).toEqual(before);
+    expect(verifyChain(before).ok).toBe(true);
+  });
+
+  it('returns 400/404 for invalid/unknown export ids and checks the demo role', async () => {
+    expect((await exportAudit(request('/api/audit/invalid/export', 'buyer'), param('invalid'))).status).toBe(400);
+    const id = randomUUID();
+    expect((await exportAudit(request(`/api/audit/${id}/export`, 'reviewer'), param(id))).status).toBe(404);
+    expect((await exportAudit(request(`/api/audit/${id}/export`), param(id))).status).toBe(400);
+    expect((await exportAudit(request(`/api/audit/${id}/export`, 'admin'), param(id))).status).toBe(400);
+  });
+
   it('locks terms, pays, authorizes, ships, confirms, and verifies the audit chain', async () => {
     const id = await createReadyTransaction();
     expect(repo.loadTransaction(id)?.shipBy).toBe('2026-10-23T00:00:00.000Z');

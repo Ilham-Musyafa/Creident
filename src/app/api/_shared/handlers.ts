@@ -1,3 +1,4 @@
+import { auditCsv } from '../../../lib/audit/csv';
 import { createHash, randomUUID } from 'node:crypto';
 import { canonicalJson, verifyChain } from '../../../lib/audit/chain';
 import { mockShipment } from '../../../lib/mockCourier';
@@ -253,6 +254,22 @@ export function auditLog(request: Request, id: string): Promise<Response> {
     requireTx(context, id);
     const events = context.repo.readEvents(id);
     return json({ txId: id, events, verification: verifyChain(events) });
+  });
+}
+
+export function exportAudit(request: Request, id: string): Promise<Response> {
+  return route(() => {
+    requireRole(request, ['buyer', 'seller', 'reviewer']);
+    const context = getApiContext();
+    requireTx(context, id);
+    return new Response(auditCsv(context.repo.readEvents(id)), {
+      headers: {
+        'content-type': 'text/csv; charset=utf-8',
+        'content-disposition': `attachment; filename="audit-${id}.csv"`,
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+      },
+    });
   });
 }
 

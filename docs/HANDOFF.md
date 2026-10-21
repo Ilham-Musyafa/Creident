@@ -135,6 +135,16 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:06 WIB (Codex, C8): added GET `/api/audit/:id/export` for all
+  demo roles and an "Export CSV" button on each audit log. CSV contains sequence,
+  timestamp, actor, type, simulated flag, previous/current hashes, and canonical
+  JSON payload. Fields are quoted with doubled quotes and CRLF record endings;
+  formula prefixes (including after whitespace) get a leading single quote.
+  Export does not mutate stored events or their hashes. Tests cover escaping,
+  formula injection, all roles, event row counts, headers, and invalid/unknown
+  IDs (400/404). `npm test` (137/137), typecheck, and build passed. Production
+  browser download checked at 360px: correct filename/header, no overflow or
+  console errors. No dependencies added.
 - 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
   documentation-only proposal for resolving PayPal actions left pending after a
   crash. It maps read-only checks for orders, authorizations, captures, voids,
