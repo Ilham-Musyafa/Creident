@@ -4,6 +4,7 @@
 // Every demo transaction is labelled: item names start with "[Demo]", terms carry
 // `demo: true`, and every PayPal-related audit event carries `simulated: true`.
 
+import { decisionBasis } from './decisionBasis';
 import { randomUUID, createHash } from 'node:crypto';
 import { canonicalJson } from './audit/chain';
 import { applyTrigger, type OrchestratorDeps } from './orchestrator';
@@ -136,7 +137,8 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         if (!spec.decisionReason) throw new Error('Demo decision needs a reason');
         await run(step, 'reviewer', {
           extras: { decision: { outcome: step.outcome, reviewerId: 'reviewer', reason: spec.decisionReason } },
-          eventPayload: { simulated: true, reason: spec.decisionReason, outcome: step.outcome },
+          // Same decision basis the review API records, so the receipt can show it.
+          eventPayload: { simulated: true, reason: spec.decisionReason, outcome: step.outcome, ...decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id)) },
         });
       } else {
         const actor = step.type === 'BUYER_CONFIRM' || step.type === 'CANCEL' || step.type === 'START_PAYMENT' || step.type === 'BUYER_APPROVED' ? 'buyer'

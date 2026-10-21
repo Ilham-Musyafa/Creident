@@ -67,6 +67,7 @@ describe('demo seed', () => {
     expect(recommendation).toBeGreaterThanOrEqual(0);
     expect(decided).toBeGreaterThan(recommendation);
     expect(events[decided]).toMatchObject({ actor: 'reviewer', payload: { outcome: 'REFUND', reason: decision.reason, simulated: true, effect: 'PAYPAL_VOID' } });
+    expect(events[decided]?.payload).toMatchObject({ termsHash: tx.termsHash, evidenceDigest: expect.stringMatching(/^[0-9a-f]{64}$/) });
     for (const deal of repo.listTransactions()) expect(verifyChain(repo.readEvents(deal.id)).ok).toBe(true);
   });
 

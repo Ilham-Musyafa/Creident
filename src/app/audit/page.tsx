@@ -38,9 +38,7 @@ export default function AuditIndexPage() {
           {rows.map(({ tx, check }) => (
             <li key={tx.id}>
               <Link href={`/audit/${tx.id}`} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
-                <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/><span className="mt-1 block text-xs text-muted">{checkpoint
-                  ? checkpointLabels[checkpoint.transactions.find(entry => entry.txId === tx.id)!.state]
-                  : 'Checkpoint comparison unavailable'}</span></span>
+                <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/>{checkpoint && <span className="mt-1 block text-xs text-muted">{checkpointLabels[checkpoint.transactions.find(entry => entry.txId === tx.id)!.state]}</span>}</span>
                 <span className="shrink-0 text-right text-xs font-semibold" style={{ color: check.ok ? 'var(--success-text)' : 'var(--warning-text)' }}>
                   {check.ok ? `Verified · ${check.length} events` : `Broken at #${check.brokenAtSeq}`}
                 </span>
