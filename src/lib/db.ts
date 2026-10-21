@@ -168,6 +168,15 @@ export function migrate(db: DatabaseSync): void {
     );
     CREATE INDEX IF NOT EXISTS paypal_disputes_tx_id ON paypal_disputes(tx_id);
 
+    CREATE TABLE IF NOT EXISTS paypal_dispute_poll_attempts (
+      mode TEXT NOT NULL CHECK (mode IN ('sandbox', 'simulated')),
+      kind TEXT NOT NULL CHECK (kind IN ('case', 'capture')),
+      resource_id TEXT NOT NULL,
+      attempt_seq INTEGER NOT NULL CHECK (attempt_seq > 0),
+      PRIMARY KEY (mode, kind, resource_id)
+    );
+    CREATE INDEX IF NOT EXISTS paypal_dispute_poll_attempts_seq ON paypal_dispute_poll_attempts(attempt_seq);
+
     CREATE TABLE IF NOT EXISTS idempotency (
       key TEXT PRIMARY KEY,
       tx_id TEXT NOT NULL REFERENCES transactions(id),
