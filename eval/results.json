@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-21T15:14:23.722Z",
+  "generatedAt": "2026-10-21T15:22:38.565Z",
   "mode": "replay",
   "k": 3,
   "labelStatus": "reviewed",
-  "labelsReviewed": 5,
-  "labelsAccepted": 45,
+  "labelsReviewed": 10,
+  "labelsAccepted": 40,
   "model": null,
   "metrics": {
     "total": 50,
@@ -23,31 +23,5 @@
     "repeatMatches": 100,
     "repeatComparisons": 100
   },
-  "differing": [
-    {
-      "id": "transit_damage_seller",
-      "expected": "RELEASE",
-      "actual": "ESCALATE_HUMAN"
-    },
-    {
-      "id": "partial_delivery_seller",
-      "expected": "RELEASE",
-      "actual": "ESCALATE_HUMAN"
-    },
-    {
-      "id": "seal_seller",
-      "expected": "RELEASE",
-      "actual": "ESCALATE_HUMAN"
-    },
-    {
-      "id": "accessory_buyer",
-      "expected": "REFUND",
-      "actual": "ESCALATE_HUMAN"
-    },
-    {
-      "id": "accessory_seller",
-      "expected": "RELEASE",
-      "actual": "ESCALATE_HUMAN"
-    }
-  ]
+  "differing": []
 }

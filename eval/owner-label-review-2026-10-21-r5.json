@@ -1,0 +1,7 @@
+{
+  "transit_damage_seller": { "decision": "human", "note": "R5: damage disputes always go to a person; seller evidence is strong." },
+  "partial_delivery_seller": { "decision": "human", "note": "R5: a person checks the opening photo and packing scan." },
+  "seal_seller": { "decision": "human", "note": "R5: consistent with seal_buyer." },
+  "accessory_buyer": { "decision": "human", "note": "R5: a person decides partial (accessory value) or full refund." },
+  "accessory_seller": { "decision": "human", "note": "R5: a person checks the claim against the locked item list." }
+}
