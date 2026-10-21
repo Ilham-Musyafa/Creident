@@ -130,6 +130,12 @@ Still open:
 
 ## Log
 
+- 2026-10-21 22:35 WIB (Claude, owner-approved "R5"): disputes typed "damaged" or
+  "incomplete" always go to a person (rules engine, review pipeline, eval harness). Eval
+  cases now carry the dispute type and shipping facts (other_parcel_buyer: wrong
+  destination, so R3 fires). Replay: 5 accepted-draft labels now differ (seller-side damage
+  and partial cases and both accessory cases escalate); waiting for the owner to confirm
+  those labels.
 - 2026-10-21 22:20 WIB (Owner + Claude): owner reviewed the 5 grey eval cases (4 -> human,
   ship_date_buyer -> agree) and chose to accept the other 45 drafts without individual
   review; recorded as distinct statuses ("reviewed by owner" / "draft accepted by owner").

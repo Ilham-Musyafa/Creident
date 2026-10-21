@@ -294,7 +294,10 @@
         "kind": "note",
         "content": "Bob Example provides a valid code but its destination is not the agreed address."
       }
-    ]
+    ],
+    "facts": {
+      "destinationMatches": false
+    }
   },
   {
     "id": "other_parcel_seller",
@@ -402,7 +405,8 @@
         "kind": "note",
         "content": "Bob Example has no protective packaging record for the fragile item."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "transit_damage_seller",
@@ -429,7 +433,8 @@
         "kind": "note",
         "content": "Bob Example documents protective packaging and an intact delivery image."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "buyer_remorse_buyer",
@@ -564,7 +569,8 @@
         "kind": "note",
         "content": "Bob Example packing record lists only one component."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "partial_delivery_seller",
@@ -591,7 +597,8 @@
         "kind": "note",
         "content": "Bob Example packing scan and item count show both components."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "chat_context_buyer",
@@ -888,7 +895,8 @@
         "kind": "note",
         "content": "Bob Example records the same seal intact only before handoff."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "seal_seller",
@@ -915,7 +923,8 @@
         "kind": "note",
         "content": "Bob Example has a matching seal record and intact handoff scan."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "accessory_buyer",
@@ -942,7 +951,8 @@
         "kind": "note",
         "content": "Bob Example packing list omits the adapter."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "accessory_seller",
@@ -969,7 +979,8 @@
         "kind": "note",
         "content": "Bob Example supplies the locked item list showing no adapter."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "mixed_photos",
@@ -1023,7 +1034,8 @@
         "kind": "note",
         "content": "Bob Example shows a packing count of two but no delivery opening."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "tracking_conflict",

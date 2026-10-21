@@ -20,6 +20,10 @@ export interface EvaluationCase {
   buyerName: string;
   sellerName: string;
   evidence: EvidenceItem[];
+  /** The buyer's dispute type, as the app records it (src/lib/disputeTypes.ts). */
+  disputeType?: 'not_received' | 'not_as_described' | 'damaged' | 'incomplete';
+  /** Shipping facts that differ from the default (tracking consistent and delivered to the agreed address). */
+  facts?: { destinationMatches?: boolean; shipDateConsistent?: boolean };
 }
 
 export interface CaseResult {
@@ -93,7 +97,8 @@ export function validateCases(cases: unknown): asserts cases is EvaluationCase[]
       !['RELEASE', 'REFUND', 'ESCALATE_HUMAN'].includes(String(item.expected)) ||
       !Array.isArray(item.criteria) || item.criteria.length === 0 ||
       !Array.isArray(item.evidence) || item.evidence.length === 0 ||
-      typeof item.buyerName !== 'string' || typeof item.sellerName !== 'string') {
+      typeof item.buyerName !== 'string' || typeof item.sellerName !== 'string' ||
+      (item.disputeType !== undefined && !['not_received', 'not_as_described', 'damaged', 'incomplete'].includes(item.disputeType))) {
       throw new Error(`Invalid evaluation case: ${String(item?.id)}`);
     }
     ids.add(item.id);
@@ -112,10 +117,11 @@ function ruleInput(item: EvaluationCase, result: Awaited<ReturnType<typeof summa
     phase: 'DISPUTE', externalDisputeOpen: false,
     evidenceContainsInjection: result.evidenceContainsInjection,
     shipByPassed: false, hasTracking: true, trackingDelivered: true,
-    destinationMatches: true, shipDateConsistent: true,
+    destinationMatches: item.facts?.destinationMatches ?? true, shipDateConsistent: item.facts?.shipDateConsistent ?? true,
     buyerConfirmed: false, inspectionExpired: false, disputeOpen: true,
     buyerEvidenceCount: item.evidence.filter((e) => e.submittedBy === 'buyer').length,
     sellerEvidenceCount: item.evidence.filter((e) => e.submittedBy === 'seller').length,
+    disputeType: item.disputeType,
     ai: result.ai,
   };
 }

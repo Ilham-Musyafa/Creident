@@ -94,7 +94,7 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
   | R2 | Delivered to the agreed destination, no dispute in the window | Release |
   | R3 | Tracking destination or date inconsistent with the order | Human review |
   | R4 | Both sides gave evidence and the summary clearly supports one side | Recommend that side; a human confirms |
-  | R5 | Evidence missing, contradictory, partial delivery or damage, or no usable AI summary | Human review (split possible) |
+  | R5 | Evidence missing or contradictory, no usable AI summary, or the buyer reports damage or missing parts (always a person: full or partial refund, seller or courier) | Human review (split possible) |
   | R6 | PayPal dispute or reversal event | Freeze |
   | R7 | Evidence looks like instructions aimed at the AI | Flag, ignore for scoring, human review |
 

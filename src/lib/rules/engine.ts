@@ -35,8 +35,16 @@ export interface RuleInput {
   disputeOpen: boolean;
   buyerEvidenceCount: number;
   sellerEvidenceCount: number;
+  /** Why the buyer disputed (src/lib/disputeTypes.ts), if they said. */
+  disputeType?: string;
   ai: AiSummary | null;
 }
+
+/** Dispute types a person always decides: the amount (full or partial) and the cause (seller or courier) need judgement. */
+export const HUMAN_DISPUTE_TYPES: Record<string, string> = {
+  damaged: 'The buyer reported the item arrived damaged',
+  incomplete: 'The buyer reported parts or accessories missing',
+};
 
 export interface RuleDecision {
   rule: RuleId | 'NONE';
@@ -107,6 +115,10 @@ export function decide(input: RuleInput): RuleDecision {
 function decideDispute(input: RuleInput): RuleDecision {
   if (input.buyerEvidenceCount === 0 || input.sellerEvidenceCount === 0) {
     return decision('R5', 'ESCALATE_HUMAN', true, 'Evidence is missing from one side');
+  }
+  // Owner decision 2026-10-21: damage and missing parts always go to a person, whatever the summary says.
+  if (input.disputeType && HUMAN_DISPUTE_TYPES[input.disputeType]) {
+    return decision('R5', 'ESCALATE_HUMAN', true, HUMAN_DISPUTE_TYPES[input.disputeType]!, 'A person decides full or partial refund and whether the seller or the courier caused it');
   }
   const ai = input.ai;
   if (!ai || ai.findings.length === 0) {
