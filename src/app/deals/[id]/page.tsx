@@ -1,4 +1,5 @@
 import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
+import { CourierClaimPack } from '../../../components/OutboundDrafts';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
@@ -24,6 +25,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const authorizedAt = allEvents.find((e) => e.type === 'BUYER_APPROVED')?.ts;
   const authWindow = authorizedAt && !tx.captured && tx.paypalAuthId && !['VOIDED', 'CANCELLED', 'REFUNDED', 'COMPLETED'].includes(tx.status)
     ? authorizationWindow(authorizedAt, now) : null;
+  const disputeType = allEvents.find((e) => e.type === 'OPEN_DISPUTE')?.payload.disputeType;
   const lastEvent = allEvents.at(-1);
   const captureFailed = lastEvent?.type === 'PAYPAL_ERROR' && lastEvent.payload.effect === 'PAYPAL_CAPTURE' && !tx.captured;
   const events = tx.captured && tx.trackingNumber ? ctx.repo.readEvents(id) : [];
@@ -69,6 +71,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
 
         <aside className="space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
+          {role === 'seller' && disputeType === 'damaged' && <><SectionTitle>Courier claim</SectionTitle><Card><CourierClaimPack txId={id}/></Card></>}
           <SectionTitle>Next step</SectionTitle>
           {action === 'accept-terms' && (role === 'buyer'
             ? <ButtonLink href={`/deals/${id}/checkout`} fullWidth>Review terms & pay</ButtonLink>

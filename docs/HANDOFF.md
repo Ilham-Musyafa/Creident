@@ -145,6 +145,13 @@ Still open:
 
 ## Log
 
+- 2026-10-22 01:55 WIB (Claude): AI assist #4 outbound drafts. `src/lib/ai/drafts.ts`
+  (validators, cite-or-drop timeline, B/S evidence aliases, replay drafts for demo deals),
+  `ai_drafts` table, draft and courier-claim endpoints, approved note on the PayPal
+  evidence/message action with unchanged/edited audit, UI in `src/components/OutboundDrafts.tsx`.
+  251 tests, typecheck, build; browser check (simulated + replay) at 390px light and 1440px
+  dark: draft, edit, PDF download, message send, audit titles; no console errors. Next for
+  Claude: #5 translation after Codex C18 is merged.
 - 2026-10-22 01:15 WIB (Claude): owner approved AI assist features 1-5 (DESIGN 6.1).
   Added the shared guard-rail helper `src/lib/ai/assist.ts` (+ tests) and the work split.
 - 2026-10-22 01:20 WIB (Claude): reviewed and merged C14 (#37, bounded dispute polling and

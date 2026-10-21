@@ -213,8 +213,17 @@ Shared guard rails (all assists use `src/lib/ai/assist.ts`):
 | 1 | Terms assistant | New deal | Structured terms from a pasted listing or chat: condition, included items checklist, required opening photos | Seller drafts, buyer accepts before terms lock | Codex C16 |
 | 2 | Evidence completeness check | Dispute, evidence window | Which agreed checklist items or required photos are still missing, per side | Each party sees prompts for their own side; no verdict | Codex C17 |
 | 3 | Reviewer copilot | Human review | Cited per-criterion notes, a draft decision reason, and for R5 cases a suggested partial-refund range with its basis | Reviewer accepts or edits; the decision stays the reviewer's | Codex C18 |
-| 4 | Outbound drafts | After a decision or a PayPal case | A message to PayPal for the dispute bridge and a courier claim pack for transit damage | Seller (or reviewer) approves before anything is sent or downloaded | Claude |
+| 4 | Outbound drafts | After a decision or a PayPal case | A message to PayPal for the dispute bridge and a courier claim pack for transit damage | Seller (or reviewer) approves before anything is sent or downloaded | Claude (done 2026-10-22) |
 | 5 | Evidence translation | Review | A translation of evidence text into the reviewer's language; the original and its hash stay authoritative | Reviewer reads both | Claude, after C18 |
+
+Implementation of #4: `POST /api/transactions/{id}/ai-drafts` (`paypal-message` for seller or
+reviewer when a PayPal case is open; `courier-claim` for the seller of a "damaged" dispute)
+stores the draft in `ai_drafts` and logs `AI_DRAFT_CREATED` (metadata only). The PayPal
+evidence action accepts an approved `note` (+ optional `draftId`); the app, not the AI,
+appends the terms hash and audit head. `POST /api/transactions/{id}/courier-claim` returns a
+PDF with the approved letter, cited timeline, evidence hashes, terms hash and audit head,
+and logs `COURIER_CLAIM_PACK_CREATED`; nothing is sent to a courier. Evidence is shown to the
+model as aliases (B1, S1), never internal ids.
 
 Measured: share of drafts accepted unchanged, edited or ignored (per feature), shown on
 the Fairness page once there is data. Not measured: whether drafts are correct in general.

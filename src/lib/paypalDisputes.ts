@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { canonicalJson, verifyChain } from './audit/chain';
 import { decisionBasis } from './decisionBasis';
 import { textPdf } from './evidencePdf';
+import { draftAudit, type PayPalMessageDraft, type StoredDraft } from './ai/drafts';
 import { DomainError } from './orchestrator';
 import { PayPalError, type PayPalClient } from './paypal/client';
 import type { StoredPayPalDispute, StoredTx, TransactionRepository } from './repository';
@@ -135,7 +136,15 @@ export function disputeDocument(txId: string, repo: TransactionRepository) {
     manifest: { ...basis, item: tx.item, amount: tx.amount, currency: tx.currency, tracking: tx.trackingNumber ?? null, decisions } };
 }
 
-export async function actOnPayPalDispute(txId: string, requestedId: string | undefined, operation: 'evidence' | 'escalate', deps: DisputeDeps) {
+/** A person-approved note (typed or from an AI draft, DESIGN 6.1) sent with a message or evidence. */
+export interface DisputeNote { text: string; draft?: StoredDraft<PayPalMessageDraft> }
+
+/** The app, not the AI, appends the record identifiers so they are always exact. */
+export function noteWithRecord(text: string, termsHash: string, headHash: string): string {
+  return `${text.trim()}\n\nHalcyVault record: terms hash ${termsHash}, audit head ${headHash}.`;
+}
+
+export async function actOnPayPalDispute(txId: string, requestedId: string | undefined, operation: 'evidence' | 'escalate', deps: DisputeDeps, note?: DisputeNote) {
   let disputeId = requestedId;
   let failureRecorded = false;
   try {
@@ -154,7 +163,9 @@ export async function actOnPayPalDispute(txId: string, requestedId: string | und
       : current.actions.includes('send_message') ? 'send_message' : null;
     if (!action || !current.actions.includes(action)) throw new DomainError('DISPUTE_ACTION_UNAVAILABLE', 'PayPal does not currently offer this action. Check the case again later.');
     const document = disputeDocument(txId, deps.repo);
-    const requestId = `hv-dispute-${hash(canonicalJson({ disputeId, action, manifest: action === 'escalate' ? null : document.manifest }))}`;
+    if (note && action === 'escalate') throw new DomainError('INVALID_INPUT', 'A note is sent with a message or evidence, not with an escalation');
+    const noteText = note ? noteWithRecord(note.text, document.basis.termsHash, document.headHash) : null;
+    const requestId = `hv-dispute-${hash(canonicalJson({ disputeId, action, manifest: action === 'escalate' ? null : document.manifest, note: noteText }))}`;
     const claim = deps.repo.claimAction(txId, action, requestId);
     if (!claim.claimed) {
       if (claim.record.state !== 'success') throw new DomainError('ACTION_PENDING', 'The previous PayPal action needs checking before another attempt');
@@ -162,11 +173,11 @@ export async function actOnPayPalDispute(txId: string, requestedId: string | und
     }
     try {
       if (action === 'provide_evidence') await deps.paypal.provideEvidence(disputeId, {
-        reason: current.reason, notes: `HalcyVault locked evidence. Terms hash ${document.basis.termsHash}. Audit head ${document.headHash}.`,
+        reason: current.reason, notes: noteText ?? `HalcyVault locked evidence. Terms hash ${document.basis.termsHash}. Audit head ${document.headHash}.`,
         trackingNumber: tx.trackingNumber, carrierName: 'HalcyVault demo courier',
         file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: document.file },
       });
-      else if (action === 'send_message') await deps.paypal.sendDisputeMessage(disputeId,
+      else if (action === 'send_message') await deps.paypal.sendDisputeMessage(disputeId, noteText ??
         `HalcyVault has recorded the locked terms and evidence for this deal. Terms hash: ${document.basis.termsHash}. Audit head: ${document.headHash}. PDF evidence needs the claim stage; it cannot be attached in this inquiry.`);
       else await deps.paypal.escalateDispute(disputeId, 'Please ask PayPal to review this dispute. HalcyVault evidence will be submitted when provide_evidence is offered.');
     } catch (error) {
@@ -177,7 +188,9 @@ export async function actOnPayPalDispute(txId: string, requestedId: string | und
     }
     const type = action === 'provide_evidence' ? 'PAYPAL_DISPUTE_EVIDENCE_SENT' : action === 'send_message' ? 'PAYPAL_DISPUTE_MESSAGE_SENT' : 'PAYPAL_DISPUTE_ESCALATED';
     deps.repo.saveSideEffect(requestId, txId, { txId, ts: deps.now(), actor: deps.actor, type,
-      payload: { ...labels(deps), disputeId, action, ...document.basis, headHash: document.headHash, pdfHash: hash(document.file) } });
+      payload: { ...labels(deps), disputeId, action, ...document.basis, headHash: document.headHash, pdfHash: hash(document.file),
+        ...(noteText ? { noteHash: hash(noteText) } : {}),
+        ...(note?.draft ? draftAudit(note.draft, note.text.trim() === note.draft.output.message) : note ? { noteSource: 'typed' } : {}) } });
     let refreshPending = false;
     try { store(await deps.paypal.getDispute(disputeId), tx, deps); } catch { refreshPending = true; }
     return { action, simulated: deps.simulated, refreshPending,

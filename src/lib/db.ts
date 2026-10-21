@@ -168,6 +168,17 @@ export function migrate(db: DatabaseSync): void {
     );
     CREATE INDEX IF NOT EXISTS paypal_disputes_tx_id ON paypal_disputes(tx_id);
 
+    -- AI drafts (DESIGN 6.1) kept so the app can tell an unchanged draft from an edited one.
+    CREATE TABLE IF NOT EXISTS ai_drafts (
+      id TEXT PRIMARY KEY,
+      tx_id TEXT NOT NULL REFERENCES transactions(id),
+      feature TEXT NOT NULL,
+      output_json TEXT NOT NULL CHECK (json_valid(output_json)),
+      meta_json TEXT NOT NULL CHECK (json_valid(meta_json)),
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS ai_drafts_tx_id ON ai_drafts(tx_id);
+
     CREATE TABLE IF NOT EXISTS paypal_dispute_poll_attempts (
       mode TEXT NOT NULL CHECK (mode IN ('sandbox', 'simulated')),
       kind TEXT NOT NULL CHECK (kind IN ('case', 'capture')),

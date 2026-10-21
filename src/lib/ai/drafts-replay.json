@@ -1,0 +1,114 @@
+{
+  "paypal-message:[Demo] Board game set": {
+    "message": "Hello PayPal team. This is the seller of the [Demo] Board game set (22.00 USD). Before payment, both parties locked the terms \"Complete, box worn\" on our dispute-mediation record. The parcel was shipped with tracking DEMO-DELIVERED, shown as delivered, and the buyer confirmed receipt before opening this case. No evidence has been recorded on our side since then. Please review the locked terms and the recorded steps; we will add any evidence the buyer submits.",
+    "citedEvidence": []
+  },
+  "courier-claim:[Demo] Smartwatch": {
+    "subject": "Damage claim: smartwatch reported cracked on delivery",
+    "claimedDamage": "Crack across the upper left corner of the watch face, reported by the recipient on delivery",
+    "body": "Dear claims team,\n\nI am the sender of a parcel containing a smartwatch (declared value 64.00 USD). At handover the watch was declared in \"Good, minor scratches\" condition with no screen cracks, and it was packed in bubble wrap (S1). After delivery, the recipient reported a crack across the upper left corner of the watch face and provided a photo with a one-time code (B1).\n\nI ask you to review this parcel for damage in transit. The attached records show the declared condition, the packing and the condition reported on delivery. I can provide the original listing photos on request.",
+    "timeline": [
+      {
+        "when": "Before shipping",
+        "event": "Seller packed the watch in bubble wrap; listing photos showed no crack",
+        "evidence": [
+          "S1"
+        ]
+      },
+      {
+        "when": "On delivery",
+        "event": "Recipient photographed a crack across the upper left corner of the watch face",
+        "evidence": [
+          "B1"
+        ]
+      }
+    ],
+    "attachments": [
+      "B1: recipient photo of the cracked watch face",
+      "S1: seller packing note"
+    ],
+    "citedEvidence": [
+      "S1",
+      "B1"
+    ]
+  },
+  "paypal-message:[Demo] Smartwatch": {
+    "message": "Hello PayPal team. This is the seller of a smartwatch (64.00 USD). The buyer reported a crack across the upper left corner of the watch face (B1). Our packing note says the watch was wrapped in bubble wrap and the listing photos showed no crack before shipping (S1). Please review the locked terms and the recorded evidence for this sale.",
+    "citedEvidence": [
+      "B1",
+      "S1"
+    ]
+  },
+  "courier-claim:[Demo] Damaged smartwatch (resolved)": {
+    "subject": "Damage claim: smartwatch reported cracked on delivery",
+    "claimedDamage": "Crack across the upper left corner of the watch face, reported by the recipient on delivery",
+    "body": "Dear claims team,\n\nI am the sender of a parcel containing a smartwatch (declared value 64.00 USD). At handover the watch was declared in \"Good, minor scratches\" condition with no screen cracks, and it was packed in bubble wrap (S1). After delivery, the recipient reported a crack across the upper left corner of the watch face and provided a photo with a one-time code (B1).\n\nI ask you to review this parcel for damage in transit. The attached records show the declared condition, the packing and the condition reported on delivery. I can provide the original listing photos on request.",
+    "timeline": [
+      {
+        "when": "Before shipping",
+        "event": "Seller packed the watch in bubble wrap; listing photos showed no crack",
+        "evidence": [
+          "S1"
+        ]
+      },
+      {
+        "when": "On delivery",
+        "event": "Recipient photographed a crack across the upper left corner of the watch face",
+        "evidence": [
+          "B1"
+        ]
+      }
+    ],
+    "attachments": [
+      "B1: recipient photo of the cracked watch face",
+      "S1: seller packing note"
+    ],
+    "citedEvidence": [
+      "S1",
+      "B1"
+    ]
+  },
+  "paypal-message:[Demo] Damaged smartwatch (resolved)": {
+    "message": "Hello PayPal team. This is the seller of a smartwatch (64.00 USD). The buyer reported a crack across the upper left corner of the watch face (B1). Our packing note says the watch was wrapped in bubble wrap and the listing photos showed no crack before shipping (S1). Please review the locked terms and the recorded evidence for this sale.",
+    "citedEvidence": [
+      "B1",
+      "S1"
+    ]
+  },
+  "courier-claim:[Demo] Smartwatch (return pending)": {
+    "subject": "Damage claim: smartwatch reported cracked on delivery",
+    "claimedDamage": "Crack across the upper left corner of the watch face, reported by the recipient on delivery",
+    "body": "Dear claims team,\n\nI am the sender of a parcel containing a smartwatch (declared value 64.00 USD). At handover the watch was declared in \"Good, minor scratches\" condition with no screen cracks, and it was packed in bubble wrap (S1). After delivery, the recipient reported a crack across the upper left corner of the watch face and provided a photo with a one-time code (B1).\n\nI ask you to review this parcel for damage in transit. The attached records show the declared condition, the packing and the condition reported on delivery. I can provide the original listing photos on request.",
+    "timeline": [
+      {
+        "when": "Before shipping",
+        "event": "Seller packed the watch in bubble wrap; listing photos showed no crack",
+        "evidence": [
+          "S1"
+        ]
+      },
+      {
+        "when": "On delivery",
+        "event": "Recipient photographed a crack across the upper left corner of the watch face",
+        "evidence": [
+          "B1"
+        ]
+      }
+    ],
+    "attachments": [
+      "B1: recipient photo of the cracked watch face",
+      "S1: seller packing note"
+    ],
+    "citedEvidence": [
+      "S1",
+      "B1"
+    ]
+  },
+  "paypal-message:[Demo] Smartwatch (return pending)": {
+    "message": "Hello PayPal team. This is the seller of a smartwatch (64.00 USD). The buyer reported a crack across the upper left corner of the watch face (B1). Our packing note says the watch was wrapped in bubble wrap and the listing photos showed no crack before shipping (S1). Please review the locked terms and the recorded evidence for this sale.",
+    "citedEvidence": [
+      "B1",
+      "S1"
+    ]
+  }
+}
