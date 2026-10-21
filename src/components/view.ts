@@ -112,6 +112,8 @@ const EVENT_TITLES: Record<string, string> = {
   CANCEL: 'Cancelled',
   RETURN_DELIVERED: 'Return delivered to seller, refund issued',
   RETURN_DEADLINE_PASSED: 'Item not returned in time, payment released',
+  AI_DRAFT_CREATED: 'AI draft prepared (not sent)',
+  COURIER_CLAIM_PACK_CREATED: 'Courier claim pack created',
 };
 
 export function eventTitle(type: string): string {

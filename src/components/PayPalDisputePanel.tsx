@@ -2,6 +2,7 @@ import { paypalDisputeLabel, type PayPalDisputeLabelKind } from '../lib/paypalDi
 import { Card, Notice, SectionTitle } from './layout';
 import { KeyValue } from './ui';
 import { ActionButton, PayPalDisputeActions } from './client';
+import { PayPalMessageDraft } from './OutboundDrafts';
 import { shortDate, type Role } from './view';
 import type { StoredPayPalDispute, StoredTx } from '../lib/repository';
 
@@ -36,6 +37,7 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
         { label: 'Actions PayPal offers', value: <ul className="space-y-1">{c.actions.length ? c.actions.map(action => <li key={action}><PayPalDisputeCode kind="action" code={action}/></li>) : <li>None yet</li>}</ul> },
       ]}/>
       {c.status !== 'RESOLVED' && canAct && <PayPalDisputeActions txId={tx.id} disputeId={c.disputeId} role={role} actions={c.actions}/>}
+      {c.status !== 'RESOLVED' && canAct && (c.actions.includes('send_message') || c.actions.includes('provide_evidence')) && <PayPalMessageDraft txId={tx.id} disputeId={c.disputeId} role={role} evidenceStage={c.actions.includes('provide_evidence')}/>}
       {c.status !== 'RESOLVED' && !canAct && <Notice>Only the seller or an unlocked reviewer can send evidence or escalate this case.</Notice>}
     </div>)}
     {cases.length > 0 && <Notice>PayPal controls the case and offered actions. Changes may take a few minutes to appear. A resolved case resumes the deal's previous state; this notification does not infer a refund or release.</Notice>}
