@@ -50,6 +50,13 @@ Sandbox-only simulations `require-evidence` and `adjudicate` should work with th
 token. The docs disagree on the provide-evidence body (multipart file vs JSON); the probe
 tries a PDF as multipart first, then JSON notes, and prints which one PayPal accepted.
 
+First owner run (2026-10-21): the buyer opened dispute `PP-R-OIU-10193936` (SNAD) in the
+Sandbox Resolution Center. Listing and reading disputes with the app's own token **works**
+(it appeared after about 3 minutes, status `UNDER_REVIEW`, stage `INQUIRY`). PayPal offered
+no actions yet and refused evidence in both formats with `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`
+(422): evidence is not accepted in the inquiry stage. Next: `npm run dispute-probe -- <id>`
+tries the Sandbox require-evidence move, or the buyer escalates the case to PayPal.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).

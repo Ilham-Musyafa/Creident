@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PayPalClient } from '../src/lib/paypal/client';
-import { runDisputeProbe } from './dispute-probe';
+import { resumeDisputeProbe, runDisputeProbe } from './dispute-probe';
 
 function fakePayPal(opts: { rejectMultipart?: boolean } = {}) {
   const calls: Array<{ method: string; path: string; body: unknown; contentType: string | null }> = [];
@@ -61,5 +61,15 @@ describe('dispute probe', () => {
   it('refuses Sandbox-only simulations against any other host', async () => {
     const client = new PayPalClient({ baseUrl: 'https://api-m.paypal.com', clientId: 'id', clientSecret: 's', fetchImpl: (async () => new Response('{}')) as typeof fetch });
     await expect(client.sandboxAdjudicate('X', 'BUYER_FAVOR')).rejects.toThrow(/only in the PayPal Sandbox/);
+  });
+});
+
+describe('dispute probe resume', () => {
+  it('tries the Sandbox require-evidence step before sending evidence to an existing dispute', async () => {
+    const { client, calls } = fakePayPal();
+    const lines: string[] = [];
+    await resumeDisputeProbe(client, answers('n'), (l) => lines.push(l), 'PP-D-1');
+    expect(calls.some((c) => c.path.endsWith('/provide-evidence'))).toBe(true);
+    expect(lines).toContain('Evidence (multipart with PDF): accepted.');
   });
 });
