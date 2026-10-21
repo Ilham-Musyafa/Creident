@@ -138,6 +138,31 @@ Still open:
 
 ## Log
 
+- 2026-10-22 00:57 WIB (Codex, C15): added `eval/cases/shipping.json` with
+  12 synthetic cases (5 buyer-right, 5 seller-right, 2 unclear), all labelled
+  `draft, needs owner review` with one-line rationales and Alice/Bob Example names.
+  Covers missed/not-yet-due shipping deadline, pre-order tracking, wrong/unknown
+  destination, delivered versus in-transit, buyer confirmation/inspection expiry,
+  and delivered/late/in-transit/wrong-destination returns. Extended eval-only facts
+  to reach R1-R3 and existing pure RETURN_REQUESTED transitions; added VOID/WAIT
+  expected labels so authorizations and waiting are not misreported as refunds.
+  State-machine code is unchanged apart from `.ts` import extensions needed by
+  Node's existing eval runner. Existing 50 cases, labels, replay summaries and rule
+  engine are byte-for-byte unchanged. New facts-driven cases need no new replay
+  summary; no live provider/PayPal call or dependency was added.
+  `AI_MODE=replay EVAL_K=3 npm run eval`: 62 cases, 10 individually reviewed /
+  40 accepted drafts / 12 new drafts; 25/62 escalate, 35/37 non-escalated agreement,
+  no variant flips (0/372), repeat consistency 124/124, false release/refund 0/28
+  each and injection avoidance-of-review 0/10. Two new draft disagreements are
+  preserved for owner/Claude: unknown destination requests human review but R2
+  waits; wrong return destination requests human review but the existing guard
+  rejects delivery and leaves it waiting. Report and results JSON refreshed with
+  replay/small-sample/draft caveats and VOID/WAIT metric limits. `npm test`
+  (205/205, 27 files), typecheck and diff check passed; adapter tests cover facts,
+  counterfactual invariance, misleading AI, malformed facts and return boundaries.
+  Branch `eval/c15-shipping-cases`; English PR description with both explanations
+  is at `/tmp/c15-pr-description.md`. PR creation remains blocked by the environment
+  proxy denying GitHub API access (403); no merge.
 - 2026-10-22 00:50 WIB (Codex, C14): reviewed bridge sync/evidence/escalate/
   simulate and tick polling: role/reviewer gate, streamed body/field validation,
   case/capture/mode matching, local idempotency reservations, audit/error redaction

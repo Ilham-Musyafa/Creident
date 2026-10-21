@@ -1,5 +1,5 @@
-import { isFinal } from './types';
-import type { Effect, Trigger, TransitionResult, Tx, TxStatus } from './types';
+import { isFinal } from './types.ts';
+import type { Effect, Trigger, TransitionResult, Tx, TxStatus } from './types.ts';
 
 // Pure transition function: no I/O, no clock. Everything time-dependent arrives in the trigger,
 // so the same input always gives the same output and every rule can be unit-tested.

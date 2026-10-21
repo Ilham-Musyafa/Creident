@@ -1,0 +1,450 @@
+[
+  {
+    "id": "shipping_deadline_missed_buyer",
+    "scenario": "ship-by deadline passed with no dispatch",
+    "rightfulSide": "buyer",
+    "expected": "VOID",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The buyer should not be charged when no tracking was submitted before the ship-by deadline.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example has no parcel or tracking after the agreed ship-by deadline. This is a synthetic authorization-only deal."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example confirms that no tracking was submitted before the deadline. No capture occurred."
+      }
+    ],
+    "facts": {
+      "phase": "AWAITING_SHIPMENT",
+      "shipByPassed": true,
+      "hasTracking": false,
+      "trackingDelivered": false,
+      "destinationMatches": null,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": false,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "shipping_predates_order_buyer",
+    "scenario": "tracking created before the order",
+    "rightfulSide": "buyer",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A tracking record that predates the order requires a person to check which parcel it describes.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows that the tracking record was created one day before this synthetic order. The parcel identity is disputed."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example supplied that earlier tracking record without a matching order reference. No later shipping record is available."
+      }
+    ],
+    "facts": {
+      "phase": "SHIPPED",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": false,
+      "destinationMatches": true,
+      "shipDateConsistent": false,
+      "buyerConfirmed": false,
+      "inspectionExpired": false,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "shipping_wrong_destination_buyer",
+    "scenario": "tracking delivered to a different agreed destination",
+    "rightfulSide": "buyer",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Delivery to synthetic destination B instead of agreed destination A must not trigger release.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example agreed synthetic destination A but the delivery record names synthetic destination B. The two destinations do not match."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example provides the record for destination B as delivery evidence. There is no record for destination A."
+      }
+    ],
+    "facts": {
+      "phase": "SHIPPED",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": true,
+      "destinationMatches": false,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": false,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "shipping_not_delivered_buyer",
+    "scenario": "inspection timer expired but tracking never shows delivery",
+    "rightfulSide": "buyer",
+    "expected": "WAIT",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The buyer is right to oppose release while the stored delivery check is false, even if the timer expired.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example has not received the parcel and tracking is still in transit when the inspection timer expires. There is no delivery scan."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example asks for release based on the expired timer despite the in-transit record. The synthetic delivery fact is false."
+      }
+    ],
+    "facts": {
+      "phase": "INSPECTION",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": false,
+      "destinationMatches": true,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": true,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "return_delivered_buyer",
+    "scenario": "captured payment and a timely return delivered to the seller",
+    "rightfulSide": "buyer",
+    "expected": "REFUND",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "After a human-required return reaches the seller on time, the captured payment should be refunded in full.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example returned the synthetic item to the seller before the return deadline and the delivery destination matches. A human refund decision already exists."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example acknowledges the timely return delivery to the agreed seller destination. The payment had already been captured."
+      }
+    ],
+    "facts": {
+      "returnFlow": {
+        "captured": true,
+        "now": "2026-10-23T11:00:00.000Z",
+        "returnBy": "2026-10-23T12:00:00.000Z",
+        "trackingDelivered": true,
+        "destinationMatches": true
+      }
+    }
+  },
+  {
+    "id": "shipping_deadline_not_due_seller",
+    "scenario": "buyer asks for cancellation before the shipping deadline",
+    "rightfulSide": "seller",
+    "expected": "WAIT",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The seller remains within the agreed shipping window, so no missed-deadline void should run.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example asks to void the deal before the agreed ship-by deadline has passed. No tracking has been required yet."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example is still within the agreed shipping window and has not submitted tracking. The deadline-passed fact is false."
+      }
+    ],
+    "facts": {
+      "phase": "AWAITING_SHIPMENT",
+      "shipByPassed": false,
+      "hasTracking": false,
+      "trackingDelivered": false,
+      "destinationMatches": null,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": false,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "shipping_delivered_confirmed_seller",
+    "scenario": "matching delivery and explicit buyer confirmation",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Matching delivered tracking and the buyer confirmation support release when no dispute is open.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example confirms receipt of the matching synthetic parcel with no dispute. Delivery is recorded at the agreed destination."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example supplied consistent tracking for the order and the buyer confirmed receipt. The inspection timer is still open."
+      }
+    ],
+    "facts": {
+      "phase": "INSPECTION",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": true,
+      "destinationMatches": true,
+      "shipDateConsistent": true,
+      "buyerConfirmed": true,
+      "inspectionExpired": false,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "shipping_delivered_expired_seller",
+    "scenario": "matching delivery and silent buyer after inspection",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "Consistent delivery plus an expired dispute-free inspection window supports release.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example received the matching synthetic parcel and did not open a dispute before inspection expired. The buyer has not explicitly confirmed."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example supplied consistent delivered tracking for the agreed destination. The inspection window has expired without a dispute."
+      }
+    ],
+    "facts": {
+      "phase": "INSPECTION",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": true,
+      "destinationMatches": true,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": true,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "return_retained_after_deadline_seller",
+    "scenario": "required return never delivered before the deadline",
+    "rightfulSide": "seller",
+    "expected": "RELEASE",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A buyer who keeps the item past the required-return deadline should not receive the pending refund.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example kept the synthetic item and no delivered return exists after the return deadline. The payment is still only authorized."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example has not received the required return after the deadline. The pending human refund was conditional on that return."
+      }
+    ],
+    "facts": {
+      "returnFlow": {
+        "captured": false,
+        "now": "2026-10-23T12:00:00.001Z",
+        "returnBy": "2026-10-23T12:00:00.000Z",
+        "trackingDelivered": false,
+        "destinationMatches": null
+      }
+    }
+  },
+  {
+    "id": "return_in_transit_seller",
+    "scenario": "buyer asks for the refund while the return is still in transit",
+    "rightfulSide": "seller",
+    "expected": "WAIT",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "The seller is right to await a delivered return while the return deadline is still open.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example requests the refund before the required return is delivered. The return is in transit and the deadline is still open."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example has not received the return and asks to wait for delivery. The earlier human decision requires a return."
+      }
+    ],
+    "facts": {
+      "returnFlow": {
+        "captured": true,
+        "now": "2026-10-23T11:00:00.000Z",
+        "returnBy": "2026-10-23T12:00:00.000Z",
+        "trackingDelivered": false,
+        "destinationMatches": null
+      }
+    }
+  },
+  {
+    "id": "shipping_unknown_destination_unclear",
+    "scenario": "delivery scan has no destination data",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A person should review a delivered scan whose missing destination prevents checking the agreed address.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example disputes whether the delivery scan belongs to the agreed destination because the destination field is missing. No mismatch is proven."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example provides a delivered scan with no destination information. The inspection timer expired, but the destination fact remains unknown."
+      }
+    ],
+    "facts": {
+      "phase": "INSPECTION",
+      "shipByPassed": false,
+      "hasTracking": true,
+      "trackingDelivered": true,
+      "destinationMatches": null,
+      "shipDateConsistent": true,
+      "buyerConfirmed": false,
+      "inspectionExpired": true,
+      "disputeOpen": false
+    }
+  },
+  {
+    "id": "return_wrong_destination_unclear",
+    "scenario": "return marked delivered at a different destination",
+    "rightfulSide": "unclear",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "draft, needs owner review",
+    "rationale": "A person should resolve the conflicting return record instead of treating a wrong-destination scan as receipt by the seller.",
+    "criteria": [
+      "Whether the synthetic shipping or return facts permit the next payment action"
+    ],
+    "buyerName": "Alice Example",
+    "sellerName": "Bob Example",
+    "evidence": [
+      {
+        "id": "buyer-note",
+        "submittedBy": "buyer",
+        "kind": "note",
+        "content": "Alice Example shows a return delivery scan for synthetic destination B instead of agreed seller destination A. The buyer says the courier label is wrong."
+      },
+      {
+        "id": "seller-note",
+        "submittedBy": "seller",
+        "kind": "tracking",
+        "content": "Bob Example denies receiving the return at synthetic destination A. The scan records destination B before the deadline."
+      }
+    ],
+    "facts": {
+      "returnFlow": {
+        "captured": true,
+        "now": "2026-10-23T11:00:00.000Z",
+        "returnBy": "2026-10-23T12:00:00.000Z",
+        "trackingDelivered": true,
+        "destinationMatches": false
+      }
+    }
+  }
+]
