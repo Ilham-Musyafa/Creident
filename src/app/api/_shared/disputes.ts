@@ -1,4 +1,5 @@
-import { actOnPayPalDispute, syncPayPalDisputes, type DisputeDeps } from '../../../lib/paypalDisputes';
+import { actOnPayPalDispute, syncPayPalDisputes, type DisputeDeps, type DisputeNote } from '../../../lib/paypalDisputes';
+import { loadDraft, PAYPAL_MESSAGE_MAX, type PayPalMessageDraft } from '../../../lib/ai/drafts';
 import { getApiContext, getDisputeGateway, isSimulatedPayPal } from './context';
 import { HttpError, json, jsonBody, noExtraFields, requireRole, route, stringField } from './http';
 
@@ -25,11 +26,20 @@ export function disputeAction(request: Request, id: string, action: 'evidence' |
   return route(async () => {
     const actor = requireRole(request, ['seller', 'reviewer']);
     const body = await jsonBody(request);
-    noExtraFields(body, action === 'escalate' ? ['disputeId', 'confirm'] : ['disputeId']);
+    noExtraFields(body, action === 'escalate' ? ['disputeId', 'confirm'] : ['disputeId', 'note', 'draftId']);
     const disputeId = body.disputeId === undefined ? undefined : stringField(body, 'disputeId', 200);
     if (action === 'escalate' && body.confirm !== true) throw new HttpError(400, 'CONFIRMATION_REQUIRED', 'Confirm escalation to PayPal claim; it cannot be undone');
     requireTx(id);
-    return json(await actOnPayPalDispute(id, disputeId, action, disputeDeps(actor)));
+    if (body.draftId !== undefined && body.note === undefined) throw new HttpError(400, 'INVALID_INPUT', 'Send the approved note text with its draftId');
+    let note: DisputeNote | undefined;
+    if (body.note !== undefined) {
+      const text = stringField(body, 'note', PAYPAL_MESSAGE_MAX);
+      const draftId = body.draftId === undefined ? undefined : stringField(body, 'draftId', 64);
+      const draft = draftId ? loadDraft<PayPalMessageDraft>(getApiContext().db, draftId, id, 'paypal-message') : undefined;
+      if (draftId && !draft) throw new HttpError(404, 'NOT_FOUND', 'Draft not found for this deal');
+      note = { text, ...(draft ? { draft } : {}) };
+    }
+    return json(await actOnPayPalDispute(id, disputeId, action, disputeDeps(actor), note));
   });
 }
 export function openSimulatedPayPalDispute(request: Request, id: string) {
