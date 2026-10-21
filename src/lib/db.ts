@@ -18,7 +18,38 @@ export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/
   return db;
 }
 
+/**
+ * Older databases have a status CHECK without RETURN_REQUESTED. SQLite cannot change a CHECK
+ * in place, so copy the table into the new definition (data and ids are unchanged; the audit
+ * events table is not touched).
+ */
+function widenStatusCheck(db: DatabaseSync): void {
+  const row = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'transactions'").get() as { sql?: string } | undefined;
+  if (!row?.sql || row.sql.includes("'RETURN_REQUESTED'")) return;
+  const widened = row.sql
+    .replace(/CREATE TABLE\s+"?transactions"?/i, 'CREATE TABLE transactions_widened')
+    .replace("'UNDER_REVIEW',", "'UNDER_REVIEW', 'RETURN_REQUESTED',");
+  if (!widened.includes("'RETURN_REQUESTED'")) throw new Error('Could not widen the transactions status check');
+  db.exec('PRAGMA foreign_keys = OFF');
+  try {
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      db.exec(widened);
+      db.exec('INSERT INTO transactions_widened SELECT * FROM transactions');
+      db.exec('DROP TABLE transactions');
+      db.exec('ALTER TABLE transactions_widened RENAME TO transactions');
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
+  } finally {
+    db.exec('PRAGMA foreign_keys = ON');
+  }
+}
+
 export function migrate(db: DatabaseSync): void {
+  widenStatusCheck(db);
   const existingEvents = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
   if (existingEvents) {
     const columns = db.prepare("PRAGMA table_info(events)").all() as { name: string }[];
@@ -39,7 +70,7 @@ export function migrate(db: DatabaseSync): void {
       id TEXT PRIMARY KEY,
       status TEXT NOT NULL CHECK (status IN (
         'DRAFT', 'TERMS_LOCKED', 'AWAITING_APPROVAL', 'AUTHORIZED', 'SHIPPED',
-        'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'FROZEN_EXTERNAL',
+        'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'RETURN_REQUESTED', 'FROZEN_EXTERNAL',
         'COMPLETED', 'REFUNDED', 'VOIDED', 'CANCELLED'
       )),
       buyer_id TEXT NOT NULL REFERENCES users(id),
@@ -53,6 +84,8 @@ export function migrate(db: DatabaseSync): void {
       inspection_until TEXT,
       evidence_until TEXT,
       tracking_number TEXT,
+      return_by TEXT,
+      return_tracking TEXT,
       paypal_order_id TEXT UNIQUE,
       paypal_auth_id TEXT UNIQUE,
       paypal_capture_id TEXT UNIQUE,
@@ -144,6 +177,12 @@ export function migrate(db: DatabaseSync): void {
   }
   if (!txColumns.some((column) => column.name === 'tracking_number')) {
     db.exec('ALTER TABLE transactions ADD COLUMN tracking_number TEXT');
+  }
+  if (!txColumns.some((column) => column.name === 'return_by')) {
+    db.exec('ALTER TABLE transactions ADD COLUMN return_by TEXT');
+  }
+  if (!txColumns.some((column) => column.name === 'return_tracking')) {
+    db.exec('ALTER TABLE transactions ADD COLUMN return_tracking TEXT');
   }
   const paypalEventColumns = db.prepare('PRAGMA table_info(paypal_events)').all() as { name: string }[];
   if (!paypalEventColumns.some((column) => column.name === 'tx_id')) {

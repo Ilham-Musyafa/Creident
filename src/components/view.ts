@@ -37,7 +37,7 @@ export function shortHash(hash: string | undefined, size = 4): string {
 
 /** Statuses where PayPal has authorized funds that are not captured yet. */
 export function isReserved(status: TxStatus, captured: boolean): boolean {
-  return !captured && ['AUTHORIZED', 'SHIPPED', 'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'FROZEN_EXTERNAL'].includes(status);
+  return !captured && ['AUTHORIZED', 'SHIPPED', 'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'RETURN_REQUESTED', 'FROZEN_EXTERNAL'].includes(status);
 }
 
 export function isActive(status: TxStatus): boolean {
@@ -59,7 +59,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   const effective = status === 'FROZEN_EXTERNAL' && frozenFrom ? frozenFrom : status;
   const doneUntil: Record<TxStatus, number> = {
     DRAFT: 0, CANCELLED: 0, TERMS_LOCKED: 1, AWAITING_APPROVAL: 1, AUTHORIZED: 2, VOIDED: 2,
-    SHIPPED: 2, IN_INSPECTION: 3, DISPUTED: 3, UNDER_REVIEW: 3, FROZEN_EXTERNAL: 3,
+    SHIPPED: 2, IN_INSPECTION: 3, DISPUTED: 3, UNDER_REVIEW: 3, RETURN_REQUESTED: 4, FROZEN_EXTERNAL: 3,
     COMPLETED: 5, REFUNDED: 5,
   };
   const done = doneUntil[effective];
@@ -70,6 +70,10 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   if (effective === 'SHIPPED' && current) { current.detail = 'In transit (simulated courier)'; }
   if ((effective === 'DISPUTED' || effective === 'UNDER_REVIEW') && steps[3]) {
     steps[3] = { title: effective === 'DISPUTED' ? 'Dispute open' : 'Under review', detail: effective === 'DISPUTED' ? 'Both sides add evidence' : 'Rules and a human reviewer decide', state: 'current' };
+  }
+  if (effective === 'RETURN_REQUESTED' && steps[3] && steps[4]) {
+    steps[3] = { title: 'Refund decided', detail: 'A reviewer decided to refund once the item is returned', state: 'done' };
+    steps[4] = { title: 'Return to seller', detail: 'Buyer ships the item back; the refund runs when it arrives', state: 'current' };
   }
   if (status === 'FROZEN_EXTERNAL' && steps[Math.min(done, 4)]) {
     steps[Math.min(done, 4)] = { title: 'Frozen by PayPal', detail: 'A PayPal dispute or reversal is open; nothing moves', state: 'current' };
@@ -105,6 +109,8 @@ const EVENT_TITLES: Record<string, string> = {
   PAYPAL_TRACKING_ADDED: 'Tracking sent to PayPal',
   PAYPAL_TRACKING_FAILED: 'Sending tracking to PayPal failed',
   CANCEL: 'Cancelled',
+  RETURN_DELIVERED: 'Return delivered to seller, refund issued',
+  RETURN_DEADLINE_PASSED: 'Item not returned in time, payment released',
 };
 
 export function eventTitle(type: string): string {
@@ -114,7 +120,7 @@ export function eventTitle(type: string): string {
 /** What the current role can do next on a deal, used to pick the screen's main action. */
 export type NextAction =
   | 'accept-terms' | 'pay' | 'wait-approval' | 'ship' | 'confirm-or-dispute'
-  | 'add-evidence' | 'review' | 'none';
+  | 'add-evidence' | 'review' | 'ship-return' | 'none';
 
 export function nextAction(status: TxStatus, role: Role): NextAction {
   switch (status) {
@@ -125,6 +131,7 @@ export function nextAction(status: TxStatus, role: Role): NextAction {
     case 'IN_INSPECTION': return role === 'buyer' ? 'confirm-or-dispute' : 'none';
     case 'DISPUTED': return role === 'reviewer' ? 'none' : 'add-evidence';
     case 'UNDER_REVIEW': return role === 'reviewer' ? 'review' : 'none';
+    case 'RETURN_REQUESTED': return role === 'buyer' ? 'ship-return' : 'none';
     default: return 'none';
   }
 }

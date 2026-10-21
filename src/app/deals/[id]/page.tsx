@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
-import { ActionButton, CopyLinkButton, DisputeForm, ShipForm } from '../../../components/client';
+import { ActionButton, CopyLinkButton, DisputeForm, ReturnForm, ShipForm } from '../../../components/client';
 import { isSimulatedDeal, money, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
 import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
@@ -30,7 +30,8 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const action = nextAction(tx.status, role) === 'accept-terms' && accepted.includes(role as 'buyer' | 'seller') ? 'none' : nextAction(tx.status, role);
   const deadline = tx.status === 'AUTHORIZED' ? timeLeft(tx.shipBy, now)
     : tx.status === 'IN_INSPECTION' ? timeLeft(tx.inspectionUntil, now)
-    : tx.status === 'DISPUTED' ? timeLeft(tx.evidenceUntil, now) : null;
+    : tx.status === 'DISPUTED' ? timeLeft(tx.evidenceUntil, now)
+    : tx.status === 'RETURN_REQUESTED' ? timeLeft(tx.returnBy, now) : null;
 
   return (
     <AppShell active="Deals">
@@ -73,6 +74,8 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             </div>
           )}
           {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}
+          {action === 'ship-return' && <Card><ReturnForm txId={id}/></Card>}
+          {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the payment goes to the seller.</Notice>}
           {action === 'review' && <ButtonLink href={`/deals/${id}/review`} fullWidth>Review dispute</ButtonLink>}
           {tx.status === 'DRAFT' && <Notice>Accepted so far: {accepted.length ? accepted.join(' and ') : 'nobody'}. Terms lock when both buyer and seller accept.</Notice>}
           {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'A PayPal dispute or reversal is open. Nothing moves until PayPal resolves it.' : 'Nothing to do for your role right now. Switch role in Menu to act as another party.'}</Notice>}

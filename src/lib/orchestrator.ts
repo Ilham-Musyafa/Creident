@@ -36,7 +36,9 @@ function effectForTrigger(trigger: Trigger, captured: boolean): Effect['kind'] |
     case 'BUYER_CONFIRM':
     case 'INSPECTION_EXPIRED': return 'PAYPAL_CAPTURE';
     case 'DECISION': return trigger.outcome === 'RELEASE'
-      ? 'PAYPAL_CAPTURE' : captured ? 'PAYPAL_REFUND' : 'PAYPAL_VOID';
+      ? 'PAYPAL_CAPTURE' : trigger.requireReturn ? null : captured ? 'PAYPAL_REFUND' : 'PAYPAL_VOID';
+    case 'RETURN_DELIVERED': return captured ? 'PAYPAL_REFUND' : 'PAYPAL_VOID';
+    case 'RETURN_DEADLINE_PASSED': return 'PAYPAL_CAPTURE';
     default: return null;
   }
 }

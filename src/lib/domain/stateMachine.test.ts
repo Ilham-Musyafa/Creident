@@ -150,3 +150,43 @@ it('does not mutate the input transaction', () => {
   transition(start, { type: 'ACCEPT_TERMS', bothAccepted: true });
   expect(start).toEqual(copy);
 });
+
+describe('return before refund', () => {
+  const RETURN_BY = '2026-11-10T00:00:00Z';
+  const pending = (captured = false) => tx('RETURN_REQUESTED', { captured, returnBy: RETURN_BY });
+
+  it('moves no money when a refund requires the item back', () => {
+    const r = transition(tx('UNDER_REVIEW'), { type: 'DECISION', outcome: 'REFUND', requireReturn: true });
+    expect(r).toMatchObject({ ok: true, tx: { status: 'RETURN_REQUESTED' }, effect: { kind: 'NONE' } });
+  });
+
+  it('still refunds at once when the return is waived', () => {
+    const r = transition(tx('UNDER_REVIEW'), { type: 'DECISION', outcome: 'REFUND' });
+    expect(r).toMatchObject({ ok: true, tx: { status: 'VOIDED' }, effect: { kind: 'PAYPAL_VOID' } });
+  });
+
+  it('voids, or refunds a capture, once the return reaches the seller in time', () => {
+    expect(transition(pending(), { type: 'RETURN_DELIVERED', now: '2026-11-09T00:00:00Z', destinationMatches: true }))
+      .toMatchObject({ ok: true, tx: { status: 'VOIDED' }, effect: { kind: 'PAYPAL_VOID' } });
+    expect(transition(pending(true), { type: 'RETURN_DELIVERED', now: '2026-11-09T00:00:00Z', destinationMatches: true }))
+      .toMatchObject({ ok: true, tx: { status: 'REFUNDED' }, effect: { kind: 'PAYPAL_REFUND' } });
+  });
+
+  it('rejects a return delivered elsewhere or after the deadline', () => {
+    expect(transition(pending(), { type: 'RETURN_DELIVERED', now: '2026-11-09T00:00:00Z', destinationMatches: false }))
+      .toMatchObject({ ok: false, code: 'RETURN_WRONG_DESTINATION' });
+    expect(transition(pending(), { type: 'RETURN_DELIVERED', now: '2026-11-11T00:00:00Z', destinationMatches: true }))
+      .toMatchObject({ ok: false, code: 'DEADLINE_PASSED' });
+  });
+
+  it('releases to the seller only after the return deadline has passed', () => {
+    expect(transition(pending(), { type: 'RETURN_DEADLINE_PASSED', now: '2026-11-09T00:00:00Z' }))
+      .toMatchObject({ ok: false, code: 'DEADLINE_NOT_REACHED' });
+    expect(transition(pending(), { type: 'RETURN_DEADLINE_PASSED', now: '2026-11-11T00:00:00Z' }))
+      .toMatchObject({ ok: true, tx: { status: 'COMPLETED', captured: true }, effect: { kind: 'PAYPAL_CAPTURE' } });
+  });
+
+  it('can be frozen by an external PayPal dispute while the return is pending', () => {
+    expect(transition(pending(), { type: 'EXTERNAL_DISPUTE' })).toMatchObject({ ok: true, tx: { status: 'FROZEN_EXTERNAL', frozenFrom: 'RETURN_REQUESTED' } });
+  });
+});

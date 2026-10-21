@@ -9,6 +9,7 @@ const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
   AUTHORIZED: { label: 'Authorized (funds reserved)', tone: 'authorized' },
   SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: 'Inspection', tone: 'inspection' },
   DISPUTED: { label: 'Disputed', tone: 'disputed' }, UNDER_REVIEW: { label: 'Under review', tone: 'disputed' },
+  RETURN_REQUESTED: { label: 'Return requested', tone: 'awaiting' },
   FROZEN_EXTERNAL: { label: 'Frozen by PayPal', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
   REFUNDED: { label: 'Refunded', tone: 'void' }, VOIDED: { label: 'Voided', tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },

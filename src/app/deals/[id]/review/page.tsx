@@ -52,7 +52,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           ]}/>
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
-            : <Card><ReviewForm txId={id} pendingSplit={pendingSplit}/></Card>}
+            : <Card><ReviewForm txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>The AI only summarises; it cannot release or refund. Rules recommend, and a human confirms every dispute outcome.</Notice>
         </aside>
       </div>
