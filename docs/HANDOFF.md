@@ -62,11 +62,10 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
-## Active agent (2026-10-21 22:05 WIB)
+## Active agent (2026-10-21 22:45 WIB)
 
-**Codex** builds the owner-approved "PayPal dispute bridge" (prompt C11, branch
-`codex/c11-dispute-bridge`). Claude helps the owner review evaluation labels and does not
-touch application code meanwhile. `docs/RECONCILIATION.md` is still a proposal only.
+None. Codex finished C11 (PayPal dispute bridge); Claude reviewed, merged it with the R5
+work and merged it to `main`. `docs/RECONCILIATION.md` is still a proposal only.
 
 ## How to run
 
@@ -130,6 +129,13 @@ Still open:
 
 ## Log
 
+- 2026-10-21 22:45 WIB (Claude): reviewed Codex C11. Merged `main` (R5) into the branch;
+  only HANDOFF conflicted. Tests 195/195, typecheck and build pass. Browser check in
+  simulated mode on a seeded completed demo deal: buyer opens a SIM case (deal freezes),
+  seller sends the inquiry message, escalation asks for confirmation, then the PDF is sent;
+  audit shows DETECTED, EXTERNAL_DISPUTE, MESSAGE_SENT, ESCALATED, EVIDENCE_SENT, all
+  marked simulated. 390px light and 390/1440px dark: no overflow, dialogs or console
+  errors. Pending for the owner: one integrated run on the real Sandbox.
 - 2026-10-21 22:35 WIB (Claude, owner-approved "R5"): disputes typed "damaged" or
   "incomplete" always go to a person (rules engine, review pipeline, eval harness). Eval
   cases now carry the dispute type and shipping facts (other_parcel_buyer: wrong
