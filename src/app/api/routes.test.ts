@@ -498,3 +498,25 @@ describe('PayPal tracking after capture', () => {
     expect(calls.filter((c) => c.path.endsWith('/track'))).toHaveLength(3);
   });
 });
+
+describe('reviewer access code', () => {
+  afterEach(() => { delete process.env.REVIEWER_ACCESS_CODE; });
+
+  it('blocks reviewer actions without the configured code and allows them with it', async () => {
+    process.env.REVIEWER_ACCESS_CODE = 'judge-2026';
+    const blocked = await tick(post('/api/jobs/tick', 'reviewer'));
+    expect(blocked.status).toBe(403);
+    expect((await blocked.json()).error).toBe('REVIEWER_CODE_REQUIRED');
+    const viaHeader = new Request('http://localhost:3000/api/jobs/tick', {
+      method: 'POST', headers: { 'x-demo-role': 'reviewer', 'x-reviewer-code': 'judge-2026', 'content-type': 'application/json' }, body: '{}',
+    });
+    expect((await tick(viaHeader)).status).toBe(200);
+    const viaCookie = new Request('http://localhost:3000/api/jobs/tick', {
+      method: 'POST', headers: { 'x-demo-role': 'reviewer', cookie: 'hv-reviewer-code=judge-2026', 'content-type': 'application/json' }, body: '{}',
+    });
+    expect((await tick(viaCookie)).status).toBe(200);
+    // Buyer and seller actions are not affected.
+    const created = await create(post('/api/transactions', 'seller', { item: 'Sample', amount: '10.00', terms: {} }));
+    expect(created.status).toBe(201);
+  });
+});

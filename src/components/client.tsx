@@ -16,6 +16,7 @@ export class ApiError extends Error {
 }
 
 const FRIENDLY: Record<string, string> = {
+  REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Menu.',
   SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, add PP_ID and PP_SECRET to .env, or set PAYPAL_MODE=simulated for a labelled simulation.',
   ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Menu.',
   EVIDENCE_CLOSED: 'The evidence window is closed.',
@@ -87,6 +88,24 @@ export function RoleSwitch({ current }: { current: Role }) {
     document.cookie = `hv-role=${labels[next]}; path=/; max-age=31536000; samesite=lax`;
     router.refresh();
   }}/>;
+}
+
+export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
+  const router = useRouter();
+  const [code, setCode] = useState('');
+  return (
+    <form className="space-y-2" onSubmit={(e) => {
+      e.preventDefault();
+      document.cookie = `hv-reviewer-code=${encodeURIComponent(code.trim())}; path=/; max-age=604800; samesite=strict`;
+      setCode('');
+      router.refresh();
+    }}>
+      <Label htmlFor="reviewer-code">Reviewer access code</Label>
+      <input id="reviewer-code" type="password" autoComplete="off" className={fieldClass} value={code} onChange={(e) => setCode(e.target.value)} placeholder={unlocked ? 'Saved on this device' : 'Ask the demo owner'}/>
+      <Button type="submit" variant="ghost" fullWidth disabled={!code.trim()}>Save code</Button>
+      <p className="text-xs text-muted">{unlocked ? 'Reviewer actions are unlocked on this device.' : 'This demo needs a code before anyone can act as the reviewer.'}</p>
+    </form>
+  );
 }
 
 export function PayButton({ txId, simulated = false }: { txId: string; simulated?: boolean }) {

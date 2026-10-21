@@ -4,6 +4,14 @@ import { createHash } from 'node:crypto';
 import { getApiContext } from './api/_shared/context';
 import { isRole, type Role } from '../components/view';
 import { payPalMode } from '../lib/paypal/simulated';
+import { REVIEWER_CODE_COOKIE, reviewerCodeMatches, reviewerCodeRequired } from '../lib/reviewerAccess';
+
+export { reviewerCodeRequired };
+
+/** False only when this demo requires a reviewer access code and this browser has not saved it. */
+export async function reviewerUnlocked(): Promise<boolean> {
+  return reviewerCodeMatches((await cookies()).get(REVIEWER_CODE_COOKIE)?.value);
+}
 
 /** True when money steps use the labelled simulation instead of the PayPal Sandbox. */
 export function simulatedPayPal(): boolean {

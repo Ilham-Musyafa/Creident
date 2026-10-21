@@ -1,6 +1,7 @@
 import { DomainError, type ApplyResult } from '../../../lib/orchestrator';
 import { PayPalError } from '../../../lib/paypal/client';
 import { ApiSetupError } from './context';
+import { reviewerCodeMatches, suppliedReviewerCode } from '../../../lib/reviewerAccess';
 
 export type Role = 'buyer' | 'seller' | 'reviewer';
 
@@ -16,6 +17,9 @@ export function requireRole(request: Request, allowed: readonly Role[], queryRol
     throw new HttpError(400, 'ROLE_REQUIRED', 'State x-demo-role: buyer, seller, or reviewer');
   }
   if (!allowed.includes(role as Role)) throw new HttpError(403, 'ROLE_FORBIDDEN', 'This demo role cannot perform this action');
+  if (role === 'reviewer' && !reviewerCodeMatches(suppliedReviewerCode(request))) {
+    throw new HttpError(403, 'REVIEWER_CODE_REQUIRED', 'This demo requires the reviewer access code for reviewer actions');
+  }
   return role as Role;
 }
 

@@ -3,7 +3,7 @@ import { FindingCard, KeyValue, RuleNotice, StatusPill } from '../../../../compo
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ReviewForm } from '../../../../components/client';
 import { money } from '../../../../components/view';
-import { data, getRole, isUuid } from '../../../_server';
+import { data, getRole, isUuid, reviewerUnlocked } from '../../../_server';
 import { disputeType } from '../../../../lib/disputeTypes';
 
 export const dynamic = 'force-dynamic';
@@ -51,6 +51,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             ...(dtype ? [{ label: 'Dispute type', value: dtype.label }] : []),
           ]}/>
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
+            : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Menu.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
             : <Card><ReviewForm txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>The AI only summarises; it cannot release or refund. Rules recommend, and a human confirms every dispute outcome.</Notice>
