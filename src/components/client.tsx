@@ -269,3 +269,26 @@ export function PayPalReturn() {
     </div>
   );
 }
+
+/** Download through fetch so the API receives the current demo-role header. */
+export function AuditExportButton({ txId, role }: { txId: string; role: Role }) {
+  const { busy, error, run } = useAction();
+  return <div>
+    <Button variant="ghost" disabled={busy} onClick={() => run(async () => {
+      const response = await fetch(`/api/audit/${txId}/export`, { headers: { 'x-demo-role': role } });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+        throw new ApiError(String(body.error ?? 'EXPORT_FAILED'), String(body.message ?? 'The audit export could not be downloaded. Please try again.'));
+      }
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `audit-${txId}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    })}>{busy ? 'Exporting…' : 'Export CSV'}</Button>
+    <ErrorNote error={error}/>
+  </div>;
+}
