@@ -110,7 +110,8 @@ capture); license MIT; visual direction Midnight Ink + Mint with light/dark/syst
 Tentative: AI provider DeepSeek V4.1 Flash via the owner's Hive API key (verify model name,
 API terms, strict-JSON reliability, image support).
 
-Decided 2026-10-21: the platform bears the PayPal fee on a refund (buyer refunded in full);
+Decided 2026-10-21: business model is a 1.5% service fee paid by the seller (documented only,
+not charged in the prototype); split stays recorded-only; the platform bears the PayPal fee on a refund (buyer refunded in full);
 deadlines ship-by 3, inspection 2, evidence 2 days (env-configurable).
 
 Still open:
@@ -129,6 +130,9 @@ Still open:
 
 ## Log
 
+- 2026-10-21 17:55 WIB (Claude): README FAQ answers for review items 7-11, 14, 15 (PR #20);
+  owner decisions recorded: 1.5% seller fee (docs only), split stays recorded-only, name
+  stays HalcyVault for now (decide before the video).
 - 2026-10-21 17:30 WIB (Claude, owner-approved "fix 1-6"): (1) return before refund:
   new status RETURN_REQUESTED, RETURN_DELIVERED / RETURN_DEADLINE_PASSED triggers,
   return_by/return_tracking columns with a migration that widens the status check,

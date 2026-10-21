@@ -319,6 +319,15 @@ the buyer stays silent and tracking shows delivery to the agreed address, the pa
 captured when the inspection window ends; the seller adds evidence in any dispute; and if a
 refund requires a return that never arrives, the payment goes to the seller.
 
+**How would the platform make money, if it also bears the PayPal fee on refunds?** The
+intended model is a 1.5% service fee paid by the seller, deducted from the amount released
+to them; buyers pay nothing extra. The prototype does not charge it, because seller payout
+is not built.
+
+**Why is a split decision not paid out?** A split is recorded with its reason and moves no
+money. PayPal supports partial refunds, so a later version can capture the payment and
+refund the buyer's share; we kept the prototype to full outcomes.
+
 ## 7. Limitations and production path
 
 - The platform operator is still trusted: it runs the server, holds the PayPal keys and
