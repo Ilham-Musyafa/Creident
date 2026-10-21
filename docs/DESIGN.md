@@ -82,6 +82,7 @@ transaction). Each transition writes one audit event.
 | `IN_INSPECTION` | Tracking shows delivery; the buyer's inspection window is running |
 | `DISPUTED` | Buyer opened a dispute inside the window |
 | `UNDER_REVIEW` | Evidence collected, rules or a human are deciding |
+| `RETURN_REQUESTED` | Refund decided; waiting for the buyer to return the item before any money moves |
 | `FROZEN_EXTERNAL` | A PayPal dispute/reversal event arrived; no money moves |
 | `COMPLETED` | Captured and released (simulated payout recorded) |
 | `REFUNDED` | Captured then refunded (full, or partial if supported) |
@@ -103,7 +104,10 @@ Transitions (guards in italics):
 | `IN_INSPECTION` | `DISPUTED` | Buyer opens dispute inside the window | none |
 | `DISPUTED` | `UNDER_REVIEW` | Evidence deadline reached or both sides submitted | none |
 | `UNDER_REVIEW` | `COMPLETED` | Rule outcome RELEASE | capture |
-| `UNDER_REVIEW` | `VOIDED` | Rule outcome REFUND while still only authorized | void |
+| `UNDER_REVIEW` | `RETURN_REQUESTED` | Human REFUND with the return required (default; added 2026-10-21, owner approved) | none |
+| `RETURN_REQUESTED` | `VOIDED` / `REFUNDED` | Buyer's return tracking shows delivery to the seller before `return_by` | void (or refund if captured) |
+| `RETURN_REQUESTED` | `COMPLETED` | Return deadline passed without a delivered return | capture |
+| `UNDER_REVIEW` | `VOIDED` | Rule outcome REFUND while still only authorized, return waived (for example item never arrived) | void |
 | `UNDER_REVIEW` | `REFUNDED` | Rule outcome REFUND after capture | refund |
 | any state, including a completed capture | `FROZEN_EXTERNAL` | Verified `CUSTOMER.DISPUTE.CREATED` or `PAYMENT.CAPTURE.REVERSED` webhook | none |
 | `FROZEN_EXTERNAL` | previous or final | PayPal's decision overrides ours | none |

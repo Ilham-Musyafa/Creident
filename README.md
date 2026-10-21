@@ -67,7 +67,10 @@ Seller writes terms ─▶ both accept (terms hash) ─▶ buyer approves on Pay
               ─▶ AI evidence summary ─▶ rules R1–R7 recommend
               ─▶ human reviewer decides (reason required)
                    ├─ release ─▶ capture ─▶ COMPLETED
-                   ├─ refund  ─▶ void (or refund if captured)
+                   ├─ refund  ─▶ RETURN_REQUESTED: buyer ships the item back
+                   │             ├─ return delivered in time ─▶ void (or refund) ─▶ VOIDED
+                   │             └─ no return by the deadline ─▶ capture ─▶ COMPLETED
+                   ├─ refund without return (e.g. never arrived) ─▶ void ─▶ VOIDED
                    └─ split   ─▶ recorded as pending, no money moves
 A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's decision wins)
 ```
@@ -193,7 +196,9 @@ Optional settings in `.env`:
   model for evidence summaries instead of the recorded replays.
 - `EVAL_K`: number of consistency runs for `npm run eval` (1–20). Keep it set to `3`
   for the copied `.env.example`; an empty value makes the evaluation command fail.
-- `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`: deadlines (defaults 3, 2, 2).
+- `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`, `RETURN_DAYS`: deadlines (defaults 3, 2, 2, 3).
+- `REVIEWER_ACCESS_CODE`: for a shared or hosted demo, reviewer actions need this code
+  (Menu > Reviewer access code).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
 - `HALCYVAULT_DB_PATH`: SQLite file location (default `data/halcyvault.sqlite`).
 
@@ -235,7 +240,50 @@ A run with a live model, with reviewed labels and its sample size, is planned.
 The same numbers are shown in the app on the **Fairness results** page (`/fairness`, from
 `eval/results.json`), with the same limits stated on the page.
 
-## 6. Limitations and production path
+## 6. Threat model and FAQ
+
+Questions we expect, with the honest answer and what the prototype does about each.
+
+**If the buyer wins a refund, do they keep the item too?** No. By default a refund waits
+for the item to come back: the deal moves to `RETURN_REQUESTED`, the buyer submits return
+tracking, and the void or refund runs only when the return is delivered to the seller
+before the deadline (`RETURN_DAYS`, default 3). If no delivered return is recorded in time,
+the payment is released to the seller. The reviewer can waive the return, which is the
+default when the buyer reported that the item never arrived.
+
+**The operator still runs the server. How is this different from a rekber admin?** We do
+not remove the need to trust an operator. We make every operator action recorded,
+attributable and checkable: hash-chained events, decisions bound to the hashes of the terms
+and evidence they were based on, a receipt both parties can read, and Ed25519-signed
+checkpoints of every chain head (`npm run checkpoint`) that can be published outside the
+database. Anyone holding a published checkpoint can detect a later rewrite; it does not
+make a rewrite impossible.
+
+**Is the bias test circular?** Partly, and we say so. The 50 synthetic cases and their
+labels were written by the builder and reviewed by one person; replay mode reuses summaries
+written from those labels. The report and the Fairness page state how many labels were
+reviewed and whether a live model was used. The harness tests the dispute rules (R4, R5,
+R7); the shipping rules R1-R3 are covered by unit tests.
+
+**Few Indonesians pay each other with PayPal, and the prototype is in USD.** True. The
+prototype runs on the PayPal Sandbox because this is a PayPal hackathon, and the flow was
+tested in USD. Many domestic trades in Indonesia use bank transfers or e-wallets instead.
+The pattern (locked terms, authorize then capture, rules first, evidence summary, human
+decision, audit log) does not depend on PayPal; a launch in Indonesia would need a licensed
+local payment partner. On PayPal it fits cross-border second-hand trades.
+
+**What if a deal takes longer than PayPal's 3-day honor period?** A capture after day 3 is
+not guaranteed and the authorization expires on day 29. The deal page shows which window
+applies, and if PayPal refuses a capture it says so plainly: nothing was charged, the deal
+does not move and the seller is not paid until it is resolved. Automatic reauthorization is
+not built.
+
+**Can anyone act as the reviewer?** In the local demo, yes: roles are picked in Menu and
+there is no sign-in. For a shared or hosted demo set `REVIEWER_ACCESS_CODE`; reviewer
+decisions and the deadline job then need that code. This is a demo gate, not
+authentication.
+
+## 7. Limitations and production path
 
 - The platform operator is still trusted: it runs the server, holds the PayPal keys and
   calls capture or refund. The audit log makes its actions checkable, not impossible to
@@ -244,6 +292,8 @@ The same numbers are shown in the app on the **Fairness results** page (`/fairne
   times need a different fund model (capture first, refund on dispute), which brings
   custody questions.
 - Split outcomes are recorded but not paid out.
+- Return shipping uses the same simulated courier; who pays for return shipping is not
+  modelled.
 - PayPal does not return its fee on a refund (seen in the Sandbox). The platform bears it,
   so a buyer who is refunded gets the full amount back.
 - No real sign-in, file upload, courier integration or seller payout. Real tracking would
@@ -255,7 +305,7 @@ The same numbers are shown in the app on the **Fairness results** page (`/fairne
 - Later, the same rules-first pattern could extend to milestone-based services, such as
   home renovation paid per stage, with one PayPal order per milestone.
 
-## 7. Tech stack and AI tools
+## 8. Tech stack and AI tools
 
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, SQLite through
   `node:sqlite`, Vitest. Three runtime dependencies: `next`, `react`, `react-dom`.
@@ -265,6 +315,6 @@ The same numbers are shown in the app on the **Fairness results** page (`/fairne
   [`docs/HANDOFF.md`](docs/HANDOFF.md).
 - Design docs: [`docs/DESIGN.md`](docs/DESIGN.md), [`docs/UI.md`](docs/UI.md).
 
-## 8. License
+## 9. License
 
 [MIT](LICENSE).
