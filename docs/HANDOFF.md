@@ -135,6 +135,20 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:00 WIB (Codex, C7): added `npm run checkpoint` to verify all
+  audit chains in one SQLite snapshot and sign canonical head manifests with
+  Ed25519 using only `AUDIT_SIGNING_KEY` from the environment. The explicit
+  `--generate-key` command prints a pair once and writes only the public key;
+  the committed bootstrap public key has no retained private half and must be
+  replaced locally before first use. Verifier detects unchanged, extended,
+  rewritten, missing, and newly uncheckpointed deals; `/audit` shows checkpoint
+  results or a plain missing/invalid-file message. README and DESIGN explain
+  publishing and the need to retain an independent trusted checkpoint/key.
+  No operational private key or checkpoint was committed. Tests generate
+  throwaway keys and cover tampering, wrong keys, CLI output, and refusal to
+  sign broken chains. `npm test` (128/128), typecheck, and build passed; final
+  build has no tracing warnings. Production `/audit` checked at 360/1440px in
+  light/dark: no overflow or browser console errors. No dependencies added.
 - 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
   documentation-only proposal for resolving PayPal actions left pending after a
   crash. It maps read-only checks for orders, authorizations, captures, voids,
