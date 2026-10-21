@@ -42,4 +42,3 @@ export function draftTerms(text: string, options: Pick<AssistRequest<TermsDraft>
     data: { listing: text }, userTexts: [text], validate: value => validateTermsDraft(value, names),
     replay: recorded, replayKey: sample?.id, ...options });
 }
-
