@@ -115,6 +115,11 @@ deadlines ship-by 3, inspection 2, evidence 2 days (env-configurable).
 
 Still open:
 - Final public name (the word "Vault" suggests custody; temporary, owner will rename later).
+  Shortlist (2026-10-21, owner re-checks before the video; English names only):
+  Pactrail (Claude's first pick: pact + audit trail, no product found), Evenhand,
+  Clarus (clear meaning, but widely used), Vectrust, Solventy, Vectro, Middlemark,
+  Settlewise. Avoid Vectra (Vectra AI), Dealtrail (close to Dealertrack) and words like
+  escrow/safe/guard/secure (claim rules). Rename README, UI and video script in one PR.
 - Hosting / public demo link: owner chose "decide later" (after smoke test and video).
 - Five draft eval labels conflict with rules R3/R5 (flagged on the label-review page);
   owner reviews before the live-model eval.
