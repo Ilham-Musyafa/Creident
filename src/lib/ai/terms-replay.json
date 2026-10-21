@@ -1,0 +1,14 @@
+{
+  "phone": {
+    "item": "Used phone, 128 GB",
+    "condition": "Good; small scratch on the back, no screen cracks; battery health 86%",
+    "includedItems": ["Phone", "Charging cable", "Original box"],
+    "criteria": ["Screen has no cracks in a close-up photo", "Battery-health screenshot shows at least 86%", "Back scratch matches the listing photo", "Phone, charging cable and box appear together in a photo"]
+  },
+  "camera": {
+    "item": "Mirrorless camera with kit lens",
+    "condition": "Good; light body wear, no visible lens scratches",
+    "includedItems": ["Camera body", "Kit lens", "Battery", "Charger", "Lens cap"],
+    "criteria": ["Serial label is visible in a close-up photo", "Lens glass shows no visible scratches in close-up photos", "Body wear matches the listing photos", "Camera, kit lens, battery, charger and lens cap appear together in a photo"]
+  }
+}

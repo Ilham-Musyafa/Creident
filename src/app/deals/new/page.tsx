@@ -1,5 +1,5 @@
 import { AppShell, Card, Notice, PageHeader } from '../../../components/layout';
-import { NewDealForm } from '../../../components/client';
+import { NewDealForm } from '../../../components/NewDealForm';
 import { KeyValue } from '../../../components/ui';
 import { data, getRole } from '../../_server';
 
@@ -14,7 +14,7 @@ export default async function NewDealPage() {
       {role !== 'seller' ? (
         <Notice>Only the seller creates a deal. Switch to Seller in Menu.</Notice>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <Card><NewDealForm/></Card>
           <div className="space-y-3">
             <KeyValue items={[

@@ -1,3 +1,4 @@
+import { acceptedTermsAudit } from '../../../lib/ai/termsReceipt';
 import { syncPayPalDisputes } from '../../../lib/paypalDisputes';
 import { disputeDeps } from './disputes';
 import { decisionBasis } from '../../../lib/decisionBasis';
@@ -56,7 +57,7 @@ export function createTransaction(request: Request): Promise<Response> {
   return route(async () => {
     requireRole(request, ['seller']);
     const body = await jsonBody(request);
-    noExtraFields(body, ['item', 'amount', 'currency', 'terms']);
+    noExtraFields(body, ['item', 'amount', 'currency', 'terms', 'termsDraftReceipt']);
     const item = stringField(body, 'item', 200);
     const amount = stringField(body, 'amount', 16);
     if (!/^\d{1,6}\.\d{2}$/.test(amount) || Number(amount) <= 0) throw new HttpError(400, 'INVALID_AMOUNT', 'amount must be positive USD with two decimals');
@@ -64,6 +65,9 @@ export function createTransaction(request: Request): Promise<Response> {
     if (!body.terms || typeof body.terms !== 'object' || Array.isArray(body.terms)) throw new HttpError(400, 'INVALID_TERMS', 'terms must be a JSON object');
     const termsJson = canonicalJson(body.terms);
     if (termsJson.length > 8192) throw new HttpError(413, 'TERMS_TOO_LARGE', 'terms exceeds 8 KB');
+    const aiAssist = body.termsDraftReceipt === undefined ? undefined
+      : acceptedTermsAudit(body.termsDraftReceipt, item, body.terms as Record<string, unknown>);
+    if (aiAssist === null) throw new HttpError(400, 'INVALID_TERMS_DRAFT', 'AI draft expired or invalid. Generate it again or continue with manual terms.');
     const context = getApiContext();
     const id = randomUUID();
     const tx: StoredTx = {
@@ -72,7 +76,7 @@ export function createTransaction(request: Request): Promise<Response> {
     };
     context.repo.createTransaction(tx, {
       txId: id, ts: context.now(), actor: 'seller', type: 'TRANSACTION_CREATED',
-      payload: { item, amount, currency: 'USD', termsHash: hash(termsJson) },
+      payload: { item, amount, currency: 'USD', termsHash: hash(termsJson), ...(aiAssist ?? {}) },
     });
     return json({ transaction: tx }, 201);
   });
