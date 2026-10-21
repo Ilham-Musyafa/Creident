@@ -65,11 +65,18 @@ The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
 webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agent (2026-10-21, C12)
+## Active agents (2026-10-22 01:15 WIB)
 
-Codex finished the C12 documentation/copy accuracy pass on `docs/c12-accuracy-pass`
-for Claude review. PR creation is blocked by the environment proxy denying
-`api.github.com` (403); git access works. No application behavior changes. `docs/RECONCILIATION.md` remains a proposal only.
+Owner approved the AI assist features (DESIGN 6.1) and asked for two agents in parallel,
+one task at a time each. Keep to your own files; put new UI in new component files rather
+than growing `src/components/client.tsx`; shared helper `src/lib/ai/assist.ts` changes
+only with a note here.
+- **Codex:** C16 terms assistant -> C17 evidence completeness -> C18 reviewer copilot.
+  Files: `src/lib/ai/terms*`, `src/lib/ai/evidenceCheck*`, `src/lib/ai/copilot*`, the
+  new-deal flow, evidence forms, review page.
+- **Claude:** #4 outbound drafts (`src/lib/ai/drafts*`, PayPal dispute panel, courier claim
+  pack), then #5 translation (`src/lib/ai/translate*`) after C18 is merged, because both
+  touch the review page.
 
 ## How to run
 
@@ -138,6 +145,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 01:15 WIB (Claude): owner approved AI assist features 1-5 (DESIGN 6.1).
+  Added the shared guard-rail helper `src/lib/ai/assist.ts` (+ tests) and the work split.
 - 2026-10-22 01:20 WIB (Claude): reviewed and merged C14 (#37, bounded dispute polling and
   security review) and C15 (#38, 12 draft shipping/return eval cases). C15's state machine
   edit is import extensions only. Fixed a merge leftover: eval/harness.ts had two report

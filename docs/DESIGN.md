@@ -186,6 +186,39 @@ execution was explicitly deferred by the owner (2026-10-21). No partial refund o
 - Use only synthetic evidence in the demo and tests; do not send real personal data to
   any third-party AI API.
 
+### 6.1 AI assist features (owner-approved 2026-10-22)
+
+Goal: a larger, visible AI role at every stage of a deal without giving the AI any power
+over money or outcomes. Rules and people still decide; every AI output is a **draft** that
+a person accepts, edits or ignores.
+
+Shared guard rails (all assists use `src/lib/ai/assist.ts`):
+- Input is quoted data inside `<untrusted_data>`; user text is checked for injection
+  patterns, and a flagged input is shown to the person, never silently trusted.
+- Output is one JSON object checked by a strict, feature-specific validator (exact keys,
+  bounded text, only known evidence or criterion ids). One retry, then the assist is
+  "unavailable" and the manual flow continues unchanged.
+- Claims about evidence must cite evidence ids; a claim without a valid citation is dropped.
+- No tool access, no PayPal calls, no state transitions from AI output. Money-moving code
+  never reads assist output.
+- When a person uses a draft, the audit event records `feature`, `mode`, `model`,
+  `promptVersion`, `promptHash` and `outputHash`, plus whether the person accepted it
+  unchanged or edited it. The draft text itself is stored only where the feature says so.
+- Replay mode uses recorded drafts for labelled demo deals and tests (no keys needed);
+  live mode uses the same OpenAI-compatible provider as section 6.
+- Synthetic data only in demos and tests.
+
+| # | Assist | Stage | What the AI drafts | Who confirms | Owner of the work |
+|---|---|---|---|---|---|
+| 1 | Terms assistant | New deal | Structured terms from a pasted listing or chat: condition, included items checklist, required opening photos | Seller drafts, buyer accepts before terms lock | Codex C16 |
+| 2 | Evidence completeness check | Dispute, evidence window | Which agreed checklist items or required photos are still missing, per side | Each party sees prompts for their own side; no verdict | Codex C17 |
+| 3 | Reviewer copilot | Human review | Cited per-criterion notes, a draft decision reason, and for R5 cases a suggested partial-refund range with its basis | Reviewer accepts or edits; the decision stays the reviewer's | Codex C18 |
+| 4 | Outbound drafts | After a decision or a PayPal case | A message to PayPal for the dispute bridge and a courier claim pack for transit damage | Seller (or reviewer) approves before anything is sent or downloaded | Claude |
+| 5 | Evidence translation | Review | A translation of evidence text into the reviewer's language; the original and its hash stay authoritative | Reviewer reads both | Claude, after C18 |
+
+Measured: share of drafts accepted unchanged, edited or ignored (per feature), shown on
+the Fairness page once there is data. Not measured: whether drafts are correct in general.
+
 ## 7. Audit log
 
 - Table `events`, append-only (application code has no update/delete path for it).
