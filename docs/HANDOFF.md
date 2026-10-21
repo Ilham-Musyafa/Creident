@@ -146,6 +146,9 @@ Still open:
 
 ## Log
 
+- 2026-10-22 01:55 WIB (Claude): README FAQ gains "Isn't sending hard cases to a person
+  inefficient?" (owner asked to add it now and will re-read everything before the demo);
+  corrected the stale bias-test FAQ counts (62 cases: 10 reviewed, 40 accepted, 12 drafts).
 - 2026-10-22 01:31 WIB (Codex, C16): implemented the terms assistant using
   `runAssist` feature `terms`, promptVersion `terms-v1`. Seller-only POST
   `/api/ai/terms-draft` accepts only `text` (1-4,000 characters after nonempty
