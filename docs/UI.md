@@ -117,7 +117,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 
 ## 7. Screens (see mockups)
 
-1. Home (role-aware: seller/buyer/reviewer)
+1. Home (role-aware: seller/buyer/reviewer). With no deals, show a compact getting-started card instead of the amount and zero stats; hide Recent deals / See all. Keep the desktop New navigation neutral so the page action is primary. Use a compact Sandbox badge and a Limitations link.
 2. Deal detail with timeline, fees, actions
 3. Dispute review (AI findings, rule notice, reviewer decision with required reason)
 4. Audit log with chain verification
@@ -125,8 +125,10 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 6. Buyer checkout: terms locked + hash, "How it works" in 3 steps, Sandbox notice,
    "Continue to PayPal (Sandbox)"
 7. Add evidence: one-time code, in-app photo only, submitted items with content hash
-8. Menu: demo role switch, appearance (Light/Dark/System), "How decisions are made",
-   "Audit & verification", "Limitations", "About"
+8. Menu: group demo role, appearance (Light/Dark/System), optional reviewer code, and
+   demo data under "Demo settings" in one divided card. Group "How decisions work",
+   "Audit & verification", fairness results, "Limitations", and "About" under
+   "About & transparency". Selected segments have a visible border and aria-pressed.
 
 Time values (3 days ship-by, 2 days inspection, 2 days evidence) and "Fee on refund borne
 by: Platform" were decided by the owner on 2026-10-21.
