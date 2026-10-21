@@ -20,6 +20,14 @@ function Metric({ label, value, detail, good: goodIn }: { label: string; value: 
   );
 }
 
+function labelLine(total: number, reviewed: number, accepted: number): string {
+  if (!reviewed && !accepted) return 'The expected outcomes for these cases are drafts that still need review.';
+  const draft = total - reviewed - accepted;
+  return `${reviewed} of ${total} expected outcomes were reviewed individually by the owner`
+    + (accepted ? `; ${accepted} drafts were accepted by the owner without individual review` : '')
+    + (draft ? `; ${draft} are still drafts` : '') + '.';
+}
+
 export default function FairnessPage() {
   const m = results.metrics;
   const falseRelease = rate(m.falseRelease, m.buyerRight);
@@ -37,7 +45,7 @@ export default function FairnessPage() {
       <PageHeader title="Fairness results" back="/menu" subtitle={`${m.total} synthetic cases · ${replay ? 'replay mode' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}/>
       <div className="space-y-5">
         {replay && <Notice tone="warning">Replay mode: these runs reuse recorded AI summaries written from the draft labels. They check the test harness, the rules and the injection flag. They do not measure a live AI model, so perfect scores here prove nothing about model fairness.</Notice>}
-        {results.labelStatus === 'draft' && <Notice tone="warning">{results.labelsReviewed ? `${results.labelsReviewed} of ${m.total} expected outcomes were reviewed by the owner; the rest are drafts.` : 'The expected outcomes for these cases are drafts that still need review.'}</Notice>}
+        <Notice tone={results.labelStatus === 'draft' ? 'warning' : 'info'}>{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</Notice>
 
         <div>
           <SectionTitle>Does one side lose more often?</SectionTitle>

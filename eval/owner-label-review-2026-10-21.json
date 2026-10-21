@@ -1,0 +1,7 @@
+{
+  "other_parcel_buyer": { "decision": "human" },
+  "ship_date_buyer": { "decision": "agree", "note": "Tracking created before the order is strong enough for a refund." },
+  "transit_damage_buyer": { "decision": "human" },
+  "partial_delivery_buyer": { "decision": "human" },
+  "seal_buyer": { "decision": "human" }
+}

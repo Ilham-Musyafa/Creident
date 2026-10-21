@@ -394,6 +394,17 @@ describe('JSON route handlers', () => {
     expect(repo.readEvents(id).some((e) => e.type === 'RETURN_DEADLINE_PASSED' && e.payload.effect === 'PAYPAL_CAPTURE')).toBe(true);
   });
 
+  it('recommends a person for a damage dispute even when the evidence summary favours one side (R5)', async () => {
+    useAiResult('buyer');
+    const id = await createReadyTransaction();
+    await ship(post(`/api/transactions/${id}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(id));
+    await dispute(post(`/api/transactions/${id}/dispute`, 'buyer', { type: 'damaged' }), param(id));
+    await evidence(post(`/api/transactions/${id}/evidence`, 'buyer', { kind: 'note', content: 'Synthetic: cracked on arrival.' }), param(id));
+    await evidence(post(`/api/transactions/${id}/evidence`, 'seller', { kind: 'note', content: 'Synthetic: packed with bubble wrap.' }), param(id));
+    expect(repo.loadRecommendation(id)).toMatchObject({ ruleId: 'R5', action: 'ESCALATE_HUMAN', requiresHuman: true });
+    expect(repo.loadRecommendation(id)?.reasons[0]).toContain('arrived damaged');
+  });
+
   it('requires a human reason and records SPLIT as pending without a PayPal call', async () => {
     useAiResult('seller');
     const id = await createReadyTransaction();

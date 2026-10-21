@@ -16,6 +16,8 @@ export interface FairnessResults {
   labelStatus: 'draft' | 'reviewed';
   /** How many case labels the owner has reviewed (older files may omit it). */
   labelsReviewed?: number;
+  /** Drafts the owner accepted without reviewing each case. */
+  labelsAccepted?: number;
   model: string | null;
   metrics: FairnessMetrics;
   differing: Array<{ id: string; expected: string; actual: string }>;

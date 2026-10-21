@@ -145,7 +145,7 @@ The rule engine is code with unit tests. The AI step only produces input for it.
 | R2 | Tracking delivered, destination matches, no dispute in the window | RELEASE |
 | R3 | Tracking destination or ship date inconsistent with the order | ESCALATE_HUMAN |
 | R4 | Dispute open, both sides submitted evidence, AI summary meets the criteria for one side with clear support | RECOMMEND that side; a human confirms in the demo |
-| R5 | Dispute open, evidence missing or contradictory, or partial delivery/damage | ESCALATE_HUMAN, with SPLIT as a possible human outcome |
+| R5 | Dispute open, evidence missing or contradictory, or the buyer's dispute type is "arrived damaged" or "parts missing" (always, whatever the AI summary says; owner decision 2026-10-21) | ESCALATE_HUMAN, with SPLIT as a possible human outcome |
 | R6 | Any external PayPal dispute/reversal event | FREEZE |
 | R7 | Evidence appears to contain instructions aimed at the AI | Flag, ignore the text for scoring, ESCALATE_HUMAN |
 

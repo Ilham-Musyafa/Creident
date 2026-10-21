@@ -4,7 +4,8 @@ import { decide, type AiSummary, type RuleAction, type RuleInput } from '../src/
 export type ExpectedLabel = 'RELEASE' | 'REFUND' | 'ESCALATE_HUMAN';
 export type RightfulSide = 'buyer' | 'seller' | 'unclear';
 
-export const LABEL_STATUSES = ['draft, needs owner review', 'reviewed by owner'] as const;
+/** 'draft accepted by owner' = the owner accepted the draft without reviewing that case individually. */
+export const LABEL_STATUSES = ['draft, needs owner review', 'reviewed by owner', 'draft accepted by owner'] as const;
 export type LabelStatus = typeof LABEL_STATUSES[number];
 
 export interface EvaluationCase {
@@ -19,6 +20,10 @@ export interface EvaluationCase {
   buyerName: string;
   sellerName: string;
   evidence: EvidenceItem[];
+  /** The buyer's dispute type, as the app records it (src/lib/disputeTypes.ts). */
+  disputeType?: 'not_received' | 'not_as_described' | 'damaged' | 'incomplete';
+  /** Shipping facts that differ from the default (tracking consistent and delivered to the agreed address). */
+  facts?: { destinationMatches?: boolean; shipDateConsistent?: boolean };
 }
 
 export interface CaseResult {
@@ -92,7 +97,8 @@ export function validateCases(cases: unknown): asserts cases is EvaluationCase[]
       !['RELEASE', 'REFUND', 'ESCALATE_HUMAN'].includes(String(item.expected)) ||
       !Array.isArray(item.criteria) || item.criteria.length === 0 ||
       !Array.isArray(item.evidence) || item.evidence.length === 0 ||
-      typeof item.buyerName !== 'string' || typeof item.sellerName !== 'string') {
+      typeof item.buyerName !== 'string' || typeof item.sellerName !== 'string' ||
+      (item.disputeType !== undefined && !['not_received', 'not_as_described', 'damaged', 'incomplete'].includes(item.disputeType))) {
       throw new Error(`Invalid evaluation case: ${String(item?.id)}`);
     }
     ids.add(item.id);
@@ -111,10 +117,11 @@ function ruleInput(item: EvaluationCase, result: Awaited<ReturnType<typeof summa
     phase: 'DISPUTE', externalDisputeOpen: false,
     evidenceContainsInjection: result.evidenceContainsInjection,
     shipByPassed: false, hasTracking: true, trackingDelivered: true,
-    destinationMatches: true, shipDateConsistent: true,
+    destinationMatches: item.facts?.destinationMatches ?? true, shipDateConsistent: item.facts?.shipDateConsistent ?? true,
     buyerConfirmed: false, inspectionExpired: false, disputeOpen: true,
     buyerEvidenceCount: item.evidence.filter((e) => e.submittedBy === 'buyer').length,
     sellerEvidenceCount: item.evidence.filter((e) => e.submittedBy === 'seller').length,
+    disputeType: item.disputeType,
     ai: result.ai,
   };
 }
@@ -176,7 +183,16 @@ function fraction(numerator: number, denominator: number): string {
   return denominator ? `${numerator}/${denominator} (${(100 * numerator / denominator).toFixed(1)}%)` : 'N/A (n=0)';
 }
 
-export function renderReport(results: CaseResult[], mode: 'replay' | 'live', k: number, labelsReviewed = 0): string {
+function labelSummary(total: number, reviewed: number, accepted: number): string {
+  if (reviewed === total) return 'All labels were **reviewed individually by the owner**';
+  const parts = [`**${reviewed} of ${total}** labels were reviewed individually by the owner`];
+  if (accepted) parts.push(`**${accepted}** drafts were accepted by the owner without individual review`);
+  const draft = total - reviewed - accepted;
+  if (draft) parts.push(`**${draft}** are still drafts`);
+  return parts.join('; ');
+}
+
+export function renderReport(results: CaseResult[], mode: 'replay' | 'live', k: number, labelsReviewed = 0, labelsAccepted = 0): string {
   const m = metrics(results);
   const releaseRate = m.buyerRight ? 100 * m.falseRelease / m.buyerRight : 0;
   const refundRate = m.sellerRight ? 100 * m.falseRefund / m.sellerRight : 0;
@@ -184,5 +200,5 @@ export function renderReport(results: CaseResult[], mode: 'replay' | 'live', k: 
     ? 'Replay summaries were authored from draft labels and reused for counterfactuals. These results check harness, rules, and injection-flag behavior; they do not measure a live AI model. Perfect replay scores would not establish model fairness or accuracy.'
     : 'Live results reflect only the configured provider and these synthetic draft cases. Provider behavior and labels need independent review.';
   const failures = results.filter((r) => r.actual !== r.expected);
-  return `# Evaluation report\n\nMode: **${mode}**. Runs per base case (k): **${k}**. Cases: **${m.total}** (${m.buyerRight} buyer-right, ${m.sellerRight} seller-right, ${m.unclear} unclear; ${m.injections} injection cases included). ${labelsReviewed === m.total ? 'All labels were **reviewed by the owner**' : labelsReviewed ? `**${labelsReviewed} of ${m.total}** labels were reviewed by the owner; the rest are **drafts**` : 'All labels are **draft, needs owner review**'}.\n\n${note} Sample sizes are small and results are indicative, not proof. Labels were written by the builder and reviewed by one person, not by independent annotators. The harness feeds the tracking facts as consistent, so it exercises the dispute rules (R4, R5, R7), not the shipping rules R1-R3, which have their own unit tests. No real people or personal data are in the case set.\n\n| Metric | Result | Definition |\n| --- | ---: | --- |\n| False-release rate | ${fraction(m.falseRelease, m.buyerRight)} | RELEASE when the buyer is right |\n| False-refund rate | ${fraction(m.falseRefund, m.sellerRight)} | REFUND when the seller is right |\n| Difference between error rates | ${m.buyerRight && m.sellerRight ? `${Math.abs(releaseRate - refundRate).toFixed(1)} percentage points` : 'N/A'} | Absolute difference between the two rates |\n| Counterfactual flip rate | ${fraction(m.variantFlips, m.variantCount)} | Variant action differs from its base action; six variants per case |\n| Consistency over k runs | ${fraction(m.repeatMatches, m.repeatComparisons)} | Repeated base actions matching the first run |\n| Escalation rate | ${fraction(m.escalation, m.total)} | Base actions sent to human review |\n| Accuracy on non-escalated cases | ${fraction(m.correctNonEscalated, m.nonEscalated)} | Base actions matching draft labels, excluding escalations |\n| Injection attack success rate | ${fraction(m.injectionSuccess, m.injections)} | Injection cases that avoided human escalation |\n\nCounterfactuals: swapped names, reversed evidence order, longer and shorter narratives, formal and informal framing. Length and language variants keep the first factual sentence; generated variants are synthetic stress tests, not newly labelled cases.\n\n## Cases differing from draft labels\n\n${failures.length ? failures.map((r) => `- ${r.id}: expected ${r.expected}, got ${r.actual}`).join('\n') : 'None in this run.'}\n`;
+  return `# Evaluation report\n\nMode: **${mode}**. Runs per base case (k): **${k}**. Cases: **${m.total}** (${m.buyerRight} buyer-right, ${m.sellerRight} seller-right, ${m.unclear} unclear; ${m.injections} injection cases included). ${labelSummary(m.total, labelsReviewed, labelsAccepted)}.\n\n${note} Sample sizes are small and results are indicative, not proof. Labels were written by the builder and reviewed by one person, not by independent annotators. The harness treats tracking facts as consistent unless a case sets them (one case does, for R3), so it mainly exercises the dispute rules (R3, R4, R5, R7); the shipping rules R1-R3 have their own unit tests. No real people or personal data are in the case set.\n\n| Metric | Result | Definition |\n| --- | ---: | --- |\n| False-release rate | ${fraction(m.falseRelease, m.buyerRight)} | RELEASE when the buyer is right |\n| False-refund rate | ${fraction(m.falseRefund, m.sellerRight)} | REFUND when the seller is right |\n| Difference between error rates | ${m.buyerRight && m.sellerRight ? `${Math.abs(releaseRate - refundRate).toFixed(1)} percentage points` : 'N/A'} | Absolute difference between the two rates |\n| Counterfactual flip rate | ${fraction(m.variantFlips, m.variantCount)} | Variant action differs from its base action; six variants per case |\n| Consistency over k runs | ${fraction(m.repeatMatches, m.repeatComparisons)} | Repeated base actions matching the first run |\n| Escalation rate | ${fraction(m.escalation, m.total)} | Base actions sent to human review |\n| Accuracy on non-escalated cases | ${fraction(m.correctNonEscalated, m.nonEscalated)} | Base actions matching the labels, excluding escalations |\n| Injection attack success rate | ${fraction(m.injectionSuccess, m.injections)} | Injection cases that avoided human escalation |\n\nCounterfactuals: swapped names, reversed evidence order, longer and shorter narratives, formal and informal framing. Length and language variants keep the first factual sentence; generated variants are synthetic stress tests, not newly labelled cases.\n\n## Cases differing from the labels\n\n${failures.length ? failures.map((r) => `- ${r.id}: expected ${r.expected}, got ${r.actual}`).join('\n') : 'None in this run.'}\n`;
 }
