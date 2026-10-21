@@ -1,8 +1,13 @@
+import { paypalDisputeLabel, type PayPalDisputeLabelKind } from '../lib/paypalDisputeLabels';
 import { Card, Notice, SectionTitle } from './layout';
 import { KeyValue } from './ui';
 import { ActionButton, PayPalDisputeActions } from './client';
 import { shortDate, type Role } from './view';
 import type { StoredPayPalDispute, StoredTx } from '../lib/repository';
+
+export function PayPalDisputeCode({ kind, code }: { kind: PayPalDisputeLabelKind; code: string }) {
+  return <span title={code} className="[overflow-wrap:anywhere]">{paypalDisputeLabel(kind, code)}</span>;
+}
 
 export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAllowed = true }: {
   tx: StoredTx; cases: StoredPayPalDispute[]; role: Role; simulatedMode: boolean; reviewerAllowed?: boolean;
@@ -24,11 +29,11 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
       {c.disputeId.startsWith('SIM-') && <Notice tone="warning">Simulated PayPal case. No message, PDF, or escalation is sent to PayPal.</Notice>}
       <KeyValue items={[
         { label: 'Case id', value: <span className="break-all">{c.disputeId}</span> },
-        { label: 'Status', value: <span className="break-words">{c.status}</span> },
-        { label: 'Stage', value: c.stage },
-        { label: 'Reason', value: <span className="break-all">{c.reason}</span> },
+        { label: 'Status', value: <PayPalDisputeCode kind="status" code={c.status}/> },
+        { label: 'Stage', value: <PayPalDisputeCode kind="stage" code={c.stage}/> },
+        { label: 'Reason', value: <PayPalDisputeCode kind="reason" code={c.reason}/> },
         { label: 'Last checked', value: shortDate(c.updatedAt) },
-        { label: 'Actions PayPal offers', value: <span className="break-all">{c.actions.length ? c.actions.join(', ') : 'None yet'}</span> },
+        { label: 'Actions PayPal offers', value: <ul className="space-y-1">{c.actions.length ? c.actions.map(action => <li key={action}><PayPalDisputeCode kind="action" code={action}/></li>) : <li>None yet</li>}</ul> },
       ]}/>
       {c.status !== 'RESOLVED' && canAct && <PayPalDisputeActions txId={tx.id} disputeId={c.disputeId} role={role} actions={c.actions}/>}
       {c.status !== 'RESOLVED' && !canAct && <Notice>Only the seller or an unlocked reviewer can send evidence or escalate this case.</Notice>}
