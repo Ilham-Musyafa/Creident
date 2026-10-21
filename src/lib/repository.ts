@@ -19,6 +19,7 @@ export interface StoredTx extends Tx {
   paypalCaptureId?: string;
   evidenceUntil?: string;
   trackingNumber?: string;
+  returnTracking?: string;
 }
 
 export interface TransitionExtras {
@@ -27,6 +28,8 @@ export interface TransitionExtras {
   trackingNumber?: string;
   inspectionUntil?: string;
   evidenceUntil?: string;
+  returnBy?: string;
+  returnTracking?: string;
   decision?: { outcome: 'RELEASE' | 'REFUND'; reviewerId: string; reason: string };
 }
 
@@ -105,6 +108,8 @@ function fromRow(row: Record<string, unknown>): StoredTx {
     ...(row.paypal_capture_id ? { paypalCaptureId: String(row.paypal_capture_id) } : {}),
     ...(row.evidence_until ? { evidenceUntil: String(row.evidence_until) } : {}),
     ...(row.tracking_number ? { trackingNumber: String(row.tracking_number) } : {}),
+    ...(row.return_by ? { returnBy: String(row.return_by) } : {}),
+    ...(row.return_tracking ? { returnTracking: String(row.return_tracking) } : {}),
   };
 }
 
@@ -327,7 +332,7 @@ export class TransactionRepository {
     });
   }
 
-  listDue(status: TxStatus, column: 'ship_by' | 'inspection_until' | 'evidence_until', now: string): StoredTx[] {
+  listDue(status: TxStatus, column: 'ship_by' | 'inspection_until' | 'evidence_until' | 'return_by', now: string): StoredTx[] {
     return this.db.prepare(`SELECT * FROM transactions WHERE status = ? AND ${column} <= ?`)
       .all(status, now).map(fromRow);
   }
@@ -370,6 +375,7 @@ export class TransactionRepository {
       const result = this.db.prepare(`UPDATE transactions SET status = ?, captured = ?, frozen_from = ?,
         paypal_order_id = ?, paypal_auth_id = ?, paypal_capture_id = ?,
         terms_hash = ?, ship_by = ?, tracking_number = ?, inspection_until = ?, evidence_until = ?,
+        return_by = ?, return_tracking = ?,
         updated_at = datetime('now')
         WHERE id = ? AND status = ?`).run(
         next.status, next.captured ? 1 : 0, next.frozenFrom ?? null,
@@ -381,6 +387,8 @@ export class TransactionRepository {
         extras.trackingNumber ?? before.trackingNumber ?? null,
         extras.inspectionUntil ?? before.inspectionUntil ?? null,
         extras.evidenceUntil ?? before.evidenceUntil ?? null,
+        extras.returnBy ?? before.returnBy ?? null,
+        extras.returnTracking ?? before.returnTracking ?? null,
         before.id, before.status,
       );
       if (result.changes !== 1) throw new Error('Transaction status changed concurrently');

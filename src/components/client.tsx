@@ -16,6 +16,7 @@ export class ApiError extends Error {
 }
 
 const FRIENDLY: Record<string, string> = {
+  REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Menu.',
   SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, add PP_ID and PP_SECRET to .env, or set PAYPAL_MODE=simulated for a labelled simulation.',
   ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Menu.',
   EVIDENCE_CLOSED: 'The evidence window is closed.',
@@ -87,6 +88,24 @@ export function RoleSwitch({ current }: { current: Role }) {
     document.cookie = `hv-role=${labels[next]}; path=/; max-age=31536000; samesite=lax`;
     router.refresh();
   }}/>;
+}
+
+export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
+  const router = useRouter();
+  const [code, setCode] = useState('');
+  return (
+    <form className="space-y-2" onSubmit={(e) => {
+      e.preventDefault();
+      document.cookie = `hv-reviewer-code=${encodeURIComponent(code.trim())}; path=/; max-age=604800; samesite=strict`;
+      setCode('');
+      router.refresh();
+    }}>
+      <Label htmlFor="reviewer-code">Reviewer access code</Label>
+      <input id="reviewer-code" type="password" autoComplete="off" className={fieldClass} value={code} onChange={(e) => setCode(e.target.value)} placeholder={unlocked ? 'Saved on this device' : 'Ask the demo owner'}/>
+      <Button type="submit" variant="ghost" fullWidth disabled={!code.trim()}>Save code</Button>
+      <p className="text-xs text-muted">{unlocked ? 'Reviewer actions are unlocked on this device.' : 'This demo needs a code before anyone can act as the reviewer.'}</p>
+    </form>
+  );
 }
 
 export function PayButton({ txId, simulated = false }: { txId: string; simulated?: boolean }) {
@@ -214,18 +233,23 @@ export function EvidenceForm({ txId, role }: { txId: string; role: Role }) {
   );
 }
 
-export function ReviewForm({ txId, pendingSplit }: { txId: string; pendingSplit: boolean }) {
+export function ReviewForm({ txId, pendingSplit, returnByDefault = true }: { txId: string; pendingSplit: boolean; returnByDefault?: boolean }) {
   const { busy, error, run } = useAction();
   const router = useRouter();
   const [reason, setReason] = useState('');
+  const [requireReturn, setRequireReturn] = useState(returnByDefault);
   const decide = (outcome: 'RELEASE' | 'SPLIT' | 'REFUND') => run(async () => {
-    await callApi(`/api/transactions/${txId}/review`, 'reviewer', { outcome, reason });
+    await callApi(`/api/transactions/${txId}/review`, 'reviewer', { outcome, reason, ...(outcome === 'REFUND' ? { requireReturn } : {}) });
     router.refresh();
   });
   const disabled = busy || reason.trim().length < 2;
   return (
     <div className="space-y-3">
       <div><Label htmlFor="reason">Reviewer decision (reason required)</Label><textarea id="reason" rows={3} maxLength={2000} className={`${fieldClass} py-3`} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Write the reason for this decision…"/></div>
+      <label htmlFor="require-return" className="flex min-h-11 items-start gap-3 text-sm">
+        <input id="require-return" type="checkbox" className="mt-1 size-4" checked={requireReturn} onChange={(e) => setRequireReturn(e.target.checked)}/>
+        <span><span className="font-semibold text-heading">Refund only after the item is returned</span><span className="block text-xs text-muted">Untick only when there is nothing to return, for example the item never arrived.</span></span>
+      </label>
       {pendingSplit && <p className="text-xs text-muted">A split is recorded as pending: it moves no money until split payments are defined.</p>}
       <div className="grid grid-cols-3 gap-2">
         <Button variant="ghost" disabled={disabled || pendingSplit} onClick={() => decide('RELEASE')}>Release</Button>
@@ -234,6 +258,27 @@ export function ReviewForm({ txId, pendingSplit }: { txId: string; pendingSplit:
       </div>
       <ErrorNote error={error}/>
     </div>
+  );
+}
+
+export function ReturnForm({ txId }: { txId: string }) {
+  const { busy, error, run } = useAction();
+  const router = useRouter();
+  const [tracking, setTracking] = useState('DEMO-DELIVERED');
+  return (
+    <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(async () => { await callApi(`/api/transactions/${txId}/return`, 'buyer', { tracking }); router.refresh(); }); }}>
+      <p className="text-sm text-text">Ship the item back to the seller, then add the return tracking. The refund runs once it is delivered to the seller.</p>
+      <div>
+        <Label htmlFor="return-tracking" hint="simulated courier">Return tracking number</Label>
+        <select id="return-tracking" className={fieldClass} value={tracking} onChange={(e) => setTracking(e.target.value)}>
+          <option value="DEMO-DELIVERED">DEMO-DELIVERED · delivered to the seller</option>
+          <option value="DEMO-IN-TRANSIT">DEMO-IN-TRANSIT · still in transit</option>
+          <option value="DEMO-WRONG-DESTINATION">DEMO-WRONG-DESTINATION · delivered elsewhere</option>
+        </select>
+      </div>
+      <Button type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add return tracking'}</Button>
+      <ErrorNote error={error}/>
+    </form>
   );
 }
 

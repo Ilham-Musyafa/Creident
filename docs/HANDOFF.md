@@ -129,6 +129,15 @@ Still open:
 
 ## Log
 
+- 2026-10-21 17:30 WIB (Claude, owner-approved "fix 1-6"): (1) return before refund:
+  new status RETURN_REQUESTED, RETURN_DELIVERED / RETURN_DEADLINE_PASSED triggers,
+  return_by/return_tracking columns with a migration that widens the status check,
+  POST /api/transactions/{id}/return, reviewer can waive (default waived for
+  not_received), RETURN_DAYS default 3, seed shows a completed and a pending return;
+  (2)+(4) README "Threat model and FAQ"; (3) owner label review support
+  (`npm run labels:apply`), report and Fairness page state reviewed counts and limits;
+  (5) deal page shows PayPal honor period and capture failures; (6) optional
+  REVIEWER_ACCESS_CODE. Owner still decides 7-16 (see chat list).
 - 2026-10-21 15:55 WIB (Claude): reviewed and merged Codex C6-C10 (decision hashes, signed
   audit checkpoints, audit CSV export, seeded resolved dispute, README screenshots).
   Resolved import conflicts between C6 and C8. Fixed: seeded decision now records

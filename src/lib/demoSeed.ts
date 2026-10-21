@@ -41,7 +41,7 @@ interface DemoSpec {
   disputeType?: DisputeTypeId;
   decisionReason?: string;
   /** Steps after creation. Strings are shorthand for common steps. */
-  steps: Array<Trigger | 'accept' | 'ship-delivered' | 'dispute' | 'miss-deadline' | 'evidence-both'>;
+  steps: Array<Trigger | 'accept' | 'ship-delivered' | 'dispute' | 'miss-deadline' | 'evidence-both' | 'return-delivered'>;
 }
 
 const SPECS: DemoSpec[] = [
@@ -51,7 +51,8 @@ const SPECS: DemoSpec[] = [
   { item: '[Demo] Used phone, 128 GB', amount: '120.00', terms: { condition: 'Good, battery 86%', criteria: ['Battery health at least 85%', 'Screen has no cracks'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered'] },
   { item: '[Demo] Road bike helmet', disputeType: 'damaged', amount: '28.00', terms: { condition: 'Good, no cracks' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute'] },
   { item: '[Demo] Smartwatch', disputeType: 'damaged', amount: '64.00', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both'] },
-  { item: '[Demo] Damaged smartwatch (resolved)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Void the authorization for the buyer; no payment was captured.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND' }] },
+  { item: '[Demo] Damaged smartwatch (resolved)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Refund the buyer once the watch is back with the seller; no payment was captured.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND', requireReturn: true }, 'return-delivered'] },
+  { item: '[Demo] Smartwatch (return pending)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Refund the buyer once the watch is back with the seller.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND', requireReturn: true }] },
   { item: '[Demo] Board game set', amount: '22.00', terms: { condition: 'Complete, box worn' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'BUYER_CONFIRM', externalDisputeOpen: false }] },
   { item: '[Demo] Desk lamp', amount: '18.00', terms: { condition: 'Works, base scratched' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'miss-deadline'] },
   { item: '[Demo] Drone with spare battery', amount: '150.00', terms: { condition: 'Good, one prop replaced' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'EXTERNAL_DISPUTE' }] },
@@ -133,12 +134,24 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         await run({ type: 'EVIDENCE_COMPLETE' }, 'seller');
         await options.onUnderReview?.(id);
         if (!repo.loadRecommendation(id)) await prepareReview(id, { repo, now, aiEnv: { AI_MODE: 'replay' } });
-      } else if (step.type === 'DECISION') {
+      } else if (step !== 'return-delivered' && step.type === 'DECISION') {
         if (!spec.decisionReason) throw new Error('Demo decision needs a reason');
         await run(step, 'reviewer', {
-          extras: { decision: { outcome: step.outcome, reviewerId: 'reviewer', reason: spec.decisionReason } },
+          extras: {
+            decision: { outcome: step.outcome, reviewerId: 'reviewer', reason: spec.decisionReason },
+            ...(step.requireReturn ? { returnBy: addDays(now(), time.returnDays) } : {}),
+          },
           // Same decision basis the review API records, so the receipt can show it.
-          eventPayload: { simulated: true, reason: spec.decisionReason, outcome: step.outcome, ...decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id)) },
+          eventPayload: {
+            simulated: true, reason: spec.decisionReason, outcome: step.outcome,
+            ...(step.outcome === 'REFUND' ? { requireReturn: !!step.requireReturn } : {}),
+            ...decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id)),
+          },
+        });
+      } else if (step === 'return-delivered') {
+        await run({ type: 'RETURN_DELIVERED', now: now(), destinationMatches: true }, 'buyer', {
+          extras: { returnTracking: 'DEMO-DELIVERED' },
+          eventPayload: { simulated: true, returnTracking: 'DEMO-DELIVERED', destinationMatches: true },
         });
       } else {
         const actor = step.type === 'BUYER_CONFIRM' || step.type === 'CANCEL' || step.type === 'START_PAYMENT' || step.type === 'BUYER_APPROVED' ? 'buyer'

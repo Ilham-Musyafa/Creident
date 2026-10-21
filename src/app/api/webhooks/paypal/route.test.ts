@@ -63,7 +63,7 @@ beforeEach(() => {
   }) as typeof fetch;
   setApiContextForTests({
     db, repo, now: () => '2026-10-20T00:00:00.000Z',
-    time: { shipByDays: 3, inspectionDays: 2, evidenceDays: 2 },
+    time: { shipByDays: 3, inspectionDays: 2, evidenceDays: 2, returnDays: 3 },
     paypal: new PayPalClient({ baseUrl: 'https://api-m.sandbox.paypal.com', clientId: 'fake', clientSecret: 'fake', fetchImpl }),
   });
 });

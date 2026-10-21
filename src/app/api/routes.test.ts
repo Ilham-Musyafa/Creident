@@ -18,6 +18,7 @@ import { GET as paypalReturn } from './paypal/return/route';
 import { POST as ship } from './transactions/[id]/ship/route';
 import { POST as confirm } from './transactions/[id]/confirm/route';
 import { POST as dispute } from './transactions/[id]/dispute/route';
+import { POST as submitReturn } from './transactions/[id]/return/route';
 import { POST as evidence } from './transactions/[id]/evidence/route';
 import { GET as getReview, POST as review } from './transactions/[id]/review/route';
 import { GET as audit } from './audit/[id]/route';
@@ -103,7 +104,7 @@ beforeEach(() => {
     return new Response(JSON.stringify(body), { status });
   }) as typeof fetch;
   setApiContextForTests({
-    db, repo, now: () => currentTime, time: { shipByDays: 3, inspectionDays: 2, evidenceDays: 2 },
+    db, repo, now: () => currentTime, time: { shipByDays: 3, inspectionDays: 2, evidenceDays: 2, returnDays: 3 },
     paypal: new PayPalClient({ baseUrl: 'https://api-m.sandbox.paypal.com', clientId: 'fake', clientSecret: 'fake', fetchImpl }),
   });
 });
@@ -187,9 +188,20 @@ describe('JSON route handlers', () => {
     const second = await evidence(post(`/api/transactions/${id}/evidence`, 'seller', { kind: 'tracking', content: 'Synthetic tracking note' }), param(id));
     expect((await second.json()).transaction).toMatchObject({ status: 'UNDER_REVIEW' });
     const reviewed = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'REFUND', reason: 'The sample evidence supports voiding this authorization.' }), param(id));
-    expect((await reviewed.json()).transaction).toMatchObject({ status: 'VOIDED' });
+    // By default a refund waits for the item to come back; no money moves yet.
+    expect((await reviewed.json()).transaction).toMatchObject({ status: 'RETURN_REQUESTED', returnBy: '2026-10-23T00:00:00.000Z' });
     expect(db.prepare("SELECT outcome, reason FROM decisions WHERE tx_id = ? AND rule_id = 'HUMAN_REVIEW'").get(id)).toMatchObject({ outcome: 'REFUND' });
-    expect(calls.some((call) => call.path.endsWith('/void'))).toBe(true);
+    expect(calls.some((call) => call.path.endsWith('/void'))).toBe(false);
+    const inTransit = await submitReturn(post(`/api/transactions/${id}/return`, 'buyer', { tracking: 'DEMO-IN-TRANSIT' }), param(id));
+    expect(inTransit.status).toBe(409);
+    const elsewhere = await submitReturn(post(`/api/transactions/${id}/return`, 'buyer', { tracking: 'DEMO-WRONG-DESTINATION' }), param(id));
+    expect(elsewhere.status).toBe(409);
+    expect(repo.loadTransaction(id)?.status).toBe('RETURN_REQUESTED');
+    const seller = await submitReturn(post(`/api/transactions/${id}/return`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(id));
+    expect(seller.status).toBe(403);
+    const returned = await submitReturn(post(`/api/transactions/${id}/return`, 'buyer', { tracking: 'DEMO-DELIVERED' }), param(id));
+    expect((await returned.json()).transaction).toMatchObject({ status: 'VOIDED', returnTracking: 'DEMO-DELIVERED' });
+    expect(calls.filter((call) => call.path.endsWith('/void'))).toHaveLength(1);
     expect((await audit(request(`/api/audit/${id}`, 'seller'), param(id)).then((response) => response.json())).verification.ok).toBe(true);
   });
 
@@ -351,6 +363,37 @@ describe('JSON route handlers', () => {
     expect(repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE')?.payload).toMatchObject({ disputeType: 'damaged' });
   });
 
+  it('refunds at once when the reviewer waives the return', async () => {
+    const waived = await createReadyTransaction();
+    await reachReview(waived, 'Synthetic buyer note.', 'Synthetic seller note.');
+    const now = await review(post(`/api/transactions/${waived}/review`, 'reviewer', { outcome: 'REFUND', reason: 'Nothing to return.', requireReturn: false }), param(waived));
+    expect((await now.json()).transaction).toMatchObject({ status: 'VOIDED' });
+    const bad = await review(post(`/api/transactions/${waived}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'x', requireReturn: true }), param(waived));
+    expect(bad.status).toBe(400);
+  });
+
+  it('waives the return by default when the buyer reported the item never arrived', async () => {
+    const lost = await createReadyTransaction();
+    await ship(post(`/api/transactions/${lost}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(lost));
+    await dispute(post(`/api/transactions/${lost}/dispute`, 'buyer', { type: 'not_received' }), param(lost));
+    await evidence(post(`/api/transactions/${lost}/evidence`, 'buyer', { kind: 'note', content: 'Synthetic: parcel never arrived.' }), param(lost));
+    await evidence(post(`/api/transactions/${lost}/evidence`, 'seller', { kind: 'note', content: 'Synthetic: courier receipt only.' }), param(lost));
+    const lostDecision = await review(post(`/api/transactions/${lost}/review`, 'reviewer', { outcome: 'REFUND', reason: 'Item never arrived, nothing to return.' }), param(lost));
+    expect((await lostDecision.json()).transaction).toMatchObject({ status: 'VOIDED' });
+  });
+
+  it('releases the payment to the seller when the item is not returned in time', async () => {
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
+    await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome: 'REFUND', reason: 'Refund once returned.' }), param(id));
+    currentTime = '2026-10-24T00:00:00.000Z';
+    const late = await submitReturn(post(`/api/transactions/${id}/return`, 'buyer', { tracking: 'DEMO-DELIVERED' }), param(id));
+    expect(late.status).toBe(409);
+    const ticked = await (await tick(post('/api/jobs/tick', 'reviewer'))).json() as { results: Array<{ txId: string; status?: string }> };
+    expect(ticked.results.find((r) => r.txId === id)?.status).toBe('COMPLETED');
+    expect(repo.readEvents(id).some((e) => e.type === 'RETURN_DEADLINE_PASSED' && e.payload.effect === 'PAYPAL_CAPTURE')).toBe(true);
+  });
+
   it('requires a human reason and records SPLIT as pending without a PayPal call', async () => {
     useAiResult('seller');
     const id = await createReadyTransaction();
@@ -453,5 +496,27 @@ describe('PayPal tracking after capture', () => {
     await tick(post('/api/jobs/tick', 'reviewer'));
     expect(repo.readEvents(id).filter((e) => e.type === 'PAYPAL_TRACKING_FAILED')).toHaveLength(3);
     expect(calls.filter((c) => c.path.endsWith('/track'))).toHaveLength(3);
+  });
+});
+
+describe('reviewer access code', () => {
+  afterEach(() => { delete process.env.REVIEWER_ACCESS_CODE; });
+
+  it('blocks reviewer actions without the configured code and allows them with it', async () => {
+    process.env.REVIEWER_ACCESS_CODE = 'judge-2026';
+    const blocked = await tick(post('/api/jobs/tick', 'reviewer'));
+    expect(blocked.status).toBe(403);
+    expect((await blocked.json()).error).toBe('REVIEWER_CODE_REQUIRED');
+    const viaHeader = new Request('http://localhost:3000/api/jobs/tick', {
+      method: 'POST', headers: { 'x-demo-role': 'reviewer', 'x-reviewer-code': 'judge-2026', 'content-type': 'application/json' }, body: '{}',
+    });
+    expect((await tick(viaHeader)).status).toBe(200);
+    const viaCookie = new Request('http://localhost:3000/api/jobs/tick', {
+      method: 'POST', headers: { 'x-demo-role': 'reviewer', cookie: 'hv-reviewer-code=judge-2026', 'content-type': 'application/json' }, body: '{}',
+    });
+    expect((await tick(viaCookie)).status).toBe(200);
+    // Buyer and seller actions are not affected.
+    const created = await create(post('/api/transactions', 'seller', { item: 'Sample', amount: '10.00', terms: {} }));
+    expect(created.status).toBe(201);
   });
 });

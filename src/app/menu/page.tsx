@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { AppShell, Card, PageHeader } from '../../components/layout';
-import { RoleSwitch, SeedButton } from '../../components/client';
+import { ReviewerCodeForm, RoleSwitch, SeedButton } from '../../components/client';
 import { ThemeSelector } from '../../components/ThemeSelector';
-import { getRole } from '../_server';
+import { getRole, reviewerCodeRequired, reviewerUnlocked } from '../_server';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,11 +16,14 @@ const LINKS = [
 
 export default async function MenuPage() {
   const role = await getRole();
+  const codeRequired = reviewerCodeRequired();
+  const unlocked = await reviewerUnlocked();
   return (
     <AppShell active="Menu">
       <PageHeader title="Menu"/>
       <div className="mx-auto max-w-xl space-y-3">
         <Card><p className="mb-3 text-xs text-muted">Act as (demo)</p><RoleSwitch current={role}/></Card>
+        {codeRequired && <Card><ReviewerCodeForm unlocked={unlocked}/></Card>}
         <Card><p className="mb-3 text-xs text-muted">Appearance</p><ThemeSelector/></Card>
         <Card className="py-1">
           <ul>

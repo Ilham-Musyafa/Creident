@@ -10,6 +10,7 @@ export type TxStatus =
   | 'IN_INSPECTION'
   | 'DISPUTED'
   | 'UNDER_REVIEW'
+  | 'RETURN_REQUESTED'
   | 'FROZEN_EXTERNAL'
   | 'COMPLETED'
   | 'REFUNDED'
@@ -34,6 +35,8 @@ export interface Tx {
   shipBy?: string;
   /** Buyer may open a dispute until this moment. */
   inspectionUntil?: string;
+  /** After a refund decision that requires a return: buyer must ship the item back before this moment. */
+  returnBy?: string;
 }
 
 export type DecisionOutcome = 'RELEASE' | 'REFUND';
@@ -51,7 +54,10 @@ export type Trigger =
   | { type: 'INSPECTION_EXPIRED'; now: string; externalDisputeOpen: boolean }
   | { type: 'OPEN_DISPUTE'; now: string }
   | { type: 'EVIDENCE_COMPLETE' }
-  | { type: 'DECISION'; outcome: DecisionOutcome }
+  /** A REFUND with requireReturn waits for the item to come back before any money moves. */
+  | { type: 'DECISION'; outcome: DecisionOutcome; requireReturn?: boolean }
+  | { type: 'RETURN_DELIVERED'; now: string; destinationMatches: boolean }
+  | { type: 'RETURN_DEADLINE_PASSED'; now: string }
   | { type: 'EXTERNAL_DISPUTE' }
   | { type: 'EXTERNAL_RESOLVED' }
   | { type: 'CANCEL' };

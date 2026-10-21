@@ -2,6 +2,8 @@ export interface TimeConfig {
   shipByDays: number;
   inspectionDays: number;
   evidenceDays: number;
+  /** Days the buyer has to ship the item back after a refund decision that requires a return. */
+  returnDays: number;
 }
 
 // Defaults decided by the owner on 2026-10-21: ship-by 3, inspection 2, evidence 2 days.
@@ -16,6 +18,7 @@ export function getTimeConfig(env: NodeJS.ProcessEnv = process.env): TimeConfig 
     shipByDays: days('SHIP_BY_DAYS', 3),
     inspectionDays: days('INSPECTION_DAYS', 2),
     evidenceDays: days('EVIDENCE_DAYS', 2),
+    returnDays: days('RETURN_DAYS', 3),
   };
 }
 

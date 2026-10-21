@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 const ACTION_LABEL = {
   'accept-terms': 'Accept terms', pay: 'Pay', 'wait-approval': 'Approve on PayPal', ship: 'Add tracking',
-  'confirm-or-dispute': 'Confirm or dispute', 'add-evidence': 'Add evidence', review: 'Review dispute', none: '',
+  'confirm-or-dispute': 'Confirm or dispute', 'add-evidence': 'Add evidence', review: 'Review dispute', 'ship-return': 'Ship the item back', none: '',
 } as const;
 
 export default async function HomePage() {
@@ -69,7 +69,7 @@ export default async function HomePage() {
             {todo.length === 0 ? <Notice>Nothing waiting for the demo {role}. Switch role in Menu to act as another party.</Notice> : (
               <ul className="space-y-2">
                 {todo.map(({ d, action }) => {
-                  const left = d.status === 'AUTHORIZED' ? timeLeft(d.shipBy, now) : d.status === 'IN_INSPECTION' ? timeLeft(d.inspectionUntil, now) : d.status === 'DISPUTED' ? timeLeft(d.evidenceUntil, now) : null;
+                  const left = d.status === 'AUTHORIZED' ? timeLeft(d.shipBy, now) : d.status === 'IN_INSPECTION' ? timeLeft(d.inspectionUntil, now) : d.status === 'DISPUTED' ? timeLeft(d.evidenceUntil, now) : d.status === 'RETURN_REQUESTED' ? timeLeft(d.returnBy, now) : null;
                   return (
                     <li key={d.id}>
                       <Link href={action === 'review' ? `/deals/${d.id}/review` : action === 'add-evidence' ? `/deals/${d.id}/evidence` : action === 'pay' || (action === 'accept-terms' && role === 'buyer') ? `/deals/${d.id}/checkout` : `/deals/${d.id}`}

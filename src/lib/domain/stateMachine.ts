@@ -30,6 +30,13 @@ const at = (iso: string): number => {
   return ms;
 };
 
+// Tested in the Sandbox: a captured authorization cannot be voided, only refunded.
+function refundOrVoid(tx: Tx): TransitionResult {
+  return tx.captured
+    ? move(tx, 'REFUNDED', { kind: 'PAYPAL_REFUND' })
+    : move(tx, 'VOIDED', { kind: 'PAYPAL_VOID' });
+}
+
 export function transition(tx: Tx, trigger: Trigger): TransitionResult {
   if (isFinal(tx.status) && trigger.type !== 'EXTERNAL_DISPUTE') {
     return fail('FINAL_STATE', `Transaction is already ${tx.status}`);
@@ -97,10 +104,24 @@ export function transition(tx: Tx, trigger: Trigger): TransitionResult {
     case 'DECISION':
       if (tx.status !== 'UNDER_REVIEW') return wrongState(tx, trigger, ['UNDER_REVIEW']);
       if (trigger.outcome === 'RELEASE') return move(tx, 'COMPLETED', { kind: 'PAYPAL_CAPTURE' });
-      // Tested in the Sandbox: a captured authorization cannot be voided, only refunded.
-      return tx.captured
-        ? move(tx, 'REFUNDED', { kind: 'PAYPAL_REFUND' })
-        : move(tx, 'VOIDED', { kind: 'PAYPAL_VOID' });
+      // Refund only after the item is back with the seller, unless the reviewer waives the return
+      // (for example when the item never arrived). No money moves while the return is pending.
+      if (trigger.requireReturn) return move(tx, 'RETURN_REQUESTED');
+      return refundOrVoid(tx);
+
+    case 'RETURN_DELIVERED':
+      if (tx.status !== 'RETURN_REQUESTED') return wrongState(tx, trigger, ['RETURN_REQUESTED']);
+      if (!tx.returnBy) return fail('NO_DEADLINE', 'Transaction has no return deadline');
+      if (at(trigger.now) > at(tx.returnBy)) return fail('DEADLINE_PASSED', 'Return tracking submitted after the return deadline');
+      if (!trigger.destinationMatches) return fail('RETURN_WRONG_DESTINATION', "Return tracking does not show delivery to the seller's address");
+      return refundOrVoid(tx);
+
+    case 'RETURN_DEADLINE_PASSED':
+      if (tx.status !== 'RETURN_REQUESTED') return wrongState(tx, trigger, ['RETURN_REQUESTED']);
+      if (!tx.returnBy) return fail('NO_DEADLINE', 'Transaction has no return deadline');
+      if (at(trigger.now) <= at(tx.returnBy)) return fail('DEADLINE_NOT_REACHED', 'Return deadline has not passed');
+      // The buyer kept the item without returning it, so the payment goes to the seller.
+      return move(tx, 'COMPLETED', { kind: 'PAYPAL_CAPTURE' });
 
     case 'EXTERNAL_DISPUTE':
       if (tx.status === 'FROZEN_EXTERNAL') return fail('ALREADY_FROZEN', 'Transaction is already frozen');

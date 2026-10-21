@@ -215,8 +215,11 @@ export function review(request: Request, id: string): Promise<Response> {
   return route(async () => {
     const role = requireRole(request, ['reviewer']);
     const body = await jsonBody(request);
-    noExtraFields(body, ['outcome', 'reason']);
+    noExtraFields(body, ['outcome', 'reason', 'requireReturn']);
     if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND' && body.outcome !== 'SPLIT') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE, REFUND, or SPLIT');
+    if (body.requireReturn !== undefined && (typeof body.requireReturn !== 'boolean' || body.outcome !== 'REFUND')) {
+      throw new HttpError(400, 'INVALID_INPUT', 'requireReturn must be a boolean and only applies to REFUND');
+    }
     const reason = stringField(body, 'reason', 2000);
     const context = getApiContext();
     const tx = requireTx(context, id);
@@ -235,13 +238,43 @@ export function review(request: Request, id: string): Promise<Response> {
       return json({ transaction: context.repo.loadTransaction(id), pendingSplit: true });
     }
     if (context.repo.hasPendingSplit(id)) throw new HttpError(409, 'SPLIT_PENDING', 'A pending split must be resolved before another decision');
-    const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome },
-      deps(context, role, true, {
-        extras: { decision: { outcome: body.outcome, reviewerId: 'reviewer', reason } },
-        eventPayload: { reason, outcome: body.outcome, ...decisionPayload },
+    // A refund waits for the item to come back, unless the reviewer waives it. By default the
+    // return is waived only when the buyer reported that the item never arrived.
+    const opened = context.repo.readEvents(id).find((event) => event.type === 'OPEN_DISPUTE');
+    const requireReturn = body.outcome === 'REFUND'
+      && (typeof body.requireReturn === 'boolean' ? body.requireReturn : opened?.payload.disputeType !== 'not_received');
+    const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome, requireReturn },
+      deps(context, role, !requireReturn, {
+        extras: {
+          decision: { outcome: body.outcome, reviewerId: 'reviewer', reason },
+          ...(requireReturn ? { returnBy: addDays(context.now(), context.time.returnDays) } : {}),
+        },
+        eventPayload: { reason, outcome: body.outcome, ...(body.outcome === 'REFUND' ? { requireReturn } : {}), ...decisionPayload },
       })));
     const tracking = await afterCapture(context, result.tx, role);
     return json({ transaction: result.tx, paypalTracking: tracking });
+  });
+}
+
+/** Buyer ships the item back after a refund decision; the refund runs once it reaches the seller. */
+export function submitReturn(request: Request, id: string): Promise<Response> {
+  return route(async () => {
+    const role = requireRole(request, ['buyer']);
+    const body = await jsonBody(request);
+    noExtraFields(body, ['tracking']);
+    const tracking = stringField(body, 'tracking', 40);
+    const shipment = mockShipment(tracking);
+    if (!shipment) throw new HttpError(400, 'UNKNOWN_TRACKING', 'Use a documented simulated tracking number');
+    const context = getApiContext();
+    const tx = requireTx(context, id);
+    if (tx.status !== 'RETURN_REQUESTED') throw new HttpError(409, 'INVALID_STATE', 'No return is pending for this deal');
+    if (shipment.status !== 'DELIVERED') throw new HttpError(409, 'RETURN_NOT_DELIVERED', 'The return has not reached the seller yet; submit it again once it is delivered');
+    const result = unwrap(await applyTrigger(id, { type: 'RETURN_DELIVERED', now: context.now(), destinationMatches: shipment.destinationMatches },
+      deps(context, role, true, {
+        extras: { returnTracking: tracking },
+        eventPayload: { returnTracking: tracking, simulated: true, destinationMatches: shipment.destinationMatches },
+      })));
+    return json({ transaction: result.tx, courier: shipment });
   });
 }
 
@@ -312,6 +345,8 @@ export function tick(request: Request): Promise<Response> {
         .map((tx) => ({ tx, trigger: { type: 'SHIP_DEADLINE_PASSED', now } as const })),
       ...context.repo.listDue('IN_INSPECTION', 'inspection_until', now).map((tx) => ({ tx, trigger: { type: 'INSPECTION_EXPIRED', now, externalDisputeOpen: false } as const })),
       ...context.repo.listDue('DISPUTED', 'evidence_until', now).map((tx) => ({ tx, trigger: { type: 'EVIDENCE_COMPLETE' } as const })),
+      ...context.repo.listDue('RETURN_REQUESTED', 'return_by', now).filter((tx) => tx.returnBy! < now)
+        .map((tx) => ({ tx, trigger: { type: 'RETURN_DEADLINE_PASSED', now } as const })),
     ];
     const results = [];
     for (const { tx, trigger } of due) {

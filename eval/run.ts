@@ -17,12 +17,13 @@ if (mode !== 'replay' && mode !== 'live') throw new Error('AI_MODE must be repla
 // An empty EVAL_K (as copied from .env.example) means the default of 3.
 const k = Number(process.env.EVAL_K || '3');
 const results = await evaluateCases(cases, recorded, { mode, k });
-const report = renderReport(results, mode, k);
+const labelsReviewed = cases.filter((c) => c.labelStatus === 'reviewed by owner').length;
+const report = renderReport(results, mode, k, labelsReviewed);
 await writeFile(new URL('./report.md', import.meta.url), report);
 // Machine-readable copy for the in-app Fairness page (src/lib/fairness.ts describes the shape).
-const labelStatus = cases.every((c) => !/draft/i.test(c.labelStatus ?? 'draft')) ? 'reviewed' : 'draft';
+const labelStatus = labelsReviewed === cases.length ? 'reviewed' : 'draft';
 const summary = {
-  generatedAt: new Date().toISOString(), mode, k, labelStatus,
+  generatedAt: new Date().toISOString(), mode, k, labelStatus, labelsReviewed,
   model: mode === 'live' ? process.env.AI_MODEL || null : null,
   metrics: metrics(results),
   differing: results.filter((r) => r.actual !== r.expected).map((r) => ({ id: r.id, expected: r.expected, actual: r.actual })),

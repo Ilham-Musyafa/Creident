@@ -39,7 +39,14 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
   const verification = (recorded: unknown, current: string) => typeof recorded === 'string'
     ? recorded === current ? 'Matches' : 'Changed since decision' : 'Not recorded';
   const chain = verifyChain(events);
-  const moneyStep = decisionEvent ? MONEY_STEP[String(decisionEvent.payload.effect ?? '')] : undefined;
+  // The money can move at the decision, or later when a required return arrives or is not made.
+  const moneyEvent = [...events].reverse().find((e) => ['DECISION', 'RETURN_DELIVERED', 'RETURN_DEADLINE_PASSED'].includes(e.type) && e.payload.effect && e.payload.effect !== 'NONE');
+  const moneyStep = moneyEvent ? MONEY_STEP[String(moneyEvent.payload.effect ?? '')] : undefined;
+  const outcomeText = !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
+    : tx.status === 'RETURN_REQUESTED' ? 'Refund after the item is returned'
+    : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Released to the seller: item not returned in time'
+    : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refunded to the buyer after the return'
+    : OUTCOME.REFUND;
 
   return (
     <AppShell active="Deals">
@@ -51,8 +58,9 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
           <div className="space-y-4">
             <Card>
               <p className="text-xs text-muted">Outcome</p>
-              <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{OUTCOME[decision.outcome] ?? decision.outcome}</p>
+              <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
               {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (simulated)' : ''}</p>}
+              {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">No money has moved yet. The refund runs when the return reaches the seller.</p>}
               <p className="mt-4 text-xs text-muted">Reviewer's reason</p>
               <p className="mt-1 text-sm text-text">{decision.reason}</p>
               <p className="mt-2 text-xs text-muted">Decided by the demo reviewer · {shortDate(decision.createdAt)}</p>

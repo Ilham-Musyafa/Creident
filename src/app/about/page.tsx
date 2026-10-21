@@ -33,6 +33,8 @@ export default function AboutPage() {
             <li>Demo roles replace real sign-in.</li>
             <li>Fake photos may not be detected. Evaluation results are indicative, based on synthetic cases.</li>
             <li>On a refund the platform bears the PayPal fee; the buyer is refunded in full.</li>
+            <li>A refund waits for the item to be returned to the seller, unless the reviewer waives it (for example the item never arrived).</li>
+            <li>The operator still runs the server; the audit log and signed checkpoints make its actions checkable, not impossible to misuse.</li>
           </ul>
         </Card>
       </div>
