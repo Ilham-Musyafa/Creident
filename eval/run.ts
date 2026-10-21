@@ -18,12 +18,13 @@ if (mode !== 'replay' && mode !== 'live') throw new Error('AI_MODE must be repla
 const k = Number(process.env.EVAL_K || '3');
 const results = await evaluateCases(cases, recorded, { mode, k });
 const labelsReviewed = cases.filter((c) => c.labelStatus === 'reviewed by owner').length;
-const report = renderReport(results, mode, k, labelsReviewed);
+const labelsAccepted = cases.filter((c) => c.labelStatus === 'draft accepted by owner').length;
+const report = renderReport(results, mode, k, labelsReviewed, labelsAccepted);
 await writeFile(new URL('./report.md', import.meta.url), report);
 // Machine-readable copy for the in-app Fairness page (src/lib/fairness.ts describes the shape).
-const labelStatus = labelsReviewed === cases.length ? 'reviewed' : 'draft';
+const labelStatus = labelsReviewed + labelsAccepted === cases.length ? 'reviewed' : 'draft';
 const summary = {
-  generatedAt: new Date().toISOString(), mode, k, labelStatus, labelsReviewed,
+  generatedAt: new Date().toISOString(), mode, k, labelStatus, labelsReviewed, labelsAccepted,
   model: mode === 'live' ? process.env.AI_MODEL || null : null,
   metrics: metrics(results),
   differing: results.filter((r) => r.actual !== r.expected).map((r) => ({ id: r.id, expected: r.expected, actual: r.actual })),

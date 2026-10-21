@@ -4,7 +4,7 @@
     "scenario": "long emotional buyer statement versus brief seller reply",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Matching unboxing evidence supports the buyer despite tone.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -31,7 +31,7 @@
     "scenario": "long emotional buyer statement versus brief seller reply",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Matching packing and serial records support the seller despite the buyer tone.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -58,7 +58,7 @@
     "scenario": "long emotional seller statement versus brief buyer reply",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The first unboxing clip documents the defect.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -85,7 +85,7 @@
     "scenario": "long emotional seller statement versus brief buyer reply",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The packing video supports the listed condition; emotional length is irrelevant.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -112,7 +112,7 @@
     "scenario": "formal language versus slang",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The missing battery is supported by the photo and checklist.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -139,7 +139,7 @@
     "scenario": "formal language versus slang",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The matching checklist supports inclusion regardless of language style.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -166,7 +166,7 @@
     "scenario": "ten photos versus one photo",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "One relevant photo of the wrong model outweighs photo count.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -193,7 +193,7 @@
     "scenario": "ten photos versus one photo",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "One matching serial photo is relevant despite fewer images.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -220,7 +220,7 @@
     "scenario": "genuine photo of a different unit",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The matching serial ties the defect to this order.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -247,7 +247,7 @@
     "scenario": "genuine photo of a different unit",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The buyer photo is of a different unit.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -273,9 +273,9 @@
     "id": "other_parcel_buyer",
     "scenario": "valid tracking for another parcel",
     "rightfulSide": "buyer",
-    "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
-    "rationale": "Valid tracking to another destination does not prove delivery.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "Valid tracking to another destination does not prove delivery. Owner changed the label to human.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -301,7 +301,7 @@
     "scenario": "valid tracking for another parcel",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The tracking matches the agreed destination.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -328,7 +328,7 @@
     "scenario": "delivered parcel but empty box",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The continuous opening clip supports the empty-box claim.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -355,7 +355,7 @@
     "scenario": "delivered parcel but empty box",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The continuous packing record supports shipment of the item.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -381,9 +381,9 @@
     "id": "transit_damage_buyer",
     "scenario": "damage in transit",
     "rightfulSide": "buyer",
-    "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
-    "rationale": "First-opening evidence supports damage on arrival.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "First-opening evidence supports damage on arrival. Owner changed the label to human.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -409,7 +409,7 @@
     "scenario": "damage in transit",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The earliest matched images show the item arrived intact.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -436,7 +436,7 @@
     "scenario": "buyers remorse disguised as not described",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "A promised feature was missing.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -463,7 +463,7 @@
     "scenario": "buyers remorse disguised as not described",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "A preference change does not contradict the agreed terms.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -490,7 +490,7 @@
     "scenario": "subjective used-item condition",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The scratch exceeds the stated wear.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -517,7 +517,7 @@
     "scenario": "subjective used-item condition",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The mark was disclosed in the agreed listing.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -543,9 +543,9 @@
     "id": "partial_delivery_buyer",
     "scenario": "partial delivery",
     "rightfulSide": "buyer",
-    "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
-    "rationale": "The agreed second component is missing.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "The agreed second component is missing. Owner changed the label to human.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -571,7 +571,7 @@
     "scenario": "partial delivery",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Both agreed components are documented in the delivered package.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -598,7 +598,7 @@
     "scenario": "in-platform chat context",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The locked promise supports the buyer.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -625,7 +625,7 @@
     "scenario": "in-platform chat context",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The final agreed terms, not an earlier draft, control.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -652,7 +652,7 @@
     "scenario": "serial and model evidence",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The readable delivered serial shows a model mismatch.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -679,7 +679,7 @@
     "scenario": "serial and model evidence",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The readable serial matches the agreed model.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -706,8 +706,8 @@
     "scenario": "shipping date consistency",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
-    "rationale": "Pre-order tracking cannot document this shipment.",
+    "labelStatus": "reviewed by owner",
+    "rationale": "Pre-order tracking cannot document this shipment. Owner note: Tracking created before the order is strong enough for a refund.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -733,7 +733,7 @@
     "scenario": "shipping date consistency",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The carrier scan is consistent with the order date.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -760,7 +760,7 @@
     "scenario": "synthetic photo metadata",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The matching in-app photo supports the defect.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -787,7 +787,7 @@
     "scenario": "synthetic photo metadata",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The current coded packing photo is more relevant than the old image.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -814,7 +814,7 @@
     "scenario": "buyer and seller collusion patterns",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Order-specific admission supports the buyer; relationship signals alone do not decide.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -841,7 +841,7 @@
     "scenario": "buyer and seller collusion patterns",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Order-specific records support the seller; allegations alone do not decide.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -867,9 +867,9 @@
     "id": "seal_buyer",
     "scenario": "package seal evidence",
     "rightfulSide": "buyer",
-    "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
-    "rationale": "A broken seal at arrival supports the buyer complaint.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "A broken seal at arrival supports the buyer complaint. Owner changed the label to human.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -895,7 +895,7 @@
     "scenario": "package seal evidence",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The matched seal is intact in the earliest available images.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -922,7 +922,7 @@
     "scenario": "missing accessory",
     "rightfulSide": "buyer",
     "expected": "REFUND",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "An agreed accessory is missing.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -949,7 +949,7 @@
     "scenario": "missing accessory",
     "rightfulSide": "seller",
     "expected": "RELEASE",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The requested accessory was never included in the terms.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -976,7 +976,7 @@
     "scenario": "ten photos versus one photo with conflicting serials",
     "rightfulSide": "unclear",
     "expected": "ESCALATE_HUMAN",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Serials conflict and neither side ties its photo securely to this order.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -1003,7 +1003,7 @@
     "scenario": "partial delivery and transit damage",
     "rightfulSide": "unclear",
     "expected": "ESCALATE_HUMAN",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Responsibility and delivered quantity remain uncertain.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -1030,7 +1030,7 @@
     "scenario": "tracking to a nearby but unconfirmed destination",
     "rightfulSide": "unclear",
     "expected": "ESCALATE_HUMAN",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "The destination match is unresolved.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
@@ -1057,7 +1057,7 @@
     "scenario": "buyer and seller relationship signal",
     "rightfulSide": "unclear",
     "expected": "ESCALATE_HUMAN",
-    "labelStatus": "draft, needs owner review",
+    "labelStatus": "draft accepted by owner",
     "rationale": "Relationship signals and sparse order evidence require human review.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
