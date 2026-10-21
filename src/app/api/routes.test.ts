@@ -1,3 +1,6 @@
+import { renderToStaticMarkup } from 'react-dom/server';
+import DecisionReceiptPage from '../deals/[id]/decision/page';
+import { decisionBasis } from '../../lib/decisionBasis';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
@@ -192,6 +195,44 @@ describe('JSON route handlers', () => {
     expect(last.status).toBe(201);
     expect(repo.loadTransaction(id)?.status).toBe('UNDER_REVIEW');
   }
+
+  it.each(['RELEASE', 'REFUND', 'SPLIT'] as const)('binds %s to the recommendation basis and detects later changes on the receipt', async (outcome) => {
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Synthetic buyer note.', 'Synthetic seller note.');
+    const basis = decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id));
+    expect(repo.readEvents(id).find(e => e.type === 'RECOMMENDATION_RECORDED')?.payload).toMatchObject(basis);
+    const response = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome, reason: 'Reviewed the synthetic evidence.' }), param(id));
+    expect(response.status).toBe(200);
+    const event = repo.readEvents(id).find(e => e.type === (outcome === 'SPLIT' ? 'HUMAN_SPLIT_PENDING' : 'DECISION'))!;
+    expect(event.payload).toMatchObject(basis);
+    expect(event.payload).not.toHaveProperty('evidenceChangedSinceRecommendation');
+    const receipt = renderToStaticMarkup(await DecisionReceiptPage(param(id)));
+    expect(receipt).toContain(basis.termsHash);
+    expect(receipt).toContain(basis.evidenceDigest);
+    expect(receipt.match(/Matches/g)).toHaveLength(2);
+
+    db.prepare('UPDATE transactions SET terms_json = ? WHERE id = ?').run('{"condition":"Changed"}', id);
+    db.prepare('UPDATE evidence SET content_ref = ? WHERE tx_id = ?').run('Changed evidence', id);
+    const changedReceipt = renderToStaticMarkup(await DecisionReceiptPage(param(id)));
+    expect(changedReceipt.match(/Changed since decision/g)).toHaveLength(2);
+    expect(repo.readEvents(id).find(e => e.seq === event.seq)?.payload).toEqual(event.payload);
+    expect(verifyChain(repo.readEvents(id)).ok).toBe(true);
+  });
+
+  it.each(['RELEASE', 'REFUND', 'SPLIT'] as const)('records %s even if evidence changed after the recommendation', async (outcome) => {
+    const id = await createReadyTransaction();
+    await reachReview(id, 'Original synthetic buyer note.', 'Synthetic seller note.');
+    const recommendation = repo.readEvents(id).find(e => e.type === 'RECOMMENDATION_RECORDED')!;
+    db.prepare('UPDATE evidence SET content_ref = ? WHERE tx_id = ? AND submitted_by = ?').run('Updated synthetic buyer note.', id, 'buyer');
+    const basis = decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id));
+    expect(basis.evidenceDigest).not.toBe(recommendation.payload.evidenceDigest);
+    const response = await review(post(`/api/transactions/${id}/review`, 'reviewer', { outcome, reason: 'Reviewed the updated synthetic evidence.' }), param(id));
+    expect(response.status).toBe(200);
+    const event = repo.readEvents(id).find(e => e.type === (outcome === 'SPLIT' ? 'HUMAN_SPLIT_PENDING' : 'DECISION'))!;
+    expect(event.payload).toMatchObject({ ...basis, evidenceChangedSinceRecommendation: true });
+    expect(renderToStaticMarkup(await DecisionReceiptPage(param(id)))).toContain('Changed before decision');
+    expect(verifyChain(repo.readEvents(id)).ok).toBe(true);
+  });
 
   function useAiResult(supports: 'buyer' | 'seller', fail = false): void {
     const context = getApiContext();

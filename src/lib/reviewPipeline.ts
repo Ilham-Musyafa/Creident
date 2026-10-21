@@ -1,4 +1,5 @@
 import { containsPromptInjection, summarizeEvidence, type AiEvidenceProvider, type EvidenceRequest } from './ai/evidence';
+import { decisionBasis } from './decisionBasis';
 import { mockShipment } from './mockCourier';
 import { TransactionRepository, type StoredTx, type StoredRecommendation } from './repository';
 import { decide, type RuleInput } from './rules/engine';
@@ -71,5 +72,5 @@ export async function prepareReview(txId: string, deps: ReviewDeps): Promise<Sto
   }
   const ts = (deps.now ?? (() => new Date().toISOString()))();
   const recommendation = decide(facts(tx, evidence, ai, injection, ts, deps.repo));
-  return deps.repo.saveRecommendation(txId, ai, recommendation, ts);
+  return deps.repo.saveRecommendation(txId, ai, recommendation, ts, decisionBasis(tx.termsJson, evidence));
 }

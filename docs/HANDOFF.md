@@ -135,6 +135,15 @@ Still open:
 
 ## Log
 
+- 2026-10-21 09:14 WIB (Codex, C6): bound recommendation and human decision audit
+  events to canonical `termsHash` and an ordered `evidenceDigest` (evidence IDs,
+  parties, kinds, and SHA-256 content hashes). RELEASE, REFUND, and SPLIT record
+  current hashes and flag evidence changed since the recommendation. The decision
+  receipt shows both full recorded hashes and compares them with current data;
+  older receipts without hashes say "Not recorded". Added digest unit tests and
+  route/receipt tests for all outcomes, including evidence changes before a
+  decision and terms/evidence changes afterwards. `npm test` (131/131),
+  `npm run typecheck`, and `npm run build` passed. No dependencies added.
 - 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
   documentation-only proposal for resolving PayPal actions left pending after a
   crash. It maps read-only checks for orders, authorizations, captures, voids,
