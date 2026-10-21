@@ -312,11 +312,25 @@ checkpoints of every chain head (`npm run checkpoint`) that can be published out
 database. Anyone holding a published checkpoint can detect a later rewrite; it does not
 make a rewrite impossible.
 
-**Is the bias test circular?** Partly, and we say so. The 50 synthetic cases and their
-labels were written by the builder: the owner reviewed 10 individually and accepted 40
-drafts without individual review. Replay mode reuses summaries authored from the original drafts. The report and the Fairness page state how many labels were
-reviewed and whether a live model was used. The harness exercises R3, R4, R5 and R7, including one case with mismatched tracking
-facts; shipping rules R1-R3 also have unit tests.
+**Isn't sending hard cases to a person inefficient?** Most deals never become disputes,
+and clear disputes (no shipment by the deadline, tracking for another parcel, a wrong
+destination) are settled by rules R1-R3 without a person. Only ambiguous cases, such as
+damage where the seller or the courier could be at fault, or a missing part where the
+refund could be full or partial, go to a reviewer. The reviewer does not start from zero:
+the AI assists check for missing evidence, summarise it with citations and draft a reason,
+so the review is a check rather than an investigation. A wrong automated decision about
+money costs far more than a few minutes of human time, and AI output can be misread or
+manipulated through evidence text. Every reviewer decision is recorded, including whether
+an AI draft was used unchanged or edited, so more case types can move to rules once the
+data shows it is safe. The escalation rate in our evaluation report comes from a case set
+built to be hard; it is not an estimate of real-world escalation.
+
+**Is the bias test circular?** Partly, and we say so. The synthetic cases and their
+labels were written by the builder: of the 62 cases, the owner reviewed 10 individually,
+accepted 40 drafts without individual review, and 12 newer shipping and return cases are
+still drafts. Replay mode reuses summaries authored from the original drafts. The report and the Fairness page state how many labels were
+reviewed and whether a live model was used. The harness exercises the dispute rules R3, R4, R5 and R7, and
+shipping and return cases with explicit facts exercise R1-R3; those rules also have unit tests.
 
 **Few Indonesians pay each other with PayPal, and the prototype is in USD.** True. The
 prototype runs on the PayPal Sandbox because this is a PayPal hackathon, and the flow was
