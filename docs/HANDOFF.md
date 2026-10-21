@@ -135,6 +135,18 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:26 WIB (Codex, C10): captured 11 current-app PNGs under
+  `docs/ui/screens/` using production Chromium automation, `PAYPAL_MODE=simulated`,
+  replay AI, and a fresh temp SQLite database seeded through Menu. Nine light
+  mobile images are exactly 390x844; dark buyer-home/reviewer-review images are
+  1440x900. Covered deals, Phone checklist, completed detail, damaged-dispute
+  guidance, review, decision receipt, audit, and fairness. Latest main did not
+  yet include C9, so the guidance/receipt states were prepared through the demo
+  dispute and reviewer UI. Only synthetic data is shown. Replaced README's old
+  image reference and added the Screens link table. Production build passed;
+  all PNG dimensions, links, sizes (50-129 KiB each, 738 KiB total), and console
+  checks passed. No code or package changes; browser automation was not added
+  as a dependency.
 - 2026-10-21 15:20 WIB (Codex, C9): added an eleventh labelled demo deal,
   "Damaged smartwatch (resolved)", with both parties' evidence, a replay-backed
   recommendation, and a human REFUND decision/reason through the orchestrator;
