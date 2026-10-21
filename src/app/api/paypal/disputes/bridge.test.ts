@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { openDatabase, migrate } from '../../../../lib/db';
 import { TransactionRepository } from '../../../../lib/repository';
 import { canonicalJson, verifyChain } from '../../../../lib/audit/chain';
-import { PayPalClient } from '../../../../lib/paypal/client';
+import { PayPalClient, PayPalError } from '../../../../lib/paypal/client';
 import { disputeDocument } from '../../../../lib/paypalDisputes';
 import { getApiContext, seedDemoUsers, setApiContextForTests } from '../../_shared/context';
 import { POST as sync } from './sync/route';
@@ -183,6 +183,52 @@ describe('PayPal dispute bridge', () => {
     vi.stubEnv('REVIEWER_ACCESS_CODE', 'throwaway-gate');
     expect((await sync(post('reviewer'))).status).toBe(403);
     expect(sent).toEqual([]);
+  });
+
+  it('gates every reviewer bridge entry point before any provider call', async () => {
+    vi.stubEnv('REVIEWER_ACCESS_CODE', 'throwaway-gate');
+    for (const [handler, body] of [
+      [sync, {}], [tick, {}], [evidence, {}], [escalate, { confirm: true }], [simulate, {}],
+    ] as const) {
+      expect((await handler(post('reviewer', body), params())).status).toBe(403);
+    }
+    const allowed = post('reviewer'); allowed.headers.set('x-reviewer-code', 'throwaway-gate');
+    expect((await sync(allowed)).status).toBe(200);
+    expect(sent).toEqual([]);
+  });
+
+  it('rejects oversized bodies, extra fields and invalid confirmation values', async () => {
+    expect((await sync(post('reviewer', { extra: true }))).status).toBe(400);
+    expect((await evidence(post('seller', { disputeId: 'x'.repeat(201) }), params())).status).toBe(400);
+    expect((await escalate(post('seller', { confirm: 'true' }), params())).status).toBe(400);
+    expect((await evidence(post('seller', { disputeId: 'x'.repeat(17_000) }), params())).status).toBe(413);
+    expect(sent).toEqual([]);
+  });
+
+  it.each(['unexpected', 'paypal'] as const)('keeps %s descriptions and tokens out of responses and audit failures', async kind => {
+    await sync(post('reviewer'));
+    const client = getApiContext().paypal!;
+    const marker = 'throwaway-sensitive-response-marker';
+    vi.spyOn(client, 'provideEvidence').mockRejectedValue(kind === 'paypal'
+      ? new PayPalError(422, 'UNPROCESSABLE_ENTITY', 'NOT_ALLOWED', 'throwaway-debug', marker) : new Error(marker));
+    const response = await evidence(post('seller'), params());
+    expect(response.status).toBe(kind === 'paypal' ? 502 : 500);
+    expect(await response.text()).not.toContain(marker);
+    const events = repo.readEvents(txId);
+    expect(events.at(-1)).toMatchObject({ type: 'PAYPAL_DISPUTE_ACTION_FAILED', payload: { code: kind === 'paypal' ? 'UNPROCESSABLE_ENTITY' : 'DISPUTE_ACTION_FAILED' } });
+    expect(JSON.stringify(events)).not.toContain(marker);
+    expect(JSON.stringify(events)).not.toContain('throwaway-token');
+    expect(verifyChain(events).ok).toBe(true);
+  });
+
+  it('quotes evidence as PDF string data even when it contains PDF-like operators', async () => {
+    const content = ') Tj /OpenAction << /S /JavaScript >> ( \\ endstream';
+    repo.recordEvidence({ txId, submittedBy: 'buyer', kind: 'note', content, contentHash: sha(content), ts: now });
+    await sync(post('reviewer'));
+    expect((await evidence(post('seller'), params())).status).toBe(200);
+    expect(pdf).toContain('Content: \\) Tj /OpenAction << /S /JavaScript >> \\(');
+    expect(pdf).toContain(sha(content));
+    expect(pdf.match(/^endstream$/gm)).toHaveLength(1);
   });
 
   it('does not trust a list entry that maps to another capture, and shows read failures', async () => {

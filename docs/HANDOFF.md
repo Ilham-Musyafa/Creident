@@ -134,6 +134,27 @@ Still open:
 
 ## Log
 
+- 2026-10-22 00:50 WIB (Codex, C14): reviewed bridge sync/evidence/escalate/
+  simulate and tick polling: role/reviewer gate, streamed body/field validation,
+  case/capture/mode matching, local idempotency reservations, audit/error redaction
+  and evidence PDF string escaping. Updated SECURITY-REVIEW with findings and limits.
+  Fixed unbounded polling: named constants default to a 180-day discovery window
+  based on audited capture time (legacy creation fallback) and a hard 50 combined
+  list/detail reads per invocation. Owner selected hard cap plus prioritized,
+  rotating known open cases; these bypass age, including verified-webhook-only IDs.
+  Persisted case/capture attempt order survives context recreation, tied clocks and
+  provider failures. Deferred work is marked in results; repeat sync/tick to continue.
+  Added an existing-DB-safe operational scheduler table/index; audit chains and
+  rules/state transitions remain unchanged. DESIGN documents OAuth/other tick calls
+  being outside the dispute-read budget, backlog behavior and policy limitations.
+  `npm audit` and `npm audit --json`: 0 vulnerabilities; no upgrades/dependencies.
+  Added window/boundary/mode/budget/rotation/webhook tests and route regressions for
+  all reviewer gates, input/body limits, safe error/audit data and literal PDF text.
+  `npm test` (208/208, 27 files), typecheck, build and diff check passed. No real
+  Sandbox calls. Branch `sec/c14-bridge-review`; one PR intended for Claude review,
+  not merge. GitHub API access remains blocked by the environment proxy (403);
+  English PR description is at `/tmp/c14-pr-description.md` for manual creation.
+
 - 2026-10-21 22:45 WIB (Claude): reviewed Codex C11. Merged `main` (R5) into the branch;
   only HANDOFF conflicted. Tests 195/195, typecheck and build pass. Browser check in
   simulated mode on a seeded completed demo deal: buyer opens a SIM case (deal freezes),

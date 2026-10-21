@@ -195,8 +195,27 @@ PayPal dispute bridge (owner-approved C11, 2026-10-21):
   `actions_json`, and `updated_at`; `CREATE TABLE IF NOT EXISTS` migrates existing DBs.
 - Reviewer-only `POST /api/paypal/disputes/sync` and `POST /api/jobs/tick` poll cases
   scoped to each stored capture ID, then read case details and match the seller
-  transaction ID exactly. Known IDs are refreshed even if absent from a later list.
-  No public webhook is needed; this is explicit polling, not a background worker.
+  transaction ID exactly. Discovery is limited by `PAYPAL_DISPUTE_WINDOW_DAYS = 180`
+  in `src/lib/paypalDisputes.ts`, inclusive of the cutoff. Age starts at the audited
+  capture event for the stored capture ID, not a later status update; legacy/seeded
+  captured rows without that event fall back to their creation event, then DB
+  `created_at`. This is a discovery policy, not a guarantee of PayPal eligibility.
+- `PAYPAL_DISPUTE_MAX_POLL_CALLS = 50` is a hard per-invocation budget shared by
+  `listDisputes` and `getDispute` calls, including failures. It applies to the polling
+  phase of sync, tick and the simulated opener. OAuth token acquisition/refresh and
+  unrelated tick money/tracking calls are outside this dispute-read budget.
+- Known open cases are age-exempt, including case IDs mapped by verified
+  `CUSTOMER.DISPUTE.CREATED` webhooks. Refresh them directly before discovery, even
+  when absent from the list. Known resolved cases are not refreshed. If the open
+  backlog exceeds the budget, defer the remainder to a later run (owner-approved
+  hard-cap policy, 2026-10-22). SQLite `paypal_dispute_poll_attempts` records attempt
+  order separately for case/capture and sandbox/simulated mode, before each call,
+  so restarts, tied clocks and failures cannot keep one entry at the front forever.
+  Discovery captures rotate too. A large persistent open backlog can consume the
+  whole budget and delay discovery; no background continuation worker is built.
+  Result rows with unattempted work have `deferred: true`; run sync/tick again.
+  Budget deferral is not a PayPal failure and does not resolve/unfreeze a case.
+  No public webhook is needed for polling; there is no background worker.
 - Case updates and existing EXTERNAL_DISPUTE/EXTERNAL_RESOLVED transitions commit
   atomically. Poll transition events carry `source: "disputes_api"` and `disputeId`.
   Verified webhook resolution can map via the case table. A resolved case stays
@@ -283,6 +302,9 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
 - `paypal_events` (event_id UNIQUE, type, received_at, processed_at) for webhook de-duplication.
 - `idempotency` (key UNIQUE, tx_id, action, result).
 - `paypal_disputes` (tx_id, dispute_id UNIQUE, status, stage, reason, actions_json, updated_at).
+- `paypal_dispute_poll_attempts` (mode, kind: case|capture, resource_id, attempt_seq;
+  composite primary key mode/kind/resource_id) — operational polling order only,
+  migrated with CREATE TABLE IF NOT EXISTS; it does not alter audit chains.
 
 ## 9. Endpoints (draft)
 

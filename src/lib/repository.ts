@@ -145,8 +145,28 @@ export class TransactionRepository {
     );
   }
 
-  capturedTransactions(): StoredTx[] {
-    return this.db.prepare('SELECT * FROM transactions WHERE captured = 1 AND paypal_capture_id IS NOT NULL ORDER BY id').all().map(fromRow);
+  capturedTransactions(since?: string): StoredTx[] {
+    // Real captures carry an audited timestamp. Imported/seeded captured rows may only
+    // have creation history, so use that as the documented legacy fallback.
+    return this.db.prepare(`SELECT * FROM transactions t WHERE captured = 1 AND paypal_capture_id IS NOT NULL
+      AND (? IS NULL OR julianday(COALESCE(
+        (SELECT ts FROM events e WHERE e.tx_id = t.id
+          AND json_extract(e.payload_json, '$.effect') = 'PAYPAL_CAPTURE'
+          AND json_extract(e.payload_json, '$.paypalCaptureId') = t.paypal_capture_id ORDER BY seq DESC LIMIT 1),
+        (SELECT ts FROM events e WHERE e.tx_id = t.id AND e.type = 'TRANSACTION_CREATED' ORDER BY seq LIMIT 1),
+        t.created_at)) >= julianday(?)) ORDER BY id`).all(since ?? null, since ?? null).map(fromRow);
+  }
+
+  disputePollAttempts(mode: 'sandbox' | 'simulated', kind: 'case' | 'capture'): Map<string, number> {
+    const rows = this.db.prepare('SELECT resource_id, attempt_seq FROM paypal_dispute_poll_attempts WHERE mode = ? AND kind = ?').all(mode, kind);
+    return new Map(rows.map(row => [String(row.resource_id), Number(row.attempt_seq)]));
+  }
+
+  recordDisputePollAttempt(mode: 'sandbox' | 'simulated', kind: 'case' | 'capture', resourceId: string): void {
+    // One atomic statement gives failures a turn too, without writing fake case updates.
+    this.db.prepare(`INSERT INTO paypal_dispute_poll_attempts (mode, kind, resource_id, attempt_seq)
+      VALUES (?, ?, ?, (SELECT COALESCE(MAX(attempt_seq), 0) + 1 FROM paypal_dispute_poll_attempts))
+      ON CONFLICT(mode, kind, resource_id) DO UPDATE SET attempt_seq = excluded.attempt_seq`).run(mode, kind, resourceId);
   }
 
   listPayPalDisputes(txId?: string): StoredPayPalDispute[] {
@@ -154,6 +174,15 @@ export class TransactionRepository {
       : this.db.prepare('SELECT * FROM paypal_disputes ORDER BY updated_at DESC, dispute_id').all();
     return rows.map(row => ({ txId: String(row.tx_id), disputeId: String(row.dispute_id), status: String(row.status),
       stage: String(row.stage), reason: String(row.reason), actions: JSON.parse(String(row.actions_json)) as string[], updatedAt: String(row.updated_at) }));
+  }
+
+  openPayPalDisputeRefs(): Array<{ txId: string; disputeId: string }> {
+    const rows = this.db.prepare(`SELECT tx_id, dispute_id FROM paypal_disputes WHERE status <> 'RESOLVED'
+      UNION SELECT p.tx_id, p.resource_id AS dispute_id FROM paypal_events p
+      WHERE p.type = 'CUSTOMER.DISPUTE.CREATED' AND p.tx_id IS NOT NULL AND p.resource_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM paypal_events r WHERE r.tx_id = p.tx_id AND r.resource_id = p.resource_id AND r.type = 'CUSTOMER.DISPUTE.RESOLVED')
+        AND NOT EXISTS (SELECT 1 FROM paypal_disputes d WHERE d.dispute_id = p.resource_id AND d.status = 'RESOLVED')`).all();
+    return rows.map(row => ({ txId: String(row.tx_id), disputeId: String(row.dispute_id) }));
   }
 
   /** A poll and its freeze/resume audit writes commit together, using the existing transitions. */
