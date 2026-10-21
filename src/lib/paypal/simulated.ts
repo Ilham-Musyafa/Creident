@@ -5,10 +5,14 @@
 // The buyer "approves" on our own page /paypal/simulated, which is clearly labelled.
 
 import { randomUUID } from 'node:crypto';
+import { PayPalError } from './client';
+import type { DisputeClient, PayPalCase } from '../paypalDisputes';
 import type { PayPalClient } from './client';
 
 export type PaymentGateway = Pick<PayPalClient,
   'createAuthorizeOrder' | 'authorizeOrder' | 'captureAuthorization' | 'voidAuthorization' | 'refundCapture' | 'getOrderStatus' | 'addTracking'>;
+
+export type SimulatedGateway = PaymentGateway & DisputeClient & { openSimulatedDispute(captureId: string): Promise<PayPalCase> };
 
 export type PayPalMode = 'sandbox' | 'simulated';
 
@@ -19,9 +23,44 @@ export function payPalMode(env: Record<string, string | undefined> = process.env
 
 export const SIMULATED_APPROVAL_PATH = '/paypal/simulated';
 
-export function createSimulatedPayPal(): PaymentGateway {
+export function createSimulatedPayPal(initialCases: PayPalCase[] = []): SimulatedGateway {
+  const cases = new Map(initialCases.map(c => [c.id, structuredClone(c)]));
+  const getCase = (id: string) => {
+    const detail = cases.get(id);
+    if (!detail) throw new PayPalError(404, 'RESOURCE_NOT_FOUND', 'INVALID_RESOURCE_ID', undefined, 'Simulated case not found');
+    return detail;
+  };
+  const requireAction = (id: string, action: string) => {
+    const detail = getCase(id);
+    if (!detail.actions.includes(action)) throw new PayPalError(422, 'UNPROCESSABLE_ENTITY', 'ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE', undefined, 'Simulated case does not offer this action');
+    return detail;
+  };
   const id = (kind: string) => `SIM-${kind}-${randomUUID().slice(0, 8).toUpperCase()}`;
   return {
+    async openSimulatedDispute(captureId) {
+      const existing = [...cases.values()].find(c => c.sellerTransactionIds.includes(captureId));
+      if (existing) return structuredClone(existing);
+      const detail: PayPalCase = { id: id('DISPUTE'), status: 'WAITING_FOR_SELLER_RESPONSE', stage: 'INQUIRY',
+        reason: 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED', sellerTransactionIds: [captureId], actions: ['send_message', 'escalate'], outcome: undefined };
+      cases.set(detail.id, detail);
+      return structuredClone(detail);
+    },
+    async listDisputes(filter = {}) {
+      return [...cases.values()].filter(c => !filter.disputedTransactionId || c.sellerTransactionIds.includes(filter.disputedTransactionId))
+        .map(c => ({ id: c.id, status: c.status, stage: c.stage, reason: c.reason, amount: null, createdAt: undefined }));
+    },
+    async getDispute(id) { return structuredClone(getCase(id)); },
+    async sendDisputeMessage(id) { requireAction(id, 'send_message'); return {}; },
+    async provideEvidence(id) {
+      const detail = requireAction(id, 'provide_evidence');
+      detail.status = 'UNDER_REVIEW'; detail.actions = ['provide_supporting_info'];
+      return {};
+    },
+    async escalateDispute(id) {
+      const detail = requireAction(id, 'escalate');
+      detail.stage = 'CHARGEBACK'; detail.status = 'WAITING_FOR_SELLER_RESPONSE'; detail.actions = ['provide_evidence'];
+      return {};
+    },
     async createAuthorizeOrder({ returnUrl }) {
       const orderId = id('ORDER');
       // Same origin as the return URL; only the transaction id and order token are passed on.

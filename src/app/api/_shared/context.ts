@@ -1,7 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import { openDatabase } from '../../../lib/db';
 import { PayPalClient } from '../../../lib/paypal/client';
-import { createSimulatedPayPal, payPalMode, type PaymentGateway } from '../../../lib/paypal/simulated';
+import { createSimulatedPayPal, payPalMode, type PaymentGateway, type SimulatedGateway } from '../../../lib/paypal/simulated';
 import { TransactionRepository } from '../../../lib/repository';
 import { getTimeConfig, type TimeConfig } from '../../../lib/timeConfig';
 import type { AiEvidenceProvider } from '../../../lib/ai/evidence';
@@ -10,7 +10,7 @@ export interface ApiContext {
   db: DatabaseSync;
   repo: TransactionRepository;
   paypal?: PayPalClient;
-  simulatedPayPal?: PaymentGateway;
+  simulatedPayPal?: SimulatedGateway;
   now: () => string;
   time: TimeConfig;
   aiProvider?: AiEvidenceProvider;
@@ -55,7 +55,10 @@ export function getPayPal(context: ApiContext): PayPalClient {
 /** Client for money steps: the labelled simulation when PAYPAL_MODE=simulated, else Sandbox. */
 export function getPaymentGateway(context: ApiContext): PaymentGateway {
   if (payPalMode() !== 'simulated') return getPayPal(context);
-  context.simulatedPayPal ??= createSimulatedPayPal();
+  context.simulatedPayPal ??= createSimulatedPayPal(context.repo.listPayPalDisputes().filter(c => c.disputeId.startsWith('SIM-')).map(c => ({
+    id: c.disputeId, status: c.status, stage: c.stage, reason: c.reason, actions: c.actions, outcome: undefined,
+    sellerTransactionIds: [context.repo.loadTransaction(c.txId)!.paypalCaptureId!],
+  })));
   return context.simulatedPayPal;
 }
 
@@ -64,3 +67,9 @@ export function isSimulatedPayPal(): boolean {
 }
 
 export class ApiSetupError extends Error {}
+
+export function getDisputeGateway(context: ApiContext) {
+  if (!isSimulatedPayPal()) return getPayPal(context);
+  getPaymentGateway(context);
+  return context.simulatedPayPal!;
+}

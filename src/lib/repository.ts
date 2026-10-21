@@ -113,6 +113,16 @@ function fromRow(row: Record<string, unknown>): StoredTx {
   };
 }
 
+export interface StoredPayPalDispute {
+  txId: string;
+  disputeId: string;
+  status: string;
+  stage: string;
+  reason: string;
+  actions: string[];
+  updatedAt: string;
+}
+
 export class TransactionRepository {
   constructor(private readonly db: DatabaseSync) {}
 
@@ -133,6 +143,48 @@ export class TransactionRepository {
       tx.paypalOrderId ?? null, tx.paypalAuthId ?? null, tx.paypalCaptureId ?? null,
       tx.captured ? 1 : 0, tx.frozenFrom ?? null,
     );
+  }
+
+  capturedTransactions(): StoredTx[] {
+    return this.db.prepare('SELECT * FROM transactions WHERE captured = 1 AND paypal_capture_id IS NOT NULL ORDER BY id').all().map(fromRow);
+  }
+
+  listPayPalDisputes(txId?: string): StoredPayPalDispute[] {
+    const rows = txId ? this.db.prepare('SELECT * FROM paypal_disputes WHERE tx_id = ? ORDER BY updated_at DESC, dispute_id').all(txId)
+      : this.db.prepare('SELECT * FROM paypal_disputes ORDER BY updated_at DESC, dispute_id').all();
+    return rows.map(row => ({ txId: String(row.tx_id), disputeId: String(row.dispute_id), status: String(row.status),
+      stage: String(row.stage), reason: String(row.reason), actions: JSON.parse(String(row.actions_json)) as string[], updatedAt: String(row.updated_at) }));
+  }
+
+  /** A poll and its freeze/resume audit writes commit together, using the existing transitions. */
+  savePayPalDispute(input: StoredPayPalDispute, simulated = false): StoredPayPalDispute {
+    return transaction(this.db, () => {
+      const existing = this.db.prepare('SELECT * FROM paypal_disputes WHERE dispute_id = ?').get(input.disputeId);
+      if (existing && existing.tx_id !== input.txId) throw new Error('Dispute belongs to another transaction');
+      const webhookResolved = this.db.prepare("SELECT 1 FROM paypal_events WHERE type = 'CUSTOMER.DISPUTE.RESOLVED' AND resource_id = ? AND tx_id = ?").get(input.disputeId, input.txId);
+      const resolved = existing?.status === 'RESOLVED' || !!webhookResolved || input.status === 'RESOLVED';
+      const stored = { ...input, ...(resolved ? { status: 'RESOLVED', actions: [] } : {}) };
+      this.db.prepare(`INSERT INTO paypal_disputes (tx_id, dispute_id, status, stage, reason, actions_json, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(dispute_id) DO UPDATE SET
+        status = excluded.status, stage = excluded.stage, reason = excluded.reason,
+        actions_json = excluded.actions_json, updated_at = excluded.updated_at`)
+        .run(stored.txId, stored.disputeId, stored.status, stored.stage, stored.reason, JSON.stringify(stored.actions), stored.updatedAt);
+      const payload = { source: 'disputes_api', disputeId: stored.disputeId, ...(simulated ? { simulated: true } : {}) };
+      if (!existing) this.appendInTransaction({ txId: stored.txId, ts: stored.updatedAt, actor: 'paypal', type: 'PAYPAL_DISPUTE_DETECTED', payload });
+      const tx = this.loadTransaction(stored.txId)!;
+      const hasOpen = !!this.db.prepare("SELECT 1 FROM paypal_disputes WHERE tx_id = ? AND status <> 'RESOLVED'").get(tx.id);
+      const trigger = hasOpen && tx.status !== 'FROZEN_EXTERNAL' ? { type: 'EXTERNAL_DISPUTE' as const }
+        : !hasOpen && resolved && tx.status === 'FROZEN_EXTERNAL' ? { type: 'EXTERNAL_RESOLVED' as const } : null;
+      if (trigger) {
+        const next = transition(tx, trigger);
+        if (!next.ok) throw new Error('External dispute transition refused');
+        this.db.prepare("UPDATE transactions SET status = ?, frozen_from = ?, updated_at = datetime('now') WHERE id = ?")
+          .run(next.tx.status, next.tx.frozenFrom ?? null, tx.id);
+        this.appendInTransaction({ txId: tx.id, ts: stored.updatedAt, actor: 'paypal', type: trigger.type,
+          payload: { ...payload, from: tx.status, to: next.tx.status } });
+      }
+      return stored;
+    });
   }
 
   readEvents(txId: string): AuditEvent[] {
@@ -180,6 +232,10 @@ export class TransactionRepository {
           WHERE type = 'CUSTOMER.DISPUTE.CREATED' AND resource_id = ? AND tx_id IS NOT NULL`).all(event.resourceId);
         for (const row of rows) found.add(String(row.tx_id));
       }
+      if (event.resourceId) {
+        const row = this.db.prepare('SELECT tx_id FROM paypal_disputes WHERE dispute_id = ?').get(event.resourceId);
+        if (row) found.add(String(row.tx_id));
+      }
       if (found.size > 1) throw new Error('PayPal webhook maps to multiple transactions');
       const txId = found.values().next().value as string | undefined;
       this.db.prepare(`INSERT INTO paypal_events (event_id, type, tx_id, resource_id, received_at, processed_at)
@@ -187,9 +243,19 @@ export class TransactionRepository {
       if (!txId) return { duplicate: false, txId: null };
 
       const tx = this.loadTransaction(txId)!;
-      const trigger = event.type === 'CUSTOMER.DISPUTE.CREATED' || event.type === 'PAYMENT.CAPTURE.REVERSED'
+      let trigger = event.type === 'CUSTOMER.DISPUTE.CREATED' || event.type === 'PAYMENT.CAPTURE.REVERSED'
         ? { type: 'EXTERNAL_DISPUTE' as const }
         : event.type === 'CUSTOMER.DISPUTE.RESOLVED' ? { type: 'EXTERNAL_RESOLVED' as const } : null;
+      if (event.resourceId && event.type === 'CUSTOMER.DISPUTE.RESOLVED') {
+        this.db.prepare("UPDATE paypal_disputes SET status = 'RESOLVED', actions_json = '[]', updated_at = ? WHERE dispute_id = ?")
+          .run(event.receivedAt, event.resourceId);
+        if (this.db.prepare("SELECT 1 FROM paypal_disputes WHERE tx_id = ? AND status <> 'RESOLVED'").get(txId)) trigger = null;
+      }
+      if (event.resourceId && event.type === 'CUSTOMER.DISPUTE.CREATED') {
+        const resolved = this.db.prepare("SELECT 1 FROM paypal_disputes WHERE dispute_id = ? AND status = 'RESOLVED'").get(event.resourceId)
+          || this.db.prepare("SELECT 1 FROM paypal_events WHERE type = 'CUSTOMER.DISPUTE.RESOLVED' AND resource_id = ? AND tx_id = ?").get(event.resourceId, txId);
+        if (resolved) trigger = null;
+      }
       const changed = trigger ? transition(tx, trigger) : null;
       if (changed?.ok) {
         const update = this.db.prepare(`UPDATE transactions SET status = ?, frozen_from = ?, updated_at = datetime('now')

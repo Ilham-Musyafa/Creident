@@ -157,6 +157,17 @@ export function migrate(db: DatabaseSync): void {
       processed_at TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS paypal_disputes (
+      tx_id TEXT NOT NULL REFERENCES transactions(id),
+      dispute_id TEXT NOT NULL UNIQUE,
+      status TEXT NOT NULL,
+      stage TEXT NOT NULL,
+      reason TEXT NOT NULL,
+      actions_json TEXT NOT NULL CHECK (json_valid(actions_json)),
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS paypal_disputes_tx_id ON paypal_disputes(tx_id);
+
     CREATE TABLE IF NOT EXISTS idempotency (
       key TEXT PRIMARY KEY,
       tx_id TEXT NOT NULL REFERENCES transactions(id),

@@ -1,9 +1,10 @@
+import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
 import { FindingCard, KeyValue, RuleNotice, StatusPill } from '../../../../components/ui';
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ReviewForm } from '../../../../components/client';
 import { money } from '../../../../components/view';
-import { data, getRole, isUuid, reviewerUnlocked } from '../../../_server';
+import { data, getRole, isUuid, reviewerUnlocked, simulatedPayPal } from '../../../_server';
 import { disputeType } from '../../../../lib/disputeTypes';
 
 export const dynamic = 'force-dynamic';
@@ -43,6 +44,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm">{e.content}</p></Card>)}</div>
         </div>
         <aside className="space-y-3">
+          <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
           <SectionTitle>Decision</SectionTitle>
           <KeyValue items={[
             { label: 'Rule', value: rec ? rec.ruleId : '—' },

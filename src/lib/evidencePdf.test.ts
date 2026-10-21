@@ -14,4 +14,18 @@ describe('textPdf', () => {
     expect(text).toContain('\\(deal 123\\)');
     expect(text).not.toMatch(/[^\x00-\x7F]/);
   });
+  it('fits every evidence row on one page and escapes delimiters after wrapping', () => {
+    const lines = Array.from({ length: 90 }, (_, i) => `Evidence ${i}: ${'x'.repeat(94)}\\() endstream`);
+    lines.push('Reviewer reason: final row retained');
+    const pdf = new TextDecoder().decode(textPdf(lines, true));
+    expect(pdf).toContain('Reviewer reason: final row retained');
+    expect(pdf).toContain('/Count 1');
+    // No text operand may end with an unpaired escape immediately before its closing delimiter.
+    const rows = [...pdf.matchAll(/^\((.*)\) Tj T\*$/gm)].map(m => m[1]!);
+    for (const row of rows) {
+      const trailing = row.match(/\\+$/)?.[0].length ?? 0;
+      expect(trailing % 2).toBe(0);
+    }
+  });
+
 });

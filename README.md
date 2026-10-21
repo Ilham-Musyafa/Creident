@@ -86,6 +86,20 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
   because the courier is simulated), so the PayPal transaction carries proof of shipment
   if the buyer later disputes there. PayPal only accepts tracking after capture; a failure
   never undoes the capture, is logged, and is retried up to three times.
+- **PayPal dispute bridge**: the reviewer can sync PayPal cases with
+  `POST /api/paypal/disputes/sync`; `POST /api/jobs/tick` also polls stored captures.
+  Matching cases freeze the deal using R6, with the PayPal case, stage, reason,
+  offered actions, and last check shown on the deal and review pages. Seller or
+  reviewer can send a one-page text PDF of locked terms, evidence and hashes,
+  tracking, any human decision/reason, and the audit head. In inquiry, if PayPal
+  only offers `send_message`, the button sends a short message instead and explains
+  that PDF evidence needs the claim stage. Escalation needs an explicit confirmation
+  inside the page and is offered only when PayPal allows it. Polling and verified
+  webhooks share case identity so the deal is not frozen/resumed twice.
+  In simulated mode, open a completed labelled demo deal as Buyer and choose
+  "Open simulated PayPal dispute". Switch to Seller to try the message, escalation,
+  and evidence steps without keys; all bridge events carry `simulated: true` and
+  case IDs start with `SIM-`.
 - **Rules** (`src/lib/rules/engine.ts`):
 
   | Rule | Situation | Recommendation |
@@ -300,10 +314,28 @@ photo must show the deal's one-time code, the item checklists ask for serial num
 evidence guidance asks for an unbroken first-opening video. We cannot detect a well-made fake
 photo; unclear cases go to a person (R5). Image forgery detection is out of scope.
 
-**What if the buyer also opens a dispute on PayPal after our decision?** A verified PayPal
-dispute or reversal webhook freezes the deal in any state, including after completion (R6),
-and PayPal's outcome wins. Signature verification and de-duplication are tested with fake
-deliveries; a real Sandbox webhook delivery has not been tested yet.
+**What if the buyer opens a dispute on PayPal?** For a captured deal, a reviewer can
+click "Check PayPal disputes" on the deal page or call the reviewer-only sync endpoint.
+The deadline tick checks too; there is no background worker, so run a sync/tick to
+see updates. A matching PayPal case freezes the deal (R6). The seller/reviewer can
+send the recorded evidence when PayPal offers it, or a short message during inquiry.
+Escalation to a PayPal claim requires confirmation and cannot be undone. A public
+webhook URL is optional for this polling flow; verified webhooks can still coexist.
+PayPal changes took roughly three minutes to appear in the owner's Sandbox probe.
+A `RESOLVED` case resumes the prior local state, like the webhook flow; the bridge
+never infers a new refund, capture, or payout from that status alone. The operator
+must check PayPal's financial outcome separately.
+
+The owner proved listing, messaging, seller escalation, and multipart PDF evidence
+using the existing client in the Sandbox (see `docs/SANDBOX-NOTES.md`). The integrated
+bridge is tested with fake PayPal and the labelled simulation; its real Sandbox run
+remains pending for the owner. Submission checks the locked terms hash, each audited evidence submission, and the
+audit chain before sending. The PDF contains text and original-data hashes,
+not original photo files; long documents use smaller text to retain a single page.
+The current client lists cases per capture; known case IDs are refreshed even when
+not returned in a later list. Unavailable or failed polls do not mean a case resolved.
+Identical submissions are claimed locally to prevent double sends; an interrupted
+send stays blocked for manual checking rather than blindly retrying.
 
 **Can text in the evidence manipulate the AI?** Evidence is passed as quoted data with forged
 delimiters escaped, instruction-like text is flagged and sends the case to a person (R7), the

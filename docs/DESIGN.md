@@ -189,6 +189,53 @@ amount and payment treatment are not yet defined by the owner.
   is detectable. Honest limit: the operator holds the database and the PayPal keys.
 - Store PayPal `debug_id` and request ids in the payload of related events.
 
+PayPal dispute bridge (owner-approved C11, 2026-10-21):
+
+- `paypal_disputes` stores `tx_id`, unique `dispute_id`, `status`, `stage`, `reason`,
+  `actions_json`, and `updated_at`; `CREATE TABLE IF NOT EXISTS` migrates existing DBs.
+- Reviewer-only `POST /api/paypal/disputes/sync` and `POST /api/jobs/tick` poll cases
+  scoped to each stored capture ID, then read case details and match the seller
+  transaction ID exactly. Known IDs are refreshed even if absent from a later list.
+  No public webhook is needed; this is explicit polling, not a background worker.
+- Case updates and existing EXTERNAL_DISPUTE/EXTERNAL_RESOLVED transitions commit
+  atomically. Poll transition events carry `source: "disputes_api"` and `disputeId`.
+  Verified webhook resolution can map via the case table. A resolved case stays
+  resolved if a stale open response or created notification arrives later. The deal
+  stays frozen while another known PayPal case is open. RESOLVED resumes the prior
+  state, without inferring or executing a financial outcome. Rules R1-R7 are unchanged.
+- Seller/reviewer `POST /api/transactions/:id/paypal-dispute/evidence` refreshes
+  PayPal's offered actions first. `provide_evidence` sends a text-only single-page
+  PDF via the existing multipart client; its evidence type follows PayPal's reason.
+  The document includes item/amount, canonical locked terms and hash, tracking,
+  evidence content/submitter/content hashes, decision/reviewer reason, and a verified
+  audit head. Changed locked terms, altered/missing audited evidence, or an invalid chain block submission. All PDF
+  text is escaped as data; long documents shrink to fit rather than drop rows.
+  Unicode is rendered as ASCII by the existing PDF helper; hashes cover original
+  UTF-8 data. Original photo files are not uploaded by this text-document bridge.
+- If only `send_message` is offered, send a short message and state that PDF evidence
+  needs the claim stage. Seller/reviewer `POST .../paypal-dispute/escalate` requires
+  `confirm: true` and the currently offered `escalate` action. The UI asks inside
+  the page, without a browser confirmation dialog. No acceptance/offer/refund API
+  actions are added here.
+- Audit events: PAYPAL_DISPUTE_DETECTED (once per case),
+  PAYPAL_DISPUTE_EVIDENCE_SENT, PAYPAL_DISPUTE_MESSAGE_SENT,
+  PAYPAL_DISPUTE_ESCALATED, and PAYPAL_DISPUTE_ACTION_FAILED. Failures retain
+  PayPal's issue and `debug_id`, never tokens, secrets, or raw provider responses.
+  Submission events record the terms/evidence/PDF hashes and audit head. Local
+  claims prevent duplicate submissions; failed or interrupted sends require manual
+  checking before retry. C5 reconciliation remains a separate, unimplemented proposal.
+- The deal and review panels show case details, last check, offered actions, and
+  permitted seller/reviewer buttons. Reviewer access-code checks still apply.
+- In `PAYPAL_MODE=simulated`, the same calls use SIM- case IDs and labelled events.
+  Buyer/reviewer `POST .../paypal-dispute/simulate` can open an inquiry only on a
+  completed labelled demo deal. Simulated cases are restored from stored metadata
+  after gateway recreation; real PayPal cases are never sent through the simulator.
+- The owner's Sandbox probe proved inquiry messaging, seller escalation, and
+  multipart PDF evidence in claim/CHARGEBACK, with updates delayed by minutes.
+  The integrated bridge still needs an owner-run Sandbox check. Real webhook
+  delivery also remains untested.
+
+
 Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
 
 - `npm run checkpoint` uses `node:crypto` Ed25519 and `AUDIT_SIGNING_KEY` (private
@@ -235,6 +282,7 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
 - `events` (audit log, section 7).
 - `paypal_events` (event_id UNIQUE, type, received_at, processed_at) for webhook de-duplication.
 - `idempotency` (key UNIQUE, tx_id, action, result).
+- `paypal_disputes` (tx_id, dispute_id UNIQUE, status, stage, reason, actions_json, updated_at).
 
 ## 9. Endpoints (draft)
 
@@ -248,6 +296,9 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
   `POST /api/transactions/:id/review` human decision with reason
 - `POST /api/webhooks/paypal` signature verification, de-duplication, state freeze
 - `GET /api/audit/:id` and `GET /api/audit/verify`
+- `POST /api/paypal/disputes/sync` reviewer-only PayPal dispute poll
+- `POST /api/transactions/:id/paypal-dispute/evidence`, `POST .../escalate` seller/reviewer
+- `POST /api/transactions/:id/paypal-dispute/simulate` demo-only simulated case
 - Mock courier: `GET /api/mock-courier/:tracking`
 
 Stack **[DECIDED 2026-10-20]**: Next.js (App Router) + TypeScript, API routes for the backend,
