@@ -224,6 +224,10 @@ The JSON API behind the screens lives in `src/app/api/**` (for example
 against the Sandbox. Void after capture is rejected (`PREVIOUSLY_CAPTURED`) and authorize
 before approval is rejected (`ORDER_NOT_APPROVED`); the state machine is built around both.
 A 10.00 USD capture showed a 0.64 USD fee that did not appear to be returned on refund.
+On 2026-10-21 the project's own PayPal client ran both paths end to end (`npm run smoke`):
+authorize, capture, **tracking added to the order** (carrier `OTHER`), full refund; and
+authorize then void. The web app's screens use the same client; a full click-through of
+the app against the Sandbox (rather than the labelled simulation) is still to do.
 
 **Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 50 synthetic
 cases (40 disputes, 10 prompt-injection attempts), each also run with six counterfactual
