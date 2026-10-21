@@ -73,3 +73,31 @@ describe('dispute probe resume', () => {
     expect(lines).toContain('Evidence (multipart with PDF): accepted.');
   });
 });
+
+describe('dispute probe escalation', () => {
+  it('messages the buyer, escalates the inquiry, then moves it to seller evidence in the Sandbox', async () => {
+    const calls: string[] = [];
+    let stage = 'INQUIRY'; let status = 'WAITING_FOR_SELLER_RESPONSE';
+    const fetchImpl = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = new URL(String(input)); const p = url.pathname; const method = init?.method ?? 'GET';
+      calls.push(`${method} ${p}`);
+      const ok = (b: unknown) => new Response(JSON.stringify(b), { status: 200 });
+      if (p === '/v1/oauth2/token') return ok({ access_token: 't', expires_in: 3600 });
+      if (p === '/v1/customer/disputes/D2' && method === 'GET') {
+        const links = stage === 'INQUIRY' ? ['send_message', 'escalate', 'make_offer', 'accept_claim']
+          : status === 'UNDER_REVIEW' ? ['require_evidence', 'adjudicate'] : ['provide_evidence'];
+        return ok({ dispute_id: 'D2', status, dispute_life_cycle_stage: stage, reason: 'SNAD', links: links.map((rel) => ({ rel })) });
+      }
+      if (p.endsWith('/send-message')) return ok({});
+      if (p.endsWith('/escalate')) { stage = 'CHARGEBACK'; status = 'UNDER_REVIEW'; return ok({}); }
+      if (p.endsWith('/require-evidence')) { status = 'WAITING_FOR_SELLER_RESPONSE'; return ok({}); }
+      if (p.endsWith('/provide-evidence')) return ok({});
+      throw new Error(`Unexpected ${method} ${p}`);
+    }) as typeof fetch;
+    const client = new PayPalClient({ baseUrl: 'https://api-m.sandbox.paypal.com', clientId: 'id', clientSecret: 's', fetchImpl });
+    const lines: string[] = [];
+    await resumeDisputeProbe(client, answers('y'), (l) => lines.push(l), 'D2');
+    expect(calls.filter((c) => c.startsWith('POST') && !c.includes('oauth2')).map((c) => c.split('/').at(-1))).toEqual(['send-message', 'escalate', 'require-evidence', 'provide-evidence']);
+    expect(lines).toContain('Evidence (multipart with PDF): accepted.');
+  });
+});

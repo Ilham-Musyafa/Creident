@@ -57,6 +57,12 @@ no actions yet and refused evidence in both formats with `ACTION_NOT_ALLOWED_IN_
 (422): evidence is not accepted in the inquiry stage. Next: `npm run dispute-probe -- <id>`
 tries the Sandbox require-evidence move, or the buyer escalates the case to PayPal.
 
+Second run, a few minutes later: status `WAITING_FOR_SELLER_RESPONSE`, still `INQUIRY`, and
+PayPal now offers the seller `accept_claim`, `send_message`, `escalate` and `make_offer`.
+The Sandbox `require-evidence` move is refused in the inquiry stage (400
+`ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`) and evidence is still refused. The seller can
+escalate the inquiry to a claim itself; the probe now does that before sending evidence.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).
