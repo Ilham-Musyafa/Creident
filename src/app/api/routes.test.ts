@@ -363,14 +363,16 @@ describe('JSON route handlers', () => {
     expect(repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE')?.payload).toMatchObject({ disputeType: 'damaged' });
   });
 
-  it('refunds at once when the reviewer waives the return, and by default for items not received', async () => {
+  it('refunds at once when the reviewer waives the return', async () => {
     const waived = await createReadyTransaction();
     await reachReview(waived, 'Synthetic buyer note.', 'Synthetic seller note.');
     const now = await review(post(`/api/transactions/${waived}/review`, 'reviewer', { outcome: 'REFUND', reason: 'Nothing to return.', requireReturn: false }), param(waived));
     expect((await now.json()).transaction).toMatchObject({ status: 'VOIDED' });
     const bad = await review(post(`/api/transactions/${waived}/review`, 'reviewer', { outcome: 'RELEASE', reason: 'x', requireReturn: true }), param(waived));
     expect(bad.status).toBe(400);
+  });
 
+  it('waives the return by default when the buyer reported the item never arrived', async () => {
     const lost = await createReadyTransaction();
     await ship(post(`/api/transactions/${lost}/ship`, 'seller', { tracking: 'DEMO-DELIVERED' }), param(lost));
     await dispute(post(`/api/transactions/${lost}/dispute`, 'buyer', { type: 'not_received' }), param(lost));
