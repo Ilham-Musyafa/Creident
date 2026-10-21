@@ -181,7 +181,9 @@ Still open:
   audit chains verified. DESIGN 6.1 documents behavior and replay/rate limits.
   No dependencies; rules/state machine/PayPal calls/shared assist.ts unchanged.
   Claude's paypalDisputes.ts, drafts*, OutboundDrafts.tsx and dispute panel untouched.
-  Live-provider verification remains pending. Branch is for Claude review; do not merge.
+  Live-provider verification remains pending. Pushed `feat/c17-evidence-check`;
+  GitHub API returned 403 Forbidden when creating the PR. English PR body is ready
+  at `/tmp/c17-pr-description.md`; open one PR for Claude review, do not merge.
 
 - 2026-10-22 01:31 WIB (Codex, C16): implemented the terms assistant using
   `runAssist` feature `terms`, promptVersion `terms-v1`. Seller-only POST
