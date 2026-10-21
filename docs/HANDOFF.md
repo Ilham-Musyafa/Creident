@@ -62,10 +62,11 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
-## Active agent
+## Active agent (2026-10-21 22:05 WIB)
 
-None right now (2026-10-21 15:55 WIB). Codex C1-C10 are merged. `docs/RECONCILIATION.md`
-is a proposal only: do not implement it without the owner's approval.
+**Codex** builds the owner-approved "PayPal dispute bridge" (prompt C11, branch
+`codex/c11-dispute-bridge`). Claude helps the owner review evaluation labels and does not
+touch application code meanwhile. `docs/RECONCILIATION.md` is still a proposal only.
 
 ## How to run
 
