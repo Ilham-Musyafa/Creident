@@ -5,8 +5,8 @@ const RULES = [
   ['R2', 'Delivered to the agreed address and the buyer confirmed or stayed silent through inspection: release.'],
   ['R3', 'Tracking does not fit the order (other destination or impossible ship date): a human reviews.'],
   ['R4', 'In a dispute, every criterion clearly supports one side with evidence: a recommendation, confirmed by a human.'],
-  ['R5', 'Missing, unclear or mixed evidence, or no AI summary: a human decides.'],
-  ['R6', 'A PayPal dispute or reversal is open: the deal is frozen and PayPal’s outcome prevails.'],
+  ['R5', 'Missing, unclear or mixed evidence, no usable AI summary, or damage / missing-parts disputes: a human decides regardless of the summary.'],
+  ['R6', 'A matching PayPal dispute poll or verified dispute/reversal webhook freezes the deal. Resolution resumes the prior local state; the financial outcome needs a separate check.'],
   ['R7', 'Evidence looks like instructions aimed at the AI: the text is ignored for scoring and a human reviews.'],
 ];
 
@@ -22,16 +22,27 @@ export default function AboutPage() {
         </Card>
 
         <SectionTitle><span id="audit">Audit & verification</span></SectionTitle>
-        <Card><p>Every action is recorded in an append-only, hash-chained log per deal. Editing, deleting or reordering an event breaks the chain. The operator still holds the database and the PayPal keys, so this makes tampering detectable, not impossible.</p></Card>
+        <Card><p>Every action is recorded in an append-only, hash-chained log per deal. Verification checks event content, sequence and links. The operator can still rewrite the database and recompute a chain. Signed checkpoints make later rewriting detectable to someone holding a published checkpoint and its trusted public key; publishing is manual.</p></Card>
+
+        <SectionTitle>PayPal dispute bridge</SectionTitle>
+        <Card>
+          <p>A reviewer can check PayPal cases, and the deadline tick polls too; there is no background worker. Verified webhooks also freeze matching deals. Seller or reviewer can send a text PDF of locked terms, audited evidence, tracking, any decision and the audit head when PayPal offers evidence submission. Inquiry may only allow a short message; escalation to a claim needs confirmation and PayPal permission.</p>
+          <p className="mt-3">In simulated mode, a completed labelled demo deal lets the buyer open a simulated PayPal case and try the bridge without keys. The owner tested the separate client probe in the Sandbox; the integrated bridge has fake-client and local-simulation checks. Its real Sandbox run and real webhook delivery remain pending.</p>
+        </Card>
+
+        <SectionTitle>Evaluation status</SectionTitle>
+        <Card>
+          <p>The committed replay run has 50 synthetic cases: 10 labels individually reviewed by the owner and 40 drafts accepted without individual review. It escalates 23/50 cases; no base result differs from its label. Recorded summaries were authored from the original draft labels, so this checks the harness and rules, not a live model. See Fairness results for sample sizes and all metrics.</p>
+        </Card>
 
         <SectionTitle><span id="limitations">Limitations</span></SectionTitle>
         <Card>
           <ul className="list-disc space-y-1 pl-5">
             <li>PayPal Sandbox only. No real money. USD only.</li>
-            <li>Not a licensed escrow service. A real launch would need a licensed partner and PayPal pre-approval.</li>
-            <li>Courier tracking and seller payouts are simulated. Demo deals use a simulated PayPal.</li>
+            <li>A dispute-mediation prototype, not an escrow service. A real launch needs an appropriately authorized payment partner, regulatory review and PayPal approval where required.</li>
+            <li>Courier tracking is simulated. Seller payout is not implemented: release means capture into the Sandbox merchant account. Demo deals use simulated PayPal payments.</li>
             <li>Demo roles replace real sign-in.</li>
-            <li>Fake photos may not be detected. Evaluation results are indicative, based on synthetic cases.</li>
+            <li>Evidence is text, including descriptions labelled as photos; camera capture and file upload are not built. Photo authenticity is not verified.</li>
             <li>On a refund the platform bears the PayPal fee; the buyer is refunded in full.</li>
             <li>A refund waits for the item to be returned to the seller, unless the reviewer waives it (for example the item never arrived).</li>
             <li>The operator still runs the server; the audit log and signed checkpoints make its actions checkable, not impossible to misuse.</li>

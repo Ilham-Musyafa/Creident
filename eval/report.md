@@ -8,7 +8,7 @@ Replay summaries were authored from draft labels and reused for counterfactuals.
 | --- | ---: | --- |
 | False-release rate | 0/23 (0.0%) | RELEASE when the buyer is right |
 | False-refund rate | 0/23 (0.0%) | REFUND when the seller is right |
-| Difference between error rates | 0.0 percentage points | Absolute difference between the two rates |
+| Difference between error rates | 0.0 percentage points | Magnitude of the difference between the two rates |
 | Counterfactual flip rate | 0/300 (0.0%) | Variant action differs from its base action; six variants per case |
 | Consistency over k runs | 100/100 (100.0%) | Repeated base actions matching the first run |
 | Escalation rate | 23/50 (46.0%) | Base actions sent to human review |

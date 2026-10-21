@@ -95,7 +95,7 @@ export default async function HomePage() {
           )}
 
           {simulatedPayPal() && <Notice tone="warning">Simulated PayPal mode is on. Money steps are recorded as simulated; nothing is sent to PayPal.</Notice>}
-          <Notice>Sandbox demo. HalcyVault is a dispute-mediation prototype, not a licensed escrow service, and does not handle real money.</Notice>
+          <Notice>Sandbox demo. HalcyVault is a dispute-mediation prototype, not an escrow service, and does not handle real money.</Notice>
         </aside>
       </div>
     </AppShell>

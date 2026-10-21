@@ -19,7 +19,7 @@ working name HalcyVault, narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/Ha
 is private during development; it must be made public before submission and stay public
 until 15 Dec 2026.
 
-Built (all on `integrate/codex-batch` until merged):
+Built on `main` (including R5 dispute-type handling and PayPal dispute bridge PR #31):
 - Core domain (`src/lib/domain`, `audit`, `rules`, `paypal`): state machine, hash-chained
   audit log, rules R1-R7, fetch-based PayPal client incl. webhook signature verification.
 - Persistence and orchestrator (`src/lib/db.ts`, `repository.ts`, `orchestrator.ts`):
@@ -31,16 +31,19 @@ Built (all on `integrate/codex-batch` until merged):
   deadline tick, PayPal webhook. Demo roles via `x-demo-role`; no real authentication.
 - AI evidence summary (`src/lib/ai/evidence.ts`): OpenAI-compatible adapter (env
   `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`), strict schema, one retry, name masking,
-  seeded order, injection flag, replay mode by default without a key. On
-  `feat/review-pipeline`, it is wired into review preparation at all three paths to
+  seeded order, injection flag, replay mode by default without a key. It is wired
+  into review preparation at all three paths to
   `UNDER_REVIEW`: evidence complete, evidence deadline, and tracking mismatch. The
   stored recommendation includes the AI summary or null, rule, action, reasons, and
   human-review requirement, plus an audit event. GET `/api/transactions/:id/review`
   reads it. AI failure becomes an R5 human escalation. `SPLIT` with a human reason is
   recorded as pending without moving funds.
 - Evaluation (`eval/`, `npm run eval`): 40 synthetic dispute cases + 10 injection cases,
-  six counterfactual variants each, report in `eval/report.md`. Labels are drafts that
-  need owner review; replay results check the harness and rules, not a live model.
+  six counterfactual variants each, report in `eval/report.md`. The owner reviewed
+  10 labels individually and accepted 40 drafts without individual review. The R5
+  follow-up (`eval/owner-label-review-2026-10-21-r5.json`) resolved the five flagged
+  conflicts. Replay: 23/50 escalations, no base result differs from its label.
+  These results check the harness/rules, not a live model.
 - Sandbox smoke script (`npm run smoke`) for the owner's PC.
 - UI (merged PR #7): eight main screens plus Deals list, About, PayPal return, two-column
   desktop home, light/dark/system theme, demo seed (`[Demo]` deals, `DEMO-*` ids).
@@ -55,17 +58,18 @@ Built (all on `integrate/codex-batch` until merged):
   stored tracking number; idempotent per attempt, failures retried by `/api/jobs/tick`
   (max 3). `npm run smoke` path b now also tests it against the real Sandbox.
 
-Checks on 2026-10-21: `npm test` 110 passed (14 files); earlier: `npm test` 106 passed (14 files), typecheck and build passed; full
-simulated flow clicked in Chromium (390px): create, accept, pay, approve, ship, confirm,
-audit chain verified, no console errors.
+Checks on 2026-10-21: `npm test` 195 passed (26 files), typecheck and build passed.
+Simulated core and dispute-bridge flows were checked in Chromium (see dated logs).
+The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 
-Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
-and the JSON routes, real webhook delivery, any live AI provider call.
+Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
+webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agent (2026-10-21 22:45 WIB)
+## Active agent (2026-10-21, C12)
 
-None. Codex finished C11 (PayPal dispute bridge); Claude reviewed, merged it with the R5
-work and merged it to `main`. `docs/RECONCILIATION.md` is still a proposal only.
+Codex finished the C12 documentation/copy accuracy pass on `docs/c12-accuracy-pass`
+for Claude review. PR creation is blocked by the environment proxy denying
+`api.github.com` (403); git access works. No application behavior changes. `docs/RECONCILIATION.md` remains a proposal only.
 
 ## How to run
 
@@ -84,21 +88,23 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 
 1. Done 2026-10-21: owner ran `npm run smoke`, both paths pass (see docs/SANDBOX-NOTES.md).
 2. Done: AI evidence summary wired into review preparation (PR #5). Only the human review
-   POST executes RELEASE or REFUND for disputed transactions. The owner still needs to
-   define the amount and payment treatment of a pending SPLIT decision.
+   POST records RELEASE or REFUND decisions for disputed transactions; a required return
+   defers the money call. SPLIT remains recorded-only by owner decision (2026-10-21);
+   partial execution is deferred.
 3. Done: the eight UI screens (PR "UI screens"), plus Deals list, About, PayPal return
    page, loading/error/not-found states. Pages read through `src/app/_server.ts`; every
    change goes through the JSON API. Demo deals: Menu > "Load demo deals"
    (`POST /api/demo/seed`, labelled `[Demo]`, simulated PayPal stub, real audit chains).
-   Without Sandbox keys, money-moving actions (pay, confirm, decisions) show a clear
+   In Sandbox mode without keys, money-moving actions (pay, confirm, decisions) show a clear
    "keys not set" message; non-money steps (ship, dispute, evidence, split) work.
    Done: labelled simulated PayPal mode (`PAYPAL_MODE=simulated`) so judges can click the
    whole flow without keys.
-4. Owner: review every evaluation label and rationale; then expand the set toward the
-   size proposed in DESIGN section 10 and run once with the chosen live provider.
+4. Owner: optionally review the remaining 40 accepted drafts individually, expand
+   the set toward DESIGN section 10, and run with the chosen live provider. Current
+   labels are 10 individually reviewed / 40 accepted drafts; R3/R5 conflicts are resolved.
 5. Owner: public HTTPS URL + `PP_WEBHOOK_ID`, then test real webhook delivery.
-6. Done (branch `docs/readme-judges`): README for judges. Update section 5 once the
-   live-model eval and the owner's `npm run smoke` results exist.
+6. README records the owner's successful smoke/probe runs and current replay results.
+   Update it after integrated Sandbox checks and live-model evaluation.
 
 ## Decisions
 
@@ -121,8 +127,6 @@ Still open:
   Settlewise. Avoid Vectra (Vectra AI), Dealtrail (close to Dealertrack) and words like
   escrow/safe/guard/secure (claim rules). Rename README, UI and video script in one PR.
 - Hosting / public demo link: owner chose "decide later" (after smoke test and video).
-- Five draft eval labels conflict with rules R3/R5 (flagged on the label-review page);
-  owner reviews before the live-model eval.
 
 ## Do not forget
 
@@ -133,6 +137,24 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-21 23:54 WIB (Codex, C12): aligned README, DESIGN, Sandbox notes,
+  About/Fairness copy and shared disclaimers with current main, R5 damage/missing-parts
+  handling, PayPal dispute bridge PR #31, 10 individually reviewed labels / 40
+  accepted drafts, and all committed replay metrics (23/50 escalations; no base
+  mismatch). Removed the resolved five-label conflict from Still open. Corrected
+  stale seed count (12), blank EVAL_K default, payout/camera/second-reviewer claims,
+  audit hashing/manual checkpoint publication, return/external-resolution wording,
+  and probe success versus pending integrated Sandbox/live checks. Scanned all
+  tracked text for claim-rule terms; remaining matches are AGENTS prohibitions,
+  CSS positioning and the preserved SIL font license. Evaluation output/comment
+  wording only clarifies the mathematical difference between rates; numbers and
+  labels are untouched. No behavior/dependency changes. `npm test` (195/195),
+  typecheck, build and diff check passed. Production Chromium checked About/Fairness
+  at 360px, current label/metric text, no overflow or console errors/warnings.
+  Branch: `docs/c12-accuracy-pass`. Complete English PR description prepared at
+  `/tmp/c12-pr-description.md`; GitHub API access is blocked by the environment
+  proxy (403), so PR creation needs API access or a manual action by the owner/Claude.
 
 - 2026-10-21 22:45 WIB (Claude): reviewed Codex C11. Merged `main` (R5) into the branch;
   only HANDOFF conflicted. Tests 195/195, typecheck and build pass. Browser check in
@@ -375,7 +397,8 @@ Still open:
 
 ---
 
-Ringkasan singkat (Bahasa Indonesia, untuk Ilham): semua pekerjaan Codex sudah disatukan
-dan diuji (89 uji lolos, build lolos). Yang belum: menjalankan skrip uji Sandbox di
-komputermu, menghubungkan ringkasan AI ke alur tinjauan, membuat layar sesuai
-`docs/UI.md`, dan memeriksa label uji bias.
+Current continuation summary: the UI, AI review preparation, owner-approved R5
+dispute types and PayPal dispute bridge are on main. Smoke and the separate dispute
+probe passed in the owner's Sandbox. Integrated Sandbox UI/bridge, webhook delivery
+and live-model evaluation remain pending. Labels: 10 individually reviewed, 40
+accepted drafts; no replay base-case mismatch. See current status and latest logs.
