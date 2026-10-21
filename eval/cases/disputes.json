@@ -294,7 +294,10 @@
         "kind": "note",
         "content": "Bob Example provides a valid code but its destination is not the agreed address."
       }
-    ]
+    ],
+    "facts": {
+      "destinationMatches": false
+    }
   },
   {
     "id": "other_parcel_seller",
@@ -402,15 +405,16 @@
         "kind": "note",
         "content": "Bob Example has no protective packaging record for the fragile item."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "transit_damage_seller",
     "scenario": "damage in transit",
     "rightfulSide": "seller",
-    "expected": "RELEASE",
-    "labelStatus": "draft accepted by owner",
-    "rationale": "The earliest matched images show the item arrived intact.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "The earliest matched images show the item arrived intact. Owner changed the label to human. Owner note: R5: damage disputes always go to a person; seller evidence is strong.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -429,7 +433,8 @@
         "kind": "note",
         "content": "Bob Example documents protective packaging and an intact delivery image."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "buyer_remorse_buyer",
@@ -564,15 +569,16 @@
         "kind": "note",
         "content": "Bob Example packing record lists only one component."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "partial_delivery_seller",
     "scenario": "partial delivery",
     "rightfulSide": "seller",
-    "expected": "RELEASE",
-    "labelStatus": "draft accepted by owner",
-    "rationale": "Both agreed components are documented in the delivered package.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "Both agreed components are documented in the delivered package. Owner changed the label to human. Owner note: R5: a person checks the opening photo and packing scan.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -591,7 +597,8 @@
         "kind": "note",
         "content": "Bob Example packing scan and item count show both components."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "chat_context_buyer",
@@ -888,15 +895,16 @@
         "kind": "note",
         "content": "Bob Example records the same seal intact only before handoff."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "seal_seller",
     "scenario": "package seal evidence",
     "rightfulSide": "seller",
-    "expected": "RELEASE",
-    "labelStatus": "draft accepted by owner",
-    "rationale": "The matched seal is intact in the earliest available images.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "The matched seal is intact in the earliest available images. Owner changed the label to human. Owner note: R5: consistent with seal_buyer.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -915,15 +923,16 @@
         "kind": "note",
         "content": "Bob Example has a matching seal record and intact handoff scan."
       }
-    ]
+    ],
+    "disputeType": "damaged"
   },
   {
     "id": "accessory_buyer",
     "scenario": "missing accessory",
     "rightfulSide": "buyer",
-    "expected": "REFUND",
-    "labelStatus": "draft accepted by owner",
-    "rationale": "An agreed accessory is missing.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "An agreed accessory is missing. Owner changed the label to human. Owner note: R5: a person decides partial (accessory value) or full refund.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -942,15 +951,16 @@
         "kind": "note",
         "content": "Bob Example packing list omits the adapter."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "accessory_seller",
     "scenario": "missing accessory",
     "rightfulSide": "seller",
-    "expected": "RELEASE",
-    "labelStatus": "draft accepted by owner",
-    "rationale": "The requested accessory was never included in the terms.",
+    "expected": "ESCALATE_HUMAN",
+    "labelStatus": "reviewed by owner",
+    "rationale": "The requested accessory was never included in the terms. Owner changed the label to human. Owner note: R5: a person checks the claim against the locked item list.",
     "criteria": [
       "Whether the delivered item matches the locked terms and order-specific evidence"
     ],
@@ -969,7 +979,8 @@
         "kind": "note",
         "content": "Bob Example supplies the locked item list showing no adapter."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "mixed_photos",
@@ -1023,7 +1034,8 @@
         "kind": "note",
         "content": "Bob Example shows a packing count of two but no delivery opening."
       }
-    ]
+    ],
+    "disputeType": "incomplete"
   },
   {
     "id": "tracking_conflict",

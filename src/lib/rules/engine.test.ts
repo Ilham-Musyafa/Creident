@@ -111,3 +111,19 @@ it('always explains itself', () => {
     expect(decide(input).reasons.length).toBeGreaterThan(0);
   }
 });
+
+describe('R5 by dispute type (owner decision 2026-10-21)', () => {
+  it('sends damage and missing-parts disputes to a person even when the summary is one-sided', () => {
+    expect(decide(dispute({ ai: ai('buyer', 'buyer'), disputeType: 'damaged' })))
+      .toMatchObject({ rule: 'R5', action: 'ESCALATE_HUMAN', requiresHuman: true });
+    expect(decide(dispute({ ai: ai('seller'), disputeType: 'incomplete' })))
+      .toMatchObject({ rule: 'R5', action: 'ESCALATE_HUMAN' });
+  });
+  it('leaves other dispute types to R4', () => {
+    expect(decide(dispute({ ai: ai('buyer'), disputeType: 'not_as_described' }))).toMatchObject({ rule: 'R4', action: 'REFUND' });
+    expect(decide(dispute({ ai: ai('seller'), disputeType: 'not_received' }))).toMatchObject({ rule: 'R4', action: 'RELEASE' });
+  });
+  it('keeps injection (R7) ahead of the dispute type', () => {
+    expect(decide(dispute({ ai: ai('buyer'), disputeType: 'damaged', evidenceContainsInjection: true }))).toMatchObject({ rule: 'R7' });
+  });
+});

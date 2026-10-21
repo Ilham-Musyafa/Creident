@@ -43,6 +43,8 @@ function facts(tx: StoredTx, evidence: ReturnType<TransactionRepository['loadEvi
     disputeOpen: !!tx.evidenceUntil,
     buyerEvidenceCount: evidence.filter((item) => item.submittedBy === 'buyer').length,
     sellerEvidenceCount: evidence.filter((item) => item.submittedBy === 'seller').length,
+    disputeType: typeof events.find((event) => event.type === 'OPEN_DISPUTE')?.payload.disputeType === 'string'
+      ? String(events.find((event) => event.type === 'OPEN_DISPUTE')!.payload.disputeType) : undefined,
     ai,
   };
 }
