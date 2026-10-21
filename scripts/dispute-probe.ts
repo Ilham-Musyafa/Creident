@@ -11,7 +11,7 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
-import { PayPalClient, PayPalError, requestIdFor } from '../src/lib/paypal/client.ts';
+import { evidenceTypeFor, PayPalClient, PayPalError, requestIdFor } from '../src/lib/paypal/client.ts';
 import { textPdf } from '../src/lib/evidencePdf.ts';
 import { clientFromEnv } from './sandbox-smoke.ts';
 
@@ -72,11 +72,11 @@ export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Lo
   const notes = 'HalcyVault deal evidence: terms locked before payment; shipped with tracking; full audit log available. Synthetic Sandbox test.';
   const pdf = textPdf(['HalcyVault - evidence for PayPal dispute (Sandbox test)', '', `Dispute: ${disputeId}`, 'Synthetic test document. No real person or goods are involved.']);
   try {
-    await client.provideEvidence(disputeId, { notes, file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
-    log('Evidence (multipart with PDF): accepted.');
+    await client.provideEvidence(disputeId, { reason: d.reason, notes, file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
+    log(`Evidence (multipart with PDF, type ${evidenceTypeFor(d.reason)}): accepted.`);
   } catch (error) {
     log(`Evidence (multipart with PDF): rejected: ${describe(error)}`);
-    try { await client.provideEvidence(disputeId, { notes }); log('Evidence (JSON notes): accepted.'); }
+    try { await client.provideEvidence(disputeId, { reason: d.reason, notes }); log(`Evidence (JSON notes, type ${evidenceTypeFor(d.reason)}): accepted.`); }
     catch (error2) { log(`Evidence (JSON notes): rejected: ${describe(error2)}`); }
   }
   d = await showDispute(client, disputeId, log);
@@ -164,13 +164,13 @@ export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, 
     catch (error) { log(`Message to buyer failed: ${describe(error)}`); }
   }
   try {
-    await client.provideEvidence(disputeId, { notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier', file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
-    log('Evidence (multipart with PDF): accepted.');
+    await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier', file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
+    log(`Evidence (multipart with PDF, type ${evidenceTypeFor(d.reason)}): accepted.`);
   } catch (error) {
     log(`Evidence (multipart with PDF): rejected: ${describe(error)}`);
     try {
-      await client.provideEvidence(disputeId, { notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier' });
-      log('Evidence (JSON notes and tracking): accepted.');
+      await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier' });
+      log(`Evidence (JSON notes, type ${evidenceTypeFor(d.reason)}): accepted.`);
     } catch (error2) { log(`Evidence (JSON notes and tracking): rejected: ${describe(error2)}`); }
   }
   d = await showDispute(client, disputeId, log);

@@ -63,6 +63,12 @@ The Sandbox `require-evidence` move is refused in the inquiry stage (400
 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`) and evidence is still refused. The seller can
 escalate the inquiry to a claim itself; the probe now does that before sending evidence.
 
+Third run: the seller's escalation worked; about 3 minutes later the case was
+`WAITING_FOR_SELLER_RESPONSE` in stage `CHARGEBACK` with `provide_evidence` offered. Evidence
+typed `PROOF_OF_FULFILLMENT` was refused with 400 `EVIDENCE_TYPE_IS_NOT_ALLOWED` in both formats:
+for SNAD PayPal accepts `OTHER` (notes, documents) or `PROOF_OF_REFUND`; proof of fulfilment
+with tracking is for "not received". The client now picks the type from the dispute reason.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).
