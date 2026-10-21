@@ -228,6 +228,9 @@ On 2026-10-21 the project's own PayPal client ran both paths end to end (`npm ru
 authorize, capture, **tracking added to the order** (carrier `OTHER`), full refund; and
 authorize then void. The web app's screens use the same client; a full click-through of
 the app against the Sandbox (rather than the labelled simulation) is still to do.
+The PayPal **Disputes API** was also exercised on a real Sandbox dispute (`npm run
+dispute-probe`): reading the case, messaging the buyer, escalating as the seller, and
+submitting a HalcyVault evidence PDF, which PayPal accepted.
 
 **Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 50 synthetic
 cases (40 disputes, 10 prompt-injection attempts), each also run with six counterfactual

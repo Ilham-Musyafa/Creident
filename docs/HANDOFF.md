@@ -129,6 +129,11 @@ Still open:
 
 ## Log
 
+- 2026-10-21 22:00 WIB (Owner + Claude): Disputes API probe on Sandbox dispute
+  PP-R-OIU-10193936 succeeded after three instructive refusals (see SANDBOX-NOTES):
+  evidence PDF accepted with type OTHER after the seller escalated to a claim. Next (needs
+  owner approval): app integration (detect PayPal disputes by polling, freeze, send locked
+  evidence from the deal, show status).
 - 2026-10-21 21:45 WIB (Claude, owner asked to try Disputes API): branch
   `feat/disputes-probe`. PayPalClient gains listDisputes, getDispute, provideEvidence
   (multipart PDF or JSON), sendDisputeMessage, and Sandbox-only sandboxRequireEvidence /
