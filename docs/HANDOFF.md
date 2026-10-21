@@ -62,13 +62,16 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
-## Active agent (2026-10-21 05:10 WIB)
+## Active agent (2026-10-21 09:15 WIB)
 
-**Codex** works through prompts C1-C5 until about 10:00 WIB; Claude is inactive meanwhile.
-Each prompt: branch from the latest `origin/main` (never from another task branch), push the
-branch, and add a log entry here. Claude opens and merges the PRs afterwards.
-C1 fresh-clone README check · C2 security pass · C3 accessibility and mobile pass ·
-C4 tracking event in demo seed · C5 reconciliation proposal (docs only).
+**Codex** works through prompts C6-C10; Claude is inactive meanwhile. Each prompt:
+branch from the latest `origin/main` (never from another task branch), push the branch,
+add a log entry here. Claude reviews, opens and merges the PRs afterwards.
+C6 decisions bound to terms and evidence hashes · C7 signed audit checkpoints ·
+C8 audit CSV export (C6-C8 = owner's "CloneIDE" batch) · C9 decided dispute in the demo
+seed · C10 refreshed README screenshots.
+C1-C5 are merged. `docs/RECONCILIATION.md` (C5) is a proposal only: do not implement it
+without the owner's approval.
 
 ## How to run
 
@@ -132,6 +135,15 @@ Still open:
 
 ## Log
 
+- 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
+  documentation-only proposal for resolving PayPal actions left pending after a
+  crash. It maps read-only checks for orders, authorizations, captures, voids,
+  refunds, and tracking; defines evidence needed before applying or replaying an
+  action with the same request ID; and proposes audit events, reviewer controls,
+  and unit/Sandbox tests. It marks persistence, reviewer-triggered replay, and
+  any state-machine change as requiring owner approval under `AGENTS.md`.
+  Existing Sandbox notes do not establish same-ID replay or resource recovery.
+  No code, dependency, or live PayPal call was changed or made.
 - 2026-10-21 05:36 WIB (Codex, C4): seeded `COMPLETED` demo deal now calls the
   existing tracking helper after buyer confirmation. Its PayPal stub returns a
   `DEMO-TRACKER` id, and the `PAYPAL_TRACKING_ADDED` audit event has
