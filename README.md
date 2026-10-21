@@ -283,6 +283,42 @@ there is no sign-in. For a shared or hosted demo set `REVIEWER_ACCESS_CODE`; rev
 decisions and the deadline job then need that code. This is a demo gate, not
 authentication.
 
+**Can a seller use a valid tracking number from another parcel?** Rule R3 sends a deal to a
+person when the tracking destination or the ship date does not match the order (the date
+must be after the terms were locked). The courier is simulated here; in production the same
+checks would run on a multi-carrier tracking API.
+
+**Can a buyer show a photo of a different unit, or claim the box was empty?** Every evidence
+photo must show the deal's one-time code, the item checklists ask for serial numbers, and the
+evidence guidance asks for an unbroken first-opening video. We cannot detect a well-made fake
+photo; unclear cases go to a person (R5). Image forgery detection is out of scope.
+
+**What if the buyer also opens a dispute on PayPal after our decision?** A verified PayPal
+dispute or reversal webhook freezes the deal in any state, including after completion (R6),
+and PayPal's outcome wins. Signature verification and de-duplication are tested with fake
+deliveries; a real Sandbox webhook delivery has not been tested yet.
+
+**Can text in the evidence manipulate the AI?** Evidence is passed as quoted data with forged
+delimiters escaped, instruction-like text is flagged and sends the case to a person (R7), the
+model has no tools and cannot move money, and its answer is rejected if it cites evidence
+that does not exist. Ten injection cases are part of the evaluation. This reduces the risk;
+it cannot guarantee that a model ignores every attack, which is why a person decides.
+
+**Is personal data sent to an AI provider?** Party names are replaced with "Buyer" and
+"Seller" before the evidence summary, the demo and tests use synthetic evidence only, and
+photos are not sent to the model. A real launch would need user consent and a data
+agreement with the provider.
+
+**What if the server stops in the middle of a PayPal call?** Each money call reserves its
+`PayPal-Request-Id` first and is never sent twice. An interrupted call stays pending and blocks
+further money actions on that deal instead of guessing. A safe reconciliation design is in
+`docs/RECONCILIATION.md`; it is not built yet.
+
+**Why can only the buyer open a dispute?** The seller is protected by the rules instead: if
+the buyer stays silent and tracking shows delivery to the agreed address, the payment is
+captured when the inspection window ends; the seller adds evidence in any dispute; and if a
+refund requires a return that never arrives, the payment goes to the seller.
+
 ## 7. Limitations and production path
 
 - The platform operator is still trusted: it runs the server, holds the PayPal keys and
