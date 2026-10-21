@@ -9,7 +9,25 @@ on the **PayPal Sandbox**.
 > anyone's money, and it does not handle real payments. PayPal authorizes the payment;
 > the platform calls capture, void or refund according to the rules.
 
-![HalcyVault screens, light theme](docs/ui/app-screens-light.png)
+![Buyer home in the running app, light theme](docs/ui/screens/home-buyer.png)
+
+**Screens**
+
+Captured from the running app with a fresh SQLite database, simulated PayPal,
+and synthetic demo data. Mobile: 390 × 844, light. Desktop: 1440 × 900, dark.
+The fairness screen shows recorded replay results with draft labels, not a live-model measurement.
+
+| Screen | Mobile, light | Desktop, dark |
+| --- | --- | --- |
+| Buyer home | [View](docs/ui/screens/home-buyer.png) | [View](docs/ui/screens/home-dark.png) |
+| Deals list | [View](docs/ui/screens/deals.png) | — |
+| New deal, Phone checklist selected | [View](docs/ui/screens/new-phone.png) | — |
+| Completed deal | [View](docs/ui/screens/deal-completed.png) | — |
+| Evidence and damaged-dispute guidance | [View](docs/ui/screens/evidence-damaged.png) | — |
+| Dispute review, reviewer | [View](docs/ui/screens/dispute-review.png) | [View](docs/ui/screens/review-dark.png) |
+| Decision receipt | [View](docs/ui/screens/decision-receipt.png) | — |
+| Audit detail | [View](docs/ui/screens/audit-detail.png) | — |
+| Fairness results | [View](docs/ui/screens/fairness.png) | — |
 
 ## 1. The problem
 
