@@ -134,6 +134,24 @@ Still open:
 
 ## Log
 
+- 2026-10-22 00:39 WIB (Codex, C13): added pure `paypalDisputeLabels.ts`
+  display mappings for known status, stage, reason, action and bridge event codes;
+  unknown values (including prototype-like keys) fall back unchanged. Deal/review
+  panels share the short labels, retain original codes in title attributes, and
+  list offered actions individually with natural word wrapping. PayPal bridge
+  audit titles use the same mapping and retain the original event type as a title.
+  Constrained review grid children and audit text so long values can shrink/wrap.
+  No colors, typography, dependencies, business rules or PayPal behavior changed.
+  Mapping/render tests cover known codes, unknown/prototype fallbacks, raw-code
+  retention and injection-like text escaped as data. `npm test` (212/212, 28 files),
+  typecheck, build and diff check passed. Fresh temp DB, simulated mode, Menu demo
+  loading and simulated case opening/escalation/PDF submission checked in Chromium:
+  deal/review/audit at 390/1440px, light/dark, inquiry/claim/supporting-info phases
+  (36 combinations), plus reviewer panel: no overflow or console errors/warnings.
+  Branch `ui/c13-dispute-panel-labels`; PR creation remains blocked because the
+  environment proxy denies `api.github.com` (403). English description prepared
+  at `/tmp/c13-pr-description.md` for owner/Claude to create one review PR.
+
 - 2026-10-21 22:45 WIB (Claude): reviewed Codex C11. Merged `main` (R5) into the branch;
   only HANDOFF conflicted. Tests 195/195, typecheck and build pass. Browser check in
   simulated mode on a seeded completed demo deal: buyer opens a SIM case (deal freezes),

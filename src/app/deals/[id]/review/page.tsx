@@ -32,8 +32,8 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   return (
     <AppShell active="Deals">
       <PageHeader title="Dispute review" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount)}`} right={<StatusPill status={tx.status}/>}/>
-      <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
-        <div>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0">
           <SectionTitle>AI evidence summary</SectionTitle>
           {!rec ? <EmptyState title="No recommendation yet">It is prepared when the deal enters review.</EmptyState>
             : !rec.aiSummary ? <Notice tone="warning">No AI summary is available (the AI was unavailable, returned invalid output, or there was too little evidence). A human decides.</Notice>
@@ -43,7 +43,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           <SectionTitle>Evidence ({evidence.length})</SectionTitle>
           <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm">{e.content}</p></Card>)}</div>
         </div>
-        <aside className="space-y-3">
+        <aside className="min-w-0 space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
           <SectionTitle>Decision</SectionTitle>
           <KeyValue items={[
