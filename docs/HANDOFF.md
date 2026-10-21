@@ -130,6 +130,13 @@ Still open:
 
 ## Log
 
+- 2026-10-21 22:20 WIB (Owner + Claude): owner reviewed the 5 grey eval cases (4 -> human,
+  ship_date_buyer -> agree) and chose to accept the other 45 drafts without individual
+  review; recorded as distinct statuses ("reviewed by owner" / "draft accepted by owner").
+  `eval/owner-label-review-2026-10-21.json` holds the review. Replay result: 4 cases differ
+  (system refunds where the owner expects a human): our rules do not escalate damage,
+  partial delivery, wrong destination or seal tampering found only in dispute evidence.
+  Open for the owner: let R5 use the dispute type (needs approval, rule change).
 - 2026-10-21 22:00 WIB (Owner + Claude): Disputes API probe on Sandbox dispute
   PP-R-OIU-10193936 succeeded after three instructive refusals (see SANDBOX-NOTES):
   evidence PDF accepted with type OTHER after the seller escalated to a claim. Next (needs
