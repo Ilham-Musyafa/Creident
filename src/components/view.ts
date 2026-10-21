@@ -1,3 +1,4 @@
+import { paypalDisputeLabel } from '../lib/paypalDisputeLabels';
 // Pure helpers that turn stored data into what the screens show. No React, no I/O.
 import type { TxStatus } from '../lib/domain/types';
 
@@ -105,11 +106,6 @@ const EVENT_TITLES: Record<string, string> = {
   EXTERNAL_DISPUTE: 'Frozen by a PayPal dispute',
   EXTERNAL_RESOLVED: 'PayPal dispute resolved',
   PAYPAL_WEBHOOK: 'PayPal webhook received',
-  PAYPAL_DISPUTE_DETECTED: 'PayPal dispute detected',
-  PAYPAL_DISPUTE_EVIDENCE_SENT: 'Evidence PDF sent to PayPal dispute',
-  PAYPAL_DISPUTE_MESSAGE_SENT: 'Message sent to PayPal dispute',
-  PAYPAL_DISPUTE_ESCALATED: 'Escalated to PayPal claim',
-  PAYPAL_DISPUTE_ACTION_FAILED: 'PayPal dispute action failed',
   PAYPAL_ERROR: 'PayPal error',
   PAYPAL_TRACKING_ADDED: 'Tracking sent to PayPal',
   PAYPAL_TRACKING_FAILED: 'Sending tracking to PayPal failed',
@@ -119,6 +115,7 @@ const EVENT_TITLES: Record<string, string> = {
 };
 
 export function eventTitle(type: string): string {
+  if (type.startsWith('PAYPAL_DISPUTE_')) return paypalDisputeLabel('event', type);
   return EVENT_TITLES[type] ?? type.toLowerCase().replace(/_/g, ' ');
 }
 

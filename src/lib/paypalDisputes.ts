@@ -37,29 +37,72 @@ function failure(txId: string, action: string, error: unknown, deps: DisputeDeps
   } });
 }
 
-/** Scope each list to a stored capture; refresh known IDs even if a resolved case leaves the list. */
+// Discovery policy, not a guarantee of PayPal eligibility for every dispute category.
+export const PAYPAL_DISPUTE_WINDOW_DAYS = 180;
+export const PAYPAL_DISPUTE_MAX_POLL_CALLS = 50;
+
+/** Bound dispute reads per invocation; known open cases are age-exempt and get priority. */
 export async function syncPayPalDisputes(deps: DisputeDeps) {
-  const results: Array<{ txId: string; cases?: number; error?: string; debug_id?: string }> = [];
-  for (const tx of deps.repo.capturedTransactions()) {
-    const demoId = /^(SIM|DEMO)-/.test(tx.paypalCaptureId!);
-    if (demoId !== deps.simulated) continue;
+  type Result = { txId: string; cases: number; error?: string; debug_id?: string; deferred?: boolean };
+  const results = new Map<string, Result>();
+  const mode = deps.simulated ? 'simulated' : 'sandbox';
+  const cutoff = new Date(Date.parse(deps.now()) - PAYPAL_DISPUTE_WINDOW_DAYS * 86_400_000).toISOString();
+  const known = deps.repo.listPayPalDisputes();
+  const resolved = new Set(known.filter(c => c.status === 'RESOLVED').map(c => c.disputeId));
+  const attempted = new Set<string>();
+  let calls = 0;
+  const matchesMode = (tx: StoredTx) => tx.captured && !!tx.paypalCaptureId && /^(SIM|DEMO)-/.test(tx.paypalCaptureId) === deps.simulated;
+  const resultFor = (txId: string) => {
+    if (!results.has(txId)) results.set(txId, { txId, cases: 0 });
+    return results.get(txId)!;
+  };
+  const onError = (tx: StoredTx, error: unknown, disputeId?: string) => {
+    failure(tx.id, 'sync', error, deps, disputeId);
+    Object.assign(resultFor(tx.id), {
+      error: error instanceof PayPalError ? error.issue ?? error.code : 'DISPUTE_SYNC_FAILED',
+      ...(error instanceof PayPalError && error.debugId ? { debug_id: error.debugId } : {}),
+    });
+  };
+  const refresh = async (id: string, tx: StoredTx) => {
+    if (!validText(id, 200)) {
+      onError(tx, new DomainError('INVALID_DISPUTE', 'PayPal returned an invalid case id'));
+      return;
+    }
+    if (attempted.has(id) || resolved.has(id)) return;
+    if (calls >= PAYPAL_DISPUTE_MAX_POLL_CALLS) { resultFor(tx.id).deferred = true; return; }
+    attempted.add(id);
+    deps.repo.recordDisputePollAttempt(mode, 'case', id);
+    calls++;
+    try {
+      const detail = await deps.paypal.getDispute(id);
+      if (detail.id !== id) throw new DomainError('DISPUTE_MISMATCH', 'PayPal returned another case');
+      store(detail, tx, deps);
+      resultFor(tx.id).cases++;
+    } catch (error) { onError(tx, error, id); }
+  };
+  // Persisted attempt order rotates even when clocks tie, a provider fails, or the app restarts.
+  const caseAttempts = deps.repo.disputePollAttempts(mode, 'case');
+  const open = deps.repo.openPayPalDisputeRefs().sort((a, b) =>
+    (caseAttempts.get(a.disputeId) ?? 0) - (caseAttempts.get(b.disputeId) ?? 0) || a.disputeId.localeCompare(b.disputeId));
+  for (const c of open) {
+    const tx = deps.repo.loadTransaction(c.txId);
+    if (tx && matchesMode(tx)) await refresh(c.disputeId, tx);
+  }
+
+  const captureAttempts = deps.repo.disputePollAttempts(mode, 'capture');
+  const recent = deps.repo.capturedTransactions(cutoff).filter(matchesMode).sort((a, b) =>
+    (captureAttempts.get(a.paypalCaptureId!) ?? 0) - (captureAttempts.get(b.paypalCaptureId!) ?? 0) || a.id.localeCompare(b.id));
+  for (const tx of recent) {
+    const result = resultFor(tx.id);
+    if (calls >= PAYPAL_DISPUTE_MAX_POLL_CALLS) { result.deferred = true; continue; }
+    deps.repo.recordDisputePollAttempt(mode, 'capture', tx.paypalCaptureId!);
+    calls++;
     try {
       const listed = await deps.paypal.listDisputes({ disputedTransactionId: tx.paypalCaptureId });
-      const ids = new Set([...listed.map(d => d.id), ...deps.repo.listPayPalDisputes(tx.id).map(d => d.disputeId)]);
-      for (const id of ids) {
-        if (!validText(id, 200)) throw new DomainError('INVALID_DISPUTE', 'PayPal returned an invalid case id');
-        const detail = await deps.paypal.getDispute(id);
-        if (detail.id !== id) throw new DomainError('DISPUTE_MISMATCH', 'PayPal returned another case');
-        store(detail, tx, deps);
-      }
-      results.push({ txId: tx.id, cases: ids.size });
-    } catch (error) {
-      failure(tx.id, 'sync', error, deps);
-      results.push({ txId: tx.id, error: error instanceof PayPalError ? error.issue ?? error.code : 'DISPUTE_SYNC_FAILED',
-        ...(error instanceof PayPalError && error.debugId ? { debug_id: error.debugId } : {}) });
-    }
+      for (const id of new Set(listed.map(d => d.id))) await refresh(id, tx);
+    } catch (error) { onError(tx, error); }
   }
-  return results;
+  return [...results.values()];
 }
 
 export function disputeDocument(txId: string, repo: TransactionRepository) {

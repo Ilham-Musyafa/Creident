@@ -10,7 +10,7 @@ peer-to-peer sales**, built for the PayPal AI Hackathon 2026. Rules decide, AI o
 summarises evidence, every action is written to an auditable log. It runs on the
 **PayPal Sandbox only**.
 
-It is a demo, not a licensed escrow service. See "Claim rules" below.
+It is a demo, not an escrow service. See "Claim rules" below.
 
 ## Owner and communication
 
