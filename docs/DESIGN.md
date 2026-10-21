@@ -1,6 +1,6 @@
 # DESIGN.md — HalcyVault (working name)
 
-Status: **draft v0.1, 2026-10-20.** Items marked **[OPEN]** need the owner's decision.
+Status: **prototype implementation reference, updated 2026-10-21.** Items marked **[OPEN]** need the owner's decision.
 Items marked **[PROPOSED]** are suggestions that have not been approved yet.
 Items marked **[DECIDED]** were approved by the owner; **[TENTATIVE]** ones still need
 verification.
@@ -14,21 +14,19 @@ sellers. HalcyVault is a **prototype of a dispute-mediation layer**:
 
 - terms are fixed before payment,
 - the funds are only *authorized* by PayPal until the rules say release or refund,
-- **deterministic rules decide**, AI only summarises evidence against the criteria,
+- **deterministic rules recommend dispute outcomes; a human confirms**, AI only summarises evidence against the criteria,
 - every action is written to an append-only, hash-chained audit log,
-- the bias of the AI step is **measured and published**.
+- a replay evaluation of the harness/rules is published; live-model bias measurement remains pending.
 
-What it is **not**: a licensed escrow service, a payment provider, or a system without a
+What it is **not**: an escrow service, a payment provider, or a system without a
 trusted operator. The platform operator still calls PayPal (capture/void/refund). The
 honest claim is that every operator action is recorded and checkable, not that collusion
 is impossible.
 
-Production path (for the pitch): funds held by a licensed party (PayPal delayed
-disbursement for approved partners, a bank escrow product, or a licensed payment
-provider). PayPal's Acceptable Use Policy lists escrow services and marketplaces as
-requiring pre-approval. Indonesian payment rules likely require a license or a licensed
-partner for anyone handling third-party funds (not legal advice; verify before any real
-launch).
+A production proposal would need an appropriately authorized payment partner and
+regulatory review in Indonesia. PayPal's Acceptable Use Policy lists escrow services
+and marketplaces as requiring pre-approval. Partner products, delayed disbursement
+and production permission have not been established by this Sandbox prototype.
 
 ## 2. Scope of the hackathon build
 
@@ -36,10 +34,11 @@ In scope:
 - One physical-goods transaction between a buyer and a seller, in USD, on the Sandbox.
 - Terms locked before payment.
 - Authorize -> (capture | void | refund) flow using the PayPal Orders and Payments APIs.
-- Evidence upload (photos taken in the app with a transaction code, tracking number,
-  in-platform chat).
+- Text evidence labelled photo, tracking, chat or note. The UI displays a transaction
+  code and evidence guidance; camera capture, file upload and in-platform chat are not built.
 - AI evidence summary (structured JSON) feeding a rule engine.
-- Human review for grey cases (a reason is required).
+- Human confirmation for every dispute outcome, with a required reason; R5 also
+  escalates damage/missing-parts dispute types regardless of the AI summary.
 - Audit-log page with hash-chain verification.
 - Handling of PayPal-side dispute/reversal events (freeze state).
 - A measured fairness/robustness report from a labelled test set.
@@ -59,9 +58,10 @@ Two options were considered:
   problem, but the platform then holds the money (custody and licensing implications) and
   a refund takes the merchant's balance, not the seller's.
 
-Both are documented honestly in the pitch. The demo implements Model A. Seller payout is
-**simulated with an internal ledger, clearly labelled**, unless Payouts/delayed
-disbursement proves usable in the Sandbox (not tested yet).
+The demo implements Model A. **Seller payout and an internal payout ledger are not
+implemented.** Release means capture into the platform's Sandbox merchant account;
+simulated mode instead records a local simulated capture. Payouts/delayed disbursement
+have not been tested.
 
 Fees: the Sandbox showed a 0.64 USD fee on a 10.00 USD sale, apparently not returned on
 refund. The UI shows fees before payment. **Decided 2026-10-21: the platform bears the fee
@@ -69,8 +69,10 @@ on a refund**, so the buyer is refunded in full.
 
 ## 4. State machine
 
-All transitions are atomic (compare-and-set on the status column inside a database
-transaction). Each transition writes one audit event.
+Successful status changes, stored PayPal IDs and their audit event commit atomically
+inside SQLite. A money action reserves its request ID before the remote call; the
+remote PayPal call is not part of the SQLite transaction. An interrupted call stays
+pending for manual checking. No financial reconciliation worker is built.
 
 | State | Meaning |
 | --- | --- |
@@ -83,9 +85,9 @@ transaction). Each transition writes one audit event.
 | `DISPUTED` | Buyer opened a dispute inside the window |
 | `UNDER_REVIEW` | Evidence collected, rules or a human are deciding |
 | `RETURN_REQUESTED` | Refund decided; waiting for the buyer to return the item before any money moves |
-| `FROZEN_EXTERNAL` | A PayPal dispute/reversal event arrived; no money moves |
-| `COMPLETED` | Captured and released (simulated payout recorded) |
-| `REFUNDED` | Captured then refunded (full, or partial if supported) |
+| `FROZEN_EXTERNAL` | A matching PayPal case/reversal was detected; local money actions are blocked |
+| `COMPLETED` | Captured into the Sandbox merchant account (or simulated capture); no seller payout |
+| `REFUNDED` | Captured then fully refunded; partial/split execution is not implemented |
 | `VOIDED` | Authorization voided before capture |
 | `CANCELLED` | Cancelled before payment |
 
@@ -103,14 +105,14 @@ Transitions (guards in italics):
 | `IN_INSPECTION` | `COMPLETED` | Buyer confirms, or the window expires with no dispute; *no external dispute open* | capture |
 | `IN_INSPECTION` | `DISPUTED` | Buyer opens dispute inside the window | none |
 | `DISPUTED` | `UNDER_REVIEW` | Evidence deadline reached or both sides submitted | none |
-| `UNDER_REVIEW` | `COMPLETED` | Rule outcome RELEASE | capture |
+| `UNDER_REVIEW` | `COMPLETED` | Human confirms RELEASE with a written reason | capture |
 | `UNDER_REVIEW` | `RETURN_REQUESTED` | Human REFUND with the return required (default; added 2026-10-21, owner approved) | none |
 | `RETURN_REQUESTED` | `VOIDED` / `REFUNDED` | Buyer's return tracking shows delivery to the seller before `return_by` | void (or refund if captured) |
 | `RETURN_REQUESTED` | `COMPLETED` | Return deadline passed without a delivered return | capture |
-| `UNDER_REVIEW` | `VOIDED` | Rule outcome REFUND while still only authorized, return waived (for example item never arrived) | void |
-| `UNDER_REVIEW` | `REFUNDED` | Rule outcome REFUND after capture | refund |
-| any state, including a completed capture | `FROZEN_EXTERNAL` | Verified `CUSTOMER.DISPUTE.CREATED` or `PAYMENT.CAPTURE.REVERSED` webhook | none |
-| `FROZEN_EXTERNAL` | previous or final | PayPal's decision overrides ours | none |
+| `UNDER_REVIEW` | `VOIDED` | Human REFUND while still only authorized, return waived (for example item never arrived) | void |
+| `UNDER_REVIEW` | `REFUNDED` | Human REFUND after capture, return waived | refund |
+| any state, including a completed capture | `FROZEN_EXTERNAL` | Matching open PayPal case from polling, or verified `CUSTOMER.DISPUTE.CREATED` / `PAYMENT.CAPTURE.REVERSED` webhook | none |
+| `FROZEN_EXTERNAL` | prior local state | `EXTERNAL_RESOLVED` from resolved PayPal case / verified notification; no other known open case | none |
 
 External dispute/reversal webhooks can arrive after capture and completion. The webhook
 therefore freezes a completed transaction too, preserving its prior status for a later
@@ -131,9 +133,10 @@ Rules that come from tested Sandbox behaviour:
 
 Time parameters are configurable. **Decided 2026-10-21:** ship-by 3 days (`SHIP_BY_DAYS`),
 inspection 2 days (`INSPECTION_DAYS`), and evidence 2 days (`EVIDENCE_DAYS`). Capture can
-therefore land after PayPal's 3-day honor period; it usually still succeeds within the
-29-day validity, but that is not guaranteed and a failure is logged. A silent
-buyer means "accept" only if tracking shows delivery to the agreed destination.
+therefore land after PayPal's 3-day honor period; success within the 29-day validity
+is not guaranteed and has not been tested here after day 3. A failure is logged. A silent
+buyer means "accept" only if tracking shows delivery to the agreed destination. Return
+shipping defaults to 3 days (`RETURN_DAYS`); courier delivery/return checks are simulated.
 
 ## 5. Decision rules (rules first)
 
@@ -145,28 +148,31 @@ The rule engine is code with unit tests. The AI step only produces input for it.
 | R2 | Tracking delivered, destination matches, no dispute in the window | RELEASE |
 | R3 | Tracking destination or ship date inconsistent with the order | ESCALATE_HUMAN |
 | R4 | Dispute open, both sides submitted evidence, AI summary meets the criteria for one side with clear support | RECOMMEND that side; a human confirms in the demo |
-| R5 | Dispute open, evidence missing or contradictory, or the buyer's dispute type is "arrived damaged" or "parts missing" (always, whatever the AI summary says; owner decision 2026-10-21) | ESCALATE_HUMAN, with SPLIT as a possible human outcome |
+| R5 | Dispute open, evidence missing or contradictory, no usable AI summary, or the buyer's dispute type is `damaged` (arrived damaged) or `incomplete` (parts missing) (always, whatever the AI summary says; owner decision 2026-10-21) | ESCALATE_HUMAN, with SPLIT as a possible human outcome |
 | R6 | Any external PayPal dispute/reversal event | FREEZE |
 | R7 | Evidence appears to contain instructions aimed at the AI | Flag, ignore the text for scoring, ESCALATE_HUMAN |
 
-Human override requires a written reason and is recorded; in the demo a second reviewer
-confirmation is simulated. A solo operator cannot make this independent in reality; say
-so in the pitch.
+Rules run in priority order: R6, R7, shipping checks (R1/R3/R2 as applicable), then
+dispute R5/R4. Damage/missing-parts types never receive an automatic release/refund
+recommendation, even if another higher-priority rule fires. Every human dispute
+decision requires a written reason and is recorded. There is one demo reviewer; no
+independent second-reviewer confirmation is implemented.
 
 An AI summary and rule recommendation are stored when a transaction enters
 `UNDER_REVIEW`; the recommendation cannot move funds. A human may record a `SPLIT`
-decision with a reason, but it remains pending and moves no funds because the split
-amount and payment treatment are not yet defined by the owner.
+decision with a reason, but it remains pending and moves no funds because split
+execution was explicitly deferred by the owner (2026-10-21). No partial refund or split payout is built.
 
 ## 6. Role of the AI
 
-- Input: evidence items (text, in-app photos, tracking data) wrapped as **data**.
-- Output: strict JSON — per criterion: finding, supporting quote or evidence id,
+- Input: text evidence items (including descriptions labelled photo, tracking or chat)
+  wrapped as quoted **data**. No photo bytes are sent to the model.
+- Output: strict JSON — per criterion: finding, supporting evidence IDs,
   and whether evidence is missing. No free-form verdict that can move money.
 - **No tool access.** The AI cannot call PayPal and cannot write transaction state.
 - Identity masking for the evidence-assessing step (names replaced by "Buyer"/"Seller",
-  order of presentation randomised). A separate **risk layer** may use account history
-  and relationship signals; hiding history from fraud checks would help repeat offenders.
+  order of presentation randomised with a seed). Account-history and relationship
+  risk checks are not implemented.
 - No self-reported confidence number is used as a threshold. Consistency is measured by
   running the same case several times.
 - Provider and model **[TENTATIVE, 2026-10-20]**: DeepSeek (V4.1 Flash) through the
@@ -174,19 +180,24 @@ amount and payment treatment are not yet defined by the owner.
   name and the API terms of the provider, whether it returns reliable strict JSON, and
   whether it accepts images (if text-only, photo evidence must be described by another
   step or model). Keep the provider behind a small interface so it can be swapped.
-- Judges must be able to run the project without the owner's key: provide a mode that
-  replays recorded AI outputs for the demo cases, plus instructions to use their own key.
+- Replay mode is implemented and defaults on when `AI_API_KEY` is empty. Live mode
+  uses `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL` with the fetch-based OpenAI-compatible
+  adapter. A live-provider run remains pending.
 - Use only synthetic evidence in the demo and tests; do not send real personal data to
   any third-party AI API.
 
 ## 7. Audit log
 
 - Table `events`, append-only (application code has no update/delete path for it).
-- Each row: `id`, `tx_id`, `ts`, `actor`, `type`, `payload_json`, `prev_hash`, `hash`
-  where `hash = SHA-256(prev_hash || canonical_json(row without hash))`.
-- A verification page recomputes the chain and shows the head hash. The head hash is
-  published periodically (for example committed to the public repo) so later rewriting
-  is detectable. Honest limit: the operator holds the database and the PayPal keys.
+- Each stored row has `id`, `tx_id`, per-transaction `seq`, `ts`, `actor`, `type`,
+  `payload_json`, `prev_hash`, `hash`. The hashed body is `{seq, txId, ts, actor, type,
+  payload}`; `hash = SHA-256(prevHash + "\n" + canonicalJson(body))`. Database row
+  IDs are not part of that body.
+- A verification page recomputes the chain and shows the head hash. The head hash
+  can be published through the manual signed-checkpoint command below so later
+  rewriting can be detected by someone retaining that checkpoint. No periodic
+  publishing job or operational checkpoint is committed. Honest limit: the operator
+  holds the database and the PayPal keys.
 - Store PayPal `debug_id` and request ids in the payload of related events.
 
 PayPal dispute bridge (owner-approved C11, 2026-10-21):
@@ -202,7 +213,9 @@ PayPal dispute bridge (owner-approved C11, 2026-10-21):
   Verified webhook resolution can map via the case table. A resolved case stays
   resolved if a stale open response or created notification arrives later. The deal
   stays frozen while another known PayPal case is open. RESOLVED resumes the prior
-  state, without inferring or executing a financial outcome. Rules R1-R7 are unchanged.
+  state, without inferring or executing a financial outcome. Freezing blocks local
+  actions; it does not stop PayPal from acting on its own case. The bridge does not
+  change rules R1-R7.
 - Seller/reviewer `POST /api/transactions/:id/paypal-dispute/evidence` refreshes
   PayPal's offered actions first. `provide_evidence` sends a text-only single-page
   PDF via the existing multipart client; its evidence type follows PayPal's reason.
@@ -268,12 +281,13 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
   Previously retained checkpoints remain the independent comparison point.
 
 
-## 8. Data model (draft)
+## 8. Data model (implementation summary)
 
 - `users` (id, role: buyer|seller|reviewer, display name) — demo accounts only.
 - `transactions` (id, status, buyer_id, seller_id, item, amount, currency, terms_json,
   terms_hash, ship_by, inspection_until, paypal_order_id, paypal_auth_id,
-  paypal_capture_id, created_at, updated_at).
+  paypal_capture_id, evidence_until, tracking_number, return_by, return_tracking,
+  captured, frozen_from, created_at, updated_at).
 - `evidence` (id, tx_id, submitted_by, kind: photo|tracking|chat|note, content_ref,
   content_hash, created_at).
 - `decisions` (id, tx_id, rule_id, outcome, ai_summary_json, action, reasons_json,
@@ -284,18 +298,20 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
 - `idempotency` (key UNIQUE, tx_id, action, result).
 - `paypal_disputes` (tx_id, dispute_id UNIQUE, status, stage, reason, actions_json, updated_at).
 
-## 9. Endpoints (draft)
+## 9. Endpoints (implementation summary)
 
 - `POST /api/transactions` create with terms; `POST /api/transactions/:id/accept`
 - `POST /api/transactions/:id/pay` create the PayPal order, return the approval URL
 - `GET /api/paypal/return` buyer returns after approval; triggers authorize
 - `POST /api/transactions/:id/ship` seller adds tracking
 - `POST /api/transactions/:id/confirm` buyer confirms receipt
-- `POST /api/transactions/:id/dispute`, `POST .../evidence`
+- `POST /api/transactions/:id/dispute`, `POST .../evidence`, `POST .../return`
 - `GET /api/transactions/:id/review` stored recommendation;
   `POST /api/transactions/:id/review` human decision with reason
 - `POST /api/webhooks/paypal` signature verification, de-duplication, state freeze
-- `GET /api/audit/:id` and `GET /api/audit/verify`
+- `GET /api/audit/:id`, `GET /api/audit/:id/export` (CSV), `GET /api/audit/verify`
+- `POST /api/jobs/tick` applies due shipment/inspection/evidence/return deadlines,
+  retries eligible tracking submissions and polls PayPal disputes; no background worker.
 - `POST /api/paypal/disputes/sync` reviewer-only PayPal dispute poll
 - `POST /api/transactions/:id/paypal-dispute/evidence`, `POST .../escalate` seller/reviewer
 - `POST /api/transactions/:id/paypal-dispute/simulate` demo-only simulated case
@@ -308,6 +324,21 @@ Hosting **[OPEN]**: run-instructions in the README are enough for the rules; a h
 (15 Dec 2026).
 
 ## 10. Test plan (fairness and robustness)
+
+Current measurement (2026-10-21): `eval/report.md` and `eval/results.json` record a
+**replay** run of 50 synthetic cases (40 disputes + 10 injection cases), k=3, six
+variants per case. The owner reviewed 10 labels individually and accepted 40 drafts
+without individual review; the R5 follow-up is in
+`eval/owner-label-review-2026-10-21-r5.json`. No base result differs from the labels.
+False release: 0/23; false refund: 0/23; gap: 0.0 percentage points; variant flips:
+0/300; repeat consistency: 100/100 comparisons; human escalation: 23/50 (46.0%);
+non-escalated agreement: 27/27; injection cases avoiding escalation: 0/10. These
+small-sample replay results check harness/rules behavior, not a live model. Recorded
+summaries were authored from the original draft labels; counterfactuals reuse them.
+The harness exercises R3/R4/R5/R7 (one case sets mismatched tracking facts); shipping
+rules also have unit tests. Live evaluation and independent annotation remain pending.
+
+The following larger set and additional measurements are **targets, not completed work**:
 
 - Labelled set of about 150-200 cases plus 30-50 prompt-injection cases. Labels written
   before running the AI, ideally by two people, with disagreements noted.
@@ -324,7 +355,10 @@ Hosting **[OPEN]**: run-instructions in the README are enough for the rules; a h
   described"; subjective condition; partial delivery; injection through image text, file
   name, chat, item description; buyer and seller collusion patterns (sybil accounts).
 
-## 11. Schedule (backward from 11 Nov 2026)
+## 11. Original schedule (planning baseline, 2026-10-20)
+
+The schedule below is historical. Current completed work and remaining checks are
+in `docs/HANDOFF.md`; do not read these dates as test-completion claims.
 
 | Dates | Work |
 | --- | --- |
@@ -345,5 +379,6 @@ Hosting **[OPEN]**: run-instructions in the README are enough for the rules; a h
 - Final project name (the word "Vault" suggests custody; consider before submitting).
 - Hosting. (License: MIT chosen; the owner may relicense his own code later. Database:
   SQLite decided.)
-- Whether Payouts/delayed disbursement can be shown, or the payout stays simulated.
+- Seller payout remains unimplemented; any Payouts/delayed-disbursement integration
+  would need a separate owner decision and Sandbox test.
 - Whether PayPal logos in the video are acceptable (ask Devpost support).
