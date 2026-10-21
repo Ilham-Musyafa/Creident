@@ -1,9 +1,10 @@
+import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
 import { ActionButton, CopyLinkButton, DisputeForm, ReturnForm, ShipForm } from '../../../components/client';
 import { authorizationWindow, isSimulatedDeal, money, shortDate, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
-import { data, getRole, isUuid } from '../../_server';
+import { data, getRole, isUuid, simulatedPayPal, reviewerUnlocked } from '../../_server';
 import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
 
 export const dynamic = 'force-dynamic';
@@ -67,6 +68,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
         </div>
 
         <aside className="space-y-3">
+          <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
           <SectionTitle>Next step</SectionTitle>
           {action === 'accept-terms' && (role === 'buyer'
             ? <ButtonLink href={`/deals/${id}/checkout`} fullWidth>Review terms & pay</ButtonLink>

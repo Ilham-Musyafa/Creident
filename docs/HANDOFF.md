@@ -130,6 +130,25 @@ Still open:
 
 ## Log
 
+- 2026-10-21 22:17 WIB (Codex, C11): built the owner-approved PayPal dispute
+  bridge on `codex/c11-dispute-bridge`. Added the existing-DB-safe
+  `paypal_disputes` table/repository, capture-scoped polling from reviewer sync
+  and tick, and shared case identity with verified webhooks. Existing external
+  freeze/resume transitions run once; stale open results cannot reopen a resolved
+  case, and other open cases keep the deal frozen. Seller/reviewer evidence
+  submission checks locked terms, audited evidence hashes and chain integrity,
+  builds a one-page text PDF, or sends an inquiry message when that is all PayPal
+  offers. Escalation requires an in-page confirmation and current PayPal permission.
+  Added deal/review panels, audit titles, SIM- cases with persisted metadata, and
+  a clearly labelled demo opener on completed demo deals. Reused the existing
+  rules, state-machine transitions, and PayPal client methods. No dependencies added. README/DESIGN explain
+  polling, stage limitations, text-only PDF, and blocked interrupted sends.
+  `npm test` (190/190), typecheck, and build passed. Browser tested simulated
+  open -> message -> cancel/confirm escalation -> PDF, both panels, 390/1440px
+  light/dark: no overflow, browser dialogs, or console errors. Fake tests cover
+  polling/webhook order, resolution, roles, migration, PDF content and failures.
+  Integrated real Sandbox run remains pending for the owner; the separate client
+  probe's successful real run is documented in SANDBOX-NOTES.
 - 2026-10-21 22:00 WIB (Owner + Claude): Disputes API probe on Sandbox dispute
   PP-R-OIU-10193936 succeeded after three instructive refusals (see SANDBOX-NOTES):
   evidence PDF accepted with type OTHER after the seller escalated to a claim. Next (needs

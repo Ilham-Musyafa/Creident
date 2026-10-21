@@ -5,7 +5,7 @@
 const PAGE = { width: 595, height: 842, margin: 50, fontSize: 10, leading: 14 };
 
 function ascii(text: string): string {
-  return text.normalize('NFKD').replace(/[^\x20-\x7E]/g, '').replace(/[\\()]/g, (c) => `\\${c}`);
+  return text.normalize('NFKD').replace(/[^\x20-\x7E]/g, '');
 }
 
 function wrap(line: string, max = 95): string[] {
@@ -20,11 +20,15 @@ function wrap(line: string, max = 95): string[] {
   return out;
 }
 
-export function textPdf(lines: string[]): Uint8Array {
+export function textPdf(lines: string[], fitToPage = false): Uint8Array {
   const maxLines = Math.floor((PAGE.height - 2 * PAGE.margin) / PAGE.leading);
-  const rows = lines.flatMap((l) => wrap(ascii(l))).slice(0, maxLines);
+  // Escape after wrapping so a line break cannot split a PDF escape sequence.
+  const allRows = lines.flatMap((l) => wrap(ascii(l))).map(row => row.replace(/[\\()]/g, c => `\\${c}`));
+  const rows = fitToPage ? allRows : allRows.slice(0, maxLines);
+  const leading = fitToPage ? Math.min(PAGE.leading, (PAGE.height - 2 * PAGE.margin) / Math.max(1, rows.length)) : PAGE.leading;
+  const fontSize = Math.min(PAGE.fontSize, leading / 1.4);
   const stream = [
-    'BT', `/F1 ${PAGE.fontSize} Tf`, `${PAGE.leading} TL`, `${PAGE.margin} ${PAGE.height - PAGE.margin} Td`,
+    'BT', `/F1 ${fontSize} Tf`, `${leading} TL`, `${PAGE.margin} ${PAGE.height - PAGE.margin} Td`,
     ...rows.map((r) => `(${r}) Tj T*`), 'ET',
   ].join('\n');
   const objects = [

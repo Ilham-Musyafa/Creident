@@ -1,3 +1,5 @@
+import { syncPayPalDisputes } from '../../../lib/paypalDisputes';
+import { disputeDeps } from './disputes';
 import { decisionBasis } from '../../../lib/decisionBasis';
 import { auditCsv } from '../../../lib/audit/csv';
 import { createHash, randomUUID } from 'node:crypto';
@@ -340,6 +342,9 @@ export function tick(request: Request): Promise<Response> {
     await emptyBody(request);
     const context = getApiContext();
     const now = context.now();
+    let paypalDisputes: unknown;
+    try { paypalDisputes = await syncPayPalDisputes(disputeDeps(role)); }
+    catch (error) { paypalDisputes = { error: (await errorResponse(error).json()).error }; }
     const due = [
       ...context.repo.listDue('AUTHORIZED', 'ship_by', now).filter((tx) => tx.shipBy! < now)
         .map((tx) => ({ tx, trigger: { type: 'SHIP_DEADLINE_PASSED', now } as const })),
@@ -386,7 +391,7 @@ export function tick(request: Request): Promise<Response> {
         results.push({ txId: tx.id, ok: false, error: body.error });
       }
     }
-    return json({ checkedAt: now, results });
+    return json({ checkedAt: now, results, paypalDisputes });
   });
 }
 
