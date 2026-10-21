@@ -62,16 +62,10 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
-## Active agent (2026-10-21 09:15 WIB)
+## Active agent
 
-**Codex** works through prompts C6-C10; Claude is inactive meanwhile. Each prompt:
-branch from the latest `origin/main` (never from another task branch), push the branch,
-add a log entry here. Claude reviews, opens and merges the PRs afterwards.
-C6 decisions bound to terms and evidence hashes · C7 signed audit checkpoints ·
-C8 audit CSV export (C6-C8 = owner's "CloneIDE" batch) · C9 decided dispute in the demo
-seed · C10 refreshed README screenshots.
-C1-C5 are merged. `docs/RECONCILIATION.md` (C5) is a proposal only: do not implement it
-without the owner's approval.
+None right now (2026-10-21 15:55 WIB). Codex C1-C10 are merged. `docs/RECONCILIATION.md`
+is a proposal only: do not implement it without the owner's approval.
 
 ## How to run
 
@@ -135,6 +129,15 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:55 WIB (Claude): reviewed and merged Codex C6-C10 (decision hashes, signed
+  audit checkpoints, audit CSV export, seeded resolved dispute, README screenshots).
+  Resolved import conflicts between C6 and C8. Fixed: seeded decision now records
+  termsHash/evidenceDigest like the review API; status pill no longer wraps in page
+  headers; audit list hides per-deal checkpoint lines when no checkpoint exists. Retook
+  docs/ui/screens at phone viewport. 152 tests, typecheck, build; Chromium check of
+  receipt, audit, CSV export, fairness, no console errors. No checkpoint has been
+  published yet: the owner runs `npm run checkpoint -- --generate-key` once, keeps the
+  private key in .env, then `npm run checkpoint`.
 - 2026-10-21 15:26 WIB (Codex, C10): captured 11 current-app PNGs under
   `docs/ui/screens/` using production Chromium automation, `PAYPAL_MODE=simulated`,
   replay AI, and a fresh temp SQLite database seeded through Menu. Nine light
