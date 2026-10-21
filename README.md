@@ -84,9 +84,36 @@ A verified PayPal dispute or reversal webhook ─▶ FROZEN_EXTERNAL (PayPal's d
   then treated as "no summary" (rule R5). The model has no tools: it cannot call PayPal
   or change a transaction.
 - **Audit log** (`src/lib/audit/chain.ts`): each event stores
-  `hash = SHA-256(prevHash + "\n" + canonical JSON of the event)`. The Audit screen recomputes
-  every chain and shows the head hash. Honest limit: the operator still runs the server
-  and holds the PayPal keys, so the log makes changes **detectable**, not impossible.
+  `hash = SHA-256(prevHash + "\n" + canonical JSON of the event)`. The Audit screen
+  verifies each chain and compares it with the latest signed checkpoint, showing
+  "matches checkpoint", "extended since checkpoint", or "differs from checkpoint".
+  New deals absent from the checkpoint are marked separately. Missing files or an
+  invalid signature are shown plainly; they are not treated as a successful check.
+
+  To publish head hashes outside the database:
+
+  1. Run `npm run checkpoint -- --generate-key` in your own terminal. This prints
+     a new Ed25519 pair once and writes only `audit-checkpoints/public-key.pem`.
+     Store the private PEM in `.env` only, as a quoted multiline value named
+     `AUDIT_SIGNING_KEY`. Never commit it, redirect the command output to a file,
+     or share a terminal transcript containing it. The committed initial public key
+     has no retained private key; this command replaces it before the first checkpoint.
+  2. Run `npm run checkpoint`. It reads `.env`, verifies every transaction's audit
+     chain from one SQLite snapshot, and writes `audit-checkpoints/<UTC timestamp>.json`.
+     It refuses broken chains or a signing key that does not match the public key.
+  3. Commit the public key and checkpoint JSON and publish them through your normal
+     review process. People verifying later must keep a trusted copy of both outside
+     the server. Writing the file locally does not publish it to GitHub automatically.
+
+  A checkpoint signs the canonical JSON of `{createdAt, transactions}`, where each
+  transaction entry contains `txId`, `length`, and `headHash`. `signature` is a
+  base64 Ed25519 signature and is excluded from the signed payload. The verifier is
+  `verifyCheckpoint()` in `src/lib/audit/checkpoint.ts`. An extended chain must still
+  contain the old head at the recorded length. Generation refuses key rotation once
+  checkpoint JSON exists; preserve old public keys and checkpoints before planning
+  a rotation. This makes rewriting detectable by anyone holding the published
+  checkpoint and trusted public key; it does not make rewriting impossible. The
+  operator still controls the server and can replace its displayed files.
 - **Making disputes easier to settle**: the seller can add a ready-made checklist per item
   type (phone, laptop, camera, headphones or speaker, game console), each check provable
   with a photo or video. The buyer picks a dispute type (not received, not as described,
