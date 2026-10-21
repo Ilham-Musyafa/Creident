@@ -138,6 +138,14 @@ Still open:
 
 ## Log
 
+- 2026-10-22 01:20 WIB (Claude): reviewed and merged C14 (#37, bounded dispute polling and
+  security review) and C15 (#38, 12 draft shipping/return eval cases). C15's state machine
+  edit is import extensions only. Fixed a merge leftover: eval/harness.ts had two report
+  templates (C12 wording vs C15 caveats), so eval/report.md showed duplicated metric rows;
+  kept C15's template with C12's "Magnitude" wording and regenerated the report. main: 235
+  tests, typecheck and build pass. Owner to review with Claude: the 12 new draft labels,
+  especially shipping_unknown_destination_unclear and return_wrong_destination_unclear
+  (label says human review, the system waits).
 - 2026-10-22 00:57 WIB (Codex, C15): added `eval/cases/shipping.json` with
   12 synthetic cases (5 buyer-right, 5 seller-right, 2 unclear), all labelled
   `draft, needs owner review` with one-line rationales and Alice/Bob Example names.
