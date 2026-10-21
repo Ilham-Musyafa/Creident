@@ -138,6 +138,12 @@ Still open:
 
 ## Log
 
+- 2026-10-22 01:00 WIB (Claude): reviewed and merged Codex work: Home/Menu polish (#33),
+  C12 docs accuracy pass (#34; Home footer conflict resolved by keeping the newer polish
+  footer), C13 plain-English PayPal dispute labels (#35). main: 212 tests, typecheck and
+  build pass; simulated browser check at 390px light and 1440px dark is clean. Next for
+  Codex: C14 (security review of bridge endpoints, polling scope), then C15 (draft R1-R3
+  eval cases for owner review).
 - 2026-10-22 00:39 WIB (Codex, C13): added pure `paypalDisputeLabels.ts`
   display mappings for known status, stage, reason, action and bridge event codes;
   unknown values (including prototype-like keys) fall back unchanged. Deal/review
