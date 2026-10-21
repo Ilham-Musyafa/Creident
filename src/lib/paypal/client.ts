@@ -223,11 +223,15 @@ export class PayPalClient {
    * Send the merchant's evidence. PayPal documents both a multipart body (a JSON "input" part plus
    * an "evidence-file") and a JSON body; this sends multipart when a file is given, else JSON.
    */
-  async provideEvidence(disputeId: string, evidence: { notes: string; trackingNumber?: string; carrierName?: string; file?: { name: string; type: string; content: Uint8Array } }) {
+  async provideEvidence(disputeId: string, evidence: { reason?: string; notes: string; trackingNumber?: string; carrierName?: string; file?: { name: string; type: string; content: Uint8Array } }) {
+    // Tested in the Sandbox: an SNAD claim refuses PROOF_OF_FULFILLMENT (EVIDENCE_TYPE_IS_NOT_ALLOWED).
+    // PayPal's reasons-evidence guide allows OTHER (notes and documents) for SNAD and
+    // PROOF_OF_FULFILLMENT with tracking for "not received".
+    const type = evidenceTypeFor(evidence.reason);
     const input = {
       evidences: [{
-        evidence_type: 'PROOF_OF_FULFILLMENT',
-        ...(evidence.trackingNumber ? { evidence_info: { tracking_info: [{ carrier_name: 'OTHER', carrier_name_other: evidence.carrierName ?? 'Other', tracking_number: evidence.trackingNumber }] } } : {}),
+        evidence_type: type,
+        ...(type === 'PROOF_OF_FULFILLMENT' && evidence.trackingNumber ? { evidence_info: { tracking_info: [{ carrier_name: 'OTHER', carrier_name_other: evidence.carrierName ?? 'Other', tracking_number: evidence.trackingNumber }] } } : {}),
         notes: evidence.notes,
       }],
     };
@@ -309,6 +313,11 @@ async function parseBody(res: Response): Promise<unknown> {
 function assertMoney(m: Money): void {
   if (!MONEY_RE.test(m.value)) throw new Error(`Amount must be a string with two decimals, got "${m.value}"`);
   if (!/^[A-Z]{3}$/.test(m.currency)) throw new Error(`Invalid currency "${m.currency}"`);
+}
+
+/** The seller evidence type PayPal accepts for a dispute reason (OTHER when unsure). */
+export function evidenceTypeFor(reason: string | undefined): 'PROOF_OF_FULFILLMENT' | 'OTHER' {
+  return reason === 'MERCHANDISE_OR_SERVICE_NOT_RECEIVED' ? 'PROOF_OF_FULFILLMENT' : 'OTHER';
 }
 
 function toMoney(x: Json | undefined): Money | null {

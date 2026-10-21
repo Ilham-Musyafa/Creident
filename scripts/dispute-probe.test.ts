@@ -41,9 +41,9 @@ describe('dispute probe', () => {
     expect(evidence.body).toBeInstanceOf(FormData);
     expect(evidence.contentType).toBeNull();
     const form = evidence.body as FormData;
-    expect(JSON.parse(await (form.get('input') as Blob).text()).evidences[0]).toMatchObject({ evidence_type: 'PROOF_OF_FULFILLMENT' });
+    expect(JSON.parse(await (form.get('input') as Blob).text()).evidences[0]).toMatchObject({ evidence_type: 'OTHER' });
     expect((form.get('evidence-file') as File).name).toBe('halcyvault-evidence.pdf');
-    expect(lines).toContain('Evidence (multipart with PDF): accepted.');
+    expect(lines.some((l) => /^Evidence \(multipart with PDF, type (OTHER|PROOF_OF_FULFILLMENT)\): accepted\.$/.test(l))).toBe(true);
     expect(lines.some((l) => l.includes('status RESOLVED'))).toBe(true);
     expect(calls.some((c) => c.path.includes('/refund'))).toBe(false);
   });
@@ -53,7 +53,7 @@ describe('dispute probe', () => {
     const lines: string[] = [];
     await runDisputeProbe(client, answers('', '', 'n'), (l) => lines.push(l), 'run-2');
     expect(lines.some((l) => l.startsWith('Evidence (multipart with PDF): rejected'))).toBe(true);
-    expect(lines).toContain('Evidence (JSON notes and tracking): accepted.');
+    expect(lines.some((l) => /^Evidence \(JSON notes, type \w+\): accepted\.$/.test(l))).toBe(true);
     const json = calls.filter((c) => c.path.endsWith('/provide-evidence')).at(-1)!;
     expect(json.contentType).toBe('application/json');
   });
@@ -70,7 +70,7 @@ describe('dispute probe resume', () => {
     const lines: string[] = [];
     await resumeDisputeProbe(client, answers('n'), (l) => lines.push(l), 'PP-D-1');
     expect(calls.some((c) => c.path.endsWith('/provide-evidence'))).toBe(true);
-    expect(lines).toContain('Evidence (multipart with PDF): accepted.');
+    expect(lines.some((l) => /^Evidence \(multipart with PDF, type (OTHER|PROOF_OF_FULFILLMENT)\): accepted\.$/.test(l))).toBe(true);
   });
 });
 
@@ -98,6 +98,15 @@ describe('dispute probe escalation', () => {
     const lines: string[] = [];
     await resumeDisputeProbe(client, answers('y'), (l) => lines.push(l), 'D2');
     expect(calls.filter((c) => c.startsWith('POST') && !c.includes('oauth2')).map((c) => c.split('/').at(-1))).toEqual(['send-message', 'escalate', 'require-evidence', 'provide-evidence']);
-    expect(lines).toContain('Evidence (multipart with PDF): accepted.');
+    expect(lines.some((l) => /^Evidence \(multipart with PDF, type (OTHER|PROOF_OF_FULFILLMENT)\): accepted\.$/.test(l))).toBe(true);
+  });
+});
+
+import { evidenceTypeFor } from '../src/lib/paypal/client';
+describe('evidence type by dispute reason', () => {
+  it('uses OTHER for not-as-described and proof of fulfilment for not-received', () => {
+    expect(evidenceTypeFor('MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED')).toBe('OTHER');
+    expect(evidenceTypeFor('MERCHANDISE_OR_SERVICE_NOT_RECEIVED')).toBe('PROOF_OF_FULFILLMENT');
+    expect(evidenceTypeFor(undefined)).toBe('OTHER');
   });
 });
