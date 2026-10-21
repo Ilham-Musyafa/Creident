@@ -285,6 +285,9 @@ Hosting **[OPEN]**: run-instructions in the README are enough for the rules; a h
 
 ## 12. Open decisions
 
+- Business model: 1.5% service fee paid by the seller (decided 2026-10-21; documented, not charged in the prototype).
+- Split: recorded only, no payout (decided 2026-10-21).
+
 - Fund model: **A decided** (2026-10-20). Fee on a refund: platform (decided 2026-10-21).
 - Time parameters: 3 / 2 / 2 days (decided 2026-10-21).
 - AI provider: tentative DeepSeek V4.1 Flash via Hive; verify before building (section 6).
