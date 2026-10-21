@@ -1,0 +1,103 @@
+[
+  {
+    "item": "[Demo] Road bike helmet",
+    "input": {
+      "checks": [
+        {
+          "id": "C1",
+          "text": "Good, no cracks",
+          "kind": "criterion"
+        }
+      ],
+      "side": "buyer",
+      "disputeType": "damaged",
+      "guidance": [
+        "Photo of the outer parcel before opening",
+        "First-opening video showing the damage, code visible"
+      ],
+      "evidence": []
+    },
+    "output": {
+      "checks": [
+        {
+          "criterionId": "C1",
+          "status": "missing",
+          "citedAliases": []
+        }
+      ],
+      "suggestions": [
+        "Add a photo of the item with the deal code visible."
+      ]
+    }
+  },
+  {
+    "item": "[Demo] Road bike helmet",
+    "input": {
+      "checks": [
+        {
+          "id": "C1",
+          "text": "Good, no cracks",
+          "kind": "criterion"
+        }
+      ],
+      "side": "seller",
+      "disputeType": "damaged",
+      "guidance": [
+        "Packing photos showing protection for fragile parts",
+        "Photo of the item working before handover to the courier"
+      ],
+      "evidence": []
+    },
+    "output": {
+      "checks": [
+        {
+          "criterionId": "C1",
+          "status": "missing",
+          "citedAliases": []
+        }
+      ],
+      "suggestions": [
+        "Add packing photos showing the item and its protective packaging."
+      ]
+    }
+  },
+  {
+    "item": "[Demo] Road bike helmet",
+    "input": {
+      "checks": [
+        {
+          "id": "C1",
+          "text": "Good, no cracks",
+          "kind": "criterion"
+        }
+      ],
+      "side": "buyer",
+      "disputeType": "damaged",
+      "guidance": [
+        "Photo of the outer parcel before opening",
+        "First-opening video showing the damage, code visible"
+      ],
+      "evidence": [
+        {
+          "alias": "B1",
+          "kind": "photo",
+          "content": "Photo of the helmet shell: a crack is visible near the rim, with the deal code on paper."
+        }
+      ]
+    },
+    "output": {
+      "checks": [
+        {
+          "criterionId": "C1",
+          "status": "covered",
+          "citedAliases": [
+            "B1"
+          ]
+        }
+      ],
+      "suggestions": [
+        "Add a photo of the outer parcel before opening."
+      ]
+    }
+  }
+]

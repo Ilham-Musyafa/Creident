@@ -65,14 +65,15 @@ The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
 webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agents (2026-10-22 01:15 WIB)
+## Active agents (2026-10-22 01:50 WIB)
 
 Owner approved the AI assist features (DESIGN 6.1) and asked for two agents in parallel,
 one task at a time each. Keep to your own files; put new UI in new component files rather
 than growing `src/components/client.tsx`; shared helper `src/lib/ai/assist.ts` changes
 only with a note here.
-- **Codex:** C16 implemented on `feat/c16-terms-assistant`, awaiting Claude review;
-  next assigned areas are C17 evidence completeness and C18 reviewer copilot.
+- **Codex:** C16 merged in PR #42; C17 evidence completeness implemented on
+  `feat/c17-evidence-check`, awaiting Claude review. C18 reviewer copilot is next,
+  not started.
   Files: `src/lib/ai/terms*`, `src/lib/ai/evidenceCheck*`, `src/lib/ai/copilot*`, the
   new-deal flow, evidence forms, review page.
 - **Claude:** #4 outbound drafts (`src/lib/ai/drafts*`, PayPal dispute panel, courier claim
@@ -145,6 +146,42 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 01:50 WIB (Codex, C17): added advisory own-side evidence completeness
+  via `src/lib/ai/evidenceCheck.ts`, `runAssist` feature `evidence-check`, version
+  `evidence-check-v1`. Strict exact-key output covers every known C/I checklist id,
+  accepts only known B/S aliases, and downgrades covered without citations to unclear.
+  Suggestions are selected from a fixed short vocabulary (at most five), so generated
+  names, links and verdict wording cannot enter that text. Input includes locked
+  criteria/included items, dispute type and own-side guidance/evidence only; legacy
+  no-criteria terms use their condition line. No photo bytes are inspected.
+  Buyer/seller-only POST `/api/transactions/{id}/ai/evidence-check` requires an empty
+  JSON object, DISPUTED and an open evidence window. Durable reservations in the
+  existing idempotency table allow one initial run per side and one per new own
+  evidence item, including failed/interrupted runs. Up to 50 own evidence items;
+  unsupported/empty checklists use manual guidance. Concurrent requests/reloads and
+  the other side adding evidence do not bypass the limit. Results arriving after a
+  deadline/status change or own-evidence change are discarded. EVIDENCE_CHECK_RUN
+  logs metadata, side/counts and injection flag only, never input or suggestion text.
+  No result is saved as a decision/recommendation or read by the rule engine.
+  Added a separate EvidenceCompleteness component (no client.tsx growth), matching
+  B1/S1 labels on the evidence list, small-screen wrapping and manual fallback.
+  Recorded helmet fixtures match full own-side snapshots: empty buyer/seller and
+  one specified buyer photo description; unmatched/new evidence does not reuse an
+  old finding. Load demo deals, switch to Buyer/Seller, open Road bike helmet >
+  Add evidence > Check my evidence for the no-key initial demo. Covered means a
+  relevant description was cited, not that the claim was proven.
+  `npm test` 337/337 (37 files), typecheck, build passed. Regression tests cover roles,
+  ids/body limits, status/window/rate/concurrency, side isolation, metadata-only audit,
+  injection, replay, invalid/provider fallback and identical R4/R5 recommendations
+  with/without the check. Production Chromium with a fresh temp DB, simulated PayPal
+  and replay: 390/1440px light/dark, no overflow or console errors/warnings; tested
+  initial/cited replay, rate persistence, visible injection/unavailable, continued
+  evidence submission, seller isolation and closed/reviewer gates. All read-back
+  audit chains verified. DESIGN 6.1 documents behavior and replay/rate limits.
+  No dependencies; rules/state machine/PayPal calls/shared assist.ts unchanged.
+  Claude's paypalDisputes.ts, drafts*, OutboundDrafts.tsx and dispute panel untouched.
+  Live-provider verification remains pending. Branch is for Claude review; do not merge.
 
 - 2026-10-22 01:31 WIB (Codex, C16): implemented the terms assistant using
   `runAssist` feature `terms`, promptVersion `terms-v1`. Seller-only POST

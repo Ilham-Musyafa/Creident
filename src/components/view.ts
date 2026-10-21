@@ -99,6 +99,7 @@ const EVENT_TITLES: Record<string, string> = {
   OPEN_DISPUTE: 'Dispute opened',
   EVIDENCE_SUBMITTED: 'Evidence added',
   EVIDENCE_COMPLETE: 'Evidence complete',
+  EVIDENCE_CHECK_RUN: 'AI evidence completeness checked (advisory)',
   RECOMMENDATION_RECORDED: 'Rule recommendation recorded',
   DECISION: 'Reviewer decision',
   HUMAN_SPLIT_PENDING: 'Split decision (pending)',
