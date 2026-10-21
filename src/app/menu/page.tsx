@@ -7,11 +7,11 @@ import { getRole, reviewerCodeRequired, reviewerUnlocked } from '../_server';
 export const dynamic = 'force-dynamic';
 
 const LINKS = [
-  { href: '/about#decisions', title: 'How decisions are made', detail: 'Rules R1–R7 and the role of the AI' },
+  { href: '/about#decisions', title: 'How decisions work', detail: 'Rules R1–R7 and the role of the AI' },
   { href: '/audit', title: 'Audit & verification', detail: 'Check the hash chains' },
   { href: '/fairness', title: 'Fairness results', detail: 'Measured bias and injection tests' },
   { href: '/about#limitations', title: 'Limitations', detail: 'Sandbox demo, not an escrow service' },
-  { href: '/about', title: 'About HalcyVault', detail: 'PayPal AI Hackathon 2026' },
+  { href: '/about', title: 'About', detail: 'PayPal AI Hackathon 2026' },
 ];
 
 export default async function MenuPage() {
@@ -22,9 +22,17 @@ export default async function MenuPage() {
     <AppShell active="Menu">
       <PageHeader title="Menu"/>
       <div className="mx-auto max-w-xl space-y-3">
-        <Card><p className="mb-3 text-xs text-muted">Act as (demo)</p><RoleSwitch current={role}/></Card>
-        {codeRequired && <Card><ReviewerCodeForm unlocked={unlocked}/></Card>}
-        <Card><p className="mb-3 text-xs text-muted">Appearance</p><ThemeSelector/></Card>
+        <section aria-labelledby="demo-settings">
+          <h2 id="demo-settings" className="mb-3 text-[15px] font-bold text-heading">Demo settings</h2>
+          <Card className="divide-y divide-line py-0">
+            <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">Demo role</p><RoleSwitch current={role}/></div>
+            {codeRequired && <div className="py-4"><ReviewerCodeForm unlocked={unlocked}/></div>}
+            <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">Appearance</p><ThemeSelector/></div>
+            <div className="py-4"><p className="mb-1 text-sm font-semibold text-heading">Demo data</p><p className="mb-3 text-xs text-muted">Labelled examples with simulated PayPal payments.</p><SeedButton role={role}/></div>
+          </Card>
+        </section>
+        <section aria-labelledby="about-transparency" className="pt-3">
+          <h2 id="about-transparency" className="mb-3 text-[15px] font-bold text-heading">About &amp; transparency</h2>
         <Card className="py-1">
           <ul>
             {LINKS.map((l) => (
@@ -37,7 +45,7 @@ export default async function MenuPage() {
             ))}
           </ul>
         </Card>
-        <Card><p className="mb-3 text-xs text-muted">Demo data (labelled, simulated PayPal)</p><SeedButton role={role}/></Card>
+        </section>
       </div>
     </AppShell>
   );
