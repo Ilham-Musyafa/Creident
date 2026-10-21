@@ -69,6 +69,18 @@ typed `PROOF_OF_FULFILLMENT` was refused with 400 `EVIDENCE_TYPE_IS_NOT_ALLOWED`
 for SNAD PayPal accepts `OTHER` (notes, documents) or `PROOF_OF_REFUND`; proof of fulfilment
 with tracking is for "not received". The client now picks the type from the dispute reason.
 
+Fourth run: **evidence accepted** as multipart (a JSON `input` part plus a PDF in
+`evidence-file`) with type `OTHER`. The case moved to `UNDER_REVIEW` (stage `CHARGEBACK`) and
+PayPal then offered only `provide_supporting_info`; the Sandbox `adjudicate` action was not
+offered yet.
+
+Proven end to end in the Sandbox: read disputes on our own payments, see the allowed
+actions per stage, message the buyer, escalate as the seller, and submit HalcyVault's
+evidence document. Lifecycle seen: INQUIRY (UNDER_REVIEW, then WAITING_FOR_SELLER_RESPONSE
+with accept_claim, send_message, escalate, make_offer) -> seller escalates -> CHARGEBACK
+(WAITING_FOR_SELLER_RESPONSE with accept_claim, provide_evidence) -> evidence ->
+UNDER_REVIEW. Each change took about 3 minutes to appear.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).
