@@ -30,6 +30,46 @@ async function showDispute(client: PayPalClient, id: string, log: Log) {
   return d;
 }
 
+/**
+ * Continue with a dispute that already exists (`npm run dispute-probe -- PP-R-...`): show the
+ * actions PayPal offers now, try the Sandbox move to "waiting for seller evidence", then send
+ * evidence. Disputes start in the INQUIRY stage, where PayPal does not accept evidence yet.
+ */
+export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Log, disputeId: string): Promise<void> {
+  log(`Resuming dispute ${disputeId}`);
+  let d = await showDispute(client, disputeId, log);
+  if (!d.actions.includes('provide_evidence')) {
+    try {
+      await client.sandboxRequireEvidence(disputeId, 'SELLER_EVIDENCE');
+      log('Sandbox simulation: require-evidence (SELLER_EVIDENCE) accepted.');
+    } catch (error) {
+      log(`Sandbox require-evidence: rejected: ${describe(error)}`);
+      log('If PayPal says the state does not allow it: as the BUYER, open the case in the Resolution Center and choose "Escalate to PayPal" (eskalasi), wait a few minutes, then run this again.');
+    }
+    d = await showDispute(client, disputeId, log);
+  }
+  const notes = 'HalcyVault deal evidence: terms locked before payment; shipped with tracking; full audit log available. Synthetic Sandbox test.';
+  const pdf = textPdf(['HalcyVault - evidence for PayPal dispute (Sandbox test)', '', `Dispute: ${disputeId}`, 'Synthetic test document. No real person or goods are involved.']);
+  try {
+    await client.provideEvidence(disputeId, { notes, file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
+    log('Evidence (multipart with PDF): accepted.');
+  } catch (error) {
+    log(`Evidence (multipart with PDF): rejected: ${describe(error)}`);
+    try { await client.provideEvidence(disputeId, { notes }); log('Evidence (JSON notes): accepted.'); }
+    catch (error2) { log(`Evidence (JSON notes): rejected: ${describe(error2)}`); }
+  }
+  d = await showDispute(client, disputeId, log);
+  if (d.actions.includes('adjudicate')) {
+    const choice = (await ask('Simulate PayPal\'s decision? b) buyer wins  s) seller wins  n) leave open [b/s/n]: ')).trim().toLowerCase();
+    if (choice === 'b' || choice === 's') {
+      try { await client.sandboxAdjudicate(disputeId, choice === 'b' ? 'BUYER_FAVOR' : 'SELLER_FAVOR'); log('Sandbox simulation: adjudicated.'); }
+      catch (error) { log(`adjudicate failed: ${describe(error)}`); }
+      await showDispute(client, disputeId, log);
+    }
+  }
+  log('Probe finished. Copy everything above and send it (it contains no secrets).');
+}
+
 export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, runId: string = randomUUID(), wait = (ms: number) => new Promise((r) => setTimeout(r, ms))): Promise<void> {
   const startedAt = new Date(Date.now() - 60_000).toISOString();
 
@@ -130,7 +170,10 @@ export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, 
 async function main(): Promise<void> {
   const input = createInterface({ input: process.stdin, output: process.stdout });
   try {
-    await runDisputeProbe(clientFromEnv(), (q) => input.question(q), console.log);
+    const existing = process.argv[2];
+    if (existing && !/^[A-Za-z0-9-]{1,255}$/.test(existing)) throw new Error('Pass a dispute id like PP-R-ABC-12345678');
+    if (existing) await resumeDisputeProbe(clientFromEnv(), (q) => input.question(q), console.log, existing);
+    else await runDisputeProbe(clientFromEnv(), (q) => input.question(q), console.log);
   } catch (error) {
     console.error(describe(error));
     process.exitCode = 1;
