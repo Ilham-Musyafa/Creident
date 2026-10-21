@@ -22,6 +22,25 @@ Sandbox figures (fees, behaviour) are not guaranteed to match production.
 | Authorize before the buyer approved | Rejected: `UNPROCESSABLE_ENTITY` / `ORDER_NOT_APPROVED` |
 | Use a wrong/placeholder authorization id | Rejected: `RESOURCE_NOT_FOUND` / `INVALID_RESOURCE_ID` |
 
+## App client run (`npm run smoke`, 2026-10-21)
+
+Run by the owner on Windows against the Sandbox with the project's own `PayPalClient`
+(the same client the app uses), each money call with its own `PayPal-Request-Id`. No
+secrets recorded.
+
+| Path | Result |
+| --- | --- |
+| Create AUTHORIZE order, buyer approval with a Sandbox Personal account | `PAYER_ACTION_REQUIRED`, then `APPROVED` |
+| Authorize | Authorization `CREATED` |
+| **b)** Capture | `COMPLETED`; fee breakdown gross 10.00, fee 0.64, net 9.36 USD |
+| **b)** Add tracking after capture (`POST /v2/checkout/orders/{id}/track`, carrier `OTHER`, made-up tracking number) | Accepted; tracker id returned (`<captureId>-<trackingNumber>`) |
+| **b)** Full refund | `COMPLETED` |
+| **a)** Void (new order) | Authorization `VOIDED` (confirmed by a read) |
+
+Learned: approving with the Sandbox **Business** account fails ("you are logged in to the
+seller account"); the buyer must use the Personal account. On Windows, run `npm.cmd`
+when PowerShell blocks `npm.ps1`.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).

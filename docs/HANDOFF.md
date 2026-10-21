@@ -82,8 +82,7 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 
 ## Next steps
 
-1. Owner: run `npm run smoke` on Windows for both paths (void; capture + refund) and record
-   the results in `docs/SANDBOX-NOTES.md`.
+1. Done 2026-10-21: owner ran `npm run smoke`, both paths pass (see docs/SANDBOX-NOTES.md).
 2. Done: AI evidence summary wired into review preparation (PR #5). Only the human review
    POST executes RELEASE or REFUND for disputed transactions. The owner still needs to
    define the amount and payment treatment of a pending SPLIT decision.
@@ -130,6 +129,10 @@ Still open:
 
 ## Log
 
+- 2026-10-21 17:25 WIB (Owner + Claude): owner ran `npm run smoke` on Windows. Both paths
+  pass: capture (fee 0.64 on 10.00), tracking accepted with carrier OTHER, refund
+  COMPLETED; void VOIDED. Recorded in docs/SANDBOX-NOTES.md and README section 5.
+  Next: owner label review, live-model eval, app click-through on the real Sandbox.
 - 2026-10-21 17:55 WIB (Claude): README FAQ answers for review items 7-11, 14, 15 (PR #20);
   owner decisions recorded: 1.5% seller fee (docs only), split stays recorded-only, name
   stays HalcyVault for now (decide before the video).
