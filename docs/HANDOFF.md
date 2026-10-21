@@ -135,6 +135,17 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:20 WIB (Codex, C9): added an eleventh labelled demo deal,
+  "Damaged smartwatch (resolved)", with both parties' evidence, a replay-backed
+  recommendation, and a human REFUND decision/reason through the orchestrator;
+  it ends VOIDED because the payment was only authorized. Disputed, under-review,
+  and resolved demo cases record `damaged` on OPEN_DISPUTE. Existing smartwatch
+  replay data suffices; no new replay case was needed. Seed now adds missing
+  examples without replacing existing deals, so earlier demo databases receive
+  the new receipt too. README count updated. `npm test` (125/125), typecheck,
+  and build passed; browser Menu seeding added one missing deal and its receipt
+  displayed the reason, evidence, and verified audit chain without console
+  errors. No dependencies added.
 - 2026-10-21 15:06 WIB (Codex, C8): added GET `/api/audit/:id/export` for all
   demo roles and an "Export CSV" button on each audit log. CSV contains sequence,
   timestamp, actor, type, simulated flag, previous/current hashes, and canonical

@@ -161,8 +161,8 @@ EVAL_K=3
 Then `npm run dev` and open http://localhost:3000. Pick a role in Menu, create a deal as
 the seller, switch to the buyer to accept and pay, back to the seller to add tracking
 `DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Menu > "Load demo deals"
-adds ten labelled sample deals across the main statuses, including a dispute ready for
-the reviewer.
+adds eleven labelled sample deals across the main statuses, including a finished dispute
+with a decision receipt and a dispute ready for the reviewer.
 
 **Option B: PayPal Sandbox.** Create a Sandbox app at developer.paypal.com and set
 `PP_ID`, `PP_SECRET` and `PP_URL=https://api-m.sandbox.paypal.com` in `.env` (leave
