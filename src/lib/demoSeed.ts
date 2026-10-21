@@ -4,12 +4,15 @@
 // Every demo transaction is labelled: item names start with "[Demo]", terms carry
 // `demo: true`, and every PayPal-related audit event carries `simulated: true`.
 
+import { decisionBasis } from './decisionBasis';
 import { randomUUID, createHash } from 'node:crypto';
 import { canonicalJson } from './audit/chain';
 import { applyTrigger, type OrchestratorDeps } from './orchestrator';
 import type { TransactionRepository, StoredTx } from './repository';
 import type { Trigger } from './domain/types';
 import { sendTrackingToPayPal, type TrackingClient } from './paypalTracking';
+import { prepareReview } from './reviewPipeline';
+import type { DisputeTypeId } from './disputeTypes';
 import { addDays, type TimeConfig } from './timeConfig';
 
 type PaymentStub = NonNullable<OrchestratorDeps['paypal']>;
@@ -35,6 +38,8 @@ interface DemoSpec {
   item: string;
   amount: string;
   terms: Record<string, unknown>;
+  disputeType?: DisputeTypeId;
+  decisionReason?: string;
   /** Steps after creation. Strings are shorthand for common steps. */
   steps: Array<Trigger | 'accept' | 'ship-delivered' | 'dispute' | 'miss-deadline' | 'evidence-both'>;
 }
@@ -44,8 +49,9 @@ const SPECS: DemoSpec[] = [
   { item: '[Demo] Wireless earbuds', amount: '35.00', terms: { condition: 'Like new, all ear tips' }, steps: ['accept', { type: 'START_PAYMENT' }] },
   { item: '[Demo] Mechanical keyboard', amount: '40.00', terms: { condition: 'Good, all keys work' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }] },
   { item: '[Demo] Used phone, 128 GB', amount: '120.00', terms: { condition: 'Good, battery 86%', criteria: ['Battery health at least 85%', 'Screen has no cracks'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered'] },
-  { item: '[Demo] Road bike helmet', amount: '28.00', terms: { condition: 'Good, no cracks' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute'] },
-  { item: '[Demo] Smartwatch', amount: '64.00', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both'] },
+  { item: '[Demo] Road bike helmet', disputeType: 'damaged', amount: '28.00', terms: { condition: 'Good, no cracks' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute'] },
+  { item: '[Demo] Smartwatch', disputeType: 'damaged', amount: '64.00', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both'] },
+  { item: '[Demo] Damaged smartwatch (resolved)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Void the authorization for the buyer; no payment was captured.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND' }] },
   { item: '[Demo] Board game set', amount: '22.00', terms: { condition: 'Complete, box worn' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'BUYER_CONFIRM', externalDisputeOpen: false }] },
   { item: '[Demo] Desk lamp', amount: '18.00', terms: { condition: 'Works, base scratched' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'miss-deadline'] },
   { item: '[Demo] Drone with spare battery', amount: '150.00', terms: { condition: 'Good, one prop replaced' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'EXTERNAL_DISPUTE' }] },
@@ -56,18 +62,20 @@ export interface SeedOptions {
   repo: TransactionRepository;
   time: TimeConfig;
   now?: () => string;
-  /** Called for transactions that end in UNDER_REVIEW (e.g. prepareReview). */
+  /** Called whenever a demo enters UNDER_REVIEW, before any seeded human decision. */
   onUnderReview?: (txId: string) => Promise<unknown>;
 }
 
-/** Creates one demo transaction per main status. Does nothing if demo data already exists. */
+/** Adds missing labelled demo cases, preserving previously seeded transactions and audit logs. */
 export async function seedDemoData(options: SeedOptions): Promise<{ created: number; skipped: boolean }> {
   const { repo, time } = options;
-  if (hasDemoData(repo)) return { created: 0, skipped: true };
+  const existingItems = new Set(repo.listTransactions(500).map(tx => tx.item));
+  const missingSpecs = SPECS.filter(spec => !existingItems.has(spec.item));
+  if (!missingSpecs.length) return { created: 0, skipped: true };
   const now = options.now ?? (() => new Date().toISOString());
   let created = 0;
 
-  for (const spec of SPECS) {
+  for (const spec of missingSpecs) {
     const id = randomUUID();
     const terms = { ...spec.terms, demo: true };
     const termsJson = canonicalJson(terms);
@@ -108,7 +116,10 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
           eventPayload: { tracking: 'DEMO-DELIVERED', simulated: true, destinationMatches: true },
         });
       } else if (step === 'dispute') {
-        await run({ type: 'OPEN_DISPUTE', now: now() }, 'buyer', { extras: { evidenceUntil: addDays(now(), time.evidenceDays) } });
+        await run({ type: 'OPEN_DISPUTE', now: now() }, 'buyer', {
+          extras: { evidenceUntil: addDays(now(), time.evidenceDays) },
+          eventPayload: { simulated: true, disputeType: spec.disputeType },
+        });
       } else if (step === 'miss-deadline') {
         // Pretend the ship-by deadline is already over so R1 voids the authorization.
         const loaded = repo.loadTransaction(id)!;
@@ -121,6 +132,14 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         repo.recordEvidence({ txId: id, submittedBy: 'seller', kind: 'note', content: sellerNote, contentHash: hash(sellerNote), ts: now() });
         await run({ type: 'EVIDENCE_COMPLETE' }, 'seller');
         await options.onUnderReview?.(id);
+        if (!repo.loadRecommendation(id)) await prepareReview(id, { repo, now, aiEnv: { AI_MODE: 'replay' } });
+      } else if (step.type === 'DECISION') {
+        if (!spec.decisionReason) throw new Error('Demo decision needs a reason');
+        await run(step, 'reviewer', {
+          extras: { decision: { outcome: step.outcome, reviewerId: 'reviewer', reason: spec.decisionReason } },
+          // Same decision basis the review API records, so the receipt can show it.
+          eventPayload: { simulated: true, reason: spec.decisionReason, outcome: step.outcome, ...decisionBasis(repo.loadTransaction(id)!.termsJson, repo.loadEvidence(id)) },
+        });
       } else {
         const actor = step.type === 'BUYER_CONFIRM' || step.type === 'CANCEL' || step.type === 'START_PAYMENT' || step.type === 'BUYER_APPROVED' ? 'buyer'
           : step.type === 'EXTERNAL_DISPUTE' ? 'paypal' : 'system';

@@ -62,16 +62,10 @@ audit chain verified, no console errors.
 Not verified yet (needs the owner or a public URL): real Sandbox run of the smoke script
 and the JSON routes, real webhook delivery, any live AI provider call.
 
-## Active agent (2026-10-21 09:15 WIB)
+## Active agent
 
-**Codex** works through prompts C6-C10; Claude is inactive meanwhile. Each prompt:
-branch from the latest `origin/main` (never from another task branch), push the branch,
-add a log entry here. Claude reviews, opens and merges the PRs afterwards.
-C6 decisions bound to terms and evidence hashes · C7 signed audit checkpoints ·
-C8 audit CSV export (C6-C8 = owner's "CloneIDE" batch) · C9 decided dispute in the demo
-seed · C10 refreshed README screenshots.
-C1-C5 are merged. `docs/RECONCILIATION.md` (C5) is a proposal only: do not implement it
-without the owner's approval.
+None right now (2026-10-21 15:55 WIB). Codex C1-C10 are merged. `docs/RECONCILIATION.md`
+is a proposal only: do not implement it without the owner's approval.
 
 ## How to run
 
@@ -135,6 +129,71 @@ Still open:
 
 ## Log
 
+- 2026-10-21 15:55 WIB (Claude): reviewed and merged Codex C6-C10 (decision hashes, signed
+  audit checkpoints, audit CSV export, seeded resolved dispute, README screenshots).
+  Resolved import conflicts between C6 and C8. Fixed: seeded decision now records
+  termsHash/evidenceDigest like the review API; status pill no longer wraps in page
+  headers; audit list hides per-deal checkpoint lines when no checkpoint exists. Retook
+  docs/ui/screens at phone viewport. 152 tests, typecheck, build; Chromium check of
+  receipt, audit, CSV export, fairness, no console errors. No checkpoint has been
+  published yet: the owner runs `npm run checkpoint -- --generate-key` once, keeps the
+  private key in .env, then `npm run checkpoint`.
+- 2026-10-21 15:26 WIB (Codex, C10): captured 11 current-app PNGs under
+  `docs/ui/screens/` using production Chromium automation, `PAYPAL_MODE=simulated`,
+  replay AI, and a fresh temp SQLite database seeded through Menu. Nine light
+  mobile images are exactly 390x844; dark buyer-home/reviewer-review images are
+  1440x900. Covered deals, Phone checklist, completed detail, damaged-dispute
+  guidance, review, decision receipt, audit, and fairness. Latest main did not
+  yet include C9, so the guidance/receipt states were prepared through the demo
+  dispute and reviewer UI. Only synthetic data is shown. Replaced README's old
+  image reference and added the Screens link table. Production build passed;
+  all PNG dimensions, links, sizes (50-129 KiB each, 738 KiB total), and console
+  checks passed. No code or package changes; browser automation was not added
+  as a dependency.
+- 2026-10-21 15:20 WIB (Codex, C9): added an eleventh labelled demo deal,
+  "Damaged smartwatch (resolved)", with both parties' evidence, a replay-backed
+  recommendation, and a human REFUND decision/reason through the orchestrator;
+  it ends VOIDED because the payment was only authorized. Disputed, under-review,
+  and resolved demo cases record `damaged` on OPEN_DISPUTE. Existing smartwatch
+  replay data suffices; no new replay case was needed. Seed now adds missing
+  examples without replacing existing deals, so earlier demo databases receive
+  the new receipt too. README count updated. `npm test` (125/125), typecheck,
+  and build passed; browser Menu seeding added one missing deal and its receipt
+  displayed the reason, evidence, and verified audit chain without console
+  errors. No dependencies added.
+- 2026-10-21 15:06 WIB (Codex, C8): added GET `/api/audit/:id/export` for all
+  demo roles and an "Export CSV" button on each audit log. CSV contains sequence,
+  timestamp, actor, type, simulated flag, previous/current hashes, and canonical
+  JSON payload. Fields are quoted with doubled quotes and CRLF record endings;
+  formula prefixes (including after whitespace) get a leading single quote.
+  Export does not mutate stored events or their hashes. Tests cover escaping,
+  formula injection, all roles, event row counts, headers, and invalid/unknown
+  IDs (400/404). `npm test` (137/137), typecheck, and build passed. Production
+  browser download checked at 360px: correct filename/header, no overflow or
+  console errors. No dependencies added.
+- 2026-10-21 15:00 WIB (Codex, C7): added `npm run checkpoint` to verify all
+  audit chains in one SQLite snapshot and sign canonical head manifests with
+  Ed25519 using only `AUDIT_SIGNING_KEY` from the environment. The explicit
+  `--generate-key` command prints a pair once and writes only the public key;
+  the committed bootstrap public key has no retained private half and must be
+  replaced locally before first use. Verifier detects unchanged, extended,
+  rewritten, missing, and newly uncheckpointed deals; `/audit` shows checkpoint
+  results or a plain missing/invalid-file message. README and DESIGN explain
+  publishing and the need to retain an independent trusted checkpoint/key.
+  No operational private key or checkpoint was committed. Tests generate
+  throwaway keys and cover tampering, wrong keys, CLI output, and refusal to
+  sign broken chains. `npm test` (128/128), typecheck, and build passed; final
+  build has no tracing warnings. Production `/audit` checked at 360/1440px in
+  light/dark: no overflow or browser console errors. No dependencies added.
+- 2026-10-21 09:14 WIB (Codex, C6): bound recommendation and human decision audit
+  events to canonical `termsHash` and an ordered `evidenceDigest` (evidence IDs,
+  parties, kinds, and SHA-256 content hashes). RELEASE, REFUND, and SPLIT record
+  current hashes and flag evidence changed since the recommendation. The decision
+  receipt shows both full recorded hashes and compares them with current data;
+  older receipts without hashes say "Not recorded". Added digest unit tests and
+  route/receipt tests for all outcomes, including evidence changes before a
+  decision and terms/evidence changes afterwards. `npm test` (131/131),
+  `npm run typecheck`, and `npm run build` passed. No dependencies added.
 - 2026-10-21 06:29 WIB (Codex, C5): wrote `docs/RECONCILIATION.md`, a
   documentation-only proposal for resolving PayPal actions left pending after a
   crash. It maps read-only checks for orders, authorizations, captures, voids,

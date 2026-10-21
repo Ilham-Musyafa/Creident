@@ -185,6 +185,38 @@ amount and payment treatment are not yet defined by the owner.
   is detectable. Honest limit: the operator holds the database and the PayPal keys.
 - Store PayPal `debug_id` and request ids in the payload of related events.
 
+Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
+
+- `npm run checkpoint` uses `node:crypto` Ed25519 and `AUDIT_SIGNING_KEY` (private
+  PEM from environment, loaded from `.env` by the script runner). It verifies all
+  transaction chains from one SQLite read snapshot before writing
+  `audit-checkpoints/<UTC timestamp>.json`. Broken chains produce no checkpoint.
+- The signed payload is canonical JSON of `{createdAt, transactions}`; transactions
+  are ordered by ID and contain `{txId, length, headHash}`. The document adds a base64
+  `signature` field outside that payload. No private material is written or logged
+  during checkpoint creation. The only intentional private-key display is the
+  owner's explicit local `--generate-key` command.
+- `npm run checkpoint -- --generate-key` prints a new pair once and writes only the
+  public key to `audit-checkpoints/public-key.pem`. Store the private PEM in `.env`
+  only. The initial committed public key is a bootstrap with its private half
+  discarded. Generation can replace it before the first JSON checkpoint, and refuses
+  rotation afterwards so earlier checkpoints are not silently invalidated.
+- Publish the public key and timestamped JSON through a reviewed repository commit
+  or another independent channel. The script creates files; it does not push them.
+  A verifier needs its own trusted copy of the public key and published checkpoint.
+- `verifyCheckpoint()` validates document shape and Ed25519 signature before
+  comparing every recorded entry with a verified current chain. Equal length/head
+  means unchanged; a longer chain retaining the old head at the original position
+  means extended; a broken, shorter, missing, or replaced chain means rewritten.
+  Deals created after the checkpoint are reported as not checkpointed. Empty chains
+  use the genesis hash. `/audit` displays the latest verified checkpoint time and
+  per-deal results; missing checkpoint/key and invalid signatures are explicit.
+- This makes rewriting detectable by anyone holding the published checkpoint and
+  trusted public key; it does not make rewriting impossible. The operator can still
+  rewrite the database and replace server-local files, or sign a later replacement.
+  Previously retained checkpoints remain the independent comparison point.
+
+
 ## 8. Data model (draft)
 
 - `users` (id, role: buyer|seller|reviewer, display name) — demo accounts only.

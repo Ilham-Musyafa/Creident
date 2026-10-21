@@ -1,3 +1,4 @@
+import { decisionBasis } from '../../../../lib/decisionBasis';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill } from '../../../../components/ui';
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
@@ -32,6 +33,11 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
   const decisionEvent = [...events].reverse().find((e) => e.type === 'DECISION' || e.type === 'HUMAN_SPLIT_PENDING');
   const rec = ctx.repo.loadRecommendation(id);
   const evidence = ctx.repo.loadEvidence(id);
+  const currentBasis = decisionBasis(tx.termsJson, evidence);
+  const recordedTermsHash = decisionEvent?.payload.termsHash;
+  const recordedEvidenceDigest = decisionEvent?.payload.evidenceDigest;
+  const verification = (recorded: unknown, current: string) => typeof recorded === 'string'
+    ? recorded === current ? 'Matches' : 'Changed since decision' : 'Not recorded';
   const chain = verifyChain(events);
   const moneyStep = decisionEvent ? MONEY_STEP[String(decisionEvent.payload.effect ?? '')] : undefined;
 
@@ -63,7 +69,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
             </div>
 
             <div>
-              <SectionTitle>Evidence considered ({evidence.length})</SectionTitle>
+              <SectionTitle>Current evidence ({evidence.length})</SectionTitle>
               <div className="space-y-2">
                 {evidence.map((e, i) => (
                   <Card key={e.id}>
@@ -79,7 +85,12 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
           <aside className="space-y-3">
             <SectionTitle>On the record</SectionTitle>
             <KeyValue items={[
-              { label: 'Terms hash', value: <span className="font-mono text-xs">{shortHash(tx.termsHash ?? '', 6)}</span> },
+              { label: 'Terms hash at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedTermsHash === 'string' ? recordedTermsHash : 'Not recorded'}</span> },
+              { label: 'Current terms', value: verification(recordedTermsHash, currentBasis.termsHash) },
+              { label: 'Evidence digest at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedEvidenceDigest === 'string' ? recordedEvidenceDigest : 'Not recorded'}</span> },
+              { label: 'Current evidence', value: verification(recordedEvidenceDigest, currentBasis.evidenceDigest) },
+              ...(decisionEvent?.payload.evidenceChangedSinceRecommendation === true
+                ? [{ label: 'Evidence since recommendation', value: 'Changed before decision' }] : []),
               { label: 'Decision event', value: decisionEvent ? `#${decisionEvent.seq}` : '—' },
               { label: 'Event hash', value: <span className="font-mono text-xs">{decisionEvent ? shortHash(decisionEvent.hash, 6) : '—'}</span> },
               { label: 'Audit chain', value: chain.ok ? `Verified, ${events.length} events` : 'Verification failed' },

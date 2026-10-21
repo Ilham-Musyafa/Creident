@@ -1,3 +1,4 @@
+import type { DecisionBasis } from './decisionBasis';
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { appendEvent, type AuditEvent, type AuditEventInput } from './audit/chain';
@@ -271,7 +272,7 @@ export class TransactionRepository {
     };
   }
 
-  saveRecommendation(txId: string, aiSummary: AiSummary | null, decision: RuleDecision, ts: string): StoredRecommendation {
+  saveRecommendation(txId: string, aiSummary: AiSummary | null, decision: RuleDecision, ts: string, basis: DecisionBasis): StoredRecommendation {
     return transaction(this.db, () => {
       const existing = this.loadRecommendation(txId);
       if (existing) return existing;
@@ -288,7 +289,7 @@ export class TransactionRepository {
         txId, ts, actor: 'system', type: 'RECOMMENDATION_RECORDED',
         payload: {
           ruleId: decision.rule, action: decision.action, reasons: decision.reasons,
-          requiresHuman: decision.requiresHuman, aiSummary,
+          requiresHuman: decision.requiresHuman, aiSummary, ...basis,
         },
       });
       return this.loadRecommendation(txId)!;
@@ -309,7 +310,7 @@ export class TransactionRepository {
       AND rule_id = 'HUMAN_REVIEW' AND outcome = 'SPLIT' LIMIT 1`).get(txId);
   }
 
-  recordPendingSplit(txId: string, reviewerId: string, reason: string, ts: string): void {
+  recordPendingSplit(txId: string, reviewerId: string, reason: string, ts: string, basis: DecisionBasis & { evidenceChangedSinceRecommendation?: boolean }): void {
     transaction(this.db, () => {
       if (this.hasPendingSplit(txId)) return;
       const tx = this.loadTransaction(txId);
@@ -321,7 +322,7 @@ export class TransactionRepository {
       );
       this.appendInTransaction({
         txId, ts, actor: reviewerId, type: 'HUMAN_SPLIT_PENDING',
-        payload: { reason, fundsMoved: false },
+        payload: { reason, fundsMoved: false, ...basis },
       });
     });
   }

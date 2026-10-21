@@ -1,3 +1,5 @@
+import { decisionBasis } from '../../../lib/decisionBasis';
+import { auditCsv } from '../../../lib/audit/csv';
 import { createHash, randomUUID } from 'node:crypto';
 import { canonicalJson, verifyChain } from '../../../lib/audit/chain';
 import { mockShipment } from '../../../lib/mockCourier';
@@ -219,16 +221,24 @@ export function review(request: Request, id: string): Promise<Response> {
     const context = getApiContext();
     const tx = requireTx(context, id);
     if (tx.status === 'UNDER_REVIEW') await prepareReview(id, context);
+    const basis = decisionBasis(requireTx(context, id).termsJson, context.repo.loadEvidence(id));
+    const recommendationEvent = context.repo.readEvents(id).find((event) => event.type === 'RECOMMENDATION_RECORDED');
+    const decisionPayload = {
+      ...basis,
+      ...(typeof recommendationEvent?.payload.evidenceDigest === 'string' &&
+        recommendationEvent.payload.evidenceDigest !== basis.evidenceDigest
+        ? { evidenceChangedSinceRecommendation: true } : {}),
+    };
     if (body.outcome === 'SPLIT') {
       if (tx.status !== 'UNDER_REVIEW') throw new HttpError(409, 'INVALID_STATE', 'Split requires human review');
-      context.repo.recordPendingSplit(id, 'reviewer', reason, context.now());
+      context.repo.recordPendingSplit(id, 'reviewer', reason, context.now(), decisionPayload);
       return json({ transaction: context.repo.loadTransaction(id), pendingSplit: true });
     }
     if (context.repo.hasPendingSplit(id)) throw new HttpError(409, 'SPLIT_PENDING', 'A pending split must be resolved before another decision');
     const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome },
       deps(context, role, true, {
         extras: { decision: { outcome: body.outcome, reviewerId: 'reviewer', reason } },
-        eventPayload: { reason, outcome: body.outcome },
+        eventPayload: { reason, outcome: body.outcome, ...decisionPayload },
       })));
     const tracking = await afterCapture(context, result.tx, role);
     return json({ transaction: result.tx, paypalTracking: tracking });
@@ -253,6 +263,22 @@ export function auditLog(request: Request, id: string): Promise<Response> {
     requireTx(context, id);
     const events = context.repo.readEvents(id);
     return json({ txId: id, events, verification: verifyChain(events) });
+  });
+}
+
+export function exportAudit(request: Request, id: string): Promise<Response> {
+  return route(() => {
+    requireRole(request, ['buyer', 'seller', 'reviewer']);
+    const context = getApiContext();
+    requireTx(context, id);
+    return new Response(auditCsv(context.repo.readEvents(id)), {
+      headers: {
+        'content-type': 'text/csv; charset=utf-8',
+        'content-disposition': `attachment; filename="audit-${id}.csv"`,
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+      },
+    });
   });
 }
 

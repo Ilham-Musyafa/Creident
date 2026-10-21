@@ -30,7 +30,7 @@ export function PageHeader({ title, back, subtitle, right }: { title: string; ba
         <h1 className="text-xl font-extrabold tracking-tight text-heading">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
-      {right}
+      {right && <div className="shrink-0">{right}</div>}
     </header>
   );
 }
