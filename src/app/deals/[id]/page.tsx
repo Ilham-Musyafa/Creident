@@ -60,6 +60,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <KeyValue items={[
             ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
             { label: 'Condition', value: String(terms.condition ?? '—') },
+            ...(Array.isArray(terms.includedItems) ? [{ label: 'Included items', value: terms.includedItems.filter((item): item is string => typeof item === 'string').join(', ') }] : []),
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
             { label: 'Terms hash', value: <span className="font-mono text-xs">{shortHash(tx.termsHash, 6)}</span> },

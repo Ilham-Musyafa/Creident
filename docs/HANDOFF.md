@@ -71,7 +71,8 @@ Owner approved the AI assist features (DESIGN 6.1) and asked for two agents in p
 one task at a time each. Keep to your own files; put new UI in new component files rather
 than growing `src/components/client.tsx`; shared helper `src/lib/ai/assist.ts` changes
 only with a note here.
-- **Codex:** C16 terms assistant -> C17 evidence completeness -> C18 reviewer copilot.
+- **Codex:** C16 implemented on `feat/c16-terms-assistant`, awaiting Claude review;
+  next assigned areas are C17 evidence completeness and C18 reviewer copilot.
   Files: `src/lib/ai/terms*`, `src/lib/ai/evidenceCheck*`, `src/lib/ai/copilot*`, the
   new-deal flow, evidence forms, review page.
 - **Claude:** #4 outbound drafts (`src/lib/ai/drafts*`, PayPal dispute panel, courier claim
@@ -144,6 +145,38 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 01:31 WIB (Codex, C16): implemented the terms assistant using
+  `runAssist` feature `terms`, promptVersion `terms-v1`. Seller-only POST
+  `/api/ai/terms-draft` accepts only `text` (1-4,000 characters after nonempty
+  validation), returns draft/meta/injection warning and an authenticated receipt,
+  and creates no deal. Exact four-field schema: item <=200, condition <=120,
+  1-12 included items <=60 each, 1-12 photo criteria <=120 each; aggregate JSON
+  <=3,000 UTF-8 bytes keeps receipts/submissions within existing request limits.
+  Rejects price/currency/URL/contact patterns and detected speaker/common personal
+  name forms; this content screening is conservative heuristics, not a complete
+  entity recognizer. Human checking is still required. Two synthetic phone/camera
+  replay samples are available without keys; unmatched replay text falls back to
+  manual entry. Invalid output/provider errors also keep the manual path usable.
+  New TermsAssistant/NewDealForm/TermsChecklist components provide preview,
+  explicit use/edit, manual-field restoration (price kept), and buyer-visible
+  included items/checks before acceptance. Moved the old form out of client.tsx.
+  Creation verifies the stateless HMAC receipt and compares submitted item/terms
+  against its original fields; TRANSACTION_CREATED payload records feature, mode,
+  model, promptVersion, promptHash, outputHash, accepted unchanged/edited and the
+  input-injection flag directly. Price is manual and excluded from the comparison.
+  Neither pasted source nor receipt is persisted/logged. Receipts last two hours;
+  the signing key lives only in server-process memory, so restart/multiple workers
+  require regeneration or manual entry (local demo scope, no new env/key file).
+  Buyer acceptance/locking, rules and PayPal calls are unchanged. No dependencies.
+  `npm test` 278/278 (33 files), typecheck, build and diff check passed. Production
+  Chromium, fresh temp DB/replay mode: 390/1440px light/dark, both samples, preview
+  before apply, unchanged/edited audit, buyer checklist, no price autofill,
+  manual fallback/restoration and visible injection warning: no overflow or console
+  errors/warnings. Signing code was absent from client chunks. Real live-provider
+  call remains pending. Claude's drafts*, PayPal dispute panel and shared assist.ts
+  were untouched. PR creation remains blocked by GitHub API proxy 403; prepared
+  English description: `/tmp/c16-pr-description.md`. Branch is for review, no merge.
 
 - 2026-10-22 01:15 WIB (Claude): owner approved AI assist features 1-5 (DESIGN 6.1).
   Added the shared guard-rail helper `src/lib/ai/assist.ts` (+ tests) and the work split.

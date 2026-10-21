@@ -1,3 +1,4 @@
+import { TermsChecklist } from '../../../../components/TermsChecklist';
 import { notFound } from 'next/navigation';
 import { StatusPill } from '../../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
@@ -36,6 +37,8 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2"><StatusPill status={tx.status}/>{tx.termsHash && <span className="font-mono text-xs text-muted">terms {shortHash(tx.termsHash)}</span>}</div>
         </Card>
+
+        <TermsChecklist terms={terms}/>
 
         <SectionTitle>How it works</SectionTitle>
         <ol className="space-y-3">
