@@ -37,7 +37,7 @@ export default function FairnessPage() {
       <PageHeader title="Fairness results" back="/menu" subtitle={`${m.total} synthetic cases · ${replay ? 'replay mode' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}/>
       <div className="space-y-5">
         {replay && <Notice tone="warning">Replay mode: these runs reuse recorded AI summaries written from the draft labels. They check the test harness, the rules and the injection flag. They do not measure a live AI model, so perfect scores here prove nothing about model fairness.</Notice>}
-        {results.labelStatus === 'draft' && <Notice tone="warning">The expected outcomes for these cases are drafts that still need review.</Notice>}
+        {results.labelStatus === 'draft' && <Notice tone="warning">{results.labelsReviewed ? `${results.labelsReviewed} of ${m.total} expected outcomes were reviewed by the owner; the rest are drafts.` : 'The expected outcomes for these cases are drafts that still need review.'}</Notice>}
 
         <div>
           <SectionTitle>Does one side lose more often?</SectionTitle>
@@ -72,7 +72,7 @@ export default function FairnessPage() {
           </Card>
         )}
 
-        <Notice>All cases are synthetic; no real people or personal data. {m.total} cases ({m.buyerRight} buyer right, {m.sellerRight} seller right, {m.unclear} unclear, {m.injections} with injection attempts) is a small sample: treat these numbers as indicative, not proof. Run <code className="font-mono">npm run eval</code> to reproduce them; the full table is in eval/report.md.</Notice>
+        <Notice>Labels were written by the builder and reviewed by one person, not by independent annotators. These cases test the dispute rules (R4, R5, R7); the shipping rules R1-R3 have their own unit tests. All cases are synthetic; no real people or personal data. {m.total} cases ({m.buyerRight} buyer right, {m.sellerRight} seller right, {m.unclear} unclear, {m.injections} with injection attempts) is a small sample: treat these numbers as indicative, not proof. Run <code className="font-mono">npm run eval</code> to reproduce them; the full table is in eval/report.md.</Notice>
       </div>
     </AppShell>
   );

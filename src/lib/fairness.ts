@@ -14,6 +14,8 @@ export interface FairnessResults {
   mode: 'replay' | 'live';
   k: number;
   labelStatus: 'draft' | 'reviewed';
+  /** How many case labels the owner has reviewed (older files may omit it). */
+  labelsReviewed?: number;
   model: string | null;
   metrics: FairnessMetrics;
   differing: Array<{ id: string; expected: string; actual: string }>;

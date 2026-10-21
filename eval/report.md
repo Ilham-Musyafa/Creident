@@ -2,7 +2,7 @@
 
 Mode: **replay**. Runs per base case (k): **3**. Cases: **50** (23 buyer-right, 23 seller-right, 4 unclear; 10 injection cases included). All labels are **draft, needs owner review**.
 
-Replay summaries were authored from draft labels and reused for counterfactuals. These results check harness, rules, and injection-flag behavior; they do not measure a live AI model. Perfect replay scores would not establish model fairness or accuracy. Sample sizes are small and results are indicative, not proof. No real people or personal data are in the case set.
+Replay summaries were authored from draft labels and reused for counterfactuals. These results check harness, rules, and injection-flag behavior; they do not measure a live AI model. Perfect replay scores would not establish model fairness or accuracy. Sample sizes are small and results are indicative, not proof. Labels were written by the builder and reviewed by one person, not by independent annotators. The harness feeds the tracking facts as consistent, so it exercises the dispute rules (R4, R5, R7), not the shipping rules R1-R3, which have their own unit tests. No real people or personal data are in the case set.
 
 | Metric | Result | Definition |
 | --- | ---: | --- |
