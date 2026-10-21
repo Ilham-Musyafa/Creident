@@ -129,6 +129,12 @@ Still open:
 
 ## Log
 
+- 2026-10-21 21:45 WIB (Claude, owner asked to try Disputes API): branch
+  `feat/disputes-probe`. PayPalClient gains listDisputes, getDispute, provideEvidence
+  (multipart PDF or JSON), sendDisputeMessage, and Sandbox-only sandboxRequireEvidence /
+  sandboxAdjudicate (refuse non-Sandbox hosts). `src/lib/evidencePdf.ts` builds a one-page
+  PDF without a library. `npm run dispute-probe` (owner-run): capture, buyer opens dispute
+  by hand, list/show, send evidence, adjudicate. App integration waits for the probe result.
 - 2026-10-21 17:25 WIB (Owner + Claude): owner ran `npm run smoke` on Windows. Both paths
   pass: capture (fee 0.64 on 10.00), tracking accepted with carrier OTHER, refund
   COMPLETED; void VOIDED. Recorded in docs/SANDBOX-NOTES.md and README section 5.

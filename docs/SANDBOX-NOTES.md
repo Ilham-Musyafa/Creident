@@ -41,6 +41,15 @@ Learned: approving with the Sandbox **Business** account fails ("you are logged 
 seller account"); the buyer must use the Personal account. On Windows, run `npm.cmd`
 when PowerShell blocks `npm.ps1`.
 
+## Disputes API probe (`npm run dispute-probe`, pending owner run)
+
+Docs (checked 2026-10-21): creating a dispute through the API needs the `DISPUTE_CREATE`
+scope from a PayPal account manager, so the buyer opens it by hand in the Sandbox
+Resolution Center. Merchant calls (list, show, provide-evidence, send-message) and the
+Sandbox-only simulations `require-evidence` and `adjudicate` should work with the app's own
+token. The docs disagree on the provide-evidence body (multipart file vs JSON); the probe
+tries a PDF as multipart first, then JSON notes, and prints which one PayPal accepted.
+
 ## Fees seen in the Sandbox (10.00 USD sale)
 
 - Capture: gross 10.00, PayPal fee 0.64, net 9.36 (`seller_receivable_breakdown`).

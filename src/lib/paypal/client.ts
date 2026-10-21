@@ -52,6 +52,8 @@ export function requestIdFor(txId: string, action: string, attempt = 1): string 
 
 interface RequestOptions {
   body?: unknown;
+  /** Multipart body (the browser-style FormData sets its own Content-Type). */
+  form?: FormData;
   requestId?: string;
 }
 
@@ -87,12 +89,13 @@ export class PayPalClient {
 
   private async request(method: string, path: string, opts: RequestOptions = {}): Promise<Json | undefined> {
     const token = await this.accessToken();
-    const headers: Record<string, string> = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+    const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+    if (!opts.form) headers['Content-Type'] = 'application/json';
     if (opts.requestId) headers['PayPal-Request-Id'] = opts.requestId;
     const res = await this.fetchImpl(`${this.config.baseUrl}${path}`, {
       method,
       headers,
-      body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
+      body: opts.form ?? (opts.body === undefined ? undefined : JSON.stringify(opts.body)),
     });
     const data = (await parseBody(res)) as Json | undefined;
     if (!res.ok) {
@@ -185,6 +188,76 @@ export class PayPalClient {
     const trackers: Json[] = data?.purchase_units?.[0]?.shipping?.trackers ?? [];
     const tracker = trackers.find((t) => String(t.id ?? '').endsWith(args.trackingNumber)) ?? trackers.at(-1);
     return { trackerId: tracker?.id ? String(tracker.id) : `${args.captureId}-${args.trackingNumber}` };
+  }
+
+  // ---- Disputes (Customer Disputes API v1). Merchant-side calls plus two Sandbox-only simulations.
+
+  /** Disputes on this merchant account, optionally for one transaction (capture id). */
+  async listDisputes(filter: { disputedTransactionId?: string; startTime?: string } = {}) {
+    const q = new URLSearchParams();
+    if (filter.disputedTransactionId) q.set('disputed_transaction_id', filter.disputedTransactionId);
+    if (filter.startTime) q.set('start_time', filter.startTime);
+    const data = await this.request('GET', `/v1/customer/disputes${q.size ? `?${q}` : ''}`);
+    const items: Json[] = data?.items ?? [];
+    return items.map((d) => ({
+      id: String(d.dispute_id), reason: String(d.reason ?? ''), status: String(d.status ?? ''),
+      stage: d.dispute_life_cycle_stage ? String(d.dispute_life_cycle_stage) : undefined,
+      amount: toMoney(d.dispute_amount), createdAt: d.create_time ? String(d.create_time) : undefined,
+    }));
+  }
+
+  /** One dispute with the actions PayPal currently allows (HATEOAS link rels). */
+  async getDispute(disputeId: string) {
+    const d = await this.request('GET', `/v1/customer/disputes/${encodeURIComponent(disputeId)}`);
+    const tx: Json[] = d?.disputed_transactions ?? [];
+    return {
+      id: String(d?.dispute_id), reason: String(d?.reason ?? ''), status: String(d?.status ?? ''),
+      stage: d?.dispute_life_cycle_stage ? String(d.dispute_life_cycle_stage) : undefined,
+      outcome: d?.dispute_outcome?.outcome_code ? String(d.dispute_outcome.outcome_code) : undefined,
+      sellerTransactionIds: tx.map((t) => String(t.seller_transaction_id ?? '')).filter(Boolean),
+      actions: ((d?.links ?? []) as Json[]).map((l) => String(l.rel)).filter((rel) => rel !== 'self'),
+    };
+  }
+
+  /**
+   * Send the merchant's evidence. PayPal documents both a multipart body (a JSON "input" part plus
+   * an "evidence-file") and a JSON body; this sends multipart when a file is given, else JSON.
+   */
+  async provideEvidence(disputeId: string, evidence: { notes: string; trackingNumber?: string; carrierName?: string; file?: { name: string; type: string; content: Uint8Array } }) {
+    const input = {
+      evidences: [{
+        evidence_type: 'PROOF_OF_FULFILLMENT',
+        ...(evidence.trackingNumber ? { evidence_info: { tracking_info: [{ carrier_name: 'OTHER', carrier_name_other: evidence.carrierName ?? 'Other', tracking_number: evidence.trackingNumber }] } } : {}),
+        notes: evidence.notes,
+      }],
+    };
+    const path = `/v1/customer/disputes/${encodeURIComponent(disputeId)}/provide-evidence`;
+    if (!evidence.file) return this.request('POST', path, { body: input });
+    const form = new FormData();
+    form.append('input', new Blob([JSON.stringify(input)], { type: 'application/json' }));
+    form.append('evidence-file', new Blob([new Uint8Array(evidence.file.content)], { type: evidence.file.type }), evidence.file.name);
+    return this.request('POST', path, { form });
+  }
+
+  /** Message to the buyer on the dispute (available in the inquiry stage). */
+  async sendDisputeMessage(disputeId: string, message: string) {
+    return this.request('POST', `/v1/customer/disputes/${encodeURIComponent(disputeId)}/send-message`, { body: { message } });
+  }
+
+  /** Sandbox only: move a dispute to waiting for seller (or buyer) evidence. */
+  async sandboxRequireEvidence(disputeId: string, action: 'SELLER_EVIDENCE' | 'BUYER_EVIDENCE') {
+    this.assertSandbox();
+    return this.request('POST', `/v1/customer/disputes/${encodeURIComponent(disputeId)}/require-evidence`, { body: { action } });
+  }
+
+  /** Sandbox only: settle a dispute in the buyer's or the seller's favour. */
+  async sandboxAdjudicate(disputeId: string, outcome: 'BUYER_FAVOR' | 'SELLER_FAVOR') {
+    this.assertSandbox();
+    return this.request('POST', `/v1/customer/disputes/${encodeURIComponent(disputeId)}/adjudicate`, { body: { adjudication_outcome: outcome } });
+  }
+
+  private assertSandbox(): void {
+    if (!this.config.baseUrl.startsWith('https://api-m.sandbox.paypal.com')) throw new Error('This simulation exists only in the PayPal Sandbox');
   }
 
   /** Capture details including the fee breakdown (seen in the Sandbox: 10.00 gross, 0.64 fee, 9.36 net). */

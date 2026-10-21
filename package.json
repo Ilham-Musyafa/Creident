@@ -15,7 +15,8 @@
     "start": "next start",
     "smoke": "node --experimental-transform-types --env-file=.env scripts/sandbox-smoke.ts",
     "checkpoint": "node --env-file-if-exists=.env --experimental-strip-types scripts/checkpoint.ts",
-    "labels:apply": "node --experimental-strip-types scripts/apply-label-review.ts"
+    "labels:apply": "node --experimental-strip-types scripts/apply-label-review.ts",
+    "dispute-probe": "node --experimental-transform-types --env-file=.env scripts/dispute-probe.ts"
   },
   "dependencies": {
     "next": "16.4.2",
