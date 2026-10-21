@@ -155,6 +155,18 @@ Still open:
   Branch: `docs/c12-accuracy-pass`. Complete English PR description prepared at
   `/tmp/c12-pr-description.md`; GitHub API access is blocked by the environment
   proxy (403), so PR creation needs API access or a manual action by the owner/Claude.
+- 2026-10-21 22:39 WIB (Codex, owner-requested Home/Menu polish): branch
+  `codex/home-menu-polish` from latest main. Replaced the empty Home's zero-value
+  hero/stats and empty list with a role-aware getting-started card. Kept New deal
+  as the primary page action, made desktop New navigation neutral, shortened the
+  action-empty message, and condensed Sandbox details into a badge and Limitations
+  link. Menu groups demo controls/data into one divided settings card and separates
+  About & transparency links; selected segments use an explicit token border.
+  Existing colors, font, mobile navigation, APIs and business logic retained.
+  No dependencies added. `npm test` (195/195), typecheck and build passed.
+  Production Chromium checked Home/Menu empty and seeded at 360/1440px in both
+  themes (16 combinations), demo loading, role and appearance switching: no
+  horizontal overflow or console errors/warnings. Updated UI guide to match.
 
 - 2026-10-21 22:45 WIB (Claude): reviewed Codex C11. Merged `main` (R5) into the branch;
   only HANDOFF conflicted. Tests 195/195, typecheck and build pass. Browser check in

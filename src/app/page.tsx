@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { verifyChain } from '../lib/audit/chain';
-import { AmountCard, DealListItem, StatusPill } from '../components/ui';
-import { AppShell, Card, EmptyState, Notice, SectionTitle } from '../components/layout';
+import { AmountCard, ButtonLink, DealListItem, StatusPill } from '../components/ui';
+import { AppShell, Card, SectionTitle } from '../components/layout';
 import { SeedButton } from '../components/client';
 import { isActive, isReserved, money, nextAction, timeLeft } from '../components/view';
 import { data, getRole, simulatedPayPal } from './_server';
@@ -40,33 +40,40 @@ export default async function HomePage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0">
-          <AmountCard
+          {deals.length === 0 ? (
+            <Card className="p-6 lg:p-8">
+              <p className="text-xs font-semibold text-muted">Get started</p>
+              <h2 className="mt-3 text-xl font-extrabold tracking-tight text-heading">{role === 'seller' ? 'Create your first deal' : role === 'reviewer' ? 'Your review queue starts here' : 'Your deals start here'}</h2>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">{role === 'seller' ? 'Agree on the terms, track delivery, and keep a record of every step.' : 'Explore labelled demo deals to see payments, delivery, and dispute review in action.'}</p>
+              <div className="mt-6 space-y-3">
+                {role === 'seller' && <ButtonLink href="/deals/new">+ New deal</ButtonLink>}
+                <SeedButton role={role}/>
+              </div>
+              <p className="mt-3 text-xs text-muted">Demo deals use simulated PayPal payments.</p>
+            </Card>
+          ) : <AmountCard
+            label="Payments authorized · not yet captured"
             amount={money(reserved)}
             stats={[{ label: 'Active', value: String(active) }, { label: 'In dispute', value: String(inDispute) }, { label: 'Completed', value: String(completed) }]}
             {...(role === 'seller' ? { actionHref: '/deals/new', actionLabel: '+ New deal' }
               : role === 'reviewer' ? { actionHref: '/deals?filter=review', actionLabel: `Review queue (${reviewQueue.length})` }
               : { actionHref: '/deals', actionLabel: 'View my deals' })}
-          />
+          />}
 
+          {shown.length > 0 && <>
           <SectionTitle right={<Link href="/deals" className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-heading underline-offset-4 hover:underline">See all</Link>}>
             {role === 'reviewer' && reviewQueue.length ? 'Waiting for review' : 'Recent deals'}
           </SectionTitle>
-          {shown.length === 0 ? (
-            <EmptyState title="No deals yet">
-              <p className="mb-4">Load labelled demo deals (simulated PayPal) to see every status, or create a new deal as the seller.</p>
-              <SeedButton role={role}/>
-            </EmptyState>
-          ) : (
             <div className="space-y-2">
               {shown.map((d) => <DealListItem key={d.id} href={`/deals/${d.id}`} title={d.item} amount={money(d.amount)} status={d.status}/>)}
             </div>
-          )}
+          </>}
         </div>
 
         <aside className="min-w-0 space-y-4">
           <div>
-            <SectionTitle>Needs your action</SectionTitle>
-            {todo.length === 0 ? <Notice>Nothing waiting for the demo {role}. Switch role in Menu to act as another party.</Notice> : (
+            <SectionTitle>Needs your action{todo.length > 0 ? ` (${todo.length})` : ''}</SectionTitle>
+            {todo.length === 0 ? <p className="text-sm leading-relaxed text-muted">You’re all caught up.<br/><Link href="/menu" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Switch demo role →</Link></p> : (
               <ul className="space-y-2">
                 {todo.map(({ d, action }) => {
                   const left = d.status === 'AUTHORIZED' ? timeLeft(d.shipBy, now) : d.status === 'IN_INSPECTION' ? timeLeft(d.inspectionUntil, now) : d.status === 'DISPUTED' ? timeLeft(d.evidenceUntil, now) : d.status === 'RETURN_REQUESTED' ? timeLeft(d.returnBy, now) : null;
@@ -94,8 +101,11 @@ export default async function HomePage() {
             </Card>
           )}
 
-          {simulatedPayPal() && <Notice tone="warning">Simulated PayPal mode is on. Money steps are recorded as simulated; nothing is sent to PayPal.</Notice>}
-          <Notice>Sandbox demo. HalcyVault is a dispute-mediation prototype, not an escrow service, and does not handle real money.</Notice>
+          <div className="border-t border-line pt-4">
+            <span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">Sandbox demo</span>
+            <p className="mt-2 text-xs leading-relaxed text-muted">{simulatedPayPal() ? 'Simulated payments. Nothing is sent to PayPal.' : 'A dispute-mediation prototype. No real money.'}</p>
+            <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">View limitations →</Link>
+          </div>
         </aside>
       </div>
     </AppShell>
