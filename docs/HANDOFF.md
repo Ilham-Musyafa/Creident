@@ -142,6 +142,16 @@ Still open:
   public server), re-seeds demo data on start, Node 22+. Do this after the feature freeze,
   together with the public-demo hardening (rate limits, security headers, SECURITY-REVIEW
   update for the AI endpoints) and a Lighthouse/bundle-size check.
+- Sponsor tool: DECIDED 2026-10-22, AG Studio (AG Grid's embedded analytics library; the
+  AG Grid prize page asks for AG Studio dashboards with custom widgets, theming and layout,
+  and encourages the Studio Agent Framework). Plan: one reviewer "Oversight dashboard"
+  (dispute and escalation counts, AI draft unchanged/edited/ignored statistics, a custom
+  audit-chain widget, deadline queue, app theming; optional read-only Studio agent that
+  cannot act). Owner registers the free 45-day trial (name + email, no card) only when the
+  build starts (~26-27 Oct) and keeps the key in .env. Before using it on the public demo,
+  ask the AG Grid team on the PayPal Discord whether the trial key may be used in a public
+  demo/open-source repo and lasts through judging. Fallback: AG Grid Community table page.
+  Large commercial dependency: approved by the owner for this purpose only.
 - License: MIT for now. Owner plans to switch to Apache-2.0 (LICENSE + NOTICE + README)
   while the repo is still private, i.e. before it goes public around 10 Nov; switching after
   it is public would leave the published versions under MIT.
@@ -156,6 +166,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:32 WIB (Owner + Claude): sponsor tool decided: AG Studio dashboard (trial
+  registered at build time), fallback AG Grid Community. Build after the feature work.
 - 2026-10-22 07:25 WIB (Owner + Claude): hosting decided: Render (free first). AG Grid
   reviewer console + AI draft statistics still awaits the owner's yes/no.
 - 2026-10-22 07:15 WIB (Owner + Claude): owner approved proposal A (partial refund decided
