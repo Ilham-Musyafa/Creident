@@ -192,7 +192,13 @@ Still open:
   after allowing Studio to repaint at full height. No key registered, supplied,
   stored or logged; owner still supplies AG_STUDIO_LICENSE_KEY on 7–8 Nov and
   checks public-demo/trial permission. Optional Studio agent was not added.
-  C22 not started. One C21 PR will be requested; do not merge.
+  Pushed commits 20d8a7f and dff9dbb. `gh pr create --base main --head
+  feat/c21-ag-studio` failed: `Post https://api.github.com/graphql: Forbidden`
+  (403), as in earlier tasks. No PR was created or merged. Complete English PR
+  description, dependency reasons and screenshot links: `/tmp/c21-pr-description.md`.
+  Owner/Claude can open the single PR at
+  https://github.com/Ilham-Musyafa/HalcyVault/pull/new/feat/c21-ag-studio.
+  C22 not started. Claude reviews; do not merge automatically.
 - 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
   browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
   correct) and C20 evidence translation (import-only conflict on the review page resolved;
