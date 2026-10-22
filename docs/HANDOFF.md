@@ -170,6 +170,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 18:00 WIB (Claude, owner request): Appearance picker in Menu is now three icon
+  tiles (sun Light, moon Dark, half circle System on the right) with labels under the icons.
 - 2026-10-22 20:30 WIB (Claude, owner request): clarity pass 2. Demo decision reasons say
   "Cancel the payment authorization once the return is received" (matches "not charged";
   only freshly seeded demo data). Home total labelled "Approved, waiting to be charged · N
