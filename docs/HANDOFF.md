@@ -147,8 +147,11 @@ Still open:
   and encourages the Studio Agent Framework). Plan: one reviewer "Oversight dashboard"
   (dispute and escalation counts, AI draft unchanged/edited/ignored statistics, a custom
   audit-chain widget, deadline queue, app theming; optional read-only Studio agent that
-  cannot act). Owner registers the free 45-day trial (name + email, no card) only when the
-  build starts (~26-27 Oct) and keeps the key in .env. Before using it on the public demo,
+  cannot act). Build without a key first (AG Studio allows local evaluation; watermark and
+  console warnings until licensed). Results are announced 21 Dec 2026, so the owner registers
+  the free 45-day trial (name + email, no card) on 7-8 Nov (expires ~22-23 Dec) and keeps the
+  key in .env; record dashboard video shots after that. Also ask AG Grid on Discord for an
+  extension through judging. Before using it on the public demo,
   ask the AG Grid team on the PayPal Discord whether the trial key may be used in a public
   demo/open-source repo and lasts through judging. Fallback: AG Grid Community table page.
   Large commercial dependency: approved by the owner for this purpose only.
