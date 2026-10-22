@@ -63,12 +63,15 @@ export function FindingCard({ criterion, supports, evidenceIds }: { criterion: s
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
   return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>{rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
 }
-export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash, intact = true }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string; intact?: boolean }) {
+/** ok: verified. failed: the first step that does not match. after: later steps, which cannot be verified once the chain is broken. */
+export type StepCheck = 'ok' | 'failed' | 'after';
+export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash, check = 'ok' }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string; check?: StepCheck }) {
   // A row shows only what happened and when. A normal step gets no badge (the summary above
   // already says how many steps are verified); only a step that failed verification is flagged.
   // Step number, actor, source and fingerprints open on tap.
-  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-xs text-muted">{time}</span></span>
-    {!intact && <span className="shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Not verified</span>}
+  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-xs text-muted">{time}</span>
+    {check === 'failed' && <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Verification failed here</span>}
+    {check === 'after' && <span className="mt-0.5 block text-xs text-muted">Cannot verify after the failed step</span>}</span>
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>;
   const details = <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-[12px] bg-surface-2 p-3 text-xs">
     <dt className="text-muted">Step</dt><dd className="font-mono text-heading">#{seq}</dd>
@@ -78,7 +81,7 @@ export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulat
     <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-[11px] text-muted">{fullPrevHash ?? prevHash}</dd>
     {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-[11px] text-muted">{rawType}</dd></>}
   </dl>;
-  return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}>
+  return <li id={`step-${seq}`} style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`scroll-mt-24 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'} ${check === 'after' ? 'opacity-60' : ''}`}>
     <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary>{details}</details>
   </li>;
 }
@@ -88,6 +91,7 @@ export function ChainStatus({ verifiedSteps, count, where, revealAfterMs }: { ve
   return <div role="status" className={`rounded-[18px] border p-4 text-sm ${revealAfterMs === undefined ? '' : 'hv-verified'}`} style={{ ...(revealAfterMs === undefined ? {} : { '--after': `${revealAfterMs}ms` }), background: verified ? 'var(--success-bg)' : 'var(--warning-bg)', borderColor: verified ? 'var(--success-line)' : 'var(--warning-line)', color: verified ? 'var(--success-text)' : 'var(--warning-text)' }}>
     <strong className="block">{verified ? '✓ ' : '⚠ '}{verifiedSteps} of {count} steps verified</strong>
     <span className="mt-0.5 block text-xs">{verified ? where : `Step #${verifiedSteps + 1} does not match the steps before it.`}</span>
+    {!verified && <a href={`#step-${verifiedSteps + 1}`} className="mt-1 inline-flex min-h-11 items-center text-xs font-bold underline underline-offset-4">Go to step #{verifiedSteps + 1}</a>}
   </div>;
 }
 export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {

@@ -170,6 +170,12 @@ Still open:
 
 ## Log
 
+- 2026-10-22 19:40 WIB (Claude, owner request): Records failure states. Index: failed records
+  sort first with a warning border, banner button "View affected record(s)". Record page: the
+  first mismatching step shows "Verification failed here", later steps are dimmed with "Cannot
+  verify after the failed step" (verifyChain stops at the first break), status box links "Go to
+  step #N". All step details stay closed on load. Tested on a VACUUM INTO copy of the demo DB
+  with the events_no_update trigger dropped in the copy only (13 records, same as normal).
 - 2026-10-22 18:20 WIB (Claude, owner request): Records in two levels. Index: one status box
   "✓ N records verified" + "Verified on this server" (or "...and against the sealed copy from
   <date>") + link "How verification works"; deal rows show name, status and step count, with

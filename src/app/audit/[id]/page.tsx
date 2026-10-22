@@ -39,7 +39,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
         <Card className="px-4 py-1">
           <ol>
             {[...events].reverse().map((e, index) => (
-              <AuditEvent index={index} key={e.seq} seq={e.seq} title={eventTitle(e.type)} rawType={e.type} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} fullPrevHash={e.prevHash} hash={e.hash} intact={check.ok || e.seq < check.brokenAtSeq} simulated={e.payload.simulated === true}/>
+              <AuditEvent index={index} key={e.seq} seq={e.seq} title={eventTitle(e.type)} rawType={e.type} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} fullPrevHash={e.prevHash} hash={e.hash} check={check.ok || e.seq < check.brokenAtSeq ? 'ok' : e.seq === check.brokenAtSeq ? 'failed' : 'after'} simulated={e.payload.simulated === true}/>
             ))}
           </ol>
         </Card>
