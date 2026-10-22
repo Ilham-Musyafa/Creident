@@ -21,7 +21,7 @@ function AuditHealth() {
     ? published.result.transactions.filter(t => t.state === 'rewritten').length : 0;
   return <div className="h-full overflow-y-auto p-2 text-sm text-text">
     <h2 className="mb-3 text-[15px] font-bold text-heading">Record integrity</h2>
-    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">records intact</span></p>
+    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">records verified</span></p>
     <p className="mt-2">{audit.events} steps · {audit.failed} changed · {audit.empty} empty</p>
     <p className="mt-3 text-xs text-muted [overflow-wrap:anywhere]">{message}</p>
     {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed} differ from the sealed copy</p>}

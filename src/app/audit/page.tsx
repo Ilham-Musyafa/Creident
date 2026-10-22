@@ -2,7 +2,8 @@ import { latestCheckpoint } from '../../lib/audit/checkpointFiles';
 import Link from 'next/link';
 import { verifyChain } from '../../lib/audit/chain';
 import { StatusPill } from '../../components/ui';
-import { AppShell, EmptyState, Notice, PageHeader } from '../../components/layout';
+import { AppShell, EmptyState, PageHeader } from '../../components/layout';
+import { shortDate } from '../../components/view';
 import { data } from '../_server';
 
 export const dynamic = 'force-dynamic';
@@ -14,42 +15,44 @@ export default function AuditIndexPage() {
     .map(row => [String(row.id), ctx.repo.readEvents(String(row.id))] as const));
   const published = latestCheckpoint(chains);
   const checkpoint = published.available && published.result.valid ? published.result : null;
-  const checkpointLabels = { unchanged: 'matches the sealed copy', extended: 'new steps since the sealed copy', rewritten: 'differs from the sealed copy', 'not-checkpointed': 'not in the sealed copy yet' };
+  // Per deal, only problems with the sealed copy are worth a line.
+  const sealedProblem = { rewritten: 'Differs from the sealed copy', 'not-checkpointed': 'Not in the sealed copy yet' } as Record<string, string>;
   const missing = checkpoint?.transactions.filter(entry => !chains.has(entry.txId)) ?? [];
   const broken = rows.filter((r) => !r.check.ok).length;
+  const where = checkpoint ? `Verified on this server and against the sealed copy from ${shortDate(checkpoint.createdAt)}`
+    : published.available && !published.result.valid ? `Verified on this server. The sealed copy could not be checked: ${published.result.reason}`
+    : 'Verified on this server';
 
   return (
     <AppShell active="Audit">
-      <PageHeader title="Deal records" subtitle="Every step of every deal is saved and checked for changes. Open a deal to see its steps."/>
+      <PageHeader title="Deal records" subtitle="Every step of every deal is saved and checked for changes."/>
       {rows.length > 0 && (
         <div role="status" className="mb-4 rounded-[18px] border p-4 text-sm" style={broken
           ? { background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }
           : { background: 'var(--success-bg)', borderColor: 'var(--success-line)', color: 'var(--success-text)' }}>
-          <strong className="block">{broken ? `${broken} of ${rows.length} records were changed` : `All ${rows.length} records intact`}</strong>
-          {/* One status: the local check first, then what the sealed copy adds (or that none exists yet). */}
-          <span className="mt-1 block text-xs">
-            {checkpoint ? `Also checked against the sealed copy from ${checkpoint.createdAt}.`
-              : published.available ? `The sealed copy could not be checked: ${published.result.valid ? '' : published.result.reason}`
-              : 'Checked step by step on this server. No sealed copy has been published yet, so a full rewrite of the database would not show here.'}
-            {missing.length > 0 && ` ${missing.length} deal(s) in the sealed copy are missing from the current records.`}
-          </span>
+          <strong className="block">{broken ? `⚠ ${broken} of ${rows.length} records failed verification` : `✓ ${rows.length} records verified`}</strong>
+          <span className="mt-0.5 block text-xs">{broken ? 'Checked on this server. Open the flagged deal to see which step.' : where}{missing.length > 0 && `. ${missing.length} deal(s) in the sealed copy are missing here.`}</span>
+          <Link href="/audit/how-it-works" className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold underline underline-offset-4">How verification works</Link>
         </div>
       )}
       {rows.length === 0 ? <EmptyState title="No deals yet"/> : (
         <ul className="space-y-2">
-          {rows.map(({ tx, check }) => (
-            <li key={tx.id}>
-              <Link href={`/audit/${tx.id}`} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
-                <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/>{checkpoint && <span className="mt-1 block text-xs text-muted">{checkpointLabels[checkpoint.transactions.find(entry => entry.txId === tx.id)!.state]}</span>}</span>
-                <span className="shrink-0 text-right text-xs font-semibold" style={{ color: check.ok ? 'var(--success-text)' : 'var(--warning-text)' }}>
-                  {check.ok ? `Intact · ${check.length} steps` : `Changed at step #${check.brokenAtSeq}`}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {rows.map(({ tx, check }) => {
+            const problem = checkpoint ? sealedProblem[checkpoint.transactions.find(entry => entry.txId === tx.id)?.state ?? ''] : undefined;
+            return (
+              <li key={tx.id}>
+                <Link href={`/audit/${tx.id}`} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
+                  <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/>
+                    {problem && <span className="mt-1 block text-xs font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ {problem}</span>}</span>
+                  {check.ok
+                    ? <span className="shrink-0 text-right text-xs text-muted">{check.length} steps</span>
+                    : <span className="shrink-0 text-right text-xs font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ Step #{check.brokenAtSeq} not verified</span>}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
-      <div className="mt-6"><Notice>The platform still runs this database, so a signed sealed copy of each record's fingerprint can be published elsewhere. Anyone holding that copy can spot later rewriting; it does not make rewriting impossible.</Notice></div>
     </AppShell>
   );
 }
