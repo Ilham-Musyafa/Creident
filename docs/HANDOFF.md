@@ -171,6 +171,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
+  browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
+  correct) and C20 evidence translation (import-only conflict on the review page resolved;
+  474 tests, build, browser check 390 light / 1440 dark). AI assists 1-5 are all merged.
+  Next for Codex: C21 AG Studio dashboard (no key), then C22 Postman collection.
 - 2026-10-22 08:45 WIB (Codex, C20): implemented and verified on
   `feat/c20-evidence-translation`, independently based on current main b966c8d
   (C18 merged; C19 remains a separate review branch). runAssist feature translate,
