@@ -1,7 +1,10 @@
 # Proposal: partial refunds and PayPal "accept claim / make offer"
 
-Status: **PROPOSAL, waiting for owner approval** (2026-10-22). Nothing here is implemented.
-It changes money movement and the state machine, so AGENTS.md "Ask first" applies.
+Status (2026-10-22 07:15 WIB): owner **approved A** (partial refund decided by the reviewer)
+with the proposed defaults: no return by default for a partial refund, and the reviewer sets
+the amount even when both parties agree. **B was not approved** (do not build it). The fee
+minimum/maximum idea was not approved either. Not implemented yet: build A after C18 is
+merged, because both touch the review page and the DECISION payload.
 
 ## Why
 

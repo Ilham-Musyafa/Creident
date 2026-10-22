@@ -150,6 +150,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:15 WIB (Owner + Claude): owner approved proposal A (partial refund decided
+  by the reviewer: PARTIAL_REFUND state, capture then refund the amount, no return by
+  default, reviewer sets the amount). B (PayPal accept-claim/make-offer) and the fee
+  min/cap were not approved. Build A after C18 is merged (same files); this is a state
+  machine change already approved, see docs/PROPOSAL-PARTIAL-REFUND.md.
 - 2026-10-22 07:12 WIB (Claude): terms validator now allows two-decimal measurements with
   a unit (2.40 GHz, 85.50%, f/3.50) and still rejects prices (tests added); the Codex task
   fix/terms-validator-units is therefore done. README Problem section gains international
