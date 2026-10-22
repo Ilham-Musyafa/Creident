@@ -150,6 +150,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:12 WIB (Claude): terms validator now allows two-decimal measurements with
+  a unit (2.40 GHz, 85.50%, f/3.50) and still rejects prices (tests added); the Codex task
+  fix/terms-validator-units is therefore done. README Problem section gains international
+  examples (Facebook Marketplace, Kleinanzeigen, PayPal G&S on forums); owner re-reads
+  before the demo.
 - 2026-10-22 07:15 WIB (Claude, before a usage reset): merged C17 evidence completeness
   (#45; 337 tests, build, browser check). Added docs/PROPOSAL-PARTIAL-REFUND.md (partial
   refund by reviewer + PayPal accept-claim/make-offer), waiting for owner approval.

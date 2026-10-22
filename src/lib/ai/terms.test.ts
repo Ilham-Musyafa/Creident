@@ -47,4 +47,13 @@ describe('terms draft schema and assist', () => {
     expect(bad.output).toBeNull(); expect(bad.meta.unavailable).toBe('INVALID_OUTPUT');
     expect((await draftTerms('Unrecorded synthetic text', { env: { AI_MODE: 'replay' } })).output).toBeNull();
   });
+
+  it('allows measured specs with decimals but still rejects prices', async () => {
+    const { validateTermsDraft } = await import('./terms');
+    const draft = (condition: string) => ({ item: 'Laptop', condition, includedItems: ['Laptop'], criteria: ['Screen has no cracks'] });
+    for (const ok of ['Processor 2.40 GHz', 'Lens aperture f/3.50', 'Battery 85.50%', 'Screen 13.30 inch', 'Weight 1.25 kg'])
+      expect(validateTermsDraft(draft(ok)), ok).not.toBeNull();
+    for (const bad of ['Price 99.99', 'USD 12.50', 'Rp 150.000', '12,50 euros', 'Asking 45.00'])
+      expect(validateTermsDraft(draft(bad)), bad).toBeNull();
+  });
 });
