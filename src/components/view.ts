@@ -98,6 +98,7 @@ const EVENT_TITLES: Record<string, string> = {
   INSPECTION_EXPIRED: 'Inspection ended, payment captured',
   OPEN_DISPUTE: 'Dispute opened',
   EVIDENCE_SUBMITTED: 'Evidence added',
+  EVIDENCE_TRANSLATED: 'AI evidence translation (original authoritative)',
   EVIDENCE_COMPLETE: 'Evidence complete',
   EVIDENCE_CHECK_RUN: 'AI evidence completeness checked (advisory)',
   RECOMMENDATION_RECORDED: 'Rule recommendation recorded',

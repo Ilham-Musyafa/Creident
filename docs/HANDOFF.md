@@ -72,7 +72,7 @@ when Codex runs out). Claude only reviews/merges until Codex usage is exhausted,
 continues the same list from where HANDOFF says Codex stopped.
 1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
 2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
-3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
+3. C20 evidence translation: implemented on `feat/c20-evidence-translation` from current main (C18); full verification in progress. C19 remains a separate review branch.
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
 5. C22 Postman collection of the HalcyVault API.
 Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
@@ -166,6 +166,17 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 08:42 WIB (Codex, C20 checkpoint): added translate/runAssist,
+  strict two-key output with numeric/code/link preservation, English/Indonesian
+  demo replays, reviewer/gate endpoint, hash/version/mode-aware ai_drafts cache
+  with atomic metadata-only audit and same-process concurrent-call sharing.
+  New EvidenceTranslation component displays the result below its original,
+  full hashes, target selection, injection warning and manual fallback. Original
+  evidence, rules and recommendation are untouched. 37 targeted tests and
+  typecheck passed. Next: full tests/typecheck/build, browser check, documentation
+  and one PR. No dependencies. C20 starts independently from current origin/main
+  (b966c8d, merged C18); it does not include unmerged C19 changes.
 
 - 2026-10-22 08:15 WIB (Claude): reviewed and merged C18 reviewer copilot (391 tests,
   build, browser check 390 light / 1440 dark). Watch in the live-model eval: the copilot

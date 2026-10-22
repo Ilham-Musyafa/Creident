@@ -243,6 +243,16 @@ export class TransactionRepository {
     return transaction(this.db, () => this.appendInTransaction(input));
   }
 
+  /** Cache a validated assist and its metadata-only audit event as one atomic write. */
+  storeAssistDraft(id: string, txId: string, feature: string, output: unknown, meta: unknown, event: AuditEventInput): boolean {
+    return transaction(this.db, () => {
+      const inserted = this.db.prepare('INSERT OR IGNORE INTO ai_drafts (id, tx_id, feature, output_json, meta_json, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(id, txId, feature, JSON.stringify(output), JSON.stringify(meta), event.ts);
+      if (inserted.changes) this.appendInTransaction(event);
+      return !!inserted.changes;
+    });
+  }
+
   processVerifiedWebhook(event: VerifiedWebhookEvent): WebhookResult {
     return transaction(this.db, () => {
       if (this.db.prepare('SELECT 1 FROM paypal_events WHERE event_id = ?').get(event.id)) {
