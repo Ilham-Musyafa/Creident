@@ -15,7 +15,7 @@ Keep it short and current. Newest entry first in the log.
 ## Current status (2026-10-21)
 
 Project locked on 2026-10-20: dispute-mediation prototype for the PayPal AI Hackathon,
-name HalcyVault (locked 2026-10-22), narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/HalcyVault`
+name **Creident** (owner decision 2026-10-22; formerly HalcyVault), narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/HalcyVault`
 is private during development; it must be made public before submission and stay public
 until 15 Dec 2026.
 
@@ -130,10 +130,15 @@ not charged in the prototype); split stays recorded-only; the platform bears the
 deadlines ship-by 3, inspection 2, evidence 2 days (env-configurable).
 
 Still open:
-- Public name: DECIDED 2026-10-22, the owner keeps **HalcyVault** (shortlist Pactrail,
-  Dealtrail, Termlock and others declined). Because "Vault" can suggest custody, README, UI and
-  video must keep saying PayPal only authorizes and the app never holds money (claim rules).
-  The Render service name should be `halcyvault` (it becomes the onrender.com address).
+- Public name: DECIDED 2026-10-22, **Creident** (owner's own idea; owner reports the .com domain
+  is available). Replaces HalcyVault in UI, README, docs, PDFs and PayPal notes. Quick web check
+  found no product with the same name (nearest: Credent Insurance, CRED fintech). Say the name
+  clearly once in the video. Render service name: `creident` (creident.onrender.com).
+  Not renamed on purpose: GitHub repo `Ilham-Musyafa/HalcyVault` (owner can rename it in
+  Settings; GitHub redirects), internal CSS/cookie prefixes `hv-`, concept mockup PNGs in
+  docs/ui, and history in this log. `HALCYVAULT_DB_PATH` still works as a fallback for
+  `CREIDENT_DB_PATH`; the default DB file is now data/creident.sqlite (an old local
+  data/halcyvault.sqlite is left untouched).
 - Hosting / public demo link: DECIDED 2026-10-22, Render (sponsor tool). Start on the free
   plan; optionally upgrade to the ~$7/month instance during judging to avoid the ~1 minute
   cold start; final choice before submission (do not change the URL after submitting).
@@ -168,6 +173,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 21:15 WIB (Claude, owner decision): renamed the project to **Creident** (supersedes
+  the 20:55 "HalcyVault locked" entry, which was a mis-click). UI brand, page title, About,
+  README, AGENTS.md, DESIGN.md, UI.md, sponsor and sandbox notes, Postman collection file name,
+  PayPal evidence notes/PDF name, courier name, package name, theme storage key, reference
+  prefixes HV- -> CR-, DB env/default path (old env name kept as fallback).
 - 2026-10-22 20:55 WIB (Claude, owner decision): name locked as HalcyVault; "(working name)"
   removed from README, AGENTS.md and DESIGN.md. Hosting on Render confirmed; next: public-demo
   hardening and render.yaml before the owner creates the service.

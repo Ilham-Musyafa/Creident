@@ -1,4 +1,4 @@
-# DESIGN.md — HalcyVault
+# DESIGN.md — Creident
 
 Status: **prototype implementation reference, updated 2026-10-21.** Items marked **[OPEN]** need the owner's decision.
 Items marked **[PROPOSED]** are suggestions that have not been approved yet.
@@ -10,7 +10,7 @@ Facts about PayPal behaviour that were tested are in `docs/SANDBOX-NOTES.md`.
 
 Peer-to-peer sales of physical goods in Indonesia often rely on a "rekber" (joint account)
 run by an admin who holds the money. Reported scams include admins who collude with
-sellers. HalcyVault is a **prototype of a dispute-mediation layer**:
+sellers. Creident is a **prototype of a dispute-mediation layer**:
 
 - terms are fixed before payment,
 - the funds are only *authorized* by PayPal until the rules say release or refund,

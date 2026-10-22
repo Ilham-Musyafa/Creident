@@ -3,7 +3,7 @@ import { textPdf } from './evidencePdf';
 
 describe('textPdf', () => {
   it('builds a valid single-page PDF with a correct xref table', () => {
-    const bytes = textPdf(['HalcyVault evidence (deal 123)', 'Ünïcode and \\ back\\slash', 'x'.repeat(250)]);
+    const bytes = textPdf(['Creident evidence (deal 123)', 'Ünïcode and \\ back\\slash', 'x'.repeat(250)]);
     const text = new TextDecoder().decode(bytes);
     expect(text.startsWith('%PDF-1.4')).toBe(true);
     expect(text.trimEnd().endsWith('%%EOF')).toBe(true);

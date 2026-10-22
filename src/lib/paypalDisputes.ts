@@ -122,7 +122,7 @@ export function disputeDocument(txId: string, repo: TransactionRepository) {
   })) throw new DomainError('EVIDENCE_CHANGED', 'Evidence no longer matches the audited submissions');
   const decisions = repo.loadDecisions(txId);
   const lines = [
-    'HalcyVault dispute evidence - text-only demo document',
+    'Creident dispute evidence - text-only demo document',
     'Text uses ASCII rendering; SHA-256 hashes cover the original UTF-8 data.',
     `Deal: ${txId}`, `Item: ${tx.item}`, `Amount: ${tx.amount} ${tx.currency}`,
     `Terms hash: ${basis.termsHash}`, `Audit head: ${chain.head}`, `Evidence digest: ${basis.evidenceDigest}`,
@@ -141,7 +141,7 @@ export interface DisputeNote { text: string; draft?: StoredDraft<PayPalMessageDr
 
 /** The app, not the AI, appends the record identifiers so they are always exact. */
 export function noteWithRecord(text: string, termsHash: string, headHash: string): string {
-  return `${text.trim()}\n\nHalcyVault record: terms hash ${termsHash}, audit head ${headHash}.`;
+  return `${text.trim()}\n\nCreident record: terms hash ${termsHash}, audit head ${headHash}.`;
 }
 
 export async function actOnPayPalDispute(txId: string, requestedId: string | undefined, operation: 'evidence' | 'escalate', deps: DisputeDeps, note?: DisputeNote) {
@@ -173,13 +173,13 @@ export async function actOnPayPalDispute(txId: string, requestedId: string | und
     }
     try {
       if (action === 'provide_evidence') await deps.paypal.provideEvidence(disputeId, {
-        reason: current.reason, notes: noteText ?? `HalcyVault locked evidence. Terms hash ${document.basis.termsHash}. Audit head ${document.headHash}.`,
-        trackingNumber: tx.trackingNumber, carrierName: 'HalcyVault demo courier',
-        file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: document.file },
+        reason: current.reason, notes: noteText ?? `Creident locked evidence. Terms hash ${document.basis.termsHash}. Audit head ${document.headHash}.`,
+        trackingNumber: tx.trackingNumber, carrierName: 'Creident demo courier',
+        file: { name: 'creident-evidence.pdf', type: 'application/pdf', content: document.file },
       });
       else if (action === 'send_message') await deps.paypal.sendDisputeMessage(disputeId, noteText ??
-        `HalcyVault has recorded the locked terms and evidence for this deal. Terms hash: ${document.basis.termsHash}. Audit head: ${document.headHash}. PDF evidence needs the claim stage; it cannot be attached in this inquiry.`);
-      else await deps.paypal.escalateDispute(disputeId, 'Please ask PayPal to review this dispute. HalcyVault evidence will be submitted when provide_evidence is offered.');
+        `Creident has recorded the locked terms and evidence for this deal. Terms hash: ${document.basis.termsHash}. Audit head: ${document.headHash}. PDF evidence needs the claim stage; it cannot be attached in this inquiry.`);
+      else await deps.paypal.escalateDispute(disputeId, 'Please ask PayPal to review this dispute. Creident evidence will be submitted when provide_evidence is offered.');
     } catch (error) {
       // Keep an interrupted/failed action claimed; a blind retry could duplicate a message or escalation.
       failure(txId, action, error, deps, disputeId);
@@ -195,7 +195,7 @@ export async function actOnPayPalDispute(txId: string, requestedId: string | und
     try { store(await deps.paypal.getDispute(disputeId), tx, deps); } catch { refreshPending = true; }
     return { action, simulated: deps.simulated, refreshPending,
       message: action === 'send_message' ? 'Message sent. PDF evidence needs the claim stage.'
-        : action === 'escalate' ? 'Escalated to PayPal claim. PayPal may take a few minutes to offer evidence submission.' : 'HalcyVault evidence PDF sent to PayPal.' };
+        : action === 'escalate' ? 'Escalated to PayPal claim. PayPal may take a few minutes to offer evidence submission.' : 'Creident evidence PDF sent to PayPal.' };
   } catch (error) {
     // A PayPal send failure was recorded above; local validation and read failures also need an audit trail.
     if (!failureRecorded) failure(txId, operation, error, deps, disputeId);

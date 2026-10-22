@@ -1,11 +1,11 @@
-# AGENTS.md — HalcyVault
+# AGENTS.md — Creident
 
 Instructions for AI coding agents (Claude Code, Codex, others).
 At the start of every session read this file, `docs/DESIGN.md` and `docs/HANDOFF.md`.
 
 ## What this project is
 
-HalcyVault (name locked by the owner on 2026-10-22) is a **prototype for a dispute-mediation layer for
+Creident (name chosen by the owner on 2026-10-22; formerly HalcyVault) is a **prototype for a dispute-mediation layer for
 peer-to-peer sales**, built for the PayPal AI Hackathon 2026. Rules decide, AI only
 summarises evidence, every action is written to an auditable log. It runs on the
 **PayPal Sandbox only**.

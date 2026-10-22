@@ -13,7 +13,7 @@ export const TRACKING_ADDED = 'PAYPAL_TRACKING_ADDED';
 export const TRACKING_FAILED = 'PAYPAL_TRACKING_FAILED';
 export const MAX_ATTEMPTS = 3;
 // The courier is simulated in this prototype, so PayPal gets carrier OTHER with this name.
-export const CARRIER_NAME = 'HalcyVault demo courier';
+export const CARRIER_NAME = 'Creident demo courier';
 
 export interface TrackingDeps {
   repo: TransactionRepository;

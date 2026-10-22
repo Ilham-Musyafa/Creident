@@ -1,4 +1,4 @@
-# UI.md — HalcyVault visual guide
+# UI.md — Creident visual guide
 
 Status: **approved direction, 2026-10-21** (owner chose Midnight Ink + Mint, with light
 and dark mode). Mockups: `docs/ui/halcyvault-ui-light.png`, `docs/ui/halcyvault-ui-dark.png`.

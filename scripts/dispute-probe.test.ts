@@ -42,7 +42,7 @@ describe('dispute probe', () => {
     expect(evidence.contentType).toBeNull();
     const form = evidence.body as FormData;
     expect(JSON.parse(await (form.get('input') as Blob).text()).evidences[0]).toMatchObject({ evidence_type: 'OTHER' });
-    expect((form.get('evidence-file') as File).name).toBe('halcyvault-evidence.pdf');
+    expect((form.get('evidence-file') as File).name).toBe('creident-evidence.pdf');
     expect(lines.some((l) => /^Evidence \(multipart with PDF, type (OTHER|PROOF_OF_FULFILLMENT)\): accepted\.$/.test(l))).toBe(true);
     expect(lines.some((l) => l.includes('status RESOLVED'))).toBe(true);
     expect(calls.some((c) => c.path.includes('/refund'))).toBe(false);

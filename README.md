@@ -1,4 +1,4 @@
-# HalcyVault
+# Creident
 
 **A dispute-mediation prototype for peer-to-peer sales of physical goods.**
 Rules first, AI summarises evidence, a human confirms every dispute outcome, and every
@@ -48,7 +48,7 @@ platform. Sellers who trade through chat, groups or forums either open a store o
 marketplace, with its listing work and commission, or meet in person (fees and coverage as
 reported in October 2026).
 
-HalcyVault explores a different shape for the same job:
+Creident explores a different shape for the same job:
 
 - the terms (item, condition, checks) are **locked and hashed before payment**,
 - PayPal only **authorizes** the payment until the rules say release or refund,
@@ -60,7 +60,7 @@ HalcyVault explores a different shape for the same job:
 - the AI step is **tested for bias and prompt injection**, and the results are published
   with their limits.
 
-**How it's different.** HalcyVault is built for the everyday case: two strangers trading a
+**How it's different.** Creident is built for the everyday case: two strangers trading a
 used item over chat. There is no marketplace account and no listing, just a shared link.
 Rules recommend, a person decides every dispute with a written reason, and we publish how
 often the recommended outcome changes when only names, evidence order or writing style
@@ -256,7 +256,7 @@ Optional settings in `.env`:
 - `REVIEWER_ACCESS_CODE`: for a shared or hosted demo, reviewer actions need this code
   (Menu > Reviewer access code).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
-- `HALCYVAULT_DB_PATH`: SQLite file location (default `data/halcyvault.sqlite`).
+- `CREIDENT_DB_PATH`: SQLite file location (default `data/creident.sqlite`).
 
 Checks:
 
@@ -276,19 +276,19 @@ The JSON API behind the screens lives in `src/app/api/**` (for example
 ### Try the API
 
 With Option A running locally, set `AI_MODE=replay` and import
-[`HalcyVault.postman_collection.json`](docs/postman/HalcyVault.postman_collection.json)
+[`Creident.postman_collection.json`](docs/postman/Creident.postman_collection.json)
 into Postman, or run the command below in a second terminal. Set `baseUrl` to your
 local HTTP origin (default `http://localhost:3000`, no trailing slash) and run the
 **whole collection in order**; scripts pass IDs between its 40 requests. It creates
 two labelled synthetic deals, exercises a human refund/return, AI replays, audit/CSV
 and the simulated PayPal dispute bridge, and leaves those records in the database.
-Use a fresh `HALCYVAULT_DB_PATH` for an isolated run. No keys or global tools are
+Use a fresh `CREIDENT_DB_PATH` for an isolated run. No keys or global tools are
 needed; Newman is fetched temporarily without changing `package.json`. Leave the
 local reviewer code empty, or set `reviewerCode` privately if your reviewer gate is
 configured; never export or commit an actual code.
 
 ```bash
-npx --yes newman@6.2.3 run docs/postman/HalcyVault.postman_collection.json --bail
+npx --yes newman@6.2.3 run docs/postman/Creident.postman_collection.json --bail
 ```
 
 The expected 409 response checks that simulation is enabled before payment; the
@@ -309,7 +309,7 @@ authorize then void. The web app's screens use the same client; a full click-thr
 the app against the Sandbox (rather than the labelled simulation) is still to do.
 The PayPal **Disputes API** was also exercised on a real Sandbox dispute (`npm run
 dispute-probe`): reading the case, messaging the buyer, escalating as the seller, and
-submitting a HalcyVault evidence PDF, which PayPal accepted.
+submitting a Creident evidence PDF, which PayPal accepted.
 
 **Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 50 synthetic
 cases (40 disputes, 10 prompt-injection attempts), each also run with six counterfactual
@@ -521,7 +521,7 @@ SPLIT and does not implement a split payout or seller payout.
   - Setup follows the publisher's [official React Quick Start](https://www.ag-grid.com/studio/react/quick-start/)
     (also in the npm package README), with `data.sources`, `AgStudio` and
     `AgStudioProvider`. The [PayPal/AG Studio boilerplate](https://github.com/paypaldev/hackathon-paypal-ag-grid-boilerplate)
-    was used only as an API reference. HalcyVault supplies its own data, widgets,
+    was used only as an API reference. Creident supplies its own data, widgets,
     responsive layout and token-based light/dark theme.
 - Plus Jakarta Sans, self-hosted under the SIL Open Font License.
 - Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).

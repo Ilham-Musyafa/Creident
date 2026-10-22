@@ -18,7 +18,7 @@ export function ThemeSelector() {
   function change(next: Choice) {
     setChoice(next);
     document.documentElement.dataset.theme = next.toLowerCase();
-    try { localStorage.setItem('halcyvault-theme', next.toLowerCase()); } catch { /* Private browsing can block storage. */ }
+    try { localStorage.setItem('creident-theme', next.toLowerCase()); } catch { /* Private browsing can block storage. */ }
   }
   return <div role="group" aria-label="Appearance" className="grid max-w-xs grid-cols-3 gap-2">
     {options.map((option) => {

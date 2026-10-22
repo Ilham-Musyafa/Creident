@@ -81,7 +81,7 @@ describe('checkpoint CLI', () => {
     const chains = new Map([['sample', repo.readEvents('sample')]]);
     db.close();
     const run = spawnSync(process.execPath, ['--experimental-strip-types', script], {
-      cwd, encoding: 'utf8', env: { ...process.env, AUDIT_SIGNING_KEY: pem, HALCYVAULT_DB_PATH: join(cwd, 'test.sqlite') },
+      cwd, encoding: 'utf8', env: { ...process.env, AUDIT_SIGNING_KEY: pem, CREIDENT_DB_PATH: join(cwd, 'test.sqlite') },
     });
     expect(run.status).toBe(0);
     expect(run.stdout.includes('PRIVATE KEY')).toBe(false);
@@ -93,7 +93,7 @@ describe('checkpoint CLI', () => {
       .run('broken', 'sample', 2, createdAt, 'system', 'BROKEN', '{}', '0'.repeat(64), '0'.repeat(64));
     brokenDb.close();
     const failed = spawnSync(process.execPath, ['--experimental-strip-types', script], {
-      cwd, encoding: 'utf8', env: { ...process.env, AUDIT_SIGNING_KEY: pem, HALCYVAULT_DB_PATH: join(cwd, 'test.sqlite') },
+      cwd, encoding: 'utf8', env: { ...process.env, AUDIT_SIGNING_KEY: pem, CREIDENT_DB_PATH: join(cwd, 'test.sqlite') },
     });
     expect(failed.status).toBe(1);
     expect(readdirSync(join(cwd, 'audit-checkpoints')).filter(name => name.endsWith('.json'))).toHaveLength(1);

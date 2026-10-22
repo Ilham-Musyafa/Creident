@@ -13,7 +13,7 @@ const RULES = [
 export default function AboutPage() {
   return (
     <AppShell active="Menu">
-      <PageHeader title="About HalcyVault" back="/menu" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026."/>
+      <PageHeader title="About Creident" back="/menu" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026."/>
       <div className="mx-auto max-w-2xl space-y-2 text-sm leading-relaxed">
         <SectionTitle><span id="decisions">How decisions are made</span></SectionTitle>
         <Card>
