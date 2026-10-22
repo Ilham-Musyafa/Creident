@@ -40,9 +40,10 @@ describe('reviewer copilot endpoint and provenance', () => {
     expect((await POST(request('reviewer', {}, 'synthetic-review-code'), params())).status).toBe(200);
   });
   it.each(['DRAFT', 'DISPUTED', 'FROZEN_EXTERNAL', 'RETURN_REQUESTED', 'COMPLETED'] as const)('requires UNDER_REVIEW, not %s', async status => {
+    const before = db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n;
     db.prepare('UPDATE transactions SET status = ? WHERE id = ?').run(status, tx.id);
     expect((await POST(request(), params())).status).toBe(409);
-    expect(db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n).toBe(0);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n).toBe(before);
   });
   it('stores a replay draft while preserving transaction, recommendation and existing evidence summary', async () => {
     const before = repo.loadTransaction(tx.id); const rec = repo.loadRecommendation(tx.id); const decisions = db.prepare('SELECT * FROM decisions WHERE tx_id = ?').all(tx.id);
@@ -111,11 +112,12 @@ describe('reviewer copilot endpoint and provenance', () => {
     expect((await review(request('reviewer', { outcome: 'REFUND', reason: 'Human reason after an unavailable draft.', requireReturn: true }), params())).status).toBe(200);
   });
   it('discards a draft if the status changes during the provider call', async () => {
+    const before = db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n;
     getApiContext().aiEnv = { AI_MODE: 'live' }; getApiContext().aiProvider = { complete: async () => {
       db.prepare("UPDATE transactions SET status = 'FROZEN_EXTERNAL' WHERE id = ?").run(tx.id);
       return JSON.stringify(recorded[0]!.output);
     } };
     expect((await POST(request(), params())).status).toBe(409);
-    expect(db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n).toBe(0);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM ai_drafts WHERE feature = 'copilot'").get()?.n).toBe(before);
   });
 });

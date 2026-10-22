@@ -6,6 +6,9 @@ import { usdCents } from './partialAmount';
 // `demo: true`, and every PayPal-related audit event carries `simulated: true`.
 
 import { decisionBasis } from './decisionBasis';
+import { draftTerms } from './ai/terms';
+import { TERMS_SAMPLES } from './ai/termsSamples';
+import { draftCopilot } from './ai/copilot';
 import { randomUUID, createHash } from 'node:crypto';
 import { canonicalJson } from './audit/chain';
 import { applyTrigger, type OrchestratorDeps } from './orchestrator';
@@ -58,6 +61,7 @@ const SPECS: DemoSpec[] = [
   { item: '[Demo] Damaged smartwatch (resolved)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Refund the buyer once the watch is back with the seller; no payment was captured.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND', requireReturn: true }, 'return-delivered'] },
   { item: '[Demo] Smartwatch (return pending)', amount: '64.00', disputeType: 'damaged', decisionReason: 'The buyer photo shows a cracked screen despite the agreed condition. Refund the buyer once the watch is back with the seller.', terms: { condition: 'Good, minor scratches', criteria: ['Screen has no cracks', 'Strap included'] }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', 'dispute', 'evidence-both', { type: 'DECISION', outcome: 'REFUND', requireReturn: true }] },
   { item: '[Demo] Board game set', amount: '22.00', terms: { condition: 'Complete, box worn' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'BUYER_CONFIRM', externalDisputeOpen: false }] },
+  { item: '[Demo] Board game (PayPal case)', amount: '22.00', terms: { condition: 'Complete, box worn' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'BUYER_CONFIRM', externalDisputeOpen: false }] },
   { item: '[Demo] Desk lamp', amount: '18.00', terms: { condition: 'Works, base scratched' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'miss-deadline'] },
   { item: '[Demo] Drone with spare battery', amount: '150.00', terms: { condition: 'Good, one prop replaced' }, steps: ['accept', { type: 'START_PAYMENT' }, { type: 'BUYER_APPROVED', orderApproved: true }, 'ship-delivered', { type: 'EXTERNAL_DISPUTE' }] },
   { item: '[Demo] Camping stove', amount: '30.00', terms: { condition: 'Good' }, steps: ['accept', { type: 'CANCEL' }] },
@@ -76,7 +80,6 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
   const { repo, time } = options;
   const existingItems = new Set(repo.listTransactions(500).map(tx => tx.item));
   const missingSpecs = SPECS.filter(spec => !existingItems.has(spec.item));
-  if (!missingSpecs.length) return { created: 0, skipped: true };
   const now = options.now ?? (() => new Date().toISOString());
   let created = 0;
 
@@ -84,13 +87,17 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
     const id = randomUUID();
     const terms = { ...spec.terms, demo: true };
     const termsJson = canonicalJson(terms);
+    // An actual recorded replay, accepted with edited terms in this synthetic example.
+    const termsDraft = spec.item === '[Demo] Vintage film camera'
+      ? await draftTerms(TERMS_SAMPLES.find(sample => sample.id === 'camera')!.text, { env: { AI_MODE: 'replay' } }) : null;
     const tx: StoredTx = {
       id, status: 'DRAFT', captured: false, buyerId: 'buyer', sellerId: 'seller',
       item: spec.item, amount: spec.amount, currency: 'USD', termsJson,
     };
     repo.createTransaction(tx, {
       txId: id, ts: now(), actor: 'seller', type: 'TRANSACTION_CREATED',
-      payload: { item: spec.item, amount: spec.amount, currency: 'USD', termsHash: hash(termsJson), demo: true },
+      payload: { item: spec.item, amount: spec.amount, currency: 'USD', termsHash: hash(termsJson), demo: true,
+        ...(termsDraft?.output ? { simulated: true, ...termsDraft.meta, accepted: 'edited', inputContainsInjection: termsDraft.inputContainsInjection } : {}) },
     });
     created++;
     // A seller always accepts their own terms when creating a deal (as the UI does).
@@ -167,6 +174,31 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         }
       }
     }
+    if (spec.item === '[Demo] Board game (PayPal case)') {
+      // The existing repository path freezes a captured deal and records detection atomically.
+      repo.savePayPalDispute({ txId: id, disputeId: `SIM-CASE-${id}`, status: 'WAITING_FOR_SELLER_RESPONSE',
+        stage: 'INQUIRY', reason: 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED', actions: ['send_message', 'escalate'], updatedAt: now() }, true);
+    }
   }
-  return { created, skipped: false };
+  // Backfill the actual replay on an unchanged older seed too. Never overwrite evidence,
+  // recommendations or a user's later decisions; an unmatched replay simply stays absent.
+  const review = repo.listTransactions(500).find(tx => tx.item === '[Demo] Smartwatch' && tx.status === 'UNDER_REVIEW');
+  const rec = review ? repo.loadRecommendation(review.id) : null;
+  const reviewEvents = review ? repo.readEvents(review.id) : [];
+  const type = reviewEvents.find(e => e.type === 'OPEN_DISPUTE')?.payload.disputeType;
+  let replayAdded = false;
+  if (review && rec && JSON.parse(review.termsJson).demo === true &&
+      !reviewEvents.some(e => e.type === 'AI_DRAFT_CREATED' && e.payload.feature === 'copilot')) {
+    const evidence = repo.loadEvidence(review.id);
+    const result = await draftCopilot({ tx: review, evidence, recommendation: rec,
+      disputeType: typeof type === 'string' ? type : undefined }, { env: { AI_MODE: 'replay' } });
+    if (result.output) {
+      const draftId = randomUUID();
+      repo.storeAssistDraft(draftId, review.id, 'copilot', { draft: result.output, basis: decisionBasis(review.termsJson, evidence) }, result.meta,
+        { txId: review.id, ts: now(), actor: 'reviewer', type: 'AI_DRAFT_CREATED',
+          payload: { ...result.meta, draftId, inputContainsInjection: result.inputContainsInjection, simulated: true } });
+      replayAdded = true;
+    }
+  }
+  return { created, skipped: created === 0 && !replayAdded };
 }
