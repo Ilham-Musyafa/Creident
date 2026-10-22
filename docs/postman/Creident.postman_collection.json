@@ -424,7 +424,7 @@
                 "exec": [
                   "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
                   "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
-                  "pm.test('Clearly labelled simulation', function () { pm.expect(pm.response.text()).to.include('Simulated PayPal approval'); });"
+                  "pm.test('Clearly labelled simulation', function () { pm.expect(pm.response.text()).to.include('Demo PayPal approval'); });"
                 ]
               }
             }

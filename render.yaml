@@ -1,0 +1,25 @@
+# Render Blueprint for the public Creident demo (docs/DEPLOY.md).
+# Labelled simulation + recorded AI replays only. Never add PayPal, AI or signing secrets here
+# or in the Render dashboard: the server refuses to start with PUBLIC_DEMO=1 if any are set.
+services:
+  - type: web
+    name: creident
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /about
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PUBLIC_DEMO
+        value: "1"
+      - key: PAYPAL_MODE
+        value: simulated
+      - key: AI_MODE
+        value: replay
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"

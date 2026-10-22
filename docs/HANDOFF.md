@@ -15,7 +15,7 @@ Keep it short and current. Newest entry first in the log.
 ## Current status (2026-10-21)
 
 Project locked on 2026-10-20: dispute-mediation prototype for the PayPal AI Hackathon,
-name **Creident** (owner decision 2026-10-22; formerly HalcyVault), narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/HalcyVault`
+name **Creident** (owner decision 2026-10-22; formerly HalcyVault), narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/Creident` (renamed from HalcyVault 2026-10-22)
 is private during development; it must be made public before submission and stay public
 until 15 Dec 2026.
 
@@ -134,8 +134,8 @@ Still open:
   is available). Replaces HalcyVault in UI, README, docs, PDFs and PayPal notes. Quick web check
   found no product with the same name (nearest: Credent Insurance, CRED fintech). Say the name
   clearly once in the video. Render service name: `creident` (creident.onrender.com).
-  Not renamed on purpose: GitHub repo `Ilham-Musyafa/HalcyVault` (owner can rename it in
-  Settings; GitHub redirects), internal CSS/cookie prefixes `hv-`, concept mockup PNGs in
+  GitHub repo renamed by the owner to `Ilham-Musyafa/Creident` (old URLs redirect).
+  Not renamed on purpose: internal CSS/cookie prefixes `hv-`, concept mockup PNGs in
   docs/ui, and history in this log. `HALCYVAULT_DB_PATH` still works as a fallback for
   `CREIDENT_DB_PATH`; the default DB file is now data/creident.sqlite (an old local
   data/halcyvault.sqlite is left untouched).
@@ -173,6 +173,16 @@ Still open:
 
 ## Log
 
+- 2026-10-22 22:30 WIB (Claude): public-demo hardening for Render. `PUBLIC_DEMO=1` locks the
+  server to PAYPAL_MODE=simulated + AI_MODE=replay and exits at start if PP_ID, PP_SECRET,
+  AI_API_KEY or AUDIT_SIGNING_KEY is set (src/lib/publicDemo.ts, src/instrumentation.ts,
+  src/lib/publicDemoStartup.ts); demo deals load on start; src/proxy.ts rate-limits /api per
+  client (30 writes, 240 reads per minute, in memory, public demo only); security headers in
+  next.config.ts; render.yaml Blueprint (free plan, oregon, auto-deploy on commit to main);
+  docs/DEPLOY.md owner steps. Fixed a stale Postman assertion ("Demo PayPal approval") and the
+  README demo-deal count (13). Repo links updated to Creident. Checked: tests, build, unsafe
+  env exits 1, safe env seeds 13 deals, headers present, 429 after 30 writes, newman 40/93,
+  key pages without console errors. Next: owner creates the Render Blueprint; Workflows later.
 - 2026-10-22 21:15 WIB (Claude, owner decision): renamed the project to **Creident** (supersedes
   the 20:55 "HalcyVault locked" entry, which was a mis-click). UI brand, page title, About,
   README, AGENTS.md, DESIGN.md, UI.md, sponsor and sandbox notes, Postman collection file name,

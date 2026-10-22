@@ -1,5 +1,28 @@
 # Security review — updated 2026-10-22 (WIB)
 
+## Public demo on Render (2026-10-22)
+
+Scope: hosting the demo publicly (render.yaml, docs/DEPLOY.md). Code review plus local
+production-build checks; not a penetration test.
+
+- **Fail-closed environment lock.** With `PUBLIC_DEMO=1` the server starts only when
+  `PAYPAL_MODE=simulated` and `AI_MODE=replay`, and exits (code 1) if `PP_ID`, `PP_SECRET`,
+  `AI_API_KEY` or `AUDIT_SIGNING_KEY` is set. A hosted demo therefore cannot reach the real
+  PayPal Sandbox, a live model, or sign checkpoints. Checked by unit tests and by starting the
+  production build with each unsafe variable.
+- **Rate limit.** `src/proxy.ts` limits `/api/*` per client (first `X-Forwarded-For`
+  address): 30 non-GET and 240 GET requests per minute, HTTP 429 with `Retry-After`. In
+  memory, single instance, reset on restart; it blunts casual abuse, not a determined attacker
+  (forwarded headers can be spoofed if the host does not overwrite them).
+- **Security headers** on every response: `X-Content-Type-Options`, `Referrer-Policy`,
+  `X-Frame-Options: DENY`, CSP `frame-ancestors 'none'; base-uri 'self'; object-src 'none';
+  form-action 'self'`, `Permissions-Policy`, HSTS; `X-Powered-By` removed. No `script-src`
+  policy yet (inline theme script and Next.js runtime).
+- **Data.** Demo data only; the free instance disk is wiped on restart and demo deals are
+  reloaded at start. Visitors share one demo dataset and can change it until the next restart.
+- **Roles.** Roles stay a demo switch (`x-demo-role`), not authentication. `REVIEWER_ACCESS_CODE`
+  is left unset on the public demo so judges can try the reviewer flow; set it if abuse appears.
+
 ## C14: PayPal dispute bridge review
 
 Scope: `origin/main` at `bf032bc`, plus `sec/c14-bridge-review`. Read the bridge
