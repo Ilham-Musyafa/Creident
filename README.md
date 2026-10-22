@@ -475,7 +475,31 @@ SPLIT and does not implement a split payout or seller payout.
 ## 8. Tech stack and AI tools
 
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, SQLite through
-  `node:sqlite`, Vitest. Three runtime dependencies: `next`, `react`, `react-dom`.
+  `node:sqlite`, Vitest.
+- **AG Studio 3 (React)** powers the read-only reviewer oversight dashboard at
+  `/reviewer/oversight` (Menu > Reviewer oversight after switching to Reviewer;
+  the reviewer access code applies when configured). It shows local dispute counts,
+  stored-recommendation escalation rate, deadline queue, recorded AI assist activity,
+  PayPal case states and a **custom audit-chain health widget** with the latest
+  published checkpoint. Studio is loaded on demand only on this page; other pages
+  do not import it. It has no payment/decision controls or configured Studio agent.
+  Load demo deals in Menu for 13 labelled examples, including a simulated PayPal case
+  and actual recorded AI replays. Counts are illustrative; missing audit events and
+  ignored drafts cannot be inferred. No published checkpoint is invented for the demo.
+  - Dependency reason: `ag-studio-react` embeds the official React component;
+    `ag-studio` supplies its typed report, custom-widget and theme APIs. This large
+    commercial sponsor dependency was explicitly approved by the owner for the
+    AG Grid sponsor prize; standalone Grid/Charts would not meet that goal.
+  - Local evaluation works **without a key**, with a watermark/licence console
+    messages. Leave `AG_STUDIO_LICENSE_KEY` empty for now. The owner plans to add
+    the trial key in `.env` on **7–8 Nov**; never commit or log it. The browser SDK
+    receives this client-side licence string only on the gated reviewer page.
+    Public-demo permission/trial duration still need the owner's check with AG Grid.
+  - Setup follows the publisher's [official React Quick Start](https://www.ag-grid.com/studio/react/quick-start/)
+    (also in the npm package README), with `data.sources`, `AgStudio` and
+    `AgStudioProvider`. The [PayPal/AG Studio boilerplate](https://github.com/paypaldev/hackathon-paypal-ag-grid-boilerplate)
+    was used only as an API reference. HalcyVault supplies its own data, widgets,
+    responsive layout and token-based light/dark theme.
 - Plus Jakarta Sans, self-hosted under the SIL Open Font License.
 - Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).
   Agent rules are in [`AGENTS.md`](AGENTS.md); working notes in

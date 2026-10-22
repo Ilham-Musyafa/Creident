@@ -171,6 +171,18 @@ Still open:
 
 ## Log
 
+- 2026-10-22 (Codex, C21, in progress): branch `feat/c21-ag-studio` starts from
+  main 765dc30 (C19/C20 merged). Added owner-approved AG Studio 3 React/core
+  dependencies for the sponsor dashboard, loaded only at `/reviewer/oversight`.
+  Reviewer/gate-protected GET `/api/reviewer/oversight` reads all local deals and
+  audit events without provider calls or writes. Widgets cover dispute status/type,
+  escalation denominator, deadline queue, recorded AI run/use counts, PayPal states
+  and custom audit/checkpoint health. Seed now has 13 labelled deals, one captured
+  simulated PayPal case and actual terms/copilot replays. Initial 481 tests,
+  typecheck and production build pass; mobile initial check has no page overflow.
+  Only AG Studio missing-key console messages appeared (owner-approved evaluation).
+  Remaining: finish 390/1440 light/dark checks and screenshots, rerun final gates,
+  commit/push and open one PR. No key registered, supplied, stored or logged.
 - 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
   browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
   correct) and C20 evidence translation (import-only conflict on the review page resolved;

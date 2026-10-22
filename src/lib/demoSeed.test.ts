@@ -18,7 +18,7 @@ describe('demo seed', () => {
     const { repo } = setup();
     const reviewed: string[] = [];
     const result = await seedDemoData({ repo, time, onUnderReview: async (id) => { reviewed.push(id); } });
-    expect(result).toEqual({ created: 12, skipped: false });
+    expect(result).toEqual({ created: 13, skipped: false });
 
     const all = repo.listTransactions();
     expect(new Set(all.map((tx) => tx.status))).toEqual(new Set([
@@ -81,8 +81,8 @@ describe('demo seed', () => {
   it('adds missing examples without replacing existing demo deals', async () => {
     const { repo } = setup();
     repo.insertTransaction({ id: 'existing-demo', item: '[Demo] Vintage film camera', status: 'DRAFT', captured: false, buyerId: 'buyer', sellerId: 'seller', amount: '85.00', currency: 'USD', termsJson: '{"demo":true}' });
-    expect(await seedDemoData({ repo, time })).toEqual({ created: 11, skipped: false });
-    expect(repo.listTransactions()).toHaveLength(12);
+    expect(await seedDemoData({ repo, time })).toEqual({ created: 12, skipped: false });
+    expect(repo.listTransactions()).toHaveLength(13);
     expect(repo.loadTransaction('existing-demo')?.status).toBe('DRAFT');
     expect(repo.listTransactions().some(tx => repo.loadDecisions(tx.id).length > 0)).toBe(true);
   });
@@ -91,7 +91,7 @@ describe('demo seed', () => {
     const { repo } = setup();
     await seedDemoData({ repo, time });
     expect(await seedDemoData({ repo, time })).toEqual({ created: 0, skipped: true });
-    expect(repo.listTransactions()).toHaveLength(12);
+    expect(repo.listTransactions()).toHaveLength(13);
   });
 });
 
