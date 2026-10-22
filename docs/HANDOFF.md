@@ -170,6 +170,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 18:05 WIB (Claude): back link replaced by a round chevron icon button in PageHeader
+  (owner choice); docs/UI.md updated.
 - 2026-10-22 17:50 WIB (Claude, owner UI review): clarity pass. Payment wording ("Payment
   captured" instead of "Released to seller"; voided refund receipts say "Authorization
   cancelled (after return)"); New deal AI panel collapsed by default; "Next: ..." summary with
