@@ -201,6 +201,9 @@ Still open:
   errors/warnings; read-back chain verified. DESIGN 6.1 updated; no dependencies.
   Rules, state machine, evidence summary, PayPal/bridge and protected drafts/UI
   modules untouched. Real live-provider translation remains pending. C21 not started.
+  All work is committed and pushed. PR creation returned GitHub API 403 Forbidden;
+  ready-to-paste English description: `/tmp/c20-pr-description.md`. Open one PR
+  from this branch for Claude review when API access is available; do not merge.
 
 - 2026-10-22 08:41 WIB (Codex, C20 checkpoint): added translate/runAssist,
   strict two-key output with numeric/code/link preservation, English/Indonesian
