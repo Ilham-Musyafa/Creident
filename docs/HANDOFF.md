@@ -206,6 +206,9 @@ Still open:
   First browser pass caught nested-paragraph hydration errors in the new notice;
   changed its child text to spans. Final pass: no overflow or console errors/warnings.
   Real integrated Sandbox partial-refund execution remains pending; C20 not started.
+  All work is committed and pushed. PR creation returned GitHub API 403 Forbidden;
+  ready-to-paste English description: `/tmp/c19-pr-description.md`. Open one PR
+  from this branch for Claude review when API access is available; do not merge.
 
 - 2026-10-22 08:12 WIB (Codex, C19 checkpoint): Part A implemented locally:
   bounded USD reviewer amount, staged capture/refund with separate durable claims,
