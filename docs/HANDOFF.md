@@ -65,19 +65,20 @@ The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
 webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agents (2026-10-22 07:50 WIB)
+## Active agents (2026-10-22 16:30 WIB)
 
-Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
-when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
-continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot: merged by Claude in PR #56.
-2. C19 partial refund Part A: merged by Claude in PR #57.
-3. C20 evidence translation: merged by Claude in PR #58.
-4. C21 AG Studio oversight dashboard: implemented on `feat/c21-ag-studio`, no key;
-   verified and pushed for Claude review, do not merge (see latest log).
-5. C22 Postman collection of the HalcyVault API: next, not started.
-Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
-owner (account and credits).
+**FEATURE FREEZE** since 2026-10-22: C18-C22 merged. No new features; new ideas go to README
+section 7 as production path. Remaining work, in order (Claude unless noted):
+1. Public-demo hardening: rate limits per IP on write and AI endpoints, security headers,
+   public server locked to PAYPAL_MODE=simulated + AI replay, demo data re-seeded on start,
+   SECURITY-REVIEW update for the AI and oversight endpoints.
+2. Lighthouse / bundle-size check and fixes.
+3. Render deploy (owner creates the account and claims the $50 credits) + Render Workflow
+   for the deadline tick and dispute polling.
+4. Full end-to-end QA pass (all roles, 390/1440, light/dark) and README screenshots.
+5. Owner items: real Sandbox run of the bridge and a partial refund, live-model eval key,
+   12 draft shipping labels, name, licence switch to Apache-2.0, AG Studio trial 7-8 Nov,
+   Discord question to AG Grid, video, Devpost.
 
 ## How to run
 
@@ -169,6 +170,40 @@ Still open:
 
 ## Log
 
+- 2026-10-22 16:30 WIB (Claude): reviewed and merged C21 AG Studio oversight (#59;
+  482 tests, widgets render at 390/1440, only the expected licence messages without a key)
+  and C22 Postman collection (newman run against main: 40 requests, 93 assertions, 0
+  failures). Feature freeze declared.
+- 2026-10-22 (Codex, C22): created `docs/c22-postman`
+  from latest origin/main 765dc30, independent of the unmerged C21 review branch.
+  Added Postman v2.1 collection at docs/postman/HalcyVault.postman_collection.json:
+  40 ordered requests, explicit demo roles, loopback baseUrl, empty optional reviewer
+  code, scripted deal/order/evidence/draft/case IDs and JSON-encoded draft bodies.
+  Covers seed/reseed, both terms acceptances, simulated approval/authorization,
+  delivered tracking, damage dispute, both sides' evidence, R5 recommendation,
+  terms/courier/copilot/translation replays, advisory no-replay fallback, human
+  refund with required return, pre-capture void, audit/CSV, a second captured deal,
+  simulated external freeze/sync, inquiry message, confirmed claim escalation and
+  locked PDF submission. No application or dependency files changed. First Newman
+  attempt exposed a Postman reserved `data` variable collision; renamed script
+  locals, then 40 requests / 93 assertions passed with zero failures. Final isolated
+  run on a freshly built main server (localhost:3143, temporary SQLite file,
+  PAYPAL_MODE=simulated, AI_MODE=replay, PP/AI keys and reviewer code empty):
+  `npx --yes newman@6.2.3 run docs/postman/HalcyVault.postman_collection.json
+  --env-var baseUrl=http://localhost:3143 --bail --reporters cli,json
+  --reporter-json-export /tmp/c22-newman-final.json` -> 40 requests, 40 test scripts,
+  41 prerequest scripts and 93 assertions, all zero failures (1 iteration, 1.216s).
+  First seed returned 201, repeat seed 200; final verification covered all 14 deals.
+  Production build passed. JSON scripts also parsed and loopback/mode guards were
+  checked locally. Newman ran only through npx (cache in /tmp), not package.json;
+  its Node 24 fs.F_OK deprecation warning is from the temporary CLI. README has a
+  short Try the API subsection. No real Sandbox/webhook/live-provider run claimed.
+  Pushed implementation commit 1684382. `gh pr create --base main --head
+  docs/c22-postman` failed with `Post https://api.github.com/graphql: Forbidden`
+  (403); no PR created or merged. Full English PR text and Newman result table:
+  `/tmp/c22-pr-description.md`. Owner/Claude can create the one review PR at
+  https://github.com/Ilham-Musyafa/HalcyVault/pull/new/docs/c22-postman.
+  Claude reviews; do not merge automatically.
 - 2026-10-22 (Codex, C21): branch `feat/c21-ag-studio` starts from
   main 765dc30 (C19/C20 merged). Added owner-approved AG Studio 3 React/core
   dependencies for the sponsor dashboard, loaded only at `/reviewer/oversight`.
