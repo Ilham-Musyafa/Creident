@@ -152,3 +152,27 @@ Follow the claim rules in `AGENTS.md`. In the UI specifically:
 - Respect `prefers-reduced-motion`; transitions under 200ms.
 - No layout shift from fonts; images sized and lazy-loaded.
 - No console errors or warnings.
+
+## Motion (owner-approved 2026-10-22)
+
+CSS only, no animation library. Transform and opacity only, short (150-450 ms), and all of it
+is disabled by `prefers-reduced-motion` (the global rule also zeroes delays and repeats).
+Classes live in `src/app/globals.css`; small client pieces in `src/components/motion.tsx`.
+
+- `hv-page`: pages fade and rise in (fill mode `backwards`, so no transform is left on
+  `<main>`; a leftover transform would turn fixed overlays into scrolling ones).
+- `hv-stagger`: children of deal lists appear one after another (capped at 10 steps).
+- `hv-press`: buttons and button links scale slightly while pressed.
+- `hv-shimmer`: loading skeletons.
+- Timeline: done steps pop in order (`hv-step-done`), the current step pulses a ring.
+- Status pills that need action (disputed, awaiting) pulse their dot (`hv-dot`).
+- `CountUp`: the Home amount counts up; the final value is the server-rendered text.
+- `SuccessBurst`: a check and small confetti, rendered into `document.body`, shown once per
+  browser for a success in the last two minutes (payment authorized, deal completed, refund
+  or partial refund, decision recorded). Decoration only; the page text states the outcome.
+- Audit chain: events reveal in order (`hv-chain-item`, `--i`), each previous-hash flashes
+  as the chain links up, then the "Chain verified" box pops (`hv-verified`).
+
+New animations must follow the same limits and must never be the only way information is
+shown.
+

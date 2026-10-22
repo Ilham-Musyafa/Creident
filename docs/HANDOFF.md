@@ -170,6 +170,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 17:10 WIB (Claude, owner-approved UI polish during the freeze): motion pass
+  (docs/UI.md "Motion"): page/list entrances, button press, shimmer loading, timeline and
+  status pulses, Home count-up, one-time success burst, audit chain reveal. CSS only, no
+  dependency, reduced-motion respected. Found and fixed: a leftover transform on <main>
+  made fixed overlays scroll with the page (fill mode now backwards; burst uses a portal).
 - 2026-10-22 16:30 WIB (Claude): reviewed and merged C21 AG Studio oversight (#59;
   482 tests, widgets render at 390/1440, only the expected licence messages without a key)
   and C22 Postman collection (newman run against main: 40 requests, 93 assertions, 0
