@@ -196,7 +196,12 @@ Still open:
   checked locally. Newman ran only through npx (cache in /tmp), not package.json;
   its Node 24 fs.F_OK deprecation warning is from the temporary CLI. README has a
   short Try the API subsection. No real Sandbox/webhook/live-provider run claimed.
-  Awaiting one PR for Claude review; do not merge automatically.
+  Pushed implementation commit 1684382. `gh pr create --base main --head
+  docs/c22-postman` failed with `Post https://api.github.com/graphql: Forbidden`
+  (403); no PR created or merged. Full English PR text and Newman result table:
+  `/tmp/c22-pr-description.md`. Owner/Claude can create the one review PR at
+  https://github.com/Ilham-Musyafa/HalcyVault/pull/new/docs/c22-postman.
+  Claude reviews; do not merge automatically.
 - 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
   browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
   correct) and C20 evidence translation (import-only conflict on the review page resolved;
