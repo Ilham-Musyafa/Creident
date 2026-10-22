@@ -176,3 +176,8 @@ Classes live in `src/app/globals.css`; small client pieces in `src/components/mo
 New animations must follow the same limits and must never be the only way information is
 shown.
 
+## Back navigation (owner choice, 2026-10-22)
+
+`PageHeader` shows back navigation as a round 44 px icon button (chevron, thin border) on the
+left of the page title, with the accessible name "Back". No arrow-and-text link.
+
