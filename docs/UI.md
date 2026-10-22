@@ -67,6 +67,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | FROZEN_EXTERNAL | Frozen by PayPal | frozen |
 | COMPLETED | Completed | completed |
 | REFUNDED | Refunded | void |
+| PARTIALLY_REFUNDED | Partially refunded | void |
 | VOIDED | Voided | void |
 | CANCELLED | Cancelled | void |
 

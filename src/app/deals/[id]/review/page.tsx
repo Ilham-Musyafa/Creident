@@ -1,4 +1,5 @@
 import { EvidenceTranslation } from '../../../../components/EvidenceTranslation';
+import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
 import { FindingCard, KeyValue, RuleNotice, StatusPill } from '../../../../components/ui';
@@ -47,6 +48,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         </div>
         <aside className="min-w-0 space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
+          <PartialRefundNotice tx={tx} events={ctx.repo.readEvents(id)}/>
           <SectionTitle>Decision</SectionTitle>
           <KeyValue items={[
             { label: 'Rule', value: rec ? rec.ruleId : '—' },
@@ -56,8 +58,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           ]}/>
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
             : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Menu.</Notice>
+            : tx.partialRefundAmount ? <Notice>A partial refund decision is already recorded. Check the decision receipt and payment status.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
-            : <Card><ReviewDecision txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
+            : <Card><ReviewDecision dealAmount={tx.amount} txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>The AI only summarises; it cannot release or refund. Rules recommend, and a human confirms every dispute outcome.</Notice>
         </aside>
       </div>

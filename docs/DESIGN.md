@@ -84,10 +84,11 @@ pending for manual checking. No financial reconciliation worker is built.
 | `IN_INSPECTION` | Tracking shows delivery; the buyer's inspection window is running |
 | `DISPUTED` | Buyer opened a dispute inside the window |
 | `UNDER_REVIEW` | Evidence collected, rules or a human are deciding |
-| `RETURN_REQUESTED` | Refund decided; waiting for the buyer to return the item before any money moves |
+| `RETURN_REQUESTED` | Refund decided; waiting for the buyer to return the item before executing the refund |
 | `FROZEN_EXTERNAL` | A matching PayPal case/reversal was detected; local money actions are blocked |
 | `COMPLETED` | Captured into the Sandbox merchant account (or simulated capture); no seller payout |
-| `REFUNDED` | Captured then fully refunded; partial/split execution is not implemented |
+| `REFUNDED` | Captured then fully refunded |
+| `PARTIALLY_REFUNDED` | Final: capture followed by the reviewer-decided partial refund; no seller payout |
 | `VOIDED` | Authorization voided before capture |
 | `CANCELLED` | Cancelled before payment |
 
@@ -105,6 +106,9 @@ Transitions (guards in italics):
 | `IN_INSPECTION` | `COMPLETED` | Buyer confirms, or the window expires with no dispute; *no external dispute open* | capture |
 | `IN_INSPECTION` | `DISPUTED` | Buyer opens dispute inside the window | none |
 | `DISPUTED` | `UNDER_REVIEW` | Evidence deadline reached or both sides submitted | none |
+| `UNDER_REVIEW` | `PARTIALLY_REFUNDED` | Human PARTIAL_REFUND, typed USD amount and reason, no return (default) | capture then refund amount |
+| `UNDER_REVIEW` | `RETURN_REQUESTED` | Human PARTIAL_REFUND requiring return | none |
+| `RETURN_REQUESTED` | `PARTIALLY_REFUNDED` | Required return for partial decision delivered in time | capture then refund recorded amount |
 | `UNDER_REVIEW` | `COMPLETED` | Human confirms RELEASE with a written reason | capture |
 | `UNDER_REVIEW` | `RETURN_REQUESTED` | Human REFUND with the return required (default; added 2026-10-21, owner approved) | none |
 | `RETURN_REQUESTED` | `VOIDED` / `REFUNDED` | Buyer's return tracking shows delivery to the seller before `return_by` | void (or refund if captured) |
@@ -161,7 +165,45 @@ independent second-reviewer confirmation is implemented.
 An AI summary and rule recommendation are stored when a transaction enters
 `UNDER_REVIEW`; the recommendation cannot move funds. A human may record a `SPLIT`
 decision with a reason, but it remains pending and moves no funds because split
-execution was explicitly deferred by the owner (2026-10-21). No partial refund or split payout is built.
+execution was explicitly deferred by the owner (2026-10-21). A human may instead choose PARTIAL_REFUND with a typed USD amount (Part A, owner-approved 2026-10-22). Split payout remains unimplemented.
+
+### Reviewer partial refund (C19 Part A, owner-approved 2026-10-22)
+
+- PARTIAL_REFUND needs a reason and a canonical two-decimal USD string, strictly
+  greater than zero and below the deal amount. AI/copilot ranges remain display-only.
+- Return defaults to unchecked for partial decisions. If required, store the amount
+  in RETURN_REQUESTED; only a delivered return before the existing deadline starts
+  capture/refund. Missing the return deadline cancels this conditional refund and
+  releases the payment as before. A captured payment is not captured a second time.
+- Record the human DECISION, amount, return choice, decisionBasis hashes and optional
+  aiDraft metadata before money calls. Persist immutable partial_refund_amount and
+  partial_refund_state (awaiting_return, ready, pending, completed, cancelled).
+  Conflicting changes to a recorded decision are rejected; a competing pending full
+  money action blocks initial partial-decision storage atomically. A delivered return
+  cannot later be cancelled by tick. SPLIT stays recorded-only.
+- The staged orchestrator reserves the shared PAYPAL_CAPTURE request id before
+  capture. On confirmed success, commit paypal_capture_id and captured=true in
+  COMPLETED with PARTIAL_REFUND_CAPTURED. Then reserve a separate
+  PAYPAL_PARTIAL_REFUND id and call Payments v2 captures/{id}/refund with USD amount.
+  Only a confirmed COMPLETED refund reaches final PARTIALLY_REFUNDED, with
+  PARTIAL_REFUND_COMPLETED/refundId. Each stage logs the amount, reason and original
+  basis/aiDraft metadata. Status/ids/audit/idempotency result commit together.
+- A refund error after capture keeps COMPLETED and a visible refund-pending notice,
+  recording PAYPAL_ERROR with debug_id/request id and no raw error text. Failed or
+  interrupted stages are never blindly retried, including by tick. An uncertain
+  transport/result/commit stays pending for manual checking; no reconciliation
+  worker is added. External freezes block later stages; already in-flight remote
+  calls cannot be undone and may need manual checking if local commit is prevented.
+- The platform bears the fee on the refunded part; the buyer receives the decided
+  amount without a fee deduction. No seller payout or ledger is built. Remaining
+  capture balance is in the platform's Sandbox merchant account.
+- Existing databases widen the transaction status CHECK while retaining rows/ids,
+  foreign keys and audit events. Add partial-refund fields to transactions and
+  amount/require_return to human decisions. Audit append-only triggers are retained.
+- Fake-client and simulated-mode tests cover this path. Real integrated Sandbox
+  partial refund remains pending. APIMatic PayPal context tools were unavailable;
+  the existing PayPalClient already supports the Payments v2 amount parameter.
+  Part B (accept-claim/make-offer) is not implemented or approved.
 
 ## 6. Role of the AI
 
@@ -274,7 +316,7 @@ current terms/evidence hashes, then compares the submitted reason on the server.
 `DECISION` (or the existing `HUMAN_SPLIT_PENDING`) records `aiDraft` prompt/model/output
 metadata with accepted unchanged/edited. A stale draft requires regeneration or
 manual entry. The selected outcome, required human reason, return flow and payment
-behavior remain unchanged; partial-refund execution is a separate C19 task.
+behavior remain unchanged; partial-refund execution is implemented separately by C19 Part A and never reads the range.
 
 Implementation of #5 (C20): reviewer-only `POST
 /api/transactions/{id}/ai/translate` accepts exactly `evidenceId` and target `en` or
@@ -443,11 +485,11 @@ Signed checkpoints (owner-approved CloneIDE item 2, 2026-10-21):
 - `transactions` (id, status, buyer_id, seller_id, item, amount, currency, terms_json,
   terms_hash, ship_by, inspection_until, paypal_order_id, paypal_auth_id,
   paypal_capture_id, evidence_until, tracking_number, return_by, return_tracking,
-  captured, frozen_from, created_at, updated_at).
+  captured, frozen_from, partial_refund_amount, partial_refund_state, created_at, updated_at).
 - `evidence` (id, tx_id, submitted_by, kind: photo|tracking|chat|note, content_ref,
   content_hash, created_at).
 - `decisions` (id, tx_id, rule_id, outcome, ai_summary_json, action, reasons_json,
-  requires_human, reviewer_id, reason, created_at). One rule recommendation per
+  requires_human, reviewer_id, reason, amount, require_return, created_at). One rule recommendation per
   transaction; human decisions are separate rows.
 - `events` (audit log, section 7).
 - `paypal_events` (event_id UNIQUE, type, received_at, processed_at) for webhook de-duplication.

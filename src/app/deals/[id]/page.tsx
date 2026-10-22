@@ -1,3 +1,4 @@
+import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
 import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
 import { CourierClaimPack } from '../../../components/OutboundDrafts';
 import { notFound } from 'next/navigation';
@@ -57,6 +58,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           )}
           {simulated && <div className="mb-4"><Notice tone="warning">Simulated payment. The PayPal steps of this deal were simulated: nothing was sent to PayPal and no money moved.</Notice></div>}
           {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal refused to capture this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The authorization may be past PayPal's 3-day honor period. Nothing was charged and the deal has not moved; the seller is not paid until this is resolved. This prototype does not reauthorize automatically.</Notice></div>}
+          <PartialRefundNotice tx={tx} events={allEvents}/>
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
@@ -96,7 +98,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (simulated)' : tx.captured ? 'See PayPal capture' : 'Shown after capture' },
             ...(authWindow ? [{ label: 'PayPal authorization', value: authWindow.phase === 'honor' ? `Honored until ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the 3-day honor period; capture not guaranteed (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be captured' }] : []),
-            { label: 'Fee on refund borne by', value: 'Platform (buyer refunded in full)' },
+            { label: 'Fee on refund borne by', value: 'Platform (buyer receives the decided refund amount)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           {hasDecision && <ButtonLink href={`/deals/${id}/decision`} fullWidth>Decision receipt</ButtonLink>}

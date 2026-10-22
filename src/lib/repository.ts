@@ -30,7 +30,7 @@ export interface TransitionExtras {
   evidenceUntil?: string;
   returnBy?: string;
   returnTracking?: string;
-  decision?: { outcome: 'RELEASE' | 'REFUND'; reviewerId: string; reason: string };
+  decision?: { outcome: 'RELEASE' | 'REFUND' | 'PARTIAL_REFUND'; amount?: string; requireReturn?: boolean; reviewerId: string; reason: string };
 }
 
 export type ActionRecord =
@@ -60,7 +60,9 @@ export interface StoredEvidence {
 }
 
 export interface StoredDecision {
-  outcome: 'RELEASE' | 'REFUND' | 'SPLIT';
+  outcome: 'RELEASE' | 'REFUND' | 'SPLIT' | 'PARTIAL_REFUND';
+  amount?: string;
+  requireReturn?: boolean;
   reviewerId: string;
   reason: string;
   createdAt: string;
@@ -93,6 +95,8 @@ function fromRow(row: Record<string, unknown>): StoredTx {
     id: String(row.id),
     status: row.status as TxStatus,
     captured: Boolean(row.captured),
+    ...(row.partial_refund_amount ? { partialRefundAmount: String(row.partial_refund_amount) } : {}),
+    ...(row.partial_refund_state ? { partialRefundState: String(row.partial_refund_state) as StoredTx['partialRefundState'] } : {}),
     ...(row.frozen_from ? { frozenFrom: String(row.frozen_from) as TxStatus } : {}),
     ...(row.ship_by ? { shipBy: String(row.ship_by) } : {}),
     ...(row.inspection_until ? { inspectionUntil: String(row.inspection_until) } : {}),
@@ -123,6 +127,8 @@ export interface StoredPayPalDispute {
   updatedAt: string;
 }
 
+export class PendingMoneyActionError extends Error {}
+
 export class TransactionRepository {
   constructor(private readonly db: DatabaseSync) {}
 
@@ -135,13 +141,13 @@ export class TransactionRepository {
     this.db.prepare(`INSERT INTO transactions (
       id, status, buyer_id, seller_id, item, amount, currency, terms_json, terms_hash,
       ship_by, inspection_until, evidence_until, tracking_number,
-      paypal_order_id, paypal_auth_id, paypal_capture_id, captured, frozen_from
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      paypal_order_id, paypal_auth_id, paypal_capture_id, captured, frozen_from, partial_refund_amount, partial_refund_state
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
       tx.id, tx.status, tx.buyerId, tx.sellerId, tx.item, tx.amount, tx.currency,
       tx.termsJson, tx.termsHash ?? null, tx.shipBy ?? null, tx.inspectionUntil ?? null,
       tx.evidenceUntil ?? null, tx.trackingNumber ?? null,
       tx.paypalOrderId ?? null, tx.paypalAuthId ?? null, tx.paypalCaptureId ?? null,
-      tx.captured ? 1 : 0, tx.frozenFrom ?? null,
+      tx.captured ? 1 : 0, tx.frozenFrom ?? null, tx.partialRefundAmount ?? null, tx.partialRefundState ?? null,
     );
   }
 
@@ -408,10 +414,12 @@ export class TransactionRepository {
 
   /** Human decisions for a transaction, oldest first (a pending SPLIT can precede the final one). */
   loadDecisions(txId: string): StoredDecision[] {
-    return this.db.prepare(`SELECT outcome, reviewer_id, reason, created_at FROM decisions
+    return this.db.prepare(`SELECT outcome, reviewer_id, reason, created_at, amount, require_return FROM decisions
       WHERE tx_id = ? AND rule_id = 'HUMAN_REVIEW' ORDER BY created_at, id`).all(txId).map((row) => ({
       outcome: String(row.outcome) as StoredDecision['outcome'], reviewerId: String(row.reviewer_id),
       reason: String(row.reason), createdAt: String(row.created_at),
+      ...(row.amount ? { amount: String(row.amount) } : {}),
+      ...(row.require_return !== null && row.require_return !== undefined ? { requireReturn: Boolean(row.require_return) } : {}),
     }));
   }
 
@@ -477,12 +485,15 @@ export class TransactionRepository {
     extras: TransitionExtras = {},
   ): StoredTx {
     return transaction(this.db, () => {
+      if (extras.decision?.outcome === 'PARTIAL_REFUND' && !before.partialRefundAmount && this.db.prepare(
+        "SELECT 1 FROM idempotency WHERE tx_id = ? AND action IN ('PAYPAL_CAPTURE','PAYPAL_REFUND','PAYPAL_VOID') AND json_extract(result, '$.state') = 'pending' LIMIT 1",
+      ).get(before.id)) throw new PendingMoneyActionError('Another money action needs verification before a partial decision');
       const result = this.db.prepare(`UPDATE transactions SET status = ?, captured = ?, frozen_from = ?,
         paypal_order_id = ?, paypal_auth_id = ?, paypal_capture_id = ?,
         terms_hash = ?, ship_by = ?, tracking_number = ?, inspection_until = ?, evidence_until = ?,
-        return_by = ?, return_tracking = ?,
+        return_by = ?, return_tracking = ?, partial_refund_amount = ?, partial_refund_state = ?,
         updated_at = datetime('now')
-        WHERE id = ? AND status = ?`).run(
+        WHERE id = ? AND status = ? AND partial_refund_amount IS ? AND partial_refund_state IS ?`).run(
         next.status, next.captured ? 1 : 0, next.frozenFrom ?? null,
         ids.paypalOrderId ?? before.paypalOrderId ?? null,
         ids.paypalAuthId ?? before.paypalAuthId ?? null,
@@ -494,15 +505,16 @@ export class TransactionRepository {
         extras.evidenceUntil ?? before.evidenceUntil ?? null,
         extras.returnBy ?? before.returnBy ?? null,
         extras.returnTracking ?? before.returnTracking ?? null,
-        before.id, before.status,
+        next.partialRefundAmount ?? null, next.partialRefundState ?? null,
+        before.id, before.status, before.partialRefundAmount ?? null, before.partialRefundState ?? null,
       );
       if (result.changes !== 1) throw new Error('Transaction status changed concurrently');
       this.appendInTransaction(event);
       if (extras.decision) this.db.prepare(`INSERT INTO decisions
-        (id, tx_id, rule_id, outcome, reviewer_id, reason, created_at)
-        VALUES (?, ?, 'HUMAN_REVIEW', ?, ?, ?, ?)`).run(
+        (id, tx_id, rule_id, outcome, reviewer_id, reason, created_at, amount, require_return)
+        VALUES (?, ?, 'HUMAN_REVIEW', ?, ?, ?, ?, ?, ?)`).run(
         randomUUID(), before.id, extras.decision.outcome,
-        extras.decision.reviewerId, extras.decision.reason, event.ts,
+        extras.decision.reviewerId, extras.decision.reason, event.ts, extras.decision.amount ?? null, extras.decision.requireReturn === undefined ? null : Number(extras.decision.requireReturn),
       );
       const saved = this.loadTransaction(before.id)!;
       if (requestId) {

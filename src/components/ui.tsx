@@ -4,6 +4,7 @@ import type { TxStatus } from '../lib/domain/types';
 
 type Tone = 'awaiting' | 'authorized' | 'inspection' | 'disputed' | 'completed' | 'frozen' | 'void';
 const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
+  PARTIALLY_REFUNDED: { label: 'Partially refunded', tone: 'void' },
   DRAFT: { label: 'Draft', tone: 'void' }, TERMS_LOCKED: { label: 'Terms locked', tone: 'completed' },
   AWAITING_APPROVAL: { label: 'Awaiting approval', tone: 'awaiting' },
   AUTHORIZED: { label: 'Authorized (funds reserved)', tone: 'authorized' },

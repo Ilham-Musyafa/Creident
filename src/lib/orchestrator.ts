@@ -1,3 +1,4 @@
+import { applyPartialRefund } from './partialRefund';
 import type { Trigger, Effect } from './domain/types';
 import { transition } from './domain/stateMachine';
 import { PayPalError, requestIdFor, type PayPalClient } from './paypal/client';
@@ -38,12 +39,12 @@ function effectForTrigger(trigger: Trigger, captured: boolean): Effect['kind'] |
     case 'DECISION': return trigger.outcome === 'RELEASE'
       ? 'PAYPAL_CAPTURE' : trigger.requireReturn ? null : captured ? 'PAYPAL_REFUND' : 'PAYPAL_VOID';
     case 'RETURN_DELIVERED': return captured ? 'PAYPAL_REFUND' : 'PAYPAL_VOID';
-    case 'RETURN_DEADLINE_PASSED': return 'PAYPAL_CAPTURE';
+    case 'RETURN_DEADLINE_PASSED': return captured ? null : 'PAYPAL_CAPTURE';
     default: return null;
   }
 }
 
-function cachedResult(record: ActionRecord): ApplyResult {
+export function cachedResult(record: ActionRecord): ApplyResult {
   if (record.state === 'success') return { ok: true, tx: record.tx, approvalUrl: record.approvalUrl };
   if (record.state === 'error') {
     return { ok: false, error: new PayPalError(
@@ -60,6 +61,7 @@ async function performEffect(
   const paypal = deps.paypal!;
   switch (effect) {
     case 'NONE': return { ids: {} };
+    case 'PAYPAL_PARTIAL_REFUND': throw new Error('Partial refunds use the staged orchestrator');
     case 'PAYPAL_CREATE_ORDER': {
       if (!deps.returnUrl || !deps.cancelUrl) throw new DomainError('MISSING_PAYMENT_URLS', 'Payment return and cancel URLs are required');
       const result = await paypal.createAuthorizeOrder({
@@ -95,6 +97,11 @@ async function performEffect(
 export async function applyTrigger(txId: string, trigger: Trigger, deps: OrchestratorDeps): Promise<ApplyResult> {
   const tx = deps.repo.loadTransaction(txId);
   if (!tx) return { ok: false, error: new DomainError('NOT_FOUND', `Transaction ${txId} was not found`) };
+
+  if ((trigger.type === 'DECISION' && trigger.outcome === 'PARTIAL_REFUND') || (trigger.type === 'RETURN_DELIVERED' && tx.partialRefundAmount)) {
+    return applyPartialRefund(tx, trigger, deps);
+  }
+  if (trigger.type === 'DECISION' && tx.partialRefundAmount) return { ok: false, error: new DomainError('PARTIAL_DECISION_EXISTS', 'A partial refund decision is already recorded; check its payment outcome before any other decision') };
 
   const action = effectForTrigger(trigger, tx.captured);
   const requestId = action ? requestIdFor(txId, action) : undefined;

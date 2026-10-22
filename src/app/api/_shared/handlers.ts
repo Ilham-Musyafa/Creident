@@ -1,4 +1,5 @@
 import { loadCopilot, copilotAudit } from '../../../lib/ai/copilotStore';
+import { validPartialAmount } from '../../../lib/partialAmount';
 import { acceptedTermsAudit } from '../../../lib/ai/termsReceipt';
 import { syncPayPalDisputes } from '../../../lib/paypalDisputes';
 import { disputeDeps } from './disputes';
@@ -47,7 +48,7 @@ function deps(context: ApiContext, actor: Role, payment = false, extra: Partial<
 
 /** After a capture, attach the tracking number to the PayPal order. Never fails the request. */
 async function afterCapture(context: ApiContext, tx: StoredTx, actor: Role): Promise<TrackingOutcome> {
-  if (!tx.captured || tx.status !== 'COMPLETED') return 'skipped';
+  if (!tx.captured || !['COMPLETED', 'PARTIALLY_REFUNDED'].includes(tx.status)) return 'skipped';
   return sendTrackingToPayPal(tx.id, {
     repo: context.repo, paypal: getPaymentGateway(context), now: context.now, actor,
     ...(isSimulatedPayPal() ? { eventPayload: { simulated: true, paypalMode: 'simulated' } } : {}),
@@ -222,14 +223,17 @@ export function review(request: Request, id: string): Promise<Response> {
   return route(async () => {
     const role = requireRole(request, ['reviewer']);
     const body = await jsonBody(request);
-    noExtraFields(body, ['outcome', 'reason', 'requireReturn', 'copilotDraftId']);
-    if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND' && body.outcome !== 'SPLIT') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE, REFUND, or SPLIT');
-    if (body.requireReturn !== undefined && (typeof body.requireReturn !== 'boolean' || body.outcome !== 'REFUND')) {
-      throw new HttpError(400, 'INVALID_INPUT', 'requireReturn must be a boolean and only applies to REFUND');
+noExtraFields(body, ['outcome', 'reason', 'requireReturn', 'amount', 'copilotDraftId']);
+    if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND' && body.outcome !== 'SPLIT' && body.outcome !== 'PARTIAL_REFUND') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE, REFUND, PARTIAL_REFUND, or SPLIT');
+    if (body.requireReturn !== undefined && (typeof body.requireReturn !== 'boolean' || !['REFUND', 'PARTIAL_REFUND'].includes(String(body.outcome)))) {
+      throw new HttpError(400, 'INVALID_INPUT', 'requireReturn must be a boolean and only applies to REFUND or PARTIAL_REFUND');
     }
     const reason = stringField(body, 'reason', 2000);
     const context = getApiContext();
     const tx = requireTx(context, id);
+    if (body.outcome === 'PARTIAL_REFUND' && (!validPartialAmount(body.amount, tx.amount) || tx.currency !== 'USD')) throw new HttpError(400, 'INVALID_AMOUNT', 'Partial refund must be positive USD below the deal amount with two decimals');
+    if (body.outcome !== 'PARTIAL_REFUND' && body.amount !== undefined) throw new HttpError(400, 'INVALID_INPUT', 'amount only applies to PARTIAL_REFUND');
+    if (body.outcome !== 'PARTIAL_REFUND' && tx.partialRefundAmount) throw new HttpError(409, 'PARTIAL_DECISION_EXISTS', 'A partial refund decision is already recorded; check its payment outcome');
     if (tx.status === 'UNDER_REVIEW') await prepareReview(id, context);
     const basis = decisionBasis(requireTx(context, id).termsJson, context.repo.loadEvidence(id));
     const recommendationEvent = context.repo.readEvents(id).find((event) => event.type === 'RECOMMENDATION_RECORDED');
@@ -258,15 +262,15 @@ export function review(request: Request, id: string): Promise<Response> {
     // A refund waits for the item to come back, unless the reviewer waives it. By default the
     // return is waived only when the buyer reported that the item never arrived.
     const opened = context.repo.readEvents(id).find((event) => event.type === 'OPEN_DISPUTE');
-    const requireReturn = body.outcome === 'REFUND'
-      && (typeof body.requireReturn === 'boolean' ? body.requireReturn : opened?.payload.disputeType !== 'not_received');
-    const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome, requireReturn },
+    const requireReturn = ['REFUND', 'PARTIAL_REFUND'].includes(body.outcome)
+      && (typeof body.requireReturn === 'boolean' ? body.requireReturn : body.outcome === 'REFUND' && opened?.payload.disputeType !== 'not_received');
+    const result = unwrap(await applyTrigger(id, { type: 'DECISION', outcome: body.outcome, requireReturn, ...(body.outcome === 'PARTIAL_REFUND' ? { amount: body.amount as string } : {}) },
       deps(context, role, !requireReturn, {
         extras: {
-          decision: { outcome: body.outcome, reviewerId: 'reviewer', reason },
+          decision: { outcome: body.outcome, reviewerId: 'reviewer', reason, ...(body.outcome === 'PARTIAL_REFUND' ? { amount: body.amount as string, requireReturn } : {}) },
           ...(requireReturn ? { returnBy: addDays(context.now(), context.time.returnDays) } : {}),
         },
-        eventPayload: { reason, outcome: body.outcome, ...(body.outcome === 'REFUND' ? { requireReturn } : {}), ...decisionPayload },
+        eventPayload: { reason, outcome: body.outcome, ...(['REFUND', 'PARTIAL_REFUND'].includes(body.outcome) ? { requireReturn } : {}), ...decisionPayload },
       })));
     const tracking = await afterCapture(context, result.tx, role);
     return json({ transaction: result.tx, paypalTracking: tracking });
@@ -284,7 +288,7 @@ export function submitReturn(request: Request, id: string): Promise<Response> {
     if (!shipment) throw new HttpError(400, 'UNKNOWN_TRACKING', 'Use a documented simulated tracking number');
     const context = getApiContext();
     const tx = requireTx(context, id);
-    if (tx.status !== 'RETURN_REQUESTED') throw new HttpError(409, 'INVALID_STATE', 'No return is pending for this deal');
+    if (tx.status !== 'RETURN_REQUESTED' && !(tx.partialRefundAmount && ['ready', 'pending', 'completed'].includes(tx.partialRefundState ?? ''))) throw new HttpError(409, 'INVALID_STATE', 'No return is pending for this deal');
     if (shipment.status !== 'DELIVERED') throw new HttpError(409, 'RETURN_NOT_DELIVERED', 'The return has not reached the seller yet; submit it again once it is delivered');
     const result = unwrap(await applyTrigger(id, { type: 'RETURN_DELIVERED', now: context.now(), destinationMatches: shipment.destinationMatches },
       deps(context, role, true, {

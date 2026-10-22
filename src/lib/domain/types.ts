@@ -14,10 +14,11 @@ export type TxStatus =
   | 'FROZEN_EXTERNAL'
   | 'COMPLETED'
   | 'REFUNDED'
+  | 'PARTIALLY_REFUNDED'
   | 'VOIDED'
   | 'CANCELLED';
 
-export const FINAL_STATUSES: readonly TxStatus[] = ['COMPLETED', 'REFUNDED', 'VOIDED', 'CANCELLED'];
+export const FINAL_STATUSES: readonly TxStatus[] = ['COMPLETED', 'REFUNDED', 'PARTIALLY_REFUNDED', 'VOIDED', 'CANCELLED'];
 
 export function isFinal(status: TxStatus): boolean {
   return FINAL_STATUSES.includes(status);
@@ -29,6 +30,9 @@ export interface Tx {
   status: TxStatus;
   /** True once the PayPal authorization has been captured. After that only a refund can undo it. */
   captured: boolean;
+  amount?: string;
+  partialRefundAmount?: string;
+  partialRefundState?: 'awaiting_return' | 'ready' | 'pending' | 'completed' | 'cancelled';
   /** Status before an external PayPal dispute froze the transaction. */
   frozenFrom?: TxStatus;
   /** Seller must submit tracking before this moment. */
@@ -39,7 +43,7 @@ export interface Tx {
   returnBy?: string;
 }
 
-export type DecisionOutcome = 'RELEASE' | 'REFUND';
+export type DecisionOutcome = 'RELEASE' | 'REFUND' | 'PARTIAL_REFUND';
 
 /** Events that can move a transaction. Facts the guards need travel with the trigger. */
 export type Trigger =
@@ -55,7 +59,7 @@ export type Trigger =
   | { type: 'OPEN_DISPUTE'; now: string }
   | { type: 'EVIDENCE_COMPLETE' }
   /** A REFUND with requireReturn waits for the item to come back before any money moves. */
-  | { type: 'DECISION'; outcome: DecisionOutcome; requireReturn?: boolean }
+  | { type: 'DECISION'; outcome: DecisionOutcome; amount?: string; requireReturn?: boolean }
   | { type: 'RETURN_DELIVERED'; now: string; destinationMatches: boolean }
   | { type: 'RETURN_DEADLINE_PASSED'; now: string }
   | { type: 'EXTERNAL_DISPUTE' }
@@ -72,7 +76,8 @@ export type Effect =
   | { kind: 'PAYPAL_AUTHORIZE' }
   | { kind: 'PAYPAL_CAPTURE' }
   | { kind: 'PAYPAL_VOID' }
-  | { kind: 'PAYPAL_REFUND' };
+  | { kind: 'PAYPAL_REFUND' }
+  | { kind: 'PAYPAL_PARTIAL_REFUND' };
 
 export type TransitionResult =
   | { ok: true; tx: Tx; effect: Effect }
