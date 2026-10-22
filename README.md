@@ -446,6 +446,12 @@ refund the buyer's share; we kept the prototype to full outcomes.
   not establish permission to launch.
 - Later, the same rules-first pattern could extend to milestone-based services, such as
   home renovation paid per stage, with one PayPal order per milestone.
+- After the hackathon, a customer-support agent could answer how-it-works questions, read
+  the signed-in caller's own deal status and guide evidence, and hand off to a person. It
+  would never decide disputes, change a deal or move money. This needs real sign-in first.
+- Notifications are in-app only. A platform integration could expose outgoing event
+  webhooks (for example "shipping deadline in 12 hours") that a marketplace connects to its
+  own email, chat or automation tools.
 
 ## 8. Tech stack and AI tools
 
