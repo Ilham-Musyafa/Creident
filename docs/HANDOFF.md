@@ -65,24 +65,20 @@ The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
 webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agents (2026-10-22 07:50 WIB)
+## Active agents (2026-10-22 16:30 WIB)
 
-Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
-when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
-continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot: merged by Claude in PR #56.
-2. C19 partial refund Part A: implemented and verified on `feat/c19-partial-refund`, based on merged C18 PR #56; awaiting Claude review, do not merge.
-3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
-4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
-5. C22 Postman collection: implemented on `docs/c22-postman`, verified with Newman;
-   awaiting Claude review (see latest log), do not merge automatically.
-2. C19 partial refund Part A: merged by Claude in PR #57.
-3. C20 evidence translation: merged by Claude in PR #58.
-4. C21 AG Studio oversight dashboard: implemented on `feat/c21-ag-studio`, no key;
-   verified and pushed for Claude review, do not merge (see latest log).
-5. C22 Postman collection of the HalcyVault API: next, not started.
-Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
-owner (account and credits).
+**FEATURE FREEZE** since 2026-10-22: C18-C22 merged. No new features; new ideas go to README
+section 7 as production path. Remaining work, in order (Claude unless noted):
+1. Public-demo hardening: rate limits per IP on write and AI endpoints, security headers,
+   public server locked to PAYPAL_MODE=simulated + AI replay, demo data re-seeded on start,
+   SECURITY-REVIEW update for the AI and oversight endpoints.
+2. Lighthouse / bundle-size check and fixes.
+3. Render deploy (owner creates the account and claims the $50 credits) + Render Workflow
+   for the deadline tick and dispute polling.
+4. Full end-to-end QA pass (all roles, 390/1440, light/dark) and README screenshots.
+5. Owner items: real Sandbox run of the bridge and a partial refund, live-model eval key,
+   12 draft shipping labels, name, licence switch to Apache-2.0, AG Studio trial 7-8 Nov,
+   Discord question to AG Grid, video, Devpost.
 
 ## How to run
 
@@ -174,6 +170,10 @@ Still open:
 
 ## Log
 
+- 2026-10-22 16:30 WIB (Claude): reviewed and merged C21 AG Studio oversight (#59;
+  482 tests, widgets render at 390/1440, only the expected licence messages without a key)
+  and C22 Postman collection (newman run against main: 40 requests, 93 assertions, 0
+  failures). Feature freeze declared.
 - 2026-10-22 (Codex, C22): created `docs/c22-postman`
   from latest origin/main 765dc30, independent of the unmerged C21 review branch.
   Added Postman v2.1 collection at docs/postman/HalcyVault.postman_collection.json:
