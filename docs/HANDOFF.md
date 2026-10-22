@@ -65,20 +65,18 @@ The owner ran both Sandbox smoke paths and the separate Disputes API probe.
 Not verified yet: integrated real Sandbox UI/JSON routes and dispute bridge, real
 webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 
-## Active agents (2026-10-22 01:50 WIB)
+## Active agents (2026-10-22 07:50 WIB)
 
-Owner approved the AI assist features (DESIGN 6.1) and asked for two agents in parallel,
-one task at a time each. Keep to your own files; put new UI in new component files rather
-than growing `src/components/client.tsx`; shared helper `src/lib/ai/assist.ts` changes
-only with a note here.
-- **Codex:** C16 merged in PR #42; C17 evidence completeness implemented on
-  `feat/c17-evidence-check`, awaiting Claude review. C18 reviewer copilot is next,
-  not started.
-  Files: `src/lib/ai/terms*`, `src/lib/ai/evidenceCheck*`, `src/lib/ai/copilot*`, the
-  new-deal flow, evidence forms, review page.
-- **Claude:** #4 outbound drafts (`src/lib/ai/drafts*`, PayPal dispute panel, courier claim
-  pack), then #5 translation (`src/lib/ai/translate*`) after C18 is merged, because both
-  touch the review page.
+Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
+when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
+continues the same list from where HANDOFF says Codex stopped.
+1. C18 reviewer copilot (DESIGN 6.1 row 3).
+2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
+3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
+4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
+5. C22 Postman collection of the HalcyVault API.
+Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
+owner (account and credits).
 
 ## How to run
 
