@@ -74,7 +74,7 @@ export async function runSandboxSmoke(client: PayPalClient, ask: Ask, log: Log, 
   try {
     const tracking = await client.addTracking({
       orderId: order.orderId, captureId: capture.captureId, trackingNumber: `HV-SMOKE-${runId.slice(0, 8)}`,
-      carrierName: 'HalcyVault demo courier', requestId: requestIdFor(runId, 'add-tracking'),
+      carrierName: 'Creident demo courier', requestId: requestIdFor(runId, 'add-tracking'),
     });
     log(`Tracking: added to the PayPal order (tracker ${tracking.trackerId}).`);
   } catch (error) {

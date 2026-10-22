@@ -1,4 +1,4 @@
-// Core domain types for a HalcyVault transaction.
+// Core domain types for a Creident transaction.
 // See docs/DESIGN.md section 4 for the state machine this models.
 
 export type TxStatus =

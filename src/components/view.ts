@@ -148,7 +148,7 @@ export function nextAction(status: TxStatus, role: Role): NextAction {
 /** One-time code the evidence photos must show. Derived from the deal id. */
 export function evidenceCode(txId: string): string {
   const compact = txId.replace(/-/g, '').toUpperCase();
-  return `HV-${compact.slice(0, 4)} · ${compact.slice(-4)}`;
+  return `CR-${compact.slice(0, 4)} · ${compact.slice(-4)}`;
 }
 
 /** Money steps of this deal ran against the demo stub or the simulated PayPal, not the Sandbox. */

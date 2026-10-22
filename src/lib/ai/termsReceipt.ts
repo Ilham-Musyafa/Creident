@@ -5,8 +5,8 @@ import { descriptionForDraft, TERMS_PROMPT_VERSION, TERMS_SYSTEM, validateTermsD
 
 // Ephemeral process key, shared across route bundles; never persisted or logged.
 // A restart invalidates receipts, so the seller can generate again or continue manually.
-const runtime = globalThis as typeof globalThis & { __halcyvaultTermsReceiptKey?: Uint8Array };
-const key = () => runtime.__halcyvaultTermsReceiptKey ??= randomBytes(32);
+const runtime = globalThis as typeof globalThis & { __creidentTermsReceiptKey?: Uint8Array };
+const key = () => runtime.__creidentTermsReceiptKey ??= randomBytes(32);
 const sha = (text: string) => createHash('sha256').update(text).digest('hex');
 const sign = (body: string) => createHmac('sha256', key()).update(body).digest('hex');
 export const TERMS_RECEIPT_TTL_MS = 2 * 60 * 60 * 1000;

@@ -76,7 +76,7 @@ PayPal then offered only `provide_supporting_info`; the Sandbox `adjudicate` act
 offered yet.
 
 Proven end to end in the Sandbox: read disputes on our own payments, see the allowed
-actions per stage, message the buyer, escalate as the seller, and submit HalcyVault's
+actions per stage, message the buyer, escalate as the seller, and submit Creident's
 evidence document. Lifecycle seen: INQUIRY (UNDER_REVIEW, then WAITING_FOR_SELLER_RESPONSE
 with accept_claim, send_message, escalate, make_offer) -> seller escalates -> CHARGEBACK
 (WAITING_FOR_SELLER_RESPONSE with accept_claim, provide_evidence) -> evidence ->

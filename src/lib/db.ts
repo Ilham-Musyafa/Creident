@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
 // This module has no framework imports so the persistence layer can be tested directly.
-export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/halcyvault.sqlite"): DatabaseSync {
+export function openDatabase(filename = process.env.CREIDENT_DB_PATH ?? process.env.HALCYVAULT_DB_PATH ?? "data/creident.sqlite"): DatabaseSync {
   if (filename !== ":memory:") {
     const path = resolve(/*turbopackIgnore: true*/ filename);
     mkdirSync(dirname(path), { recursive: true });

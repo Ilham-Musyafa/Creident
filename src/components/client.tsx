@@ -296,7 +296,7 @@ export function PayPalDisputeActions({ txId, disputeId, role, actions }: { txId:
   }
   return <div className="space-y-3">
     {!actions.includes('provide_evidence') && actions.includes('send_message') && <p className="text-xs text-muted">Inquiry stage: this sends a short message. The evidence PDF needs the claim stage and PayPal must offer provide_evidence first.</p>}
-    {(actions.includes('provide_evidence') || actions.includes('send_message')) && <Button variant="ghost" fullWidth disabled={busy} onClick={() => act('evidence')}>{busy ? 'Sending…' : 'Send HalcyVault evidence to PayPal'}</Button>}
+    {(actions.includes('provide_evidence') || actions.includes('send_message')) && <Button variant="ghost" fullWidth disabled={busy} onClick={() => act('evidence')}>{busy ? 'Sending…' : 'Send Creident evidence to PayPal'}</Button>}
     {actions.includes('escalate') && (confirming ? <div className="space-y-3 rounded-[18px] border border-line bg-surface p-4">
       <p className="text-sm text-heading">Ask PayPal to step in? This turns the inquiry into a PayPal claim and cannot be undone.</p>
       <div className="flex flex-wrap gap-2"><Button variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>Cancel</Button><Button disabled={busy} onClick={() => act('escalate')}>{busy ? 'Escalating…' : 'Confirm escalation'}</Button></div>

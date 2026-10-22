@@ -70,7 +70,7 @@ export function courierClaimPack(request: Request, id: string) {
 
     const aliases = evidenceAliases(ctx.evidence);
     const lines = [
-      'Courier damage claim - prepared with HalcyVault (Sandbox demo, not sent to any courier)',
+      'Courier damage claim - prepared with Creident (Sandbox demo, not sent to any courier)',
       `Subject: ${subject}`, `Item: ${ctx.tx.item}`, `Declared value: ${ctx.tx.amount} ${ctx.tx.currency}`,
       `Tracking: ${ctx.tx.trackingNumber ?? 'Not recorded'}`, '',
       ...text.split('\n'), '',

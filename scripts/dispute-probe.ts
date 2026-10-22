@@ -40,7 +40,7 @@ export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Lo
   let d = await showDispute(client, disputeId, log);
   if (d.actions.includes('send_message')) {
     try {
-      await client.sendDisputeMessage(disputeId, 'HalcyVault: the terms were locked before payment and the item shipped with tracking. A decision receipt and the audit log are available. (Synthetic Sandbox test.)');
+      await client.sendDisputeMessage(disputeId, 'Creident: the terms were locked before payment and the item shipped with tracking. A decision receipt and the audit log are available. (Synthetic Sandbox test.)');
       log('Message to buyer (inquiry stage): sent.');
     } catch (error) { log(`Message to buyer: rejected: ${describe(error)}`); }
   }
@@ -48,7 +48,7 @@ export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Lo
     const go = (await ask('Escalate this inquiry to a PayPal claim as the seller, so evidence can be sent? [y/n]: ')).trim().toLowerCase();
     if (go === 'y') {
       try {
-        await client.escalateDispute(disputeId, 'Escalated by HalcyVault to submit locked evidence. Synthetic Sandbox test.');
+        await client.escalateDispute(disputeId, 'Escalated by Creident to submit locked evidence. Synthetic Sandbox test.');
         log('Escalated to a claim.');
       } catch (error) { log(`Escalate: rejected: ${describe(error)}`); }
       for (let i = 0; i < 6; i++) {
@@ -69,10 +69,10 @@ export async function resumeDisputeProbe(client: PayPalClient, ask: Ask, log: Lo
     }
     d = await showDispute(client, disputeId, log);
   }
-  const notes = 'HalcyVault deal evidence: terms locked before payment; shipped with tracking; full audit log available. Synthetic Sandbox test.';
-  const pdf = textPdf(['HalcyVault - evidence for PayPal dispute (Sandbox test)', '', `Dispute: ${disputeId}`, 'Synthetic test document. No real person or goods are involved.']);
+  const notes = 'Creident deal evidence: terms locked before payment; shipped with tracking; full audit log available. Synthetic Sandbox test.';
+  const pdf = textPdf(['Creident - evidence for PayPal dispute (Sandbox test)', '', `Dispute: ${disputeId}`, 'Synthetic test document. No real person or goods are involved.']);
   try {
-    await client.provideEvidence(disputeId, { reason: d.reason, notes, file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
+    await client.provideEvidence(disputeId, { reason: d.reason, notes, file: { name: 'creident-evidence.pdf', type: 'application/pdf', content: pdf } });
     log(`Evidence (multipart with PDF, type ${evidenceTypeFor(d.reason)}): accepted.`);
   } catch (error) {
     log(`Evidence (multipart with PDF): rejected: ${describe(error)}`);
@@ -108,7 +108,7 @@ export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, 
   const capture = await client.captureAuthorization(auth.authorizationId, requestIdFor(runId, 'capture'));
   log(`Captured: ${capture.status}. Seller transaction (capture) id: ${capture.captureId}`);
   try {
-    await client.addTracking({ orderId: order.orderId, captureId: capture.captureId, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier', requestId: requestIdFor(runId, 'add-tracking') });
+    await client.addTracking({ orderId: order.orderId, captureId: capture.captureId, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'Creident demo courier', requestId: requestIdFor(runId, 'add-tracking') });
     log('Tracking added to the order.');
   } catch (error) { log(`Tracking not added: ${describe(error)}`); }
 
@@ -151,12 +151,12 @@ export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, 
 
   // Step 5: send evidence, first as a PDF file, then as JSON notes if the file is refused.
   log('');
-  log('Step 5/6: sending evidence from HalcyVault...');
-  const notes = `HalcyVault deal evidence: terms locked before payment; shipped with tracking HV-PROBE-${runId.slice(0, 8)}; full audit log available. Synthetic Sandbox test.`;
+  log('Step 5/6: sending evidence from Creident...');
+  const notes = `Creident deal evidence: terms locked before payment; shipped with tracking HV-PROBE-${runId.slice(0, 8)}; full audit log available. Synthetic Sandbox test.`;
   const pdf = textPdf([
-    'HalcyVault - evidence for PayPal dispute (Sandbox test)', '',
+    'Creident - evidence for PayPal dispute (Sandbox test)', '',
     `PayPal order: ${order.orderId}`, `Capture: ${capture.captureId}`, `Tracking: HV-PROBE-${runId.slice(0, 8)} (simulated courier)`, '',
-    'Locked terms, evidence hashes and the hash-chained audit log are kept by HalcyVault.',
+    'Locked terms, evidence hashes and the hash-chained audit log are kept by Creident.',
     'This is a synthetic test document. No real person or goods are involved.',
   ]);
   if (d.actions.includes('send_message')) {
@@ -164,12 +164,12 @@ export async function runDisputeProbe(client: PayPalClient, ask: Ask, log: Log, 
     catch (error) { log(`Message to buyer failed: ${describe(error)}`); }
   }
   try {
-    await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier', file: { name: 'halcyvault-evidence.pdf', type: 'application/pdf', content: pdf } });
+    await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'Creident demo courier', file: { name: 'creident-evidence.pdf', type: 'application/pdf', content: pdf } });
     log(`Evidence (multipart with PDF, type ${evidenceTypeFor(d.reason)}): accepted.`);
   } catch (error) {
     log(`Evidence (multipart with PDF): rejected: ${describe(error)}`);
     try {
-      await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'HalcyVault demo courier' });
+      await client.provideEvidence(disputeId, { reason: d.reason, notes, trackingNumber: `HV-PROBE-${runId.slice(0, 8)}`, carrierName: 'Creident demo courier' });
       log(`Evidence (JSON notes, type ${evidenceTypeFor(d.reason)}): accepted.`);
     } catch (error2) { log(`Evidence (JSON notes and tracking): rejected: ${describe(error2)}`); }
   }

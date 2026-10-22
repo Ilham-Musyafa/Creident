@@ -34,7 +34,7 @@ describe('view helpers', () => {
   it('names events and derives a stable evidence code', () => {
     expect(eventTitle('BUYER_APPROVED')).toBe('Payment approved');
     expect(eventTitle('SOMETHING_NEW')).toBe('something new');
-    expect(evidenceCode('8c1e0000-0000-0000-0000-00000000a7f2')).toBe('HV-8C1E · A7F2');
+    expect(evidenceCode('8c1e0000-0000-0000-0000-00000000a7f2')).toBe('CR-8C1E · A7F2');
   });
 });
 

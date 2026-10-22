@@ -479,7 +479,7 @@ describe('PayPal tracking after capture', () => {
     const id = await shipAndConfirm();
     expect(trackBodies).toEqual([{
       capture_id: 'capture-1', tracking_number: 'DEMO-DELIVERED', carrier: 'OTHER',
-      carrier_name_other: 'HalcyVault demo courier', notify_payer: false,
+      carrier_name_other: 'Creident demo courier', notify_payer: false,
     }]);
     const event = repo.readEvents(id).find((e) => e.type === 'PAYPAL_TRACKING_ADDED');
     expect(event?.payload).toMatchObject({ trackerId: 'capture-1-DEMO-DELIVERED', attempt: 1 });

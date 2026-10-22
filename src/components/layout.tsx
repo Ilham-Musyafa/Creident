@@ -12,7 +12,7 @@ export function AppShell({ active, children }: { active?: Active; children: Reac
         <div className="hidden px-6 pt-6 lg:block">
           <Link href="/" className="flex min-h-11 items-center gap-3">
             <span aria-hidden="true" className="grid size-9 place-items-center rounded-xl bg-hero"><span className="size-3.5 rotate-45 rounded-[4px] bg-accent"/></span>
-            <span className="text-lg font-extrabold tracking-tight text-heading">HalcyVault</span>
+            <span className="text-lg font-extrabold tracking-tight text-heading">Creident</span>
           </Link>
         </div>
         <BottomNav active={active}/>

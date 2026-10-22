@@ -73,7 +73,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-dashed border-line pb-4">
                 <div className="min-w-0">
                   <p className="text-xs text-muted">Reference</p>
-                  <p className="font-mono text-sm font-bold tracking-wide text-heading">{`HV-${id.slice(0, 8).toUpperCase()}-${decisionEvent?.seq ?? 0}`}</p>
+                  <p className="font-mono text-sm font-bold tracking-wide text-heading">{`CR-${id.slice(0, 8).toUpperCase()}-${decisionEvent?.seq ?? 0}`}</p>
                   <p className="mt-1 text-xs text-muted">{shortDate(decision.createdAt)} · {money(tx.amount, tx.currency)}</p>
                 </div>
                 <PrintButton/>

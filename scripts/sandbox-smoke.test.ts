@@ -71,7 +71,7 @@ describe('Sandbox smoke script with fake fetch', () => {
     expect(f.lines).toContain('Refund: COMPLETED (confirmed).');
     expect(f.lines).toContain('Tracking: added to the PayPal order (tracker capture-1-HV-SMOKE-test-run).');
     const trackCall = f.calls.find((c) => c.url.endsWith('/v2/checkout/orders/order-1/track'))!;
-    expect(JSON.parse(String(trackCall.init.body))).toMatchObject({ capture_id: 'capture-1', carrier: 'OTHER', carrier_name_other: 'HalcyVault demo courier' });
+    expect(JSON.parse(String(trackCall.init.body))).toMatchObject({ capture_id: 'capture-1', carrier: 'OTHER', carrier_name_other: 'Creident demo courier' });
     expect(f.calls.at(-1)?.url).toContain('/v2/payments/captures/capture-1/refund');
     const writeIds = f.calls.map(({ init }) => (init.headers as Record<string, string>)?.['PayPal-Request-Id']).filter(Boolean);
     expect(new Set(writeIds).size).toBe(5);
