@@ -167,6 +167,11 @@ Still open:
 
 ## Log
 
+- 2026-10-22 08:15 WIB (Claude): reviewed and merged C18 reviewer copilot (391 tests,
+  build, browser check 390 light / 1440 dark). Watch in the live-model eval: the copilot
+  validator rejects any capitalised word outside a short allow-list (name screening), so
+  live drafts with words like "Battery" or "Courier" will come back "unavailable"; widen
+  the list or switch to name masking if that happens.
 - 2026-10-22 07:58 WIB (Codex, C18): reviewer copilot implemented and verified on
   `feat/c18-reviewer-copilot`. `runAssist` feature copilot / copilot-v1 drafts cited
   per-criterion notes, a 20-800 character reason, and optional bounded R5-only
