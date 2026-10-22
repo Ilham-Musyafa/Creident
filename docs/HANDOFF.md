@@ -135,7 +135,13 @@ Still open:
   Clarus (clear meaning, but widely used), Vectrust, Solventy, Vectro, Middlemark,
   Settlewise. Avoid Vectra (Vectra AI), Dealtrail (close to Dealertrack) and words like
   escrow/safe/guard/secure (claim rules). Rename README, UI and video script in one PR.
-- Hosting / public demo link: owner chose "decide later" (after smoke test and video).
+- Hosting / public demo link: DECIDED 2026-10-22, Render (sponsor tool). Start on the free
+  plan; optionally upgrade to the ~$7/month instance during judging to avoid the ~1 minute
+  cold start; final choice before submission (do not change the URL after submitting).
+  Public server runs PAYPAL_MODE=simulated and AI replay only (no PayPal or AI keys on the
+  public server), re-seeds demo data on start, Node 22+. Do this after the feature freeze,
+  together with the public-demo hardening (rate limits, security headers, SECURITY-REVIEW
+  update for the AI endpoints) and a Lighthouse/bundle-size check.
 - License: MIT for now. Owner plans to switch to Apache-2.0 (LICENSE + NOTICE + README)
   while the repo is still private, i.e. before it goes public around 10 Nov; switching after
   it is public would leave the published versions under MIT.
@@ -150,6 +156,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:25 WIB (Owner + Claude): hosting decided: Render (free first). AG Grid
+  reviewer console + AI draft statistics still awaits the owner's yes/no.
 - 2026-10-22 07:15 WIB (Owner + Claude): owner approved proposal A (partial refund decided
   by the reviewer: PARTIAL_REFUND state, capture then refund the amount, no return by
   default, reviewer sets the amount). B (PayPal accept-claim/make-offer) and the fee
