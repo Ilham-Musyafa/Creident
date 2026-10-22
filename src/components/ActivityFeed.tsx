@@ -15,7 +15,7 @@ export function ActivityFeed({ txId, items, now }: { txId: string; items: Activi
   if (!items.length) return null;
   return <section aria-label="Activity" className="rounded-[22px] border border-line bg-surface p-4">
     <div className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-bold text-heading">Activity</h2>
-      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">Full audit log</Link></div>
+      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">Full deal record</Link></div>
     <ol className="hv-stagger">
       {items.map((item) => {
         const icon = ICON[item.kind];

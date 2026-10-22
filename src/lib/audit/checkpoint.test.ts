@@ -57,7 +57,7 @@ describe('signed checkpoints', () => {
     const directory = mkdtempSync(join(tmpdir(), 'hv-checkpoint-'));
     expect(latestCheckpoint(new Map(), directory)).toMatchObject({ available: false });
     writeFileSync(join(directory, '2026-10-21T00-00-00-000Z.json'), '{}');
-    expect(latestCheckpoint(new Map(), directory)).toMatchObject({ available: false, message: 'No checkpoint public key is available.' });
+    expect(latestCheckpoint(new Map(), directory)).toMatchObject({ available: false, message: 'The key to check the sealed copy is missing.' });
     writeFileSync(join(directory, 'public-key.pem'), keys().publicPem);
     expect(latestCheckpoint(new Map(), directory)).toMatchObject({ available: true, result: { valid: false } });
   });

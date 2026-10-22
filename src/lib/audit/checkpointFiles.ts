@@ -8,13 +8,13 @@ export type PublishedCheckpoint = { available: false; message: string } | { avai
 export function latestCheckpoint(chains: AuditChains, directory = join(process.cwd(), 'audit-checkpoints')): PublishedCheckpoint {
   let names: string[];
   try { names = readdirSync(/*turbopackIgnore: true*/ directory).filter(name => /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\.json$/.test(name)).sort(); }
-  catch { return { available: false, message: 'No checkpoint or public key is available.' }; }
-  if (!names.length) return { available: false, message: 'No published checkpoint is available.' };
+  catch { return { available: false, message: 'No sealed copy has been published yet.' }; }
+  if (!names.length) return { available: false, message: 'No sealed copy has been published yet.' };
   let publicKey: string;
   try { publicKey = readFileSync(/*turbopackIgnore: true*/ join(/*turbopackIgnore: true*/ directory, 'public-key.pem'), 'utf8'); }
-  catch { return { available: false, message: 'No checkpoint public key is available.' }; }
+  catch { return { available: false, message: 'The key to check the sealed copy is missing.' }; }
   try {
     const value: unknown = JSON.parse(readFileSync(/*turbopackIgnore: true*/ join(/*turbopackIgnore: true*/ directory, names.at(-1)!), 'utf8'));
     return { available: true, result: verifyCheckpoint(value, publicKey, chains) };
-  } catch { return { available: false, message: 'The latest checkpoint could not be read.' }; }
+  } catch { return { available: false, message: 'The latest sealed copy could not be read.' }; }
 }

@@ -19,10 +19,10 @@ export default async function NewDealPage() {
           <div className="space-y-3">
             <KeyValue items={[
               { label: 'Seller ships within', value: `${time.shipByDays} days` },
-              { label: 'Buyer inspection', value: `${time.inspectionDays} days` },
+              { label: 'Buyer checks the item', value: `${time.inspectionDays} days` },
               { label: 'Evidence window', value: `${time.evidenceDays} days` },
-              { label: 'PayPal fee', value: 'Shown after capture' },
-              { label: 'Fee on refund borne by', value: 'Platform (buyer refunded in full)' },
+              { label: 'PayPal fee', value: 'Shown after payment' },
+              { label: 'Refund fees paid by', value: 'The platform (buyer gets the full refund)' },
             ]}/>
             <Notice>Currency is USD (PayPal Sandbox). PayPal fees are not returned on a refund; the platform bears them, so the buyer gets the full amount back.</Notice>
           </div>

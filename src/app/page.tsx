@@ -49,10 +49,10 @@ export default async function HomePage() {
                 {role === 'seller' && <ButtonLink href="/deals/new">+ New deal</ButtonLink>}
                 <SeedButton role={role}/>
               </div>
-              <p className="mt-3 text-xs text-muted">Demo deals use simulated PayPal payments.</p>
+              <p className="mt-3 text-xs text-muted">Example deals use demo payments (no real money).</p>
             </Card>
           ) : <AmountCard
-            label="Payments authorized · not yet captured"
+            label="Approved payments · not charged yet"
             amount={money(reserved)}
             stats={[{ label: 'Active', value: String(active) }, { label: 'In dispute', value: String(inDispute) }, { label: 'Completed', value: String(completed) }]}
             {...(role === 'seller' ? { actionHref: '/deals/new', actionLabel: '+ New deal' }
@@ -95,15 +95,15 @@ export default async function HomePage() {
             <Card>
               <p className="text-xs text-muted">Audit & verification</p>
               <p className="mt-1 text-sm font-bold" style={{ color: verified === chains.length ? 'var(--success-text)' : 'var(--warning-text)' }}>
-                {verified === chains.length ? `All ${chains.length} chains verified` : `${chains.length - verified} of ${chains.length} chains failed`}
+                {verified === chains.length ? `All ${chains.length} records intact` : `${chains.length - verified} of ${chains.length} records changed`}
               </p>
-              <Link href="/audit" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-heading underline-offset-4 hover:underline">Open audit log</Link>
+              <Link href="/audit" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-heading underline-offset-4 hover:underline">Open deal records</Link>
             </Card>
           )}
 
           <div className="border-t border-line pt-4">
             <span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">Sandbox demo</span>
-            <p className="mt-2 text-xs leading-relaxed text-muted">{simulatedPayPal() ? 'Simulated payments. Nothing is sent to PayPal.' : 'A dispute-mediation prototype. No real money.'}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted">{simulatedPayPal() ? 'Demo payments only. No real money moves.' : 'A dispute-mediation prototype. No real money.'}</p>
             <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">View limitations →</Link>
           </div>
         </aside>

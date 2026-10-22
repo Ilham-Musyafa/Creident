@@ -23,7 +23,7 @@ const FRIENDLY: Record<string, string> = {
   ACTION_PENDING: 'A PayPal action for this deal is still pending. Try again later.',
   SPLIT_PENDING: 'A split decision is pending for this deal.',
   INVALID_STATE: 'This action is not possible in the current status. Refresh the page.',
-  UNKNOWN_TRACKING: 'Use one of the simulated tracking numbers.',
+  UNKNOWN_TRACKING: 'Use one of the demo tracking numbers.',
 };
 
 export async function callApi<T = Record<string, unknown>>(path: string, role: Role, body?: unknown, method = 'POST'): Promise<T> {
@@ -116,7 +116,7 @@ export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
 export function PayButton({ txId, simulated = false, amount, item }: { txId: string; simulated?: boolean; amount?: string; item?: string }) {
   const { busy, error, run } = useAction();
   const [asking, setAsking] = useState(false);
-  const label = simulated ? 'Continue to simulated PayPal' : 'Continue to PayPal (Sandbox)';
+  const label = simulated ? 'Continue to demo PayPal' : 'Continue to PayPal (Sandbox)';
   const pay = () => { setAsking(false); return run(async () => {
     const data = await callApi<{ approvalUrl?: string }>(`/api/transactions/${txId}/pay`, 'buyer', {});
     if (data.approvalUrl) window.location.href = data.approvalUrl;
@@ -126,8 +126,8 @@ export function PayButton({ txId, simulated = false, amount, item }: { txId: str
       <Button fullWidth disabled={busy} onClick={() => amount ? setAsking(true) : pay()}>{busy ? 'Opening PayPal…' : label}</Button>
       {amount && <ConfirmSheet open={asking} busy={busy} onConfirm={pay} onCancel={() => setAsking(false)} details={{
         title: 'Authorize payment', amount, amountCaption: item,
-        rows: [{ label: 'Taken now', value: 'Nothing: funds are reserved' }, { label: 'Captured when', value: 'You confirm receipt or a dispute is decided' }, { label: 'Paid with', value: simulated ? 'Simulated PayPal' : 'PayPal Sandbox' }],
-        note: 'If the seller does not ship in time, the authorization is voided and nothing is charged.', confirmLabel: 'Continue to PayPal',
+        rows: [{ label: 'Charged now', value: 'Nothing yet' }, { label: 'Charged when', value: 'You confirm the item, or a problem is decided' }, { label: 'Paid with', value: simulated ? 'Demo PayPal' : 'PayPal Sandbox' }],
+        note: 'If the seller does not ship in time, the payment is cancelled and nothing is charged.', confirmLabel: 'Continue to PayPal',
       }}/>}
       <ErrorNote error={error}/>
     </div>
@@ -279,9 +279,9 @@ export function PayPalDisputeActions({ txId, disputeId, role, actions }: { txId:
     {!actions.includes('provide_evidence') && actions.includes('send_message') && <p className="text-xs text-muted">Inquiry stage: this sends a short message. The evidence PDF needs the claim stage and PayPal must offer provide_evidence first.</p>}
     {(actions.includes('provide_evidence') || actions.includes('send_message')) && <Button variant="ghost" fullWidth disabled={busy} onClick={() => act('evidence')}>{busy ? 'Sending…' : 'Send HalcyVault evidence to PayPal'}</Button>}
     {actions.includes('escalate') && (confirming ? <div className="space-y-3 rounded-[18px] border border-line bg-surface p-4">
-      <p className="text-sm text-heading">Escalate this inquiry to a PayPal claim? This cannot be undone. PayPal will review the case.</p>
+      <p className="text-sm text-heading">Ask PayPal to step in? This turns the inquiry into a PayPal claim and cannot be undone.</p>
       <div className="flex flex-wrap gap-2"><Button variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>Cancel</Button><Button disabled={busy} onClick={() => act('escalate')}>{busy ? 'Escalating…' : 'Confirm escalation'}</Button></div>
-    </div> : <Button variant="ghost" fullWidth disabled={busy} onClick={() => setConfirming(true)}>Escalate to PayPal claim</Button>)}
+    </div> : <Button variant="ghost" fullWidth disabled={busy} onClick={() => setConfirming(true)}>Ask PayPal to step in</Button>)}
     {message && <p role="status" className="text-sm text-heading">{message}</p>}
     <ErrorNote error={error}/>
   </div>;

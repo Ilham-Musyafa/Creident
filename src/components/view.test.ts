@@ -20,8 +20,8 @@ describe('view helpers', () => {
       expect(timelineFor(status).filter((s) => s.state === 'current')).toHaveLength(1);
     }
     expect(timelineFor('COMPLETED').every((s) => s.state === 'done')).toBe(true);
-    expect(timelineFor('VOIDED').at(-1)?.title).toBe('Authorization voided');
-    expect(timelineFor('FROZEN_EXTERNAL', 'IN_INSPECTION').some((s) => s.title === 'Frozen by PayPal')).toBe(true);
+    expect(timelineFor('VOIDED').at(-1)?.title).toBe('Payment cancelled');
+    expect(timelineFor('FROZEN_EXTERNAL', 'IN_INSPECTION').some((s) => s.title === 'On hold by PayPal')).toBe(true);
   });
 
   it('offers money-moving decisions only to the right role', () => {
@@ -32,7 +32,7 @@ describe('view helpers', () => {
   });
 
   it('names events and derives a stable evidence code', () => {
-    expect(eventTitle('BUYER_APPROVED')).toBe('Payment authorized');
+    expect(eventTitle('BUYER_APPROVED')).toBe('Payment approved');
     expect(eventTitle('SOMETHING_NEW')).toBe('something new');
     expect(evidenceCode('8c1e0000-0000-0000-0000-00000000a7f2')).toBe('HV-8C1E · A7F2');
   });

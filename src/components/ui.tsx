@@ -5,15 +5,15 @@ import type { TxStatus } from '../lib/domain/types';
 
 type Tone = 'awaiting' | 'authorized' | 'inspection' | 'disputed' | 'completed' | 'frozen' | 'void';
 const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
-  PARTIALLY_REFUNDED: { label: 'Partially refunded', tone: 'void' },
-  DRAFT: { label: 'Draft', tone: 'void' }, TERMS_LOCKED: { label: 'Terms locked', tone: 'completed' },
-  AWAITING_APPROVAL: { label: 'Awaiting approval', tone: 'awaiting' },
-  AUTHORIZED: { label: 'Authorized (funds reserved)', tone: 'authorized' },
-  SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: 'Inspection', tone: 'inspection' },
-  DISPUTED: { label: 'Disputed', tone: 'disputed' }, UNDER_REVIEW: { label: 'Under review', tone: 'disputed' },
-  RETURN_REQUESTED: { label: 'Return requested', tone: 'awaiting' },
-  FROZEN_EXTERNAL: { label: 'Frozen by PayPal', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
-  REFUNDED: { label: 'Refunded', tone: 'void' }, VOIDED: { label: 'Voided', tone: 'void' },
+  PARTIALLY_REFUNDED: { label: 'Partly refunded', tone: 'void' },
+  DRAFT: { label: 'Waiting for agreement', tone: 'void' }, TERMS_LOCKED: { label: 'Agreed · ready to pay', tone: 'completed' },
+  AWAITING_APPROVAL: { label: 'Waiting for payment', tone: 'awaiting' },
+  AUTHORIZED: { label: 'Payment approved', tone: 'authorized' },
+  SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: 'Delivered · checking', tone: 'inspection' },
+  DISPUTED: { label: 'Problem reported', tone: 'disputed' }, UNDER_REVIEW: { label: 'Being reviewed', tone: 'disputed' },
+  RETURN_REQUESTED: { label: 'Return in progress', tone: 'awaiting' },
+  FROZEN_EXTERNAL: { label: 'On hold by PayPal', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
+  REFUNDED: { label: 'Refunded', tone: 'void' }, VOIDED: { label: 'Cancelled · not charged', tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },
 };
 const toneStyle = (tone: Tone) => ({ backgroundColor: `var(--${tone}-bg)`, color: `var(--${tone}-text)` });
@@ -65,22 +65,22 @@ export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason
 }
 export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string }) {
   // Metadata items never break inside a short hash; the full hashes show when the event is opened.
-  const meta = <p className="mt-0.5 flex flex-wrap gap-x-2 font-mono text-xs text-muted"><span className="whitespace-nowrap">{actor}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">{time}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">prev <span className="hv-hash">{prevHash}</span></span></p>;
-  const heading = <p title={rawType} className="text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{simulated && <span className="ml-2 rounded-full px-2 py-0.5 align-middle text-[11px] font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>Simulated</span>}</p>;
+  const meta = <p className="mt-0.5 flex flex-wrap gap-x-2 font-mono text-xs text-muted"><span className="whitespace-nowrap">{actor}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">{time}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">linked to <span className="hv-hash">{prevHash}</span></span></p>;
+  const heading = <p title={rawType} className="text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{simulated && <span className="ml-2 rounded-full px-2 py-0.5 align-middle text-[11px] font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>Demo</span>}</p>;
   return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`flex gap-3 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}>
     <span className="h-fit rounded-full bg-surface-2 px-2 py-1 font-mono text-xs text-muted">#{seq}</span>
     <div className="min-w-0 flex-1">{fullPrevHash || hash
       ? <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{heading}{meta}</summary>
           <dl className="mt-2 space-y-1 rounded-[12px] bg-surface-2 p-2 font-mono text-[11px] text-muted">
-            {hash && <div><dt className="font-sans font-semibold text-heading">Event hash</dt><dd className="break-all">{hash}</dd></div>}
-            {fullPrevHash && <div><dt className="font-sans font-semibold text-heading">Previous hash</dt><dd className="break-all">{fullPrevHash}</dd></div>}
-            {rawType && <div><dt className="font-sans font-semibold text-heading">Type</dt><dd className="break-all">{rawType}</dd></div>}
+            {hash && <div><dt className="font-sans font-semibold text-heading">Fingerprint</dt><dd className="break-all">{hash}</dd></div>}
+            {fullPrevHash && <div><dt className="font-sans font-semibold text-heading">Linked to</dt><dd className="break-all">{fullPrevHash}</dd></div>}
+            {rawType && <div><dt className="font-sans font-semibold text-heading">Technical name</dt><dd className="break-all">{rawType}</dd></div>}
           </dl></details>
       : <>{heading}{meta}</>}</div>
   </li>;
 }
 export function ChainStatus({ verified, count, headHash, revealAfterMs }: { verified: boolean; count: number; headHash: string; revealAfterMs?: number }) {
-  return <div role="status" className={`rounded-[18px] border p-4 text-sm ${revealAfterMs === undefined ? '' : 'hv-verified'}`} style={{ ...(revealAfterMs === undefined ? {} : { '--after': `${revealAfterMs}ms` }), background: verified ? 'var(--success-bg)' : 'var(--warning-bg)', borderColor: verified ? 'var(--success-line)' : 'var(--warning-line)', color: verified ? 'var(--success-text)' : 'var(--warning-text)' }}><strong>{verified ? `Chain verified · ${count} events` : 'Chain verification failed'}</strong><p className="mt-1 break-all font-mono text-xs">Head {headHash}</p></div>;
+  return <div role="status" className={`rounded-[18px] border p-4 text-sm ${revealAfterMs === undefined ? '' : 'hv-verified'}`} style={{ ...(revealAfterMs === undefined ? {} : { '--after': `${revealAfterMs}ms` }), background: verified ? 'var(--success-bg)' : 'var(--warning-bg)', borderColor: verified ? 'var(--success-line)' : 'var(--warning-line)', color: verified ? 'var(--success-text)' : 'var(--warning-text)' }}><strong>{verified ? `Record intact · ${count} steps` : 'Record was changed'}</strong><p className="mt-1 break-all font-mono text-xs">Fingerprint {headHash}</p></div>;
 }
 export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`min-h-11 w-full rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted ${className}`} {...props}/>;
@@ -97,5 +97,5 @@ function NavIcon({ name }: { name: NavItem['label'] }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">{path}</svg>;
 }
 export function BottomNav({ active = 'Home' }: { active?: NavItem['label'] }) {
-  return <nav aria-label="Main navigation" className="border-t border-line bg-surface lg:w-56 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-14 min-w-12 flex-col items-center justify-center gap-1 text-[11px] font-semibold lg:min-h-11 lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm ${item.label === 'New' ? 'text-heading lg:hover:bg-surface-2' : active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'} ${item.label === 'New' ? '[&>svg]:size-11 [&>svg]:rounded-full [&>svg]:bg-accent [&>svg]:p-3 [&>svg]:text-on-accent lg:[&>svg]:size-5 lg:[&>svg]:rounded-none lg:[&>svg]:bg-transparent lg:[&>svg]:text-heading lg:[&>svg]:p-0' : ''}`}><NavIcon name={item.label}/><span>{item.label}</span></Link>)}</div></nav>;
+  return <nav aria-label="Main navigation" className="border-t border-line bg-surface lg:w-56 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-14 min-w-12 flex-col items-center justify-center gap-1 text-[11px] font-semibold lg:min-h-11 lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm ${item.label === 'New' ? 'text-heading lg:hover:bg-surface-2' : active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'} ${item.label === 'New' ? '[&>svg]:size-11 [&>svg]:rounded-full [&>svg]:bg-accent [&>svg]:p-3 [&>svg]:text-on-accent lg:[&>svg]:size-5 lg:[&>svg]:rounded-none lg:[&>svg]:bg-transparent lg:[&>svg]:text-heading lg:[&>svg]:p-0' : ''}`}><NavIcon name={item.label}/><span>{item.label === 'Audit' ? 'Records' : item.label}</span></Link>)}</div></nav>;
 }

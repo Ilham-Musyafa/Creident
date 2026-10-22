@@ -170,6 +170,14 @@ Still open:
 
 ## Log
 
+- 2026-10-22 19:20 WIB (Claude, owner request): plain-language pass. Glossary in docs/UI.md
+  "Plain language" (approved -> not charged yet, captured -> payment completed, voided ->
+  payment cancelled, audit log -> deal record, hash -> fingerprint, checkpoint -> sealed
+  copy, simulated -> demo). Applied to statuses, timeline, event titles, activity feed, deal,
+  checkout, demo PayPal page, confirm sheets, receipt, records pages, oversight widget, menu
+  and nav ("Records"). About and Fairness keep their technical explanations for judges.
+  The receipt for a refund decided before capture now reads "Payment cancelled (after
+  return)" (was "Authorization cancelled ..."). Tests updated to the new copy.
 - 2026-10-22 18:40 WIB (Claude, owner-approved UI patterns): confirmation sheet before money
   moves (checkout, confirm receipt, every reviewer decision), receipt reference + Save as
   PDF, plain-language activity feed on the deal page, three-step dispute opening (old

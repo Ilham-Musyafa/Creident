@@ -291,7 +291,7 @@ describe('JSON route handlers', () => {
     expect(response.status).toBe(200);
     const event = repo.readEvents(id).find(e => e.type === (outcome === 'SPLIT' ? 'HUMAN_SPLIT_PENDING' : 'DECISION'))!;
     expect(event.payload).toMatchObject({ ...basis, evidenceChangedSinceRecommendation: true });
-    expect(renderToStaticMarkup(await DecisionReceiptPage(param(id)))).toContain('Changed before decision');
+    expect(renderToStaticMarkup(await DecisionReceiptPage(param(id)))).toContain('Changed before the decision');
     expect(verifyChain(repo.readEvents(id)).ok).toBe(true);
   });
 

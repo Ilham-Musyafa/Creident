@@ -51,11 +51,11 @@ export interface Step { title: string; detail?: string; state: StepState }
 /** The five-step progress shown on the deal detail screen. */
 export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   const base: Array<Omit<Step, 'state'>> = [
-    { title: 'Terms locked', detail: 'Both parties agreed to the same terms' },
-    { title: 'Payment authorized', detail: 'Funds reserved via PayPal, not captured' },
-    { title: 'Shipped', detail: 'Seller added tracking (simulated courier)' },
-    { title: 'Buyer inspection', detail: 'Confirm receipt or open a dispute' },
-    { title: 'Payment captured', detail: 'Captured via PayPal; seller payout is outside this prototype' },
+    { title: 'Agreed', detail: 'Both sides accepted the same terms' },
+    { title: 'Payment approved', detail: 'Not charged until the buyer confirms' },
+    { title: 'Shipped', detail: 'Seller added tracking (demo courier)' },
+    { title: 'Buyer checks the item', detail: 'Confirm it arrived as agreed, or report a problem' },
+    { title: 'Payment completed', detail: 'Charged via PayPal; payout to the seller is not part of this demo' },
   ];
   const effective = status === 'FROZEN_EXTERNAL' && frozenFrom ? frozenFrom : status;
   const doneUntil: Record<TxStatus, number> = {
@@ -67,58 +67,58 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   const steps: Step[] = base.map((step, i) => ({ ...step, state: i < done ? 'done' : i === done ? 'current' : 'upcoming' }));
 
   const current = steps[done];
-  if (effective === 'AWAITING_APPROVAL' && current) current.detail = 'Waiting for the buyer to approve on PayPal (Sandbox)';
-  if (effective === 'SHIPPED' && current) { current.detail = 'In transit (simulated courier)'; }
+  if (effective === 'AWAITING_APPROVAL' && current) current.detail = 'Waiting for the buyer to approve on PayPal';
+  if (effective === 'SHIPPED' && current) { current.detail = 'On the way (demo courier)'; }
   if ((effective === 'DISPUTED' || effective === 'UNDER_REVIEW') && steps[3]) {
-    steps[3] = { title: effective === 'DISPUTED' ? 'Dispute open' : 'Under review', detail: effective === 'DISPUTED' ? 'Both sides add evidence' : 'Rules and a human reviewer decide', state: 'current' };
+    steps[3] = { title: effective === 'DISPUTED' ? 'Problem reported' : 'Being reviewed', detail: effective === 'DISPUTED' ? 'Both sides add evidence' : 'A person decides, guided by the rules', state: 'current' };
   }
   if (effective === 'RETURN_REQUESTED' && steps[3] && steps[4]) {
-    steps[3] = { title: 'Refund decided', detail: 'A reviewer decided to refund once the item is returned', state: 'done' };
-    steps[4] = { title: 'Return to seller', detail: 'Buyer ships the item back; the refund runs when it arrives', state: 'current' };
+    steps[3] = { title: 'Refund approved', detail: 'The refund follows once the item is returned', state: 'done' };
+    steps[4] = { title: 'Return to seller', detail: 'Buyer ships it back; the refund is sent when it arrives', state: 'current' };
   }
   if (status === 'FROZEN_EXTERNAL' && steps[Math.min(done, 4)]) {
-    steps[Math.min(done, 4)] = { title: 'Frozen by PayPal', detail: 'A PayPal dispute or reversal is open; nothing moves', state: 'current' };
+    steps[Math.min(done, 4)] = { title: 'On hold by PayPal', detail: 'PayPal is reviewing a case; nothing moves meanwhile', state: 'current' };
   }
-  if (effective === 'VOIDED') steps.splice(2, 3, { title: 'Authorization voided', detail: 'No money was taken', state: 'done' });
+  if (effective === 'VOIDED') steps.splice(2, 3, { title: 'Payment cancelled', detail: 'Nothing was charged', state: 'done' });
   if (effective === 'CANCELLED') steps.splice(0, 5, { title: 'Cancelled', detail: 'Cancelled before payment', state: 'done' });
-  if (effective === 'PARTIALLY_REFUNDED' && steps[4]) steps[4] = { title: 'Partially refunded', detail: 'Captured, then the reviewer amount was refunded', state: 'done' };
-  if (effective === 'REFUNDED' && steps[4]) steps[4] = { title: 'Refunded to buyer', detail: 'Captured, then refunded via PayPal', state: 'done' };
+  if (effective === 'PARTIALLY_REFUNDED' && steps[4]) steps[4] = { title: 'Partly refunded', detail: 'Charged, then part was refunded to the buyer', state: 'done' };
+  if (effective === 'REFUNDED' && steps[4]) steps[4] = { title: 'Refunded', detail: 'Charged, then refunded to the buyer', state: 'done' };
   return steps;
 }
 
 const EVENT_TITLES: Record<string, string> = {
-  TRANSACTION_CREATED: 'Terms created',
+  TRANSACTION_CREATED: 'Deal created',
   TERMS_ACCEPTED: 'Terms accepted',
-  ACCEPT_TERMS: 'Terms locked',
-  START_PAYMENT: 'PayPal order created',
-  BUYER_APPROVED: 'Payment authorized',
-  SUBMIT_TRACKING: 'Tracking submitted',
-  TRACKING_DELIVERED: 'Delivery recorded',
-  TRACKING_INVALID: 'Tracking invalid',
-  BUYER_CONFIRM: 'Buyer confirmed, payment captured',
-  INSPECTION_EXPIRED: 'Inspection ended, payment captured',
-  OPEN_DISPUTE: 'Dispute opened',
+  ACCEPT_TERMS: 'Terms agreed by both sides',
+  START_PAYMENT: 'Payment started',
+  BUYER_APPROVED: 'Payment approved',
+  SUBMIT_TRACKING: 'Item shipped',
+  TRACKING_DELIVERED: 'Item delivered',
+  TRACKING_INVALID: 'Tracking number not valid',
+  BUYER_CONFIRM: 'Buyer confirmed · payment completed',
+  INSPECTION_EXPIRED: 'Check period ended · payment completed',
+  OPEN_DISPUTE: 'Problem reported',
   EVIDENCE_SUBMITTED: 'Evidence added',
-  EVIDENCE_TRANSLATED: 'AI evidence translation (original authoritative)',
+  EVIDENCE_TRANSLATED: 'Evidence translated by AI (original kept)',
   EVIDENCE_COMPLETE: 'Evidence complete',
-  EVIDENCE_CHECK_RUN: 'AI evidence completeness checked (advisory)',
-  RECOMMENDATION_RECORDED: 'Rule recommendation recorded',
+  EVIDENCE_CHECK_RUN: 'AI checked for missing evidence',
+  RECOMMENDATION_RECORDED: 'Rules recommendation saved',
   DECISION: 'Reviewer decision',
-  PARTIAL_REFUND_CAPTURED: 'Partial refund: payment captured',
-  PARTIAL_REFUND_COMPLETED: 'Reviewer partial refund completed',
+  PARTIAL_REFUND_CAPTURED: 'Payment completed before partial refund',
+  PARTIAL_REFUND_COMPLETED: 'Partial refund sent',
   HUMAN_SPLIT_PENDING: 'Split decision (pending)',
-  SHIP_DEADLINE_PASSED: 'Ship-by deadline missed, authorization voided',
-  EXTERNAL_DISPUTE: 'Frozen by a PayPal dispute',
-  EXTERNAL_RESOLVED: 'PayPal dispute resolved',
-  PAYPAL_WEBHOOK: 'PayPal webhook received',
-  PAYPAL_ERROR: 'PayPal error',
-  PAYPAL_TRACKING_ADDED: 'Tracking sent to PayPal',
-  PAYPAL_TRACKING_FAILED: 'Sending tracking to PayPal failed',
-  CANCEL: 'Cancelled',
-  RETURN_DELIVERED: 'Return delivered to seller, refund issued',
-  RETURN_DEADLINE_PASSED: 'Item not returned in time, payment released',
+  SHIP_DEADLINE_PASSED: 'Not shipped in time · payment cancelled',
+  EXTERNAL_DISPUTE: 'PayPal case opened · deal on hold',
+  EXTERNAL_RESOLVED: 'PayPal case closed',
+  PAYPAL_WEBHOOK: 'Update from PayPal',
+  PAYPAL_ERROR: 'PayPal problem (needs checking)',
+  PAYPAL_TRACKING_ADDED: 'Tracking shared with PayPal',
+  PAYPAL_TRACKING_FAILED: 'Could not share tracking with PayPal',
+  CANCEL: 'Deal cancelled',
+  RETURN_DELIVERED: 'Return received by the seller',
+  RETURN_DEADLINE_PASSED: 'Not returned in time · payment completed',
   AI_DRAFT_CREATED: 'AI draft prepared (not sent)',
-  COURIER_CLAIM_PACK_CREATED: 'Courier claim pack created',
+  COURIER_CLAIM_PACK_CREATED: 'Courier claim prepared',
 };
 
 export function eventTitle(type: string): string {
@@ -174,8 +174,8 @@ export function authorizationWindow(authorizedAt: string, now: string): { honorE
 export function recentSuccess(status: TxStatus, lastEventTs: string | undefined, now: string): string | null {
   if (!lastEventTs || Date.parse(now) - Date.parse(lastEventTs) > 120_000) return null;
   const labels: Partial<Record<TxStatus, string>> = {
-    AUTHORIZED: 'Payment authorized', COMPLETED: 'Deal completed', REFUNDED: 'Refund sent',
-    PARTIALLY_REFUNDED: 'Partial refund sent', RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Authorization voided',
+    AUTHORIZED: 'Payment approved', COMPLETED: 'Deal completed', REFUNDED: 'Refund sent',
+    PARTIALLY_REFUNDED: 'Partial refund sent', RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Payment cancelled',
   };
   return labels[status] ?? null;
 }
@@ -199,25 +199,25 @@ export function activityFeed(events: Array<{ seq: number; type: string; actor: s
       TERMS_ACCEPTED: [`${who} accepted the terms`, 'done'],
       ACCEPT_TERMS: ['Terms locked for both sides', 'done'],
       START_PAYMENT: ['Buyer started the payment', 'money'],
-      BUYER_APPROVED: ['Payment authorized · funds reserved', 'money'],
+      BUYER_APPROVED: ['Payment approved · not charged yet', 'money'],
       SUBMIT_TRACKING: ['Seller shipped the item', 'ship'],
       TRACKING_DELIVERED: ['Courier delivered the parcel', 'ship'],
       TRACKING_INVALID: ['Tracking could not be verified', 'dispute'],
       PAYPAL_TRACKING_ADDED: ['Tracking shared with PayPal', 'ship'],
-      BUYER_CONFIRM: ['Buyer confirmed receipt · payment captured', 'money'],
-      INSPECTION_EXPIRED: ['Inspection ended · payment captured', 'money'],
-      OPEN_DISPUTE: ['Buyer opened a dispute', 'dispute'],
+      BUYER_CONFIRM: ['Buyer confirmed · payment completed', 'money'],
+      INSPECTION_EXPIRED: ['Check period ended · payment completed', 'money'],
+      OPEN_DISPUTE: ['Buyer reported a problem', 'dispute'],
       EVIDENCE_SUBMITTED: [`${who} added evidence`, 'info'],
       EVIDENCE_COMPLETE: ['Evidence is complete', 'info'],
       RECOMMENDATION_RECORDED: [e.payload.action === 'ESCALATE_HUMAN' ? 'Rules sent the case to a reviewer' : 'Rules made a recommendation', 'info'],
       DECISION: [`Reviewer decided: ${DECISION_TEXT[String(e.payload.outcome)] ?? 'decision recorded'}`, 'done'],
       HUMAN_SPLIT_PENDING: ['Reviewer recorded a split (pending)', 'done'],
       PARTIAL_REFUND_COMPLETED: ['Partial refund sent to the buyer', 'money'],
-      SHIP_DEADLINE_PASSED: ['Ship-by date missed · authorization voided', 'money'],
-      EXTERNAL_DISPUTE: ['PayPal case opened · deal frozen', 'dispute'],
-      EXTERNAL_RESOLVED: ['PayPal case resolved', 'done'],
+      SHIP_DEADLINE_PASSED: ['Not shipped in time · payment cancelled', 'money'],
+      EXTERNAL_DISPUTE: ['PayPal case opened · deal on hold', 'dispute'],
+      EXTERNAL_RESOLVED: ['PayPal case closed', 'done'],
       RETURN_DELIVERED: ['Return delivered to the seller', 'ship'],
-      RETURN_DEADLINE_PASSED: ['Return not shipped in time · payment captured', 'money'],
+      RETURN_DEADLINE_PASSED: ['Not returned in time · payment completed', 'money'],
       CANCEL: ['Deal cancelled', 'info'],
       COURIER_CLAIM_PACK_CREATED: ['Seller prepared a courier claim', 'ship'],
     } as Record<string, [string, ActivityKind]>)[e.type] ?? [eventTitle(e.type), 'info'];

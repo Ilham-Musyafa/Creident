@@ -16,17 +16,17 @@ function AuditHealth() {
   const audit = useContext(AuditContext)!;
   const published = audit.checkpoint;
   const message = !published.available ? published.message : published.result.valid
-    ? `Last verified checkpoint: ${shortDate(published.result.createdAt)}` : published.result.reason;
+    ? `Latest sealed copy: ${shortDate(published.result.createdAt)}` : published.result.reason;
   const changed = published.available && published.result.valid
     ? published.result.transactions.filter(t => t.state === 'rewritten').length : 0;
   return <div className="h-full overflow-y-auto p-2 text-sm text-text">
-    <h2 className="mb-3 text-[15px] font-bold text-heading">Audit chain health</h2>
-    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">verified chains</span></p>
-    <p className="mt-2">{audit.events} events · {audit.failed} failed · {audit.empty} empty</p>
+    <h2 className="mb-3 text-[15px] font-bold text-heading">Record integrity</h2>
+    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">records intact</span></p>
+    <p className="mt-2">{audit.events} steps · {audit.failed} changed · {audit.empty} empty</p>
     <p className="mt-3 text-xs text-muted [overflow-wrap:anywhere]">{message}</p>
-    {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed} differ from checkpoint</p>}
-    <p className="mt-2 text-xs text-muted">A locally verified chain alone cannot detect a complete rewrite.</p>
-    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Inspect chains &amp; checkpoints →</Link>
+    {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed} differ from the sealed copy</p>}
+    <p className="mt-2 text-xs text-muted">A record checked only here cannot reveal a full rewrite; a published sealed copy can.</p>
+    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal records →</Link>
   </div>;
 }
 const gridOptions: AgGridWidgetOptions = { createCellRenderer: () => ({ value }: { value: unknown }) =>
@@ -61,7 +61,7 @@ function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<Oversi
     { id: 'escalation', data: [{ rate: snapshot.escalation.rate === null ? null : Math.round(snapshot.escalation.rate * 1000) / 10 }],
       fields: [{ id: 'rate', name: 'Percent escalated', format: 'decimalFormat' }] },
     { id: 'deadlines', data: snapshot.deadlines.map(d => ({ item: d.item,
-      deadline: `${d.kind}: ${timeLeft(d.remainingMinutes)}${d.frozen ? ' · frozen' : ''}`, due: shortDate(d.dueAt) })),
+      deadline: `${d.kind}: ${timeLeft(d.remainingMinutes)}${d.frozen ? ' · on hold' : ''}`, due: shortDate(d.dueAt) })),
       fields: [field('item', 'Deal'), field('deadline', 'Deadline / time left'), field('due', 'Due (UTC)')] },
     { id: 'assists', data: snapshot.assists.map(a => ({ ...a,
       summary: `${a.feature}\n${a.created} created · ${a.unchanged} unchanged · ${a.edited} edited\n${a.unavailable} unavailable · ${a.injection} injection flagged` })),
