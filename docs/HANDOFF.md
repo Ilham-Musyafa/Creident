@@ -70,7 +70,7 @@ webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot (DESIGN 6.1 row 3).
+1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented on `feat/c18-reviewer-copilot`; full verification in progress, not ready to merge.
 2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
@@ -166,6 +166,16 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 07:55 WIB (Codex, C18 checkpoint): implemented copilot/runAssist,
+  exact schema with citation dropping, bounded R5-only ranges, exact demo replay,
+  separate server-side ai_drafts helper, reviewer-gated UNDER_REVIEW endpoint,
+  metadata-only AI_DRAFT_CREATED and reason unchanged/edited decision audit.
+  Added separate reviewer UI with explicit Use as reason and manual restoration;
+  rules/summary remain first and unchanged. Terms/evidence changes invalidate a
+  draft. 51 targeted tests passed; initial typecheck passed. Next: full npm test,
+  typecheck, build, 390/1440px light/dark browser check, final documentation and PR.
+  No dependencies, PayPal/rules/state-machine changes, or edits to protected files.
 
 - 2026-10-22 07:45 WIB (Claude): checked every sponsor details page; plan in
   docs/SPONSOR-TOOLS.md (AG Studio main target, Render deploy + Workflows, APIMatic plugin

@@ -1,3 +1,4 @@
+import { loadCopilot, copilotAudit } from '../../../lib/ai/copilotStore';
 import { acceptedTermsAudit } from '../../../lib/ai/termsReceipt';
 import { syncPayPalDisputes } from '../../../lib/paypalDisputes';
 import { disputeDeps } from './disputes';
@@ -221,7 +222,7 @@ export function review(request: Request, id: string): Promise<Response> {
   return route(async () => {
     const role = requireRole(request, ['reviewer']);
     const body = await jsonBody(request);
-    noExtraFields(body, ['outcome', 'reason', 'requireReturn']);
+    noExtraFields(body, ['outcome', 'reason', 'requireReturn', 'copilotDraftId']);
     if (body.outcome !== 'RELEASE' && body.outcome !== 'REFUND' && body.outcome !== 'SPLIT') throw new HttpError(400, 'INVALID_OUTCOME', 'outcome must be RELEASE, REFUND, or SPLIT');
     if (body.requireReturn !== undefined && (typeof body.requireReturn !== 'boolean' || body.outcome !== 'REFUND')) {
       throw new HttpError(400, 'INVALID_INPUT', 'requireReturn must be a boolean and only applies to REFUND');
@@ -232,8 +233,18 @@ export function review(request: Request, id: string): Promise<Response> {
     if (tx.status === 'UNDER_REVIEW') await prepareReview(id, context);
     const basis = decisionBasis(requireTx(context, id).termsJson, context.repo.loadEvidence(id));
     const recommendationEvent = context.repo.readEvents(id).find((event) => event.type === 'RECOMMENDATION_RECORDED');
+    let assist = {};
+    if (body.copilotDraftId !== undefined) {
+      const draftId = stringField(body, 'copilotDraftId', 36);
+      const draft = loadCopilot(context.db, draftId, id);
+      if (!draft) throw new HttpError(400, 'INVALID_COPILOT', 'Copilot draft not found for this deal');
+      if (draft.basis.termsHash !== basis.termsHash || draft.basis.evidenceDigest !== basis.evidenceDigest) {
+        throw new HttpError(409, 'COPILOT_STALE', 'Terms or evidence changed. Generate a new draft or write the reason manually.');
+      }
+      assist = copilotAudit(draft, reason);
+    }
     const decisionPayload = {
-      ...basis,
+      ...basis, ...assist,
       ...(typeof recommendationEvent?.payload.evidenceDigest === 'string' &&
         recommendationEvent.payload.evidenceDigest !== basis.evidenceDigest
         ? { evidenceChangedSinceRecommendation: true } : {}),
