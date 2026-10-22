@@ -15,7 +15,7 @@ Keep it short and current. Newest entry first in the log.
 ## Current status (2026-10-21)
 
 Project locked on 2026-10-20: dispute-mediation prototype for the PayPal AI Hackathon,
-working name HalcyVault, narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/HalcyVault`
+name HalcyVault (locked 2026-10-22), narrow scope (`docs/DESIGN.md`). Repo `Ilham-Musyafa/HalcyVault`
 is private during development; it must be made public before submission and stay public
 until 15 Dec 2026.
 
@@ -130,12 +130,10 @@ not charged in the prototype); split stays recorded-only; the platform bears the
 deadlines ship-by 3, inspection 2, evidence 2 days (env-configurable).
 
 Still open:
-- Final public name (the word "Vault" suggests custody; temporary, owner will rename later).
-  Shortlist (2026-10-21, owner re-checks before the video; English names only):
-  Pactrail (Claude's first pick: pact + audit trail, no product found), Evenhand,
-  Clarus (clear meaning, but widely used), Vectrust, Solventy, Vectro, Middlemark,
-  Settlewise. Avoid Vectra (Vectra AI), Dealtrail (close to Dealertrack) and words like
-  escrow/safe/guard/secure (claim rules). Rename README, UI and video script in one PR.
+- Public name: DECIDED 2026-10-22, the owner keeps **HalcyVault** (shortlist Pactrail,
+  Dealtrail, Termlock and others declined). Because "Vault" can suggest custody, README, UI and
+  video must keep saying PayPal only authorizes and the app never holds money (claim rules).
+  The Render service name should be `halcyvault` (it becomes the onrender.com address).
 - Hosting / public demo link: DECIDED 2026-10-22, Render (sponsor tool). Start on the free
   plan; optionally upgrade to the ~$7/month instance during judging to avoid the ~1 minute
   cold start; final choice before submission (do not change the URL after submitting).
@@ -170,6 +168,9 @@ Still open:
 
 ## Log
 
+- 2026-10-22 20:55 WIB (Claude, owner decision): name locked as HalcyVault; "(working name)"
+  removed from README, AGENTS.md and DESIGN.md. Hosting on Render confirmed; next: public-demo
+  hardening and render.yaml before the owner creates the service.
 - 2026-10-22 19:50 WIB (Claude, owner request): Home section "Recent deals" renamed "Recent
   transactions". The rest of the app keeps "deal" (owner decision).
 - 2026-10-22 19:40 WIB (Claude, owner request): Records failure states. Index: failed records

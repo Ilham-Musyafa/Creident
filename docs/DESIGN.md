@@ -1,4 +1,4 @@
-# DESIGN.md — HalcyVault (working name)
+# DESIGN.md — HalcyVault
 
 Status: **prototype implementation reference, updated 2026-10-21.** Items marked **[OPEN]** need the owner's decision.
 Items marked **[PROPOSED]** are suggestions that have not been approved yet.
