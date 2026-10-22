@@ -7,10 +7,10 @@ import { getRole, reviewerCodeRequired, reviewerUnlocked } from '../_server';
 export const dynamic = 'force-dynamic';
 
 const LINKS = [
-  { href: '/about#decisions', title: 'How decisions work', detail: 'Rules R1–R7 and the role of the AI' },
-  { href: '/audit', title: 'Audit & verification', detail: 'Check the hash chains' },
-  { href: '/fairness', title: 'Fairness results', detail: 'Measured bias and injection tests' },
-  { href: '/about#limitations', title: 'Limitations', detail: 'Sandbox demo, not an escrow service' },
+  { href: '/about#decisions', title: 'How decisions work', detail: 'Rules decide first; the AI only summarises' },
+  { href: '/audit', title: 'Deal records', detail: 'Check that no step was changed' },
+  { href: '/fairness', title: 'Fairness results', detail: 'How we test the AI for bias' },
+  { href: '/about#limitations', title: 'Limitations', detail: 'What this demo does not do' },
   { href: '/about', title: 'About', detail: 'PayPal AI Hackathon 2026' },
 ];
 
@@ -25,10 +25,10 @@ export default async function MenuPage() {
         <section aria-labelledby="demo-settings">
           <h2 id="demo-settings" className="mb-3 text-[15px] font-bold text-heading">Demo settings</h2>
           <Card className="divide-y divide-line py-0">
-            <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">Demo role</p><RoleSwitch current={role}/></div>
+            <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">View as</p><RoleSwitch current={role}/></div>
             {codeRequired && <div className="py-4"><ReviewerCodeForm unlocked={unlocked}/></div>}
             <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">Appearance</p><ThemeSelector/></div>
-            <div className="py-4"><p className="mb-1 text-sm font-semibold text-heading">Demo data</p><p className="mb-3 text-xs text-muted">Labelled examples with simulated PayPal payments.</p><SeedButton role={role}/></div>
+            <div className="py-4"><p className="mb-1 text-sm font-semibold text-heading">Demo data</p><p className="mb-3 text-xs text-muted">Example deals with demo payments (no real money).</p><SeedButton role={role}/></div>
           </Card>
         </section>
         <section aria-labelledby="about-transparency" className="pt-3">

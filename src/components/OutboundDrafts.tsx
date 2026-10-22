@@ -111,7 +111,7 @@ export function CourierClaimPack({ txId }: { txId: string }) {
     const a = document.createElement('a');
     a.href = url; a.download = `courier-claim-${txId.slice(0, 8)}.pdf`; a.click();
     URL.revokeObjectURL(url);
-    setDone('Claim pack downloaded and recorded in the audit log. Send it to your courier yourself.');
+    setDone('Claim pack downloaded and saved in the deal record. Send it to your courier yourself.');
     router.refresh();
   });
 
@@ -139,7 +139,7 @@ export function CourierClaimPack({ txId }: { txId: string }) {
           <ul className="list-disc pl-5 text-sm text-text">{draft.draft.attachments.map((a) => <li key={a}>{a}</li>)}</ul>
         </div>
       </>}
-      <p className="text-xs text-muted">The PDF adds evidence hashes, the terms hash and the audit head. This prototype does not contact couriers.</p>
+      <p className="text-xs text-muted">The PDF adds fingerprints of the evidence, terms and deal record. This demo does not contact couriers.</p>
       <div className="flex flex-wrap gap-2">
         <Button variant="ghost" disabled={busy} onClick={() => { setDraft(null); setManual(false); }}>Cancel</Button>
         <Button disabled={busy || subject.trim().length < 5 || body.trim().length < 20} onClick={download}>{busy ? 'Building…' : 'Download claim pack (PDF)'}</Button>

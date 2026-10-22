@@ -28,6 +28,6 @@ describe('PayPal dispute display labels', () => {
       expect(eventTitle(type)).toBe(paypalDisputeLabel('event', type));
     }
     expect(eventTitle('PAYPAL_DISPUTE_FUTURE')).toBe('PAYPAL_DISPUTE_FUTURE');
-    expect(eventTitle('BUYER_APPROVED')).toBe('Payment authorized');
+    expect(eventTitle('BUYER_APPROVED')).toBe('Payment approved');
   });
 });

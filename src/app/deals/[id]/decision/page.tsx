@@ -13,14 +13,14 @@ import { data, isUuid, sha256 } from '../../../_server';
 export const dynamic = 'force-dynamic';
 
 const OUTCOME: Record<string, string> = {
-  RELEASE: 'Payment captured', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
+  RELEASE: 'Payment completed', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
 };
 const MONEY_STEP: Record<string, string> = {
-  PAYPAL_CAPTURE: 'Payment captured on PayPal', PAYPAL_VOID: 'Authorization voided on PayPal (nothing was charged)',
-  PAYPAL_REFUND: 'Captured payment refunded on PayPal', PAYPAL_PARTIAL_REFUND: 'Reviewer amount refunded on PayPal',
+  PAYPAL_CAPTURE: 'Payment completed on PayPal', PAYPAL_VOID: 'Payment cancelled on PayPal (nothing was charged)',
+  PAYPAL_REFUND: 'Payment refunded on PayPal', PAYPAL_PARTIAL_REFUND: 'Reviewer amount refunded on PayPal',
 };
 const RULE_ACTION: Record<string, string> = {
-  RELEASE: 'Release', REFUND: 'Refund', VOID: 'Void', ESCALATE_HUMAN: 'Escalate to a human', FREEZE: 'Freeze', WAIT: 'Wait',
+  RELEASE: 'Pay the seller', REFUND: 'Refund the buyer', VOID: 'Cancel the payment', ESCALATE_HUMAN: 'A person decides', FREEZE: 'Put on hold', WAIT: 'Wait',
 };
 
 // One page both parties can read after a dispute: what was decided, by whom, on which rule
@@ -52,9 +52,9 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
     : tx.status === 'RETURN_REQUESTED' ? 'Partial refund after the item is returned' : 'Partial refund pending'
     : !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
     : tx.status === 'RETURN_REQUESTED' ? 'Refund after the item is returned'
-    : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Payment captured: item not returned in time'
+    : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Payment completed: item not returned in time'
     // A refund decided before capture voids the authorization: nothing was charged, so "refunded" would be wrong.
-    : tx.status === 'VOIDED' ? moneyEvent?.type === 'RETURN_DELIVERED' ? 'Authorization cancelled after return' : 'Authorization cancelled'
+    : tx.status === 'VOIDED' ? moneyEvent?.type === 'RETURN_DELIVERED' ? 'Payment cancelled after return' : 'Payment cancelled'
     : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refunded to the buyer after the return'
     : OUTCOME.REFUND;
 
@@ -80,7 +80,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
               </div>
               <p className="text-xs text-muted">Outcome</p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
-              {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (simulated)' : ''}</p>}
+              {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (demo)' : ''}</p>}
               {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">{tx.captured ? 'The earlier payment was captured. The refund waits for the required return.' : 'No money has moved yet. The refund runs when the return reaches the seller.'}</p>}
               {decision.amount && <p className="mt-3 text-sm font-semibold text-heading">Reviewer refund amount: {money(decision.amount)} USD · fee borne by Platform</p>}
               <p className="mt-4 text-xs text-muted">Reviewer's reason</p>
@@ -94,7 +94,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
                 { label: 'Rule', value: rec ? rec.ruleId : 'None recorded' },
                 { label: 'Recommendation', value: rec ? RULE_ACTION[rec.action] ?? rec.action : '—' },
                 { label: 'AI summary', value: rec?.aiSummary ? `${rec.aiSummary.findings.length} findings` : 'Not available' },
-                { label: 'Reviewer followed it', value: rec ? (rec.action === decision.outcome ? 'Yes' : rec.action === 'ESCALATE_HUMAN' ? 'Rules asked for a human' : 'No, see reason') : '—' },
+                { label: 'Reviewer followed it', value: rec ? (rec.action === decision.outcome ? 'Yes' : rec.action === 'ESCALATE_HUMAN' ? 'A person decided, as the rules asked' : 'No, see reason') : '—' },
               ]}/>
             </div>
 
@@ -115,18 +115,18 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
           <aside className="space-y-3">
             <SectionTitle>On the record</SectionTitle>
             <KeyValue items={[
-              { label: 'Terms hash at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedTermsHash === 'string' ? recordedTermsHash : 'Not recorded'}</span> },
+              { label: 'Terms fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedTermsHash === 'string' ? recordedTermsHash : 'Not recorded'}</span> },
               { label: 'Current terms', value: verification(recordedTermsHash, currentBasis.termsHash) },
-              { label: 'Evidence digest at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedEvidenceDigest === 'string' ? recordedEvidenceDigest : 'Not recorded'}</span> },
+              { label: 'Evidence fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedEvidenceDigest === 'string' ? recordedEvidenceDigest : 'Not recorded'}</span> },
               { label: 'Current evidence', value: verification(recordedEvidenceDigest, currentBasis.evidenceDigest) },
               ...(decisionEvent?.payload.evidenceChangedSinceRecommendation === true
-                ? [{ label: 'Evidence since recommendation', value: 'Changed before decision' }] : []),
-              { label: 'Decision event', value: decisionEvent ? `#${decisionEvent.seq}` : '—' },
-              { label: 'Event hash', value: <span className="font-mono text-xs">{decisionEvent ? shortHash(decisionEvent.hash, 6) : '—'}</span> },
-              { label: 'Audit chain', value: chain.ok ? `Verified, ${events.length} events` : 'Verification failed' },
+                ? [{ label: 'Evidence after the recommendation', value: 'Changed before the decision' }] : []),
+              { label: 'Decision step', value: decisionEvent ? `#${decisionEvent.seq}` : '—' },
+              { label: 'Step fingerprint', value: <span className="font-mono text-xs">{decisionEvent ? shortHash(decisionEvent.hash, 6) : '—'}</span> },
+              { label: 'Deal record', value: chain.ok ? `Intact, ${events.length} steps` : 'Changed after recording' },
             ]}/>
-            <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Open audit log</ButtonLink>
-            <Notice>The AI only summarised the evidence. Rules recommended, and a person made this decision with the reason above. Changing any recorded step later breaks the audit chain.</Notice>
+            <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Open deal record</ButtonLink>
+            <Notice>The AI only summarised the evidence. Rules recommended, and a person made this decision with the reason above. Changing any recorded step later shows up in the deal record.</Notice>
           </aside>
         </div>
       )}

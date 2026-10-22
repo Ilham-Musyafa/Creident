@@ -11,7 +11,7 @@ export function EvidenceTranslation({ txId, evidenceId, sourceHash }: { txId: st
   const [busy, setBusy] = useState(false); const [unavailable, setUnavailable] = useState(false);
   const controlId = `translation-target-${evidenceId}`;
   return <section aria-label="Evidence translation" className="mt-3 min-w-0 space-y-2 border-t border-line pt-3 [overflow-wrap:anywhere]">
-    <p className="text-xs text-muted">The original above and its hash remain authoritative.</p>
+    <p className="text-xs text-muted">The original above is what counts; this is a reading aid.</p>
     <p className="break-all font-mono text-[11px] text-muted">Original SHA-256: {sourceHash}</p>
     <label htmlFor={controlId} className="block text-xs font-medium text-muted">Translate to</label>
     <div className="flex flex-wrap gap-2">

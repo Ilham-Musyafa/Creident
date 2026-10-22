@@ -35,9 +35,9 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const captureFailed = lastEvent?.type === 'PAYPAL_ERROR' && lastEvent.payload.effect === 'PAYPAL_CAPTURE' && !tx.captured;
   const events = tx.captured && tx.trackingNumber ? ctx.repo.readEvents(id) : [];
   const trackingOnPayPal = !tx.captured || !tx.trackingNumber ? null
-    : events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED') ? (simulated ? 'Sent (simulated)' : 'Sent')
-    : events.some((e) => e.type === 'PAYPAL_TRACKING_FAILED') ? 'Failed, retried automatically'
-    : 'Not sent yet';
+    : events.some((e) => e.type === 'PAYPAL_TRACKING_ADDED') ? (simulated ? 'Shared (demo)' : 'Shared')
+    : events.some((e) => e.type === 'PAYPAL_TRACKING_FAILED') ? 'Not shared yet, trying again'
+    : 'Not shared yet';
   const terms = JSON.parse(tx.termsJson) as Record<string, unknown>;
   const criteria = Array.isArray(terms.criteria) ? terms.criteria as string[] : [];
   const accepted = tx.status === 'DRAFT' ? ctx.repo.listAcceptances(id) : [];
@@ -61,7 +61,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {created && role === 'seller' && (
             <div className="mb-4 space-y-2"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></div>
           )}
-          {simulated && <div className="mb-4"><Notice tone="warning">Simulated payment. The PayPal steps of this deal were simulated: nothing was sent to PayPal and no money moved.</Notice></div>}
+          {simulated && <div className="mb-4"><Notice tone="warning">Demo payment: no real money moved and nothing was sent to PayPal.</Notice></div>}
           {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal refused to capture this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The authorization may be past PayPal's 3-day honor period. Nothing was charged and the deal has not moved; the seller is not paid until this is resolved. This prototype does not reauthorize automatically.</Notice></div>}
           <PartialRefundNotice tx={tx} events={allEvents}/>
           {(() => {
@@ -91,8 +91,8 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             ...(Array.isArray(terms.includedItems) ? [{ label: 'Included items', value: terms.includedItems.filter((item): item is string => typeof item === 'string').join(', ') }] : []),
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
-            { label: 'Terms hash', value: <span className="font-mono text-xs">{shortHash(tx.termsHash, 6)}</span> },
-            ...(tx.trackingNumber ? [{ label: 'Tracking (simulated)', value: tx.trackingNumber }] : []),
+            { label: 'Terms fingerprint', value: <span className="font-mono text-xs">{shortHash(tx.termsHash, 6)}</span> },
+            ...(tx.trackingNumber ? [{ label: 'Tracking (demo courier)', value: tx.trackingNumber }] : []),
           ]}/>
         </div>
 
@@ -110,7 +110,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <div className="space-y-3">
               <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth confirm={{
                 title: 'Confirm you received the item', amount: money(tx.amount, tx.currency), amountCaption: tx.item,
-                rows: [{ label: 'Payment', value: 'Captured via PayPal' }, { label: 'Disputes', value: 'No longer possible here' }],
+                rows: [{ label: 'Payment', value: 'Completed via PayPal' }, { label: 'Problems', value: 'Can no longer be reported here' }],
                 note: 'Only confirm after you checked the item against the locked terms.', confirmLabel: 'Confirm receipt',
               }}/>
               <Card><DisputeSteps txId={id} evidenceWindow={`${ctx.time.evidenceDays} day${ctx.time.evidenceDays === 1 ? '' : 's'}`}/></Card>
@@ -121,17 +121,17 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the payment goes to the seller.</Notice>}
           {action === 'review' && <ButtonLink href={`/deals/${id}/review`} fullWidth>Review dispute</ButtonLink>}
           {tx.status === 'DRAFT' && <Notice>Accepted so far: {accepted.length ? accepted.join(' and ') : 'nobody'}. Terms lock when both buyer and seller accept.</Notice>}
-          {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'A PayPal dispute or reversal is open. Nothing moves until PayPal resolves it.' : 'Nothing to do for your role right now. Switch role in Menu to act as another party.'}</Notice>}
+          {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'PayPal is reviewing a case on this payment. Nothing moves until PayPal closes it.' : 'Nothing to do for your role right now. Switch role in Menu to act as another party.'}</Notice>}
 
           <KeyValue items={[
-            { label: 'PayPal fee', value: simulated ? 'None (simulated)' : tx.captured ? 'See PayPal capture' : 'Shown after capture' },
-            ...(authWindow ? [{ label: 'PayPal authorization', value: authWindow.phase === 'honor' ? `Honored until ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the 3-day honor period; capture not guaranteed (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be captured' }] : []),
-            { label: 'Fee on refund borne by', value: 'Platform (buyer receives the decided refund amount)' },
+            { label: 'PayPal fee', value: simulated ? 'None (demo)' : tx.captured ? 'See PayPal' : 'Shown after payment' },
+            ...(authWindow ? [{ label: 'Payment approval', value: authWindow.phase === 'honor' ? `Guaranteed until ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the 3-day guarantee; charging may fail (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be charged' }] : []),
+            { label: 'Refund fees paid by', value: 'The platform (buyer gets the full refund amount)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           {hasDecision && <ButtonLink href={`/deals/${id}/decision`} fullWidth>Decision receipt</ButtonLink>}
-          <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Audit log</ButtonLink>
-          <p className="text-center text-xs text-muted">Every action is recorded in the audit log.</p>
+          <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Deal record</ButtonLink>
+          <p className="text-center text-xs text-muted">Every step is saved in the deal record.</p>
         </aside>
       </div>
     </AppShell>

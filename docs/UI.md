@@ -196,3 +196,28 @@ Patterns borrowed from banking and payment apps, never their branding:
 - **Stepped dispute** (`DisputeSteps`): what went wrong -> what you will need -> check and
   open, with a three-dot step indicator.
 
+## Plain language (owner request, 2026-10-22)
+
+Screens for buyers and sellers use everyday words, like common payment apps. Technical terms
+stay available behind "Details", on the record (audit) pages and in receipts, never as the
+main label. One word per idea across the app. Plain must still be honest: PayPal approves
+(authorizes) a payment; it does not "hold your money" (AGENTS.md claim rules).
+
+| Technical | Shown to users |
+|---|---|
+| Authorized / funds reserved | Payment approved · not charged yet |
+| Capture / captured | Payment completed (charged) |
+| Void / voided | Payment cancelled · nothing charged |
+| Refund / partial refund | Refunded / Partly refunded |
+| Inspection | Checking the item |
+| Dispute opened | Problem reported |
+| Under review / escalate to a human / R5 | Being reviewed · a person decides (rule ID only in details) |
+| Frozen by PayPal | On hold by PayPal |
+| Simulated | Demo (no real money) |
+| Audit log / hash chain | Deal record / record intact |
+| Hash, head hash, digest | Fingerprint |
+| prev hash | Linked to |
+| Checkpoint | Sealed copy |
+| Event | Step |
+| Replay mode | Recorded test run |
+

@@ -20,7 +20,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
 
   return (
     <AppShell active="Audit">
-      <PageHeader title="Audit log" back={`/deals/${id}`} subtitle={tx.item}/>
+      <PageHeader title="Deal record" back={`/deals/${id}`} subtitle={tx.item}/>
       <div className="mx-auto max-w-2xl space-y-4">
         <AuditExportButton txId={id} role={role}/>
         <ChainStatus revealAfterMs={Math.min(events.length, 24) * 70 + 300} verified={check.ok} count={events.length} headHash={check.ok ? shortHash(check.head, 6) : `Mismatch at event #${check.brokenAtSeq}: ${check.reason}`}/>
@@ -31,7 +31,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
             ))}
           </ol>
         </Card>
-        <Notice>Each event stores the hash of the previous one. Editing, deleting or reordering an event breaks the chain and shows here. Events marked Simulated come from the simulated PayPal, demo data or the simulated courier, not from PayPal.</Notice>
+        <Notice>Each step stores a fingerprint of the step before it, so changing, deleting or reordering a step shows up here. Steps marked Demo come from demo payments, example deals or the demo courier, not from PayPal. Tap a step for its technical details.</Notice>
       </div>
     </AppShell>
   );

@@ -18,16 +18,16 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
   const canSimulate = simulatedMode && tx.status === 'COMPLETED' && tx.item.startsWith('[Demo]') && !cases.length;
   return <section className="min-w-0 space-y-3" aria-label="PayPal dispute">
     <SectionTitle>PayPal dispute</SectionTitle>
-    {cases.length === 0 && <Notice>No PayPal case has been detected for this deal. A reviewer can sync cases; the deadline tick also checks captured deals.</Notice>}
+    {cases.length === 0 && <Notice>No PayPal case has been detected for this deal. A reviewer can check for cases; the deadline check also looks at completed payments.</Notice>}
     {role === 'reviewer' && reviewerAllowed && <ActionButton path="/api/paypal/disputes/sync" role="reviewer" label="Check PayPal disputes" variant="ghost" fullWidth/>}
     {canSimulate && <Card>
-      <p className="mb-3 text-xs text-muted">Simulated demo only. Open a case for this completed demo deal without calling PayPal or moving money.</p>
+      <p className="mb-3 text-xs text-muted">Demo only. Open a case for this completed example deal without contacting PayPal or moving money.</p>
       {role === 'buyer' || (role === 'reviewer' && reviewerAllowed)
-        ? <ActionButton path={`/api/transactions/${tx.id}/paypal-dispute/simulate`} role={role} label="Open simulated PayPal dispute" variant="ghost" fullWidth/>
-        : <Notice>Switch to Buyer in Menu to open a simulated PayPal case.</Notice>}
+        ? <ActionButton path={`/api/transactions/${tx.id}/paypal-dispute/simulate`} role={role} label="Open demo PayPal case" variant="ghost" fullWidth/>
+        : <Notice>Switch to Buyer in Menu to open a demo PayPal case.</Notice>}
     </Card>}
     {cases.map(c => <div key={c.disputeId} className="min-w-0 space-y-3">
-      {c.disputeId.startsWith('SIM-') && <Notice tone="warning">Simulated PayPal case. No message, PDF, or escalation is sent to PayPal.</Notice>}
+      {c.disputeId.startsWith('SIM-') && <Notice tone="warning">Demo PayPal case. Nothing is sent to PayPal.</Notice>}
       <KeyValue items={[
         { label: 'Case id', value: <span className="break-all">{c.disputeId}</span> },
         { label: 'Status', value: <PayPalDisputeCode kind="status" code={c.status}/> },
@@ -38,7 +38,7 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
       ]}/>
       {c.status !== 'RESOLVED' && canAct && <PayPalDisputeActions txId={tx.id} disputeId={c.disputeId} role={role} actions={c.actions}/>}
       {c.status !== 'RESOLVED' && canAct && (c.actions.includes('send_message') || c.actions.includes('provide_evidence')) && <PayPalMessageDraft txId={tx.id} disputeId={c.disputeId} role={role} evidenceStage={c.actions.includes('provide_evidence')}/>}
-      {c.status !== 'RESOLVED' && !canAct && <Notice>Only the seller or an unlocked reviewer can send evidence or escalate this case.</Notice>}
+      {c.status !== 'RESOLVED' && !canAct && <Notice>Only the seller or a reviewer can send evidence or ask PayPal to step in.</Notice>}
     </div>)}
     {cases.length > 0 && <Notice>PayPal controls the case and offered actions. Changes may take a few minutes to appear. A resolved case resumes the deal's previous state; this notification does not infer a refund or release.</Notice>}
   </section>;

@@ -14,8 +14,8 @@ import { disputeType } from '../../../../lib/disputeTypes';
 export const dynamic = 'force-dynamic';
 
 const ACTION_TEXT: Record<string, string> = {
-  RELEASE: 'Release to seller', REFUND: 'Refund to buyer', VOID: 'Void the authorization',
-  ESCALATE_HUMAN: 'Escalate to a human', FREEZE: 'Freeze', WAIT: 'Wait',
+  RELEASE: 'Pay the seller', REFUND: 'Refund the buyer', VOID: 'Cancel the payment',
+  ESCALATE_HUMAN: 'A person decides', FREEZE: 'Put on hold', WAIT: 'Wait',
 };
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {

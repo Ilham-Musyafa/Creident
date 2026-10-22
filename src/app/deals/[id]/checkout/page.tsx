@@ -21,9 +21,9 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   const accepted = tx.status === 'DRAFT' ? ctx.repo.listAcceptances(id) : [];
 
   const steps = [
-    { title: `PayPal authorizes ${money(tx.amount)}`, detail: 'The money is reserved, not taken yet.' },
-    { title: `Seller ships within ${shipByDays} days`, detail: 'No tracking in time: the authorization is voided.' },
-    { title: `You inspect for ${inspectionDays} days`, detail: 'Confirm, or open a dispute with evidence.' },
+    { title: `You approve ${money(tx.amount)} on PayPal`, detail: 'You are not charged yet.' },
+    { title: `Seller ships within ${shipByDays} days`, detail: 'If it is not shipped in time, the payment is cancelled.' },
+    { title: `You check the item for ${inspectionDays} days`, detail: 'Confirm it, or report a problem with evidence.' },
   ];
 
   return (
@@ -47,7 +47,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
           ))}
         </ol>
 
-        <Notice tone={simulated ? 'warning' : 'info'}>{simulated ? 'Simulated PayPal mode: no real or Sandbox money moves. ' : 'Sandbox demo. '}HalcyVault is a dispute-mediation prototype, not an escrow service.</Notice>
+        <Notice tone={simulated ? 'warning' : 'info'}>{simulated ? 'Demo payment: no real money moves. ' : 'PayPal Sandbox test: no real money moves. '}HalcyVault is a dispute-mediation prototype, not an escrow service.</Notice>
 
         {role !== 'buyer' ? <Notice>Only the buyer pays. Switch to Buyer in Menu.</Notice>
           : tx.status === 'DRAFT' && accepted.includes('buyer') ? <Notice>You accepted the terms. Waiting for the seller to accept.</Notice>
