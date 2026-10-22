@@ -175,10 +175,12 @@ export function EvidenceForm({ txId, role }: { txId: string; role: Role }) {
       <div>
         <Label htmlFor="kind">Type</Label>
         <select id="kind" className={fieldClass} value={kind} onChange={(e) => setKind(e.target.value as typeof kind)}>
-          <option value="photo">Photo (describe it: camera upload is simulated in this demo)</option>
-          <option value="chat">Chat excerpt (in-platform messages only)</option>
+          <option value="photo">Photo description</option>
+          <option value="chat">Chat excerpt</option>
           <option value="note">Note</option>
         </select>
+        <p className="mt-1 text-xs text-muted">{kind === 'photo' ? 'Describe what the photo shows, including the one-time code.'
+          : kind === 'chat' ? 'Paste the relevant messages from your chat with the other party.' : 'Anything else the reviewer should know.'}</p>
       </div>
       <div><Label htmlFor="content">Evidence</Label><textarea id="content" required maxLength={4000} rows={4} className={`${fieldClass} py-3`} value={content} onChange={(e) => setContent(e.target.value)} placeholder="What does it show? Mention the one-time code if it is a photo."/></div>
       <Button type="submit" fullWidth disabled={busy || !content.trim()}>{busy ? 'Submitting…' : 'Submit evidence'}</Button>

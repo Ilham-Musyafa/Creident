@@ -47,7 +47,8 @@ export function Notice({ tone = 'info', children }: { tone?: 'info' | 'warning';
   const style = tone === 'warning'
     ? { background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }
     : { background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--muted)' };
-  return <p className="rounded-[16px] border p-3 text-xs leading-relaxed" style={style}>{children}</p>;
+  // A div, not a p: some notices hold block content (details, paragraphs).
+  return <div className="rounded-[16px] border p-3 text-xs leading-relaxed" style={style}>{children}</div>;
 }
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {

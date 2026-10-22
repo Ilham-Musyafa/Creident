@@ -12,7 +12,7 @@ import { data, isUuid, sha256 } from '../../../_server';
 export const dynamic = 'force-dynamic';
 
 const OUTCOME: Record<string, string> = {
-  RELEASE: 'Released to the seller', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
+  RELEASE: 'Payment captured', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
 };
 const MONEY_STEP: Record<string, string> = {
   PAYPAL_CAPTURE: 'Payment captured on PayPal', PAYPAL_VOID: 'Authorization voided on PayPal (nothing was charged)',
@@ -51,7 +51,9 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
     : tx.status === 'RETURN_REQUESTED' ? 'Partial refund after the item is returned' : 'Partial refund pending'
     : !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
     : tx.status === 'RETURN_REQUESTED' ? 'Refund after the item is returned'
-    : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Released to the seller: item not returned in time'
+    : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Payment captured: item not returned in time'
+    // A refund decided before capture voids the authorization: nothing was charged, so "refunded" would be wrong.
+    : tx.status === 'VOIDED' ? moneyEvent?.type === 'RETURN_DELIVERED' ? 'Authorization cancelled after return' : 'Authorization cancelled'
     : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refunded to the buyer after the return'
     : OUTCOME.REFUND;
 

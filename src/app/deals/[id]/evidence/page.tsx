@@ -31,7 +31,7 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
           <Card>
             <p className="text-xs text-muted">Write this code on paper and keep it visible in every photo</p>
             <div className="mt-2"><CodeBadge code={evidenceCode(id)}/></div>
-            <p className="mt-3 text-xs text-muted">In the real flow photos are taken in the app (no gallery uploads). In this demo, describe what the photo shows.</p>
+            <p className="mt-3 text-xs text-muted">This demo accepts text descriptions. Photo upload is not available yet.</p>
           </Card>
           {type && (
             <Card>

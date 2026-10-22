@@ -170,6 +170,16 @@ Still open:
 
 ## Log
 
+- 2026-10-22 17:50 WIB (Claude, owner UI review): clarity pass. Payment wording ("Payment
+  captured" instead of "Released to seller"; voided refund receipts say "Authorization
+  cancelled (after return)"); New deal AI panel collapsed by default; "Next: ..." summary with
+  time left and the main button above the deal timeline; evidence type labels shortened and
+  the photo claim replaced with "text descriptions only, photo upload not available yet";
+  review notice "R5 · Human decision required"; Fairness single summary (replay caveat
+  visible, details on demand); audit metadata no longer splits short hashes and each event
+  opens to show full hashes; oversight bars show integer labels (no tick-interval option in
+  AG Studio, so value-axis labels are hidden) and a shorter licence notice. Fixed a hydration
+  error: Notice rendered block content inside <p>; it is now a <div>.
 - 2026-10-22 17:10 WIB (Claude, owner-approved UI polish during the freeze): motion pass
   (docs/UI.md "Motion"): page/list entrances, button press, shimmer loading, timeline and
   status pulses, Home count-up, one-time success burst, audit chain reveal. CSS only, no

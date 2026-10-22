@@ -55,7 +55,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
     { title: 'Payment authorized', detail: 'Funds reserved via PayPal, not captured' },
     { title: 'Shipped', detail: 'Seller added tracking (simulated courier)' },
     { title: 'Buyer inspection', detail: 'Confirm receipt or open a dispute' },
-    { title: 'Released to seller', detail: 'Captured via PayPal' },
+    { title: 'Payment captured', detail: 'Captured via PayPal; seller payout is outside this prototype' },
   ];
   const effective = status === 'FROZEN_EXTERNAL' && frozenFrom ? frozenFrom : status;
   const doneUntil: Record<TxStatus, number> = {

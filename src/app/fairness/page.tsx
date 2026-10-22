@@ -44,8 +44,13 @@ export default function FairnessPage() {
     <AppShell active="Menu">
       <PageHeader title="Fairness results" back="/menu" subtitle={`${m.total} synthetic cases · ${replay ? 'replay mode' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}/>
       <div className="space-y-5">
-        {replay && <Notice tone="warning">Replay mode: these runs reuse recorded AI summaries authored from the original draft labels, including for counterfactual variants. They check the test harness, the rules and the injection flag. They do not measure a live AI model, so perfect scores here prove nothing about model fairness.</Notice>}
-        <Notice tone={results.labelStatus === 'draft' ? 'warning' : 'info'}>{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</Notice>
+        {/* One summary; the replay caveat stays visible, details open on demand. */}
+        <Notice tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>
+          <strong className="block">{replay ? 'Replay results: not a measurement of a live AI model.' : 'Live-model results for these synthetic cases only.'}</strong>
+          <span className="mt-1 block">{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</span>
+          {replay && <details className="mt-2"><summary className="cursor-pointer font-semibold">What this means</summary>
+            <p className="mt-1">These runs reuse recorded AI summaries authored from the original draft labels, including for counterfactual variants. They check the test harness, the rules and the injection flag, so perfect scores here prove nothing about model fairness.</p></details>}
+        </Notice>
 
         <div>
           <SectionTitle>Does one side lose more often?</SectionTitle>
@@ -80,7 +85,7 @@ export default function FairnessPage() {
           </Card>
         )}
 
-        <Notice>Labels were written by the builder. The counts above distinguish individual owner review from drafts accepted without individual review; there are no independent annotators. These cases exercise R3, R4, R5 and R7, including one with mismatched tracking facts; shipping rules R1-R3 also have unit tests. Damage and missing-parts disputes require human review under R5 regardless of the AI summary. All cases are synthetic; no real people or personal data. {m.total} cases ({m.buyerRight} buyer right, {m.sellerRight} seller right, {m.unclear} unclear, {m.injections} with injection attempts) is a small sample: treat these numbers as indicative, not proof. Run <code className="font-mono">npm run eval</code> to reproduce them; the full table is in eval/report.md.</Notice>
+        <Notice>Labels were written by the builder. The counts above distinguish individual owner review from drafts accepted without individual review; there are no independent annotators. Dispute cases exercise R3, R4, R5 and R7; shipping and return cases with explicit facts exercise R1-R3, which also have unit tests. Damage and missing-parts disputes require human review under R5 regardless of the AI summary. All cases are synthetic; no real people or personal data. {m.total} cases ({m.buyerRight} buyer right, {m.sellerRight} seller right, {m.unclear} unclear, {m.injections} with injection attempts) is a small sample: treat these numbers as indicative, not proof. Run <code className="font-mono">npm run eval</code> to reproduce them; the full table is in eval/report.md.</Notice>
       </div>
     </AppShell>
   );
