@@ -1,0 +1,74 @@
+[
+  {
+    "item": "[Demo] Smartwatch",
+    "input": {
+      "lockedTerms": {
+        "condition": "Good, minor scratches",
+        "criteria": [
+          "Screen has no cracks",
+          "Strap included"
+        ],
+        "demo": true
+      },
+      "criteria": [
+        {
+          "id": "C1",
+          "text": "Screen has no cracks"
+        },
+        {
+          "id": "C2",
+          "text": "Strap included"
+        }
+      ],
+      "amount": "64.00",
+      "currency": "USD",
+      "disputeType": "damaged",
+      "evidence": [
+        {
+          "alias": "B1",
+          "kind": "photo",
+          "content": "Photo of the watch face: a crack runs across the upper left corner. The one-time code is visible on paper."
+        },
+        {
+          "alias": "S1",
+          "kind": "note",
+          "content": "The watch was packed in bubble wrap; the listing photos showed no crack before shipping."
+        }
+      ],
+      "recommendation": {
+        "ruleId": "R5",
+        "action": "ESCALATE_HUMAN",
+        "reasons": [
+          "The buyer reported the item arrived damaged",
+          "A person decides full or partial refund and whether the seller or the courier caused it"
+        ],
+        "requiresHuman": true
+      }
+    },
+    "output": {
+      "notes": [
+        {
+          "criterionId": "C1",
+          "text": "Buyer describes a screen crack in B1; Seller describes the earlier packing condition in S1. These are claims for human checking.",
+          "citedAliases": [
+            "B1",
+            "S1"
+          ]
+        },
+        {
+          "criterionId": "C2",
+          "text": "Buyer describes the watch face in B1, but the strap is not described. This check remains unclear.",
+          "citedAliases": [
+            "B1"
+          ]
+        }
+      ],
+      "reason": "Buyer describes a cracked screen in B1; Seller describes protective packing in S1. The damage type needs human review under R5. Review the original evidence and return requirements before deciding.",
+      "range": {
+        "min": 0,
+        "max": 64,
+        "basis": "The locked terms do not price the screen or strap separately. Bounds run from zero to the 64 USD deal total; repair value needs human checking."
+      }
+    }
+  }
+]

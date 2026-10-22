@@ -243,6 +243,39 @@ as recommendations, never feed the rule engine/review summary, never block evide
 submission and never extend deadlines. If the window closes or own evidence changes
 during the call, the result is discarded; metadata is still audited.
 
+Implementation of #3 (C18): reviewer-only `POST
+/api/transactions/{id}/ai/copilot` accepts an empty JSON object, applies the optional
+reviewer access-code gate, and requires `UNDER_REVIEW` with an existing recommendation.
+It does not rerun or modify that recommendation or the original evidence summary.
+`runAssist` uses feature `copilot`, promptVersion `copilot-v1`; input is locked terms,
+dispute type, both sides' evidence as B1/S1 aliases, amount and the stored rules
+recommendation. No internal evidence ids are sent. Output has exact keys `notes`,
+`reason` (20-800 characters) and `range`. Notes reference known criterion ids and
+known aliases; an uncited note is dropped. Text rejects link/contact patterns,
+certainty wording and unexpected capitalized names; this conservative screening
+can reject harmless prose and is not a general personal-data detector. Human
+checking remains necessary.
+
+Ranges are permitted only for R5 damage/missing-parts cases, use two-decimal USD
+numbers within 0..deal amount with min <= max, and require a short stated basis.
+They are display-only: neither rules nor payment logic reads them. No component or
+repair value may be invented. The recorded Smartwatch example has no separate
+valuation, so its 0..64 USD range is explicitly an outer bound, not an estimate.
+A real valuation needs human checking. Replay matches the full labelled demo
+snapshot (terms, evidence aliases/content and rule recommendation); changed inputs
+fall back to unavailable. A live-provider run remains pending.
+
+Validated drafts are stored under feature `copilot` in the existing `ai_drafts`
+table with their terms/evidence hashes. `AI_DRAFT_CREATED` logs metadata only, never
+the notes, range basis or reason. Explicit Use as reason copies text into the normal
+reviewer form without submitting it; discarding restores the pre-draft manual reason.
+The review POST accepts optional `copilotDraftId`, checks its transaction/feature and
+current terms/evidence hashes, then compares the submitted reason on the server.
+`DECISION` (or the existing `HUMAN_SPLIT_PENDING`) records `aiDraft` prompt/model/output
+metadata with accepted unchanged/edited. A stale draft requires regeneration or
+manual entry. The selected outcome, required human reason, return flow and payment
+behavior remain unchanged; partial-refund execution is a separate C19 task.
+
 Implementation of #4: `POST /api/transactions/{id}/ai-drafts` (`paypal-message` for seller or
 reviewer when a PayPal case is open; `courier-claim` for the seller of a "damaged" dispute)
 stores the draft in `ai_drafts` and logs `AI_DRAFT_CREATED` (metadata only). The PayPal

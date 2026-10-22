@@ -2,7 +2,7 @@ import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
 import { FindingCard, KeyValue, RuleNotice, StatusPill } from '../../../../components/ui';
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
-import { ReviewForm } from '../../../../components/client';
+import { ReviewDecision } from '../../../../components/ReviewDecision';
 import { money } from '../../../../components/view';
 import { data, getRole, isUuid, reviewerUnlocked, simulatedPayPal } from '../../../_server';
 import { disputeType } from '../../../../lib/disputeTypes';
@@ -26,8 +26,8 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   const evidence = ctx.repo.loadEvidence(id);
   const ruleId = rec && rec.ruleId !== 'NONE' ? rec.ruleId : null;
   const dtype = disputeType(ctx.repo.readEvents(id).find((e) => e.type === 'OPEN_DISPUTE')?.payload.disputeType);
-  // Show evidence as E1, E2… instead of raw ids.
-  const label = new Map(evidence.map((e, i) => [e.id, `E${i + 1}`]));
+  // Same B1/S1 aliases as the copilot; stored findings still use their original ids.
+  const label = new Map((['buyer', 'seller'] as const).flatMap(side => evidence.filter(e => e.submittedBy === side).map((e, i) => [e.id, `${side === 'buyer' ? 'B' : 'S'}${i + 1}`] as const)));
 
   return (
     <AppShell active="Deals">
@@ -41,7 +41,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           {ruleId && <div className="mt-3"><RuleNotice rule={ruleId} reason={`${ACTION_TEXT[rec!.action] ?? rec!.action}${rec!.requiresHuman ? ' · needs a human decision' : ''}`}/></div>}
           {rec && <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted">{rec.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
           <SectionTitle>Evidence ({evidence.length})</SectionTitle>
-          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm">{e.content}</p></Card>)}</div>
+          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p></Card>)}</div>
         </div>
         <aside className="min-w-0 space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
@@ -55,7 +55,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
             : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Menu.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
-            : <Card><ReviewForm txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
+            : <Card><ReviewDecision txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>The AI only summarises; it cannot release or refund. Rules recommend, and a human confirms every dispute outcome.</Notice>
         </aside>
       </div>
