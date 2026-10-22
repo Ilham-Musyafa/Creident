@@ -223,8 +223,8 @@ a "Simulated payment" notice.
 Requirements: **Node.js 22.13 or newer** (uses the built-in `node:sqlite`).
 
 ```bash
-git clone https://github.com/Ilham-Musyafa/HalcyVault.git
-cd HalcyVault
+git clone https://github.com/Ilham-Musyafa/Creident.git
+cd Creident
 npm ci
 cp .env.example .env        # Windows PowerShell: Copy-Item .env.example .env
 ```
@@ -239,7 +239,7 @@ EVAL_K=3
 Then `npm run dev` and open http://localhost:3000. Pick a role in Menu, create a deal as
 the seller, switch to the buyer to accept and pay, back to the seller to add tracking
 `DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Menu > "Load demo deals"
-adds twelve labelled sample deals across the main statuses, including a finished dispute
+adds thirteen labelled sample deals across the main statuses, including a finished dispute
 with a decision receipt and a dispute ready for the reviewer.
 
 **Option B: PayPal Sandbox.** Create a Sandbox app at developer.paypal.com and set
@@ -257,6 +257,9 @@ Optional settings in `.env`:
   (Menu > Reviewer access code).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
 - `CREIDENT_DB_PATH`: SQLite file location (default `data/creident.sqlite`).
+- `PUBLIC_DEMO=1`: hosted-demo mode. The server refuses to start unless `PAYPAL_MODE=simulated`
+  and `AI_MODE=replay` and no PayPal, AI or signing secret is set; it loads the demo deals on
+  start and rate-limits the API per client. See [docs/DEPLOY.md](docs/DEPLOY.md).
 
 Checks:
 
