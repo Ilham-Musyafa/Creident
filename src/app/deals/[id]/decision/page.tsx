@@ -1,4 +1,6 @@
 import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
+import { SuccessBurst } from '../../../../components/motion';
+import { recentSuccess } from '../../../../components/view';
 import { decisionBasis } from '../../../../lib/decisionBasis';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill } from '../../../../components/ui';
@@ -55,6 +57,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
 
   return (
     <AppShell active="Deals">
+      {(() => { const label = recentSuccess(tx.status, events.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
       <PageHeader title="Decision receipt" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount, tx.currency)}`} right={<StatusPill status={tx.status}/>}/>
       {!decision ? (
         <EmptyState title="No dispute decision on this deal">A receipt appears here after a reviewer decides a dispute.</EmptyState>

@@ -1,4 +1,6 @@
 import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
+import { SuccessBurst } from '../../../components/motion';
+import { recentSuccess } from '../../../components/view';
 import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
 import { CourierClaimPack } from '../../../components/OutboundDrafts';
 import { notFound } from 'next/navigation';
@@ -45,6 +47,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
 
   return (
     <AppShell active="Deals">
+      {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
       <PageHeader title={`Deal #${id.slice(0, 8).toUpperCase()}`} back="/deals"/>
       <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
         <div>

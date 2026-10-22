@@ -169,3 +169,13 @@ export function authorizationWindow(authorizedAt: string, now: string): { honorE
   const t = Date.parse(now);
   return { honorEndsAt, expiresAt, phase: t < start + 3 * DAY ? 'honor' : t < start + 29 * DAY ? 'after-honor' : 'expired' };
 }
+
+/** Label for a one-time success animation when the deal reached this state in the last two minutes. */
+export function recentSuccess(status: TxStatus, lastEventTs: string | undefined, now: string): string | null {
+  if (!lastEventTs || Date.parse(now) - Date.parse(lastEventTs) > 120_000) return null;
+  const labels: Partial<Record<TxStatus, string>> = {
+    AUTHORIZED: 'Payment authorized', COMPLETED: 'Deal completed', REFUNDED: 'Refund sent',
+    PARTIALLY_REFUNDED: 'Partial refund sent', RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Authorization voided',
+  };
+  return labels[status] ?? null;
+}

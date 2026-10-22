@@ -64,7 +64,7 @@ export default async function HomePage() {
           <SectionTitle right={<Link href="/deals" className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-heading underline-offset-4 hover:underline">See all</Link>}>
             {role === 'reviewer' && reviewQueue.length ? 'Waiting for review' : 'Recent deals'}
           </SectionTitle>
-            <div className="space-y-2">
+            <div className="hv-stagger space-y-2">
               {shown.map((d) => <DealListItem key={d.id} href={`/deals/${d.id}`} title={d.item} amount={money(d.amount)} status={d.status}/>)}
             </div>
           </>}

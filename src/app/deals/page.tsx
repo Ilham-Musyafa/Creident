@@ -33,7 +33,7 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
           {filter === 'all' && <><p className="mb-4">Load labelled demo deals to explore every status.</p><SeedButton role={role}/></>}
         </EmptyState>
       ) : (
-        <div className="grid gap-2 lg:grid-cols-2">
+        <div className="hv-stagger grid gap-2 lg:grid-cols-2">
           {deals.map((d) => <DealListItem key={d.id} href={`/deals/${d.id}`} title={d.item} amount={money(d.amount)} status={d.status}/>)}
         </div>
       )}

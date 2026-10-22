@@ -1,4 +1,6 @@
 import { EvidenceTranslation } from '../../../../components/EvidenceTranslation';
+import { SuccessBurst } from '../../../../components/motion';
+import { recentSuccess } from '../../../../components/view';
 import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
@@ -34,6 +36,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
 
   return (
     <AppShell active="Deals">
+      {(() => { const label = recentSuccess(tx.status, ctx.repo.readEvents(id).at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
       <PageHeader title="Dispute review" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount)}`} right={<StatusPill status={tx.status}/>}/>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0">
