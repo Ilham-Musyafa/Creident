@@ -150,6 +150,19 @@ Still open:
 
 ## Log
 
+- 2026-10-22 00:47 UTC (Codex, owner-requested Step 0 checkpoint): C17 was already
+  implemented and pushed on `feat/c17-evidence-check` (487d68b, 9a35180); the
+  working tree was clean. Done: strict own-side completeness validator/runAssist,
+  guarded and rate-limited endpoint, metadata-only audit, replay fixtures, separate
+  evidence-page UI, regression tests and DESIGN documentation. Previously verified:
+  337 tests, typecheck and build passed; 390/1440px light/dark browser checks passed.
+  Missing: Claude review and a real live-provider run; no known implementation work
+  remains from C17. No PR exists from this session. Next step: Claude reviews the
+  pushed branch; wait for owner direction before opening a PR or starting another
+  task. This checkpoint changes documentation only; checks were not rerun.
+  Per the latest instruction, stop here, do not open a PR and do not start the
+  terms-validator-units fix. Nothing was merged.
+
 - 2026-10-22 01:50 WIB (Codex, C17): added advisory own-side evidence completeness
   via `src/lib/ai/evidenceCheck.ts`, `runAssist` feature `evidence-check`, version
   `evidence-check-v1`. Strict exact-key output covers every known C/I checklist id,
