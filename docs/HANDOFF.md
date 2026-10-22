@@ -169,6 +169,9 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:45 WIB (Claude): checked every sponsor details page; plan in
+  docs/SPONSOR-TOOLS.md (AG Studio main target, Render deploy + Workflows, APIMatic plugin
+  optional, Bryntum backup, others skipped).
 - 2026-10-22 07:32 WIB (Owner + Claude): sponsor tool decided: AG Studio dashboard (trial
   registered at build time), fallback AG Grid Community. Build after the feature work.
 - 2026-10-22 07:25 WIB (Owner + Claude): hosting decided: Render (free first). AG Grid
