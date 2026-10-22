@@ -167,7 +167,7 @@ Still open:
 
 ## Log
 
-- 2026-10-22 08:00 WIB (Codex, C18): reviewer copilot implemented and verified on
+- 2026-10-22 07:58 WIB (Codex, C18): reviewer copilot implemented and verified on
   `feat/c18-reviewer-copilot`. `runAssist` feature copilot / copilot-v1 drafts cited
   per-criterion notes, a 20-800 character reason, and optional bounded R5-only
   damage/incomplete refund ranges with a basis. Exact keys, known criteria/aliases,
@@ -198,6 +198,9 @@ Still open:
   DESIGN 6.1 updated. No dependencies. Rules/transitions/PayPal calls/shared assist.ts
   unchanged; protected drafts*, OutboundDrafts.tsx and paypalDisputes.ts untouched.
   Live-provider verification and Claude review remain pending. C19 has not started.
+  All work is committed and pushed. PR creation returned GitHub API 403 Forbidden;
+  English body: `/tmp/c18-pr-description.md`. Open one PR from this branch for
+  Claude review when API access is available; do not merge.
 
 - 2026-10-22 07:55 WIB (Codex, C18 checkpoint): implemented copilot/runAssist,
   exact schema with citation dropping, bounded R5-only ranges, exact demo replay,
