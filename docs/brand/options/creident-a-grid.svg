@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option A construction grid</title>
+  <rect width="48" height="48" fill="#F7F7F4"/>
+  <path d="M6 0V48M12 0V48M18 0V48M24 0V48M30 0V48M36 0V48M42 0V48M0 6H48M0 12H48M0 18H48M0 24H48M0 30H48M0 36H48M0 42H48" fill="none" stroke="#D1D5DB" stroke-width="0.35"/>
+  <circle cx="24" cy="24" r="16" fill="none" stroke="#94A3B8" stroke-width="0.45" stroke-dasharray="1.5 1.5"/>
+  <path d="M35.3 12.7 A16 16 0 1 0 35.3 35.3" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="35.3" cy="35.3" r="3.5" fill="#5EEAD4"/>
+</svg>

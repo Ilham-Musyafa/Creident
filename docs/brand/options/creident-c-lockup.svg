@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" color="#172554" role="img" aria-labelledby="title">
-  <title id="title">Creident option C logo</title>
-  <g id="lockup">
-    <path d="M48 20 C39 13 29 14 21 20 C13 26 13 38 21 44 C29 50 39 51 48 44" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M51 26 57 32 51 38 45 32Z" fill="#5EEAD4"/>
-    <text x="77" y="43" fill="currentColor" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="32" font-weight="800" letter-spacing="-1.5">Creident</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205 48" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option C lockup</title>
+  <g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 36 C11 37 6 32 6 24 C6 16 14 10 24 12 H31 C39 12 41 17 39 22 C38 25 35 27 30 27 H26"/>
+    <path d="M26 13 V36"/>
+    <path d="M31 27 41 36"/>
   </g>
+  <text x="60" y="33" fill="currentColor" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="-1.2">Creident</text>
 </svg>

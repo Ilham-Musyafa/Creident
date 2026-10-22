@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205 48" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option D lockup</title>
+  <defs>
+    <mask id="cut-d">
+      <rect width="48" height="48" fill="white"/>
+      <path d="M33 15 A13 13 0 1 0 33 33" fill="none" stroke="black" stroke-width="7" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <rect x="3" y="3" width="42" height="42" rx="10" fill="currentColor" mask="url(#cut-d)"/>
+  <rect x="33" y="21" width="7" height="7" rx="2" fill="#5EEAD4"/>
+  <text x="60" y="33" fill="currentColor" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="-1.2">Creident</text>
+</svg>

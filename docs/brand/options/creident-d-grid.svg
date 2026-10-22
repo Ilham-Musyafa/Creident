@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option D construction grid</title>
+  <rect width="48" height="48" fill="#F7F7F4"/>
+  <path d="M6 0V48M12 0V48M18 0V48M24 0V48M30 0V48M36 0V48M42 0V48M0 6H48M0 12H48M0 18H48M0 24H48M0 30H48M0 36H48M0 42H48" fill="none" stroke="#D1D5DB" stroke-width="0.35"/>
+  <path d="M3 0V48M13 0V48M24 0V48M35 0V48M45 0V48M0 3H48M0 13H48M0 24H48M0 35H48M0 45H48" fill="none" stroke="#94A3B8" stroke-width="0.55"/>
+  <defs>
+    <mask id="cut-d">
+      <rect width="48" height="48" fill="white"/>
+      <path d="M33 15 A13 13 0 1 0 33 33" fill="none" stroke="black" stroke-width="7" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <rect x="3" y="3" width="42" height="42" rx="10" fill="currentColor" mask="url(#cut-d)"/>
+  <rect x="33" y="21" width="7" height="7" rx="2" fill="#5EEAD4"/>
+</svg>

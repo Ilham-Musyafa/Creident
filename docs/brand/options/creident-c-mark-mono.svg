@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">Creident option C single-color sealed trail mark</title>
-  <g id="mark">
-    <path d="M48 20 C39 13 29 14 21 20 C13 26 13 38 21 44 C29 50 39 51 48 44" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M51 26 57 32 51 38 45 32Z" fill="currentColor"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Creident option C single-color mark</title>
+  <g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 36 C11 37 6 32 6 24 C6 16 14 10 24 12 H31 C39 12 41 17 39 22 C38 25 35 27 30 27 H26"/>
+    <path d="M26 13 V36"/>
+    <path d="M31 27 41 36"/>
   </g>
 </svg>

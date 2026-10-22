@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+- 2026-10-22 (Codex, C23 revision): replaced the initial three exploratory marks
+  with four geometric monogram options on a 48-unit grid: arc C, seven-square
+  grid C, shared-stroke CR ligature, and negative-space C. Added construction
+  grid SVGs and app-icon comparisons to the light/dark preview. Chromium opened
+  the page with no console errors; all 16 SVGs parsed and rendered, and the
+  16/32 px marks were inspected. No `src/` files or dependencies changed.
 - 2026-10-22 (Codex, C23): prepared three Creident logo options in
   `docs/brand/options/` on `design/c23-logo-options`: a connected step trail,
   two equal meeting strokes, and a C with a mint seal. Added color and

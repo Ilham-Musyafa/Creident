@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option C construction grid</title>
+  <rect width="48" height="48" fill="#F7F7F4"/>
+  <path d="M6 0V48M12 0V48M18 0V48M24 0V48M30 0V48M36 0V48M42 0V48M0 6H48M0 12H48M0 18H48M0 24H48M0 30H48M0 36H48M0 42H48" fill="none" stroke="#D1D5DB" stroke-width="0.35"/>
+  <path d="M6 0V48M18 0V48M26 0V48M41 0V48M0 12H48M0 24H48M0 36H48" fill="none" stroke="#94A3B8" stroke-width="0.55"/>
+  <g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 36 C11 37 6 32 6 24 C6 16 14 10 24 12 H31 C39 12 41 17 39 22 C38 25 35 27 30 27 H26"/>
+    <path d="M26 13 V36"/>
+    <path d="M31 27 41 36"/>
+  </g>
+</svg>
