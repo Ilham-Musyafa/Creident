@@ -16,7 +16,7 @@ describe('evidence translation schema and preservation', () => {
   ])('rejects changed/omitted numeric or code token %s', (before, after) => {
     expect(validateTranslation({ ...good, translation: coded.id.replace(before, after) }, coded.en)).toBeNull();
   });
-  it.each([' https://new.example.test', ' www.example.test', ' evil.test', ' a@evil.test', ' mailto:a@evil.test', ' javascript:alert(1)', ' 99', ' SN-999', ' 10.00 USD'])('rejects invented links, codes, amounts and extra occurrences: %s', extra => {
+  it.each([' https://new.example.test', ' www.example.test', ' evil.test', ' a@evil.test', ' mailto:a@evil.test', ' javascript:alert(1)', ' file:///tmp/example', ' [link](/other-evidence)', ' 99', ' SN-999', ' 10.00 USD'])('rejects invented links, codes, amounts and extra occurrences: %s', extra => {
     expect(validateTranslation({ ...good, translation: coded.id + extra }, coded.en)).toBeNull();
   });
   it('rejects changed lowercase serials, dates and added/removed original links', () => {

@@ -214,7 +214,7 @@ Shared guard rails (all assists use `src/lib/ai/assist.ts`):
 | 2 | Evidence completeness check | Dispute, evidence window | Which agreed checklist items or required photos are still missing, per side | Each party sees prompts for their own side; no verdict | Codex C17 |
 | 3 | Reviewer copilot | Human review | Cited per-criterion notes, a draft decision reason, and for R5 cases a suggested partial-refund range with its basis | Reviewer accepts or edits; the decision stays the reviewer's | Codex C18 |
 | 4 | Outbound drafts | After a decision or a PayPal case | A message to PayPal for the dispute bridge and a courier claim pack for transit damage | Seller (or reviewer) approves before anything is sent or downloaded | Claude (done 2026-10-22) |
-| 5 | Evidence translation | Review | A translation of evidence text into the reviewer's language; the original and its hash stay authoritative | Reviewer reads both | Claude, after C18 |
+| 5 | Evidence translation | Review | A translation of evidence text into the reviewer's language; the original and its hash stay authoritative | Reviewer reads both | Codex C20 |
 
 Implementation of #2 (C17): buyer/seller-only `POST
 /api/transactions/{id}/ai/evidence-check` accepts an empty JSON object during an open
@@ -275,6 +275,41 @@ current terms/evidence hashes, then compares the submitted reason on the server.
 metadata with accepted unchanged/edited. A stale draft requires regeneration or
 manual entry. The selected outcome, required human reason, return flow and payment
 behavior remain unchanged; partial-refund execution is a separate C19 task.
+
+Implementation of #5 (C20): reviewer-only `POST
+/api/transactions/{id}/ai/translate` accepts exactly `evidenceId` and target `en` or
+`id`, applies the reviewer access-code gate even on cache hits, and reads only that
+evidence item belonging to the deal. It is a reading aid on the review page,
+including historical evidence; it cannot change evidence, deadlines or state.
+`runAssist` uses feature `translate`, promptVersion `translate-v1`. Input is one
+quoted text and the target, never other evidence or the rules recommendation.
+Output has exactly `translation` (1-8,000 characters) and `detectedLanguage`
+(en/id/unknown for mixed/other/uncertain source language). Source is 1-4,000 characters.
+
+Validation preserves numeric tokens (including decimal/date formats and occurrence
+counts), mixed alphanumeric and uppercase identifiers, explicitly labelled serials,
+and existing URLs/email/link targets exactly; added or changed links are rejected.
+These conservative format checks can refuse harmless localization or uppercase-word
+translations. They do not establish semantic accuracy or detect every possible code
+format. The original text and SHA-256 remain authoritative and visible above the
+translation, labelled **AI translation – check the original**, with both hashes.
+Only plain React text is rendered. Injection flags are shown to the reviewer.
+
+Successful results are cached in `ai_drafts` under feature `translate`, keyed by deal,
+evidence id, source hash, target, prompt version, mode, model and provider base URL
+(no API key is stored). Original changes invalidate the cache; changes during a call
+reject the result. The cache and EVIDENCE_TRANSLATED audit event commit atomically.
+The log contains only evidence id, hashes, language codes, mode/model/prompt metadata
+and injection/unavailable flags, never either text. Cache hits do not log another run.
+Unavailable attempts are logged without creating a success cache and can be retried.
+Concurrent requests share one call within a server process; separate workers can
+make redundant AI calls on a simultaneous miss, but publish only one cache row/event.
+Translation output never feeds rules, the original AI summary or recommendations.
+
+Replay covers both English seed-evidence texts (watch photo and packing note), their
+Indonesian equivalents in either direction, and a synthetic coded tracking/serial
+example. Same-language requests return the recorded original. Unknown replay text
+falls back to reading the original. No live-provider translation has been verified.
 
 Implementation of #4: `POST /api/transactions/{id}/ai-drafts` (`paypal-message` for seller or
 reviewer when a PayPal case is open; `courier-claim` for the seller of a "damaged" dispute)

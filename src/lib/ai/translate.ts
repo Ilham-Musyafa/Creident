@@ -13,7 +13,9 @@ const SYSTEM = `Translate only the supplied evidence text into target en (Englis
 const sorted = (values: string[]) => [...values].sort();
 const same = (a: string[], b: string[]) => JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
 function links(text: string): string[] {
-  return (text.match(/\b(?:(?:https?|ftp):\/\/|www\.|mailto:|tel:|javascript:|data:)[^\s<>"']+|\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b[a-z\d](?:[a-z\d-]*\.)+[a-z]{2,}(?:\/[^\s<>"']*)?/giu) ?? []).map(link => link.replace(/[.,;!?\])]+$/, ''));
+  const urls = (text.match(/\b(?:[a-z][a-z\d+.-]*:\/\/|www\.|mailto:|tel:|javascript:|data:)[^\s<>"']+|\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b[a-z\d](?:[a-z\d-]*\.)+[a-z]{2,}(?:\/[^\s<>"']*)?/giu) ?? []).map(link => link.replace(/[.,;!?\])]+$/, ''));
+  const markup = [...text.matchAll(/\[[^\]]*\]\(([^)]+)\)|(?:href|src)\s*=\s*["']([^"']+)["']/gi)].map(match => match[1] ?? match[2]!);
+  return [...urls, ...markup];
 }
 function codes(text: string): string[] {
   const tokens = text.match(/[\p{L}\p{N}]+(?:[-_.:/][\p{L}\p{N}]+)*/gu) ?? [];
