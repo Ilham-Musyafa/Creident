@@ -150,6 +150,16 @@ Still open:
 
 ## Log
 
+- 2026-10-22 07:15 WIB (Claude, before a usage reset): merged C17 evidence completeness
+  (#45; 337 tests, build, browser check). Added docs/PROPOSAL-PARTIAL-REFUND.md (partial
+  refund by reviewer + PayPal accept-claim/make-offer), waiting for owner approval.
+  State now: AI assists 1, 2, 4 merged; next Codex C18 reviewer copilot (prompt to be
+  written by Claude from DESIGN 6.1 row 3), then Claude #5 translation. Codex branch
+  fix/terms-validator-units was not started. Other open items for the owner: 12 draft
+  shipping labels (2 disagreements), fee minimum/cap idea ($0.50 / $15, docs only),
+  "international examples" paragraph for README Problem section, license switch to
+  Apache-2.0 before going public, name choice, live-model eval key, real Sandbox run of the
+  bridge, AG Grid sponsor decision.
 - 2026-10-22 01:50 WIB (Codex, C17): added advisory own-side evidence completeness
   via `src/lib/ai/evidenceCheck.ts`, `runAssist` feature `evidence-check`, version
   `evidence-check-v1`. Strict exact-key output covers every known C/I checklist id,
