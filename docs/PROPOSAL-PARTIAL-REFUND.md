@@ -3,8 +3,8 @@
 Status (2026-10-22 07:15 WIB): owner **approved A** (partial refund decided by the reviewer)
 with the proposed defaults: no return by default for a partial refund, and the reviewer sets
 the amount even when both parties agree. **B was not approved** (do not build it). The fee
-minimum/maximum idea was not approved either. Not implemented yet: build A after C18 is
-merged, because both touch the review page and the DECISION payload.
+minimum/maximum idea was not approved either. A is implemented on `feat/c19-partial-refund` after C18 PR #56 merged, pending
+review and a real integrated Sandbox partial-refund run. B remains unimplemented.
 
 ## Why
 
@@ -50,8 +50,10 @@ Amount validation, capture-then-refund ordering and failure, idempotency on retr
 state transitions, audit payloads, simulated mode, and Sandbox probe steps for
 accept-claim and make-offer.
 
-## Open questions for the owner
+## Original questions (answered 2026-10-22)
 
 1. Approve A, B, both, or neither?
 2. For A: should the default be "no return" for partial refunds? (Proposed: yes.)
 3. Who sets the amount when the buyer and seller already agree? (Proposed: still the reviewer.)
+
+Owner decision: A only; no return by default for partial refunds; the reviewer sets the amount.

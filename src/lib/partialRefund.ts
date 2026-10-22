@@ -4,7 +4,7 @@ import type { Trigger } from './domain/types';
 import { PayPalError, requestIdFor } from './paypal/client';
 import { DomainError, cachedResult, type ApplyResult, type OrchestratorDeps } from './orchestrator';
 import { decisionBasis } from './decisionBasis';
-import type { StoredTx } from './repository';
+import { PendingMoneyActionError, type StoredTx } from './repository';
 import { validPartialAmount } from './partialAmount';
 
 export async function applyPartialRefund(initial: StoredTx, trigger: Trigger, deps: OrchestratorDeps): Promise<ApplyResult> {
@@ -25,12 +25,16 @@ export async function applyPartialRefund(initial: StoredTx, trigger: Trigger, de
       const proposed = transition(tx, trigger);
       if (!proposed.ok) return fail(proposed.code, proposed.message);
       if (trigger.requireReturn && !deps.extras?.returnBy) return fail('NO_DEADLINE', 'A required return needs a deadline');
-      tx = repo.saveTransition(tx, { ...tx, status: trigger.requireReturn ? 'RETURN_REQUESTED' : 'UNDER_REVIEW',
+      try { tx = repo.saveTransition(tx, { ...tx, status: trigger.requireReturn ? 'RETURN_REQUESTED' : 'UNDER_REVIEW',
         partialRefundAmount: trigger.amount, partialRefundState: trigger.requireReturn ? 'awaiting_return' : 'ready' }, {}, {
         txId: tx.id, ts: now(), actor, type: 'DECISION', payload: { ...deps.eventPayload,
           ...decisionBasis(tx.termsJson, repo.loadEvidence(tx.id)), outcome: 'PARTIAL_REFUND', amount: trigger.amount, currency: 'USD', reason: decision.reason,
           requireReturn: !!trigger.requireReturn, from: tx.status, to: trigger.requireReturn ? 'RETURN_REQUESTED' : 'UNDER_REVIEW', effect: 'NONE' },
       }, undefined, undefined, { ...deps.extras, decision: { ...decision, amount: trigger.amount, requireReturn: !!trigger.requireReturn } });
+      } catch (error) {
+        if (error instanceof PendingMoneyActionError) return fail('ACTION_PENDING', error.message);
+        throw error;
+      }
       plan = repo.readEvents(tx.id).find(e => e.type === 'DECISION' && e.payload.outcome === 'PARTIAL_REFUND');
     }
   }

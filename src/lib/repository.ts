@@ -127,6 +127,8 @@ export interface StoredPayPalDispute {
   updatedAt: string;
 }
 
+export class PendingMoneyActionError extends Error {}
+
 export class TransactionRepository {
   constructor(private readonly db: DatabaseSync) {}
 
@@ -473,6 +475,9 @@ export class TransactionRepository {
     extras: TransitionExtras = {},
   ): StoredTx {
     return transaction(this.db, () => {
+      if (extras.decision?.outcome === 'PARTIAL_REFUND' && !before.partialRefundAmount && this.db.prepare(
+        "SELECT 1 FROM idempotency WHERE tx_id = ? AND action IN ('PAYPAL_CAPTURE','PAYPAL_REFUND','PAYPAL_VOID') AND json_extract(result, '$.state') = 'pending' LIMIT 1",
+      ).get(before.id)) throw new PendingMoneyActionError('Another money action needs verification before a partial decision');
       const result = this.db.prepare(`UPDATE transactions SET status = ?, captured = ?, frozen_from = ?,
         paypal_order_id = ?, paypal_auth_id = ?, paypal_capture_id = ?,
         terms_hash = ?, ship_by = ?, tracking_number = ?, inspection_until = ?, evidence_until = ?,

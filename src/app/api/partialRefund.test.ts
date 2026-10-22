@@ -10,6 +10,7 @@ import { PayPalError } from '../../lib/paypal/client';
 import { PartialRefundNotice } from '../../components/PartialRefundNotice';
 import Receipt from '../deals/[id]/decision/page';
 import { getApiContext, seedDemoUsers, setApiContextForTests } from './_shared/context';
+import { POST as tick } from './jobs/tick/route';
 import { POST as review } from './transactions/[id]/review/route';
 import { POST as copilot } from './transactions/[id]/ai/copilot/route';
 import { POST as returned } from './transactions/[id]/return/route';
@@ -65,6 +66,7 @@ describe('partial refund review API and receipt', () => {
     const html = renderToStaticMarkup(await Receipt(param())); expect(html).toContain('Refund pending'); expect(html).toContain('demo-debug'); expect(html).not.toContain('private provider text');
     const notice = renderToStaticMarkup(PartialRefundNotice({ tx: repo.loadTransaction(tx.id)!, events: repo.readEvents(tx.id) })); expect(notice).toContain('Refund pending');
     expect((await review(req(body()), param())).status).toBe(502); expect(refund).toHaveBeenCalledTimes(1);
+    expect((await tick(req({}))).status).toBe(200); expect(refund).toHaveBeenCalledTimes(1);
     expect((await review(req({ outcome: 'RELEASE', reason: 'Different action' }), param())).status).toBe(409);
     expect(verifyChain(repo.readEvents(tx.id)).ok).toBe(true);
   });

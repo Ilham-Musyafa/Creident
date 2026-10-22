@@ -8,8 +8,8 @@ export function PartialRefundNotice({ tx, events }: { tx: StoredTx; events: Audi
   const error = [...events].reverse().find(e => e.type === 'PAYPAL_ERROR');
   return <div role="status" className="my-3 [overflow-wrap:anywhere]"><Notice tone="warning">
     <strong>{tx.captured ? 'Refund pending – payment captured' : 'Partial refund pending verification'}</strong>
-    <p className="mt-1">The reviewer decided {money(tx.partialRefundAmount)}. Check the recorded capture and refund in PayPal before taking another money action. This prototype does not automatically retry or reconcile it.</p>
-    {typeof error?.payload.debug_id === 'string' && <p className="mt-1 font-mono text-xs">PayPal debug id: {error.payload.debug_id}</p>}
-    {typeof error?.payload.requestId === 'string' && <p className="mt-1 font-mono text-xs">Request id: {error.payload.requestId}</p>}
+    <span className="mt-1 block">The reviewer decided {money(tx.partialRefundAmount)}. Check the recorded capture and refund in PayPal before taking another money action. This prototype does not automatically retry or reconcile it.</span>
+    {typeof error?.payload.debug_id === 'string' && <span className="mt-1 block font-mono text-xs">PayPal debug id: {error.payload.debug_id}</span>}
+    {typeof error?.payload.requestId === 'string' && <span className="mt-1 block font-mono text-xs">Request id: {error.payload.requestId}</span>}
   </Notice></div>;
 }

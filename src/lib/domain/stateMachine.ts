@@ -125,6 +125,7 @@ export function transition(tx: Tx, trigger: Trigger): TransitionResult {
       return refundOrVoid(tx);
 
     case 'RETURN_DEADLINE_PASSED':
+      if (tx.partialRefundAmount && tx.partialRefundState !== 'awaiting_return') return fail('RETURN_ALREADY_RECORDED', 'A delivered return cannot be cancelled by the deadline job');
       if (tx.status !== 'RETURN_REQUESTED') return wrongState(tx, trigger, ['RETURN_REQUESTED']);
       if (!tx.returnBy) return fail('NO_DEADLINE', 'Transaction has no return deadline');
       if (at(trigger.now) <= at(tx.returnBy)) return fail('DEADLINE_NOT_REACHED', 'Return deadline has not passed');

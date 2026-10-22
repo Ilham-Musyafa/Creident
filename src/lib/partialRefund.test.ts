@@ -104,6 +104,18 @@ describe('reviewer partial refund', () => {
     });
     expect((await decide()).ok).toBe(false); expect(repo.loadTransaction(tx.id)?.status).toBe('FROZEN_EXTERNAL'); expect(paypal.refundCapture).not.toHaveBeenCalled();
   });
+  it('does not overwrite a competing pending full money action', async () => {
+    const { repo, tx, decide, paypal } = setup(); repo.claimAction(tx.id, 'PAYPAL_CAPTURE', requestIdFor(tx.id, 'PAYPAL_CAPTURE'));
+    expect(await decide()).toMatchObject({ ok: false, error: { code: 'ACTION_PENDING' } });
+    expect(repo.loadDecisions(tx.id)).toEqual([]); expect(repo.loadTransaction(tx.id)?.partialRefundAmount).toBeUndefined(); expect(paypal.captureAuthorization).not.toHaveBeenCalled();
+  });
+  it('never cancels an already delivered conditional return while its payment needs checking', async () => {
+    const { decide, deps, repo, tx } = setup(); deps.extras!.returnBy = '2026-10-23T00:00:00Z'; await decide(true);
+    await applyTrigger(tx.id, { type: 'RETURN_DELIVERED', now: '2026-10-22T01:00:00Z', destinationMatches: true }, { ...deps, paypal: undefined });
+    expect(repo.loadTransaction(tx.id)?.partialRefundState).toBe('ready');
+    expect(await applyTrigger(tx.id, { type: 'RETURN_DEADLINE_PASSED', now: '2026-10-24T00:00:00Z' }, deps)).toMatchObject({ ok: false, error: { code: 'RETURN_ALREADY_RECORDED' } });
+    expect(repo.loadTransaction(tx.id)?.partialRefundState).toBe('ready');
+  });
   it('models direct and conditional partial decisions in the pure transition function', () => {
     const { tx } = setup();
     expect(transition(tx, { type: 'DECISION', outcome: 'PARTIAL_REFUND', amount: '2.00' })).toMatchObject({ ok: true, tx: { status: 'PARTIALLY_REFUNDED' }, effect: { kind: 'PAYPAL_PARTIAL_REFUND' } });
