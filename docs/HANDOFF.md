@@ -173,6 +173,14 @@ Still open:
 
 ## Log
 
+- 2026-10-22 (Codex, C23): prepared three Creident logo options in
+  `docs/brand/options/` on `design/c23-logo-options`: a connected step trail,
+  two equal meeting strokes, and a C with a mint seal. Added color and
+  single-color SVGs, a light/dark size-comparison page, and its Chromium
+  screenshot. Opened the page locally with no console errors; inspected the
+  16/32/64/128 px marks and checked that all nine SVG files parse and render.
+  No `src/` files or dependencies changed. Logo selection and app integration
+  remain separate decisions.
 - 2026-10-22 21:15 WIB (Claude, owner decision): renamed the project to **Creident** (supersedes
   the 20:55 "HalcyVault locked" entry, which was a mis-click). UI brand, page title, About,
   README, AGENTS.md, DESIGN.md, UI.md, sponsor and sandbox notes, Postman collection file name,

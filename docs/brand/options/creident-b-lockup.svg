@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option B logo</title>
+  <g id="lockup">
+    <g fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M49 17 H36 C24 17 16 23 16 32" stroke="currentColor"/>
+      <path d="M16 32 C16 41 24 47 36 47 H49" stroke="#5EEAD4"/>
+    </g>
+    <text x="77" y="43" fill="currentColor" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="32" font-weight="800" letter-spacing="-1.5">Creident</text>
+  </g>
+</svg>

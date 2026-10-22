@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#172554" role="img" aria-labelledby="title">
+  <title id="title">Creident option B two-party mark</title>
+  <g id="mark" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M49 17 H36 C24 17 16 23 16 32" stroke="currentColor"/>
+    <path d="M16 32 C16 41 24 47 36 47 H49" stroke="#5EEAD4"/>
+  </g>
+</svg>

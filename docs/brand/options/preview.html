@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Creident logo options</title>
+  <style>
+    @font-face {
+      font-family: "Plus Jakarta Sans";
+      src: url("../../../src/fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");
+      font-weight: 400 800;
+      font-display: swap;
+    }
+    :root { font-family: "Plus Jakarta Sans", Arial, sans-serif; color: #172554; background: #F7F7F4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1200px; margin: auto; padding: 42px 28px 56px; }
+    header { margin-bottom: 30px; }
+    h1 { font-size: 34px; letter-spacing: -.045em; margin: 0 0 8px; }
+    header p { color: #475569; margin: 0; line-height: 1.55; }
+    section { margin-top: 28px; }
+    h2 { font-size: 21px; letter-spacing: -.03em; margin: 0 0 4px; }
+    .rationale { color: #475569; margin: 0 0 14px; font-size: 14px; }
+    .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .panel { border: 1px solid #DFE5E9; border-radius: 18px; padding: 20px; min-width: 0; }
+    .light { background: #F7F7F4; color: #172554; }
+    .dark { background: #0B1020; color: #FFFFFF; border-color: #26325A; }
+    .panel-title { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .7; margin-bottom: 18px; }
+    .sizes { display: flex; align-items: end; justify-content: space-between; gap: 14px; min-height: 158px; }
+    .size { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+    .size svg { display: block; flex: none; }
+    .size span { font-size: 11px; opacity: .7; }
+    .lockup { margin-top: 20px; border-top: 1px solid currentColor; padding-top: 17px; }
+    .lockup svg { display: block; width: min(100%, 400px); height: auto; }
+    .note { margin-top: 20px; color: #64748B; font-size: 12px; }
+    @media (max-width: 720px) {
+      main { padding: 24px 14px 36px; }
+      .pair { grid-template-columns: 1fr; }
+      .panel { padding: 15px; }
+      .sizes { gap: 6px; }
+      .size:last-child svg { width: 96px; height: 96px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Creident logo options</h1>
+      <p>Three design-only directions in the existing ink and mint palette. Marks are shown at actual favicon and app-icon sizes; no option is selected or applied to the product.</p>
+    </header>
+    <div id="options"></div>
+    <p class="note">The single-color files use currentColor. The wordmarks use the app's existing Plus Jakarta Sans stack.</p>
+  </main>
+  <script>
+    const options = [
+      {
+        id: 'a', name: 'A — Recorded steps',
+        rationale: 'Connected nodes follow a C-shaped trail, with the final mint step marking a recorded sequence.',
+        mark: `<path d="M48 14 32 11 18 20 13 32 18 44 32 53 48 50" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="currentColor"><circle cx="48" cy="14" r="5"/><circle cx="32" cy="11" r="5"/><circle cx="18" cy="20" r="5"/><circle cx="13" cy="32" r="5"/><circle cx="18" cy="44" r="5"/><circle cx="32" cy="53" r="5"/></g>
+          <circle cx="48" cy="50" r="5" fill="#5EEAD4"/>`
+      },
+      {
+        id: 'b', name: 'B — Two parties',
+        rationale: 'Two equal mirrored strokes meet at the center to form one shared C.',
+        mark: `<g fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M49 17 H36 C24 17 16 23 16 32" stroke="currentColor"/>
+          <path d="M16 32 C16 41 24 47 36 47 H49" stroke="#5EEAD4"/></g>`
+      },
+      {
+        id: 'c', name: 'C — Locked terms',
+        rationale: 'A continuous C approaches a small mint seal at its opening, suggesting terms fixed before payment.',
+        mark: `<path d="M48 20 C39 13 29 14 21 20 C13 26 13 38 21 44 C29 50 39 51 48 44" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M51 26 57 32 51 38 45 32Z" fill="#5EEAD4"/>`
+      }
+    ];
+    const sizes = [16, 32, 64, 128];
+    const container = document.getElementById('options');
+    for (const option of options) {
+      const section = document.createElement('section');
+      const panels = ['light', 'dark'].map(theme => `
+        <div class="panel ${theme}">
+          <div class="panel-title">${theme} · ${theme === 'light' ? '#F7F7F4' : '#0B1020'}</div>
+          <div class="sizes">${sizes.map(size => `
+            <div class="size"><svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="Option ${option.id.toUpperCase()} at ${size} pixels">${option.mark}</svg><span>${size} px</span></div>
+          `).join('')}</div>
+          <div class="lockup"><svg viewBox="0 0 320 64" role="img" aria-label="Option ${option.id.toUpperCase()} horizontal lockup">${option.mark}<text x="77" y="43" fill="currentColor" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="32" font-weight="800" letter-spacing="-1.5">Creident</text></svg></div>
+        </div>`).join('');
+      section.innerHTML = `<h2>${option.name}</h2><p class="rationale">${option.rationale}</p><div class="pair">${panels}</div>`;
+      container.appendChild(section);
+    }
+  </script>
+</body>
+</html>
