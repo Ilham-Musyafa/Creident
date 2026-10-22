@@ -19,7 +19,7 @@ const unsafe = /https?:|www\.|\b[^\s@]+@[^\s@]+\b|\b[a-z\d-]+(?:\.[a-z\d-]+)*\.[
 const allowedCapitalized = new Set('A An The This That These Those Buyer Seller Both Evidence Photo Photos Packing Listing Locked Terms Review Human No It Missing Damage Screen Strap Repair Value Bounds USD R5 B S'.split(' '));
 function clean(value: unknown, max: number, min = 1): value is string {
   return boundedText(value, max, min) && value === value.trim() && !/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(value) && !unsafe.test(value) &&
-    !(value.match(/\b[A-Z][a-z]+\b/g) ?? []).some(word => !allowedCapitalized.has(word));
+    !(value.match(/(?<![\p{L}\p{N}])\p{Lu}\p{L}*(?![\p{L}\p{N}])/gu) ?? []).some(word => !allowedCapitalized.has(word));
 }
 
 export function copilotData(ctx: CopilotContext) {

@@ -70,7 +70,7 @@ webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented on `feat/c18-reviewer-copilot`; full verification in progress, not ready to merge.
+1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
 2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
@@ -166,6 +166,38 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 08:00 WIB (Codex, C18): reviewer copilot implemented and verified on
+  `feat/c18-reviewer-copilot`. `runAssist` feature copilot / copilot-v1 drafts cited
+  per-criterion notes, a 20-800 character reason, and optional bounded R5-only
+  damage/incomplete refund ranges with a basis. Exact keys, known criteria/aliases,
+  cite-or-drop, URL/name/certainty screening and currency bounds are unit tested.
+  Proper-name screening is conservative, can reject harmless wording, and is not
+  a general personal-data detector; synthetic data and human checking remain required.
+  The recorded Smartwatch has no component valuation: its 0..64 USD range is clearly
+  labelled as outer bounds rather than an estimate. No amount is selected or executed.
+  Reviewer-only POST `/api/transactions/{id}/ai/copilot` applies the reviewer gate,
+  empty-body/id/status checks and requires an existing recommendation. Both sides'
+  evidence uses B1/S1 aliases (no internal ids); the quoted input includes locked
+  terms, type and rule recommendation. Replay matches the exact labelled demo
+  snapshot, avoiding reuse after edits. New copilotStore helper reuses ai_drafts
+  without changing drafts.ts. Draft storage binds current terms/evidence hashes;
+  stale generation/adoption is rejected. AI_DRAFT_CREATED logs metadata only.
+  Review POST accepts copilotDraftId and records server-compared unchanged/edited
+  aiDraft metadata in DECISION or the existing pending-split event. Human reason
+  remains required, manual decisions have no AI attribution, and ranges never
+  enter rules or PayPal parameters. Original recommendations and summaries are
+  unchanged and shown first. Moved the review form into ReviewDecision, with a
+  separate ReviewerCopilot component, explicit Use as reason, editable reason and
+  restoration of pre-draft manual text. client.tsx shrank; evidence labels match B/S.
+  `npm test` 391/391 (39 files), typecheck and build passed. Production Chromium,
+  fresh temp DB, PAYPAL_MODE=simulated / AI_MODE=replay: 390/1440px light/dark,
+  preview without autofill, apply/discard/edit, unchanged rules/summary, edited
+  decision audit, display-only range, injection/unavailable fallback and a manual
+  decision after failure. No overflow or console errors/warnings; audit chain verified.
+  DESIGN 6.1 updated. No dependencies. Rules/transitions/PayPal calls/shared assist.ts
+  unchanged; protected drafts*, OutboundDrafts.tsx and paypalDisputes.ts untouched.
+  Live-provider verification and Claude review remain pending. C19 has not started.
 
 - 2026-10-22 07:55 WIB (Codex, C18 checkpoint): implemented copilot/runAssist,
   exact schema with citation dropping, bounded R5-only ranges, exact demo replay,

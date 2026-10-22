@@ -16,7 +16,7 @@ describe('reviewer copilot schema and assist', () => {
     const draft = validateCopilot({ ...good, notes: [{ ...good.notes[0], citedAliases: [] }, good.notes[1]] }, input);
     expect(draft?.notes).toEqual([good.notes[1]]);
   });
-  it.each(['definitely', 'proves', 'guaranteed', 'Alice Example', 'tari', 'https://example.test', 'example.test', 'a@example.test', '<script>alert(1)</script>', 'Zayn'])('rejects certainty, names and links in every generated text field: %s', word => {
+  it.each(['definitely', 'proves', 'guaranteed', 'Alice Example', 'tari', 'https://example.test', 'example.test', 'a@example.test', '<script>alert(1)</script>', 'Zayn', 'ZAYN', 'Élodie'])('rejects certainty, names and links in every generated text field: %s', word => {
     expect(validateCopilot({ ...good, reason: `The evidence ${word} needs checking before any decision.` }, input)).toBeNull();
     expect(validateCopilot({ ...good, notes: [{ ...good.notes[0], text: word }] }, input)).toBeNull();
     expect(validateCopilot({ ...good, range: { ...good.range, basis: `The basis ${word} needs review before deciding.` } }, input)).toBeNull();
