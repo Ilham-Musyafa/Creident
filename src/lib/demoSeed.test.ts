@@ -3,6 +3,8 @@ import { verifyChain } from './audit/chain';
 import { openDatabase } from './db';
 import { seedDemoData } from './demoSeed';
 import { TransactionRepository } from './repository';
+import { prepareReview } from './reviewPipeline';
+import copilotReplay from './ai/copilot-replay.json';
 
 function setup() {
   const db = openDatabase(':memory:');
@@ -92,6 +94,27 @@ describe('demo seed', () => {
     await seedDemoData({ repo, time });
     expect(await seedDemoData({ repo, time })).toEqual({ created: 0, skipped: true });
     expect(repo.listTransactions()).toHaveLength(13);
+  });
+
+  it('backfills a real copilot replay for an unchanged older demo without replacing it', async () => {
+    const { repo } = setup();
+    const recorded = copilotReplay[0]!;
+    const id = 'older-review-demo';
+    repo.createTransaction({ id, item: recorded.item, amount: recorded.input.amount, currency: 'USD',
+      termsJson: JSON.stringify(recorded.input.lockedTerms), status: 'UNDER_REVIEW', captured: false,
+      buyerId: 'buyer', sellerId: 'seller' }, { txId: id, ts: '2026-10-22T00:00:00Z', actor: 'seller', type: 'TRANSACTION_CREATED', payload: { simulated: true } });
+    repo.appendAuditEvent({ txId: id, ts: '2026-10-22T00:00:00Z', actor: 'buyer', type: 'OPEN_DISPUTE', payload: { disputeType: 'damaged', simulated: true } });
+    for (const evidence of recorded.input.evidence) repo.recordEvidence({ txId: id,
+      submittedBy: evidence.alias.startsWith('B') ? 'buyer' : 'seller', kind: evidence.kind, content: evidence.content, contentHash: 'synthetic', ts: '2026-10-22T00:00:00Z' });
+    await prepareReview(id, { repo, aiEnv: { AI_MODE: 'replay' } });
+    const before = repo.loadTransaction(id); const rec = repo.loadRecommendation(id);
+    await seedDemoData({ repo, time });
+    expect(repo.loadTransaction(id)).toEqual(before); expect(repo.loadRecommendation(id)).toEqual(rec);
+    expect(repo.readEvents(id).filter(e => e.type === 'AI_DRAFT_CREATED')).toEqual([
+      expect.objectContaining({ payload: expect.objectContaining({ feature: 'copilot', mode: 'replay', simulated: true }) }),
+    ]);
+    expect(verifyChain(repo.readEvents(id)).ok).toBe(true);
+    expect(await seedDemoData({ repo, time })).toEqual({ created: 0, skipped: true });
   });
 });
 

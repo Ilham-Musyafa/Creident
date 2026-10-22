@@ -80,7 +80,6 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
   const { repo, time } = options;
   const existingItems = new Set(repo.listTransactions(500).map(tx => tx.item));
   const missingSpecs = SPECS.filter(spec => !existingItems.has(spec.item));
-  if (!missingSpecs.length) return { created: 0, skipped: true };
   const now = options.now ?? (() => new Date().toISOString());
   let created = 0;
 
@@ -146,15 +145,6 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         await run({ type: 'EVIDENCE_COMPLETE' }, 'seller');
         await options.onUnderReview?.(id);
         if (!repo.loadRecommendation(id)) await prepareReview(id, { repo, now, aiEnv: { AI_MODE: 'replay' } });
-        if (spec.item === '[Demo] Smartwatch') {
-          const result = await draftCopilot({ tx: repo.loadTransaction(id)!, evidence: repo.loadEvidence(id),
-            recommendation: repo.loadRecommendation(id)!, disputeType: spec.disputeType }, { env: { AI_MODE: 'replay' } });
-          if (!result.output) throw new Error('Demo copilot replay unavailable');
-          const draftId = randomUUID();
-          repo.storeAssistDraft(draftId, id, 'copilot', { draft: result.output, basis: decisionBasis(termsJson, repo.loadEvidence(id)) }, result.meta,
-            { txId: id, ts: now(), actor: 'reviewer', type: 'AI_DRAFT_CREATED',
-              payload: { ...result.meta, draftId, inputContainsInjection: result.inputContainsInjection, simulated: true } });
-        }
       } else if (step !== 'return-delivered' && step.type === 'DECISION') {
         if (!spec.decisionReason) throw new Error('Demo decision needs a reason');
         await run(step, 'reviewer', {
@@ -190,5 +180,25 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
         stage: 'INQUIRY', reason: 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED', actions: ['send_message', 'escalate'], updatedAt: now() }, true);
     }
   }
-  return { created, skipped: false };
+  // Backfill the actual replay on an unchanged older seed too. Never overwrite evidence,
+  // recommendations or a user's later decisions; an unmatched replay simply stays absent.
+  const review = repo.listTransactions(500).find(tx => tx.item === '[Demo] Smartwatch' && tx.status === 'UNDER_REVIEW');
+  const rec = review ? repo.loadRecommendation(review.id) : null;
+  const reviewEvents = review ? repo.readEvents(review.id) : [];
+  const type = reviewEvents.find(e => e.type === 'OPEN_DISPUTE')?.payload.disputeType;
+  let replayAdded = false;
+  if (review && rec && JSON.parse(review.termsJson).demo === true &&
+      !reviewEvents.some(e => e.type === 'AI_DRAFT_CREATED' && e.payload.feature === 'copilot')) {
+    const evidence = repo.loadEvidence(review.id);
+    const result = await draftCopilot({ tx: review, evidence, recommendation: rec,
+      disputeType: typeof type === 'string' ? type : undefined }, { env: { AI_MODE: 'replay' } });
+    if (result.output) {
+      const draftId = randomUUID();
+      repo.storeAssistDraft(draftId, review.id, 'copilot', { draft: result.output, basis: decisionBasis(review.termsJson, evidence) }, result.meta,
+        { txId: review.id, ts: now(), actor: 'reviewer', type: 'AI_DRAFT_CREATED',
+          payload: { ...result.meta, draftId, inputContainsInjection: result.inputContainsInjection, simulated: true } });
+      replayAdded = true;
+    }
+  }
+  return { created, skipped: created === 0 && !replayAdded };
 }

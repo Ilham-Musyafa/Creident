@@ -506,6 +506,15 @@ SPLIT and does not implement a split payout or seller payout.
   [`docs/HANDOFF.md`](docs/HANDOFF.md).
 - Design docs: [`docs/DESIGN.md`](docs/DESIGN.md), [`docs/UI.md`](docs/UI.md).
 
+### Oversight screenshots
+
+Labelled demo data, local evaluation without a key. Full-page captures at the stated width.
+
+| Width | Light | Dark |
+| --- | --- | --- |
+| 390 px | [Mobile light](docs/ui/screens/oversight-390-light.png) | [Mobile dark](docs/ui/screens/oversight-390-dark.png) |
+| 1440 px | [Desktop light](docs/ui/screens/oversight-1440-light.png) | [Desktop dark](docs/ui/screens/oversight-1440-dark.png) |
+
 ## 9. License
 
 [MIT](LICENSE).

@@ -70,14 +70,12 @@ webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
-2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
-3. C20 evidence translation: implemented and verified on `feat/c20-evidence-translation` from current main (C18); awaiting Claude review, do not merge. C19 remains a separate review branch.
 1. C18 reviewer copilot: merged by Claude in PR #56.
-2. C19 partial refund Part A: implemented and verified on `feat/c19-partial-refund`, based on merged C18 PR #56; awaiting Claude review, do not merge.
-3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
-4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
-5. C22 Postman collection of the HalcyVault API.
+2. C19 partial refund Part A: merged by Claude in PR #57.
+3. C20 evidence translation: merged by Claude in PR #58.
+4. C21 AG Studio oversight dashboard: implemented on `feat/c21-ag-studio`, no key;
+   verified and pushed for Claude review, do not merge (see latest log).
+5. C22 Postman collection of the HalcyVault API: next, not started.
 Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
 owner (account and credits).
 
@@ -171,18 +169,30 @@ Still open:
 
 ## Log
 
-- 2026-10-22 (Codex, C21, in progress): branch `feat/c21-ag-studio` starts from
+- 2026-10-22 (Codex, C21): branch `feat/c21-ag-studio` starts from
   main 765dc30 (C19/C20 merged). Added owner-approved AG Studio 3 React/core
   dependencies for the sponsor dashboard, loaded only at `/reviewer/oversight`.
   Reviewer/gate-protected GET `/api/reviewer/oversight` reads all local deals and
   audit events without provider calls or writes. Widgets cover dispute status/type,
   escalation denominator, deadline queue, recorded AI run/use counts, PayPal states
   and custom audit/checkpoint health. Seed now has 13 labelled deals, one captured
-  simulated PayPal case and actual terms/copilot replays. Initial 481 tests,
-  typecheck and production build pass; mobile initial check has no page overflow.
-  Only AG Studio missing-key console messages appeared (owner-approved evaluation).
-  Remaining: finish 390/1440 light/dark checks and screenshots, rerun final gates,
-  commit/push and open one PR. No key registered, supplied, stored or logged.
+  simulated PayPal case and actual terms/copilot replays; unchanged older review
+  seeds get the copilot replay too, without replacing evidence or decisions.
+  Counters count observed events only and deduplicate reused drafts; terms previews
+  and unavailable outbound attempts are not fully logged, so missing/ignored drafts
+  cannot be inferred. No signed checkpoint is fabricated. README section 8 explains
+  setup/dependency reasons, limitations and the four committed screenshot links.
+  Final gates: 482 tests (45 files), typecheck and production build pass; runtime
+  dependency audit reports zero findings. Chromium at 390x844 and 1440x900, light
+  and dark: seven widgets, no horizontal page overflow, no unexpected console or
+  page errors, no writes or external requests from the dashboard. Only the seven
+  AG Studio missing-key console lines per load remain (owner-approved evaluation).
+  Home and a denied oversight page did not download the Studio runtime chunk.
+  Full-page PNGs in docs/ui/screens/oversight-*.png are 146–173 KiB each, captured
+  after allowing Studio to repaint at full height. No key registered, supplied,
+  stored or logged; owner still supplies AG_STUDIO_LICENSE_KEY on 7–8 Nov and
+  checks public-demo/trial permission. Optional Studio agent was not added.
+  C22 not started. One C21 PR will be requested; do not merge.
 - 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
   browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
   correct) and C20 evidence translation (import-only conflict on the review page resolved;

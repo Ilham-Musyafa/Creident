@@ -41,7 +41,8 @@ const field = (id: string, name: string, numeric = false) => ({ id, name, format
 const timeLeft = (minutes: number) => minutes <= 0 ? `Due now (${Math.abs(minutes)}m overdue)`
   : minutes >= 1440 ? `${Math.floor(minutes / 1440)}d ${Math.floor(minutes % 1440 / 60)}h left`
     : minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m left` : `${minutes}m left`;
-const statusLabel = (value: string) => value.toLowerCase().split('_').map(word => word[0]!.toUpperCase() + word.slice(1)).join(' ');
+const statusLabel = (value: string) => ({ RETURN_REQUESTED: 'Return due', FROZEN_EXTERNAL: 'PayPal freeze' } as Record<string, string>)[value]
+  ?? value.toLowerCase().split('_').map(word => word[0]!.toUpperCase() + word.slice(1)).join(' ');
 
 function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<OversightRegistry> {
   const countDisputes = (key: 'status' | 'type') => {
@@ -51,7 +52,8 @@ function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<Oversi
   };
   return { sources: [
     ...(['status', 'type'] as const).map(id => ({ id, data: countDisputes(id), fields: [field('name', 'Dispute ' + id), field('count', 'Deals', true)] })),
-    { id: 'escalation', data: [{ rate: snapshot.escalation.rate === null ? null : Math.round(snapshot.escalation.rate * 1000) / 10 }], fields: [field('rate', 'Percent escalated', true)] },
+    { id: 'escalation', data: [{ rate: snapshot.escalation.rate === null ? null : Math.round(snapshot.escalation.rate * 1000) / 10 }],
+      fields: [{ id: 'rate', name: 'Percent escalated', format: 'decimalFormat' }] },
     { id: 'deadlines', data: snapshot.deadlines.map(d => ({ item: d.item,
       deadline: `${d.kind}: ${timeLeft(d.remainingMinutes)}${d.frozen ? ' · frozen' : ''}`, due: shortDate(d.dueAt) })),
       fields: [field('item', 'Deal'), field('deadline', 'Deadline / time left'), field('due', 'Due (UTC)')] },
