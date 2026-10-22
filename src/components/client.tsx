@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Button } from './ui';
 import { SegmentedControl } from './SegmentedControl';
 import type { Role } from './view';
-import { DISPUTE_TYPES } from '../lib/disputeTypes';
+import { ConfirmSheet, type ConfirmDetails } from './ConfirmSheet';
 
 export class ApiError extends Error {
   constructor(readonly code: string, message: string, readonly debugId?: string) {
@@ -62,17 +62,23 @@ function useAction() {
 }
 
 /** A button that POSTs to the API, then refreshes the page or navigates. */
-export function ActionButton({ path, role, body = {}, label, busyLabel = 'Working…', variant = 'accent', fullWidth = false, redirectTo }: {
+export function ActionButton({ path, role, body = {}, label, busyLabel = 'Working…', variant = 'accent', fullWidth = false, redirectTo, confirm }: {
   path: string; role: Role; body?: unknown; label: string; busyLabel?: string; variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean; redirectTo?: string;
+  /** Show a confirmation sheet first; used for actions that move money. */
+  confirm?: ConfirmDetails;
 }) {
   const router = useRouter();
   const { busy, error, run } = useAction();
+  const [asking, setAsking] = useState(false);
+  // The sheet closes on confirm so a failure message below the button stays visible.
+  const act = () => { setAsking(false); return run(async () => {
+    await callApi(path, role, body);
+    if (redirectTo) router.push(redirectTo); else router.refresh();
+  }); };
   return (
     <div className={fullWidth ? 'w-full' : ''}>
-      <Button variant={variant} fullWidth={fullWidth} disabled={busy} onClick={() => run(async () => {
-        await callApi(path, role, body);
-        if (redirectTo) router.push(redirectTo); else router.refresh();
-      })}>{busy ? busyLabel : label}</Button>
+      <Button variant={variant} fullWidth={fullWidth} disabled={busy} onClick={() => confirm ? setAsking(true) : act()}>{busy ? busyLabel : label}</Button>
+      {confirm && <ConfirmSheet details={confirm} open={asking} busy={busy} onConfirm={act} onCancel={() => setAsking(false)}/>}
       <ErrorNote error={error}/>
     </div>
   );
@@ -107,14 +113,22 @@ export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
   );
 }
 
-export function PayButton({ txId, simulated = false }: { txId: string; simulated?: boolean }) {
+export function PayButton({ txId, simulated = false, amount, item }: { txId: string; simulated?: boolean; amount?: string; item?: string }) {
   const { busy, error, run } = useAction();
+  const [asking, setAsking] = useState(false);
+  const label = simulated ? 'Continue to simulated PayPal' : 'Continue to PayPal (Sandbox)';
+  const pay = () => { setAsking(false); return run(async () => {
+    const data = await callApi<{ approvalUrl?: string }>(`/api/transactions/${txId}/pay`, 'buyer', {});
+    if (data.approvalUrl) window.location.href = data.approvalUrl;
+  }); };
   return (
     <div>
-      <Button fullWidth disabled={busy} onClick={() => run(async () => {
-        const data = await callApi<{ approvalUrl?: string }>(`/api/transactions/${txId}/pay`, 'buyer', {});
-        if (data.approvalUrl) window.location.href = data.approvalUrl;
-      })}>{busy ? 'Opening PayPal…' : simulated ? 'Continue to simulated PayPal' : 'Continue to PayPal (Sandbox)'}</Button>
+      <Button fullWidth disabled={busy} onClick={() => amount ? setAsking(true) : pay()}>{busy ? 'Opening PayPal…' : label}</Button>
+      {amount && <ConfirmSheet open={asking} busy={busy} onConfirm={pay} onCancel={() => setAsking(false)} details={{
+        title: 'Authorize payment', amount, amountCaption: item,
+        rows: [{ label: 'Taken now', value: 'Nothing: funds are reserved' }, { label: 'Captured when', value: 'You confirm receipt or a dispute is decided' }, { label: 'Paid with', value: simulated ? 'Simulated PayPal' : 'PayPal Sandbox' }],
+        note: 'If the seller does not ship in time, the authorization is voided and nothing is charged.', confirmLabel: 'Continue to PayPal',
+      }}/>}
       <ErrorNote error={error}/>
     </div>
   );
@@ -126,24 +140,6 @@ function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNo
   return <label htmlFor={htmlFor} className="mb-2 block text-xs font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
-
-export function DisputeForm({ txId }: { txId: string }) {
-  const { busy, error, run } = useAction();
-  const router = useRouter();
-  const [type, setType] = useState<string>('not_as_described');
-  return (
-    <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(async () => { await callApi(`/api/transactions/${txId}/dispute`, 'buyer', { type }); router.push(`/deals/${txId}/evidence`); }); }}>
-      <div>
-        <Label htmlFor="dispute-type">What went wrong?</Label>
-        <select id="dispute-type" className={fieldClass} value={type} onChange={(e) => setType(e.target.value)}>
-          {DISPUTE_TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-        </select>
-      </div>
-      <Button type="submit" variant="ghost" fullWidth disabled={busy}>{busy ? 'Opening…' : 'Open dispute'}</Button>
-      <ErrorNote error={error}/>
-    </form>
-  );
-}
 
 export function ShipForm({ txId }: { txId: string }) {
   const { busy, error, run } = useAction();

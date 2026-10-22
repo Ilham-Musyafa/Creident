@@ -1,12 +1,14 @@
 import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
 import { SuccessBurst } from '../../../components/motion';
-import { recentSuccess } from '../../../components/view';
+import { recentSuccess, activityFeed } from '../../../components/view';
 import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
 import { CourierClaimPack } from '../../../components/OutboundDrafts';
+import { ActivityFeed } from '../../../components/ActivityFeed';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../components/layout';
-import { ActionButton, CopyLinkButton, DisputeForm, ReturnForm, ShipForm } from '../../../components/client';
+import { ActionButton, CopyLinkButton, ReturnForm, ShipForm } from '../../../components/client';
+import { DisputeSteps } from '../../../components/DisputeSteps';
 import { authorizationWindow, isSimulatedDeal, money, shortDate, nextAction, shortHash, timeLeft, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid, simulatedPayPal, reviewerUnlocked } from '../../_server';
 import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
@@ -81,6 +83,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             </section> : null;
           })()}
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
+          <div className="mt-4"><ActivityFeed txId={id} items={activityFeed(allEvents)} now={now}/></div>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
             ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
@@ -105,8 +108,12 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {action === 'ship' && <Card><ShipForm txId={id}/></Card>}
           {action === 'confirm-or-dispute' && (
             <div className="space-y-3">
-              <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth/>
-              <Card><DisputeForm txId={id}/></Card>
+              <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth confirm={{
+                title: 'Confirm you received the item', amount: money(tx.amount, tx.currency), amountCaption: tx.item,
+                rows: [{ label: 'Payment', value: 'Captured via PayPal' }, { label: 'Disputes', value: 'No longer possible here' }],
+                note: 'Only confirm after you checked the item against the locked terms.', confirmLabel: 'Confirm receipt',
+              }}/>
+              <Card><DisputeSteps txId={id} evidenceWindow={`${ctx.time.evidenceDays} day${ctx.time.evidenceDays === 1 ? '' : 's'}`}/></Card>
             </div>
           )}
           {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}

@@ -52,7 +52,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
         {role !== 'buyer' ? <Notice>Only the buyer pays. Switch to Buyer in Menu.</Notice>
           : tx.status === 'DRAFT' && accepted.includes('buyer') ? <Notice>You accepted the terms. Waiting for the seller to accept.</Notice>
           : tx.status === 'DRAFT' ? <ActionButton path={`/api/transactions/${id}/accept`} role="buyer" label="Accept terms" fullWidth/>
-          : tx.status === 'TERMS_LOCKED' ? <><PayButton txId={id} simulated={simulated}/><p className="text-center text-xs text-muted">You will approve the payment on PayPal and come back here.</p></>
+          : tx.status === 'TERMS_LOCKED' ? <><PayButton txId={id} simulated={simulated} amount={money(tx.amount, tx.currency)} item={tx.item}/><p className="text-center text-xs text-muted">You will approve the payment on PayPal and come back here.</p></>
           : <Notice>Payment is already past this step. Open the deal to see its status.</Notice>}
       </div>
     </AppShell>
