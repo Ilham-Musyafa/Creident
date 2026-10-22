@@ -1,5 +1,6 @@
 import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { SuccessBurst } from '../../../../components/motion';
+import { PrintButton } from '../../../../components/PrintButton';
 import { recentSuccess } from '../../../../components/view';
 import { decisionBasis } from '../../../../lib/decisionBasis';
 import { notFound } from 'next/navigation';
@@ -67,7 +68,16 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="min-w-0 space-y-4">
             <PartialRefundNotice tx={tx} events={events}/>
-            <Card>
+            <Card className="relative overflow-hidden">
+              {/* Bank-style receipt header: reference, date and a save action (docs/UI.md). */}
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-dashed border-line pb-4">
+                <div className="min-w-0">
+                  <p className="text-xs text-muted">Reference</p>
+                  <p className="font-mono text-sm font-bold tracking-wide text-heading">{`HV-${id.slice(0, 8).toUpperCase()}-${decisionEvent?.seq ?? 0}`}</p>
+                  <p className="mt-1 text-xs text-muted">{shortDate(decision.createdAt)} · {money(tx.amount, tx.currency)}</p>
+                </div>
+                <PrintButton/>
+              </div>
               <p className="text-xs text-muted">Outcome</p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
               {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (simulated)' : ''}</p>}

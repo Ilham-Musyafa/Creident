@@ -181,3 +181,18 @@ shown.
 `PageHeader` shows back navigation as a round 44 px icon button (chevron, thin border) on the
 left of the page title, with the accessible name "Back". No arrow-and-text link.
 
+## Finance-app patterns (owner-approved 2026-10-22)
+
+Patterns borrowed from banking and payment apps, never their branding:
+- **Confirmation sheet** (`ConfirmSheet`): before any action that moves or commits money
+  (authorize at checkout, confirm receipt, reviewer release/refund/partial refund/split),
+  show the amount large, what happens to the money, and an explicit confirm. Bottom sheet on
+  mobile, centred card on desktop; Escape or the backdrop cancels; the sheet closes on
+  confirm so errors below the button stay visible. Never use native browser dialogs.
+- **Receipt**: the decision receipt starts with a reference (`HV-<deal>-<decision event>`),
+  date and amount, and a "Save as PDF" button (browser print; print styles hide navigation).
+- **Activity feed** (`ActivityFeed`): the deal page shows the latest events in plain words
+  with an icon and relative time; technical events stay in the audit log ("Full audit log").
+- **Stepped dispute** (`DisputeSteps`): what went wrong -> what you will need -> check and
+  open, with a three-dot step indicator.
+

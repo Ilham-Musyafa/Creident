@@ -179,3 +179,58 @@ export function recentSuccess(status: TxStatus, lastEventTs: string | undefined,
   };
   return labels[status] ?? null;
 }
+
+export type ActivityKind = 'money' | 'ship' | 'dispute' | 'done' | 'info';
+export interface ActivityItem { seq: number; text: string; kind: ActivityKind; ts: string }
+
+const actorName = (actor: string) => actor === 'buyer' ? 'Buyer' : actor === 'seller' ? 'Seller' : actor === 'reviewer' ? 'Reviewer' : actor === 'paypal' ? 'PayPal' : 'System';
+const DECISION_TEXT: Record<string, string> = { RELEASE: 'release to the seller', REFUND: 'refund the buyer', PARTIAL_REFUND: 'partial refund', SPLIT: 'split (pending)' };
+// Technical events stay in the audit log; the feed tells the story in plain words.
+const HIDDEN_IN_FEED = new Set(['PAYPAL_WEBHOOK', 'AI_DRAFT_CREATED', 'EVIDENCE_CHECK_RUN', 'EVIDENCE_TRANSLATED', 'PAYPAL_DISPUTE_ACTION_FAILED', 'PARTIAL_REFUND_CAPTURED']);
+
+/** Plain-language activity for the deal page (newest first); the audit log keeps every detail. */
+export function activityFeed(events: Array<{ seq: number; type: string; actor: string; ts: string; payload: Record<string, unknown> }>, limit = 6): ActivityItem[] {
+  const items: ActivityItem[] = [];
+  for (const e of [...events].reverse()) {
+    if (HIDDEN_IN_FEED.has(e.type)) continue;
+    const who = actorName(e.actor);
+    const [text, kind]: [string, ActivityKind] = ({
+      TRANSACTION_CREATED: ['Seller created the deal', 'info'],
+      TERMS_ACCEPTED: [`${who} accepted the terms`, 'done'],
+      ACCEPT_TERMS: ['Terms locked for both sides', 'done'],
+      START_PAYMENT: ['Buyer started the payment', 'money'],
+      BUYER_APPROVED: ['Payment authorized · funds reserved', 'money'],
+      SUBMIT_TRACKING: ['Seller shipped the item', 'ship'],
+      TRACKING_DELIVERED: ['Courier delivered the parcel', 'ship'],
+      TRACKING_INVALID: ['Tracking could not be verified', 'dispute'],
+      PAYPAL_TRACKING_ADDED: ['Tracking shared with PayPal', 'ship'],
+      BUYER_CONFIRM: ['Buyer confirmed receipt · payment captured', 'money'],
+      INSPECTION_EXPIRED: ['Inspection ended · payment captured', 'money'],
+      OPEN_DISPUTE: ['Buyer opened a dispute', 'dispute'],
+      EVIDENCE_SUBMITTED: [`${who} added evidence`, 'info'],
+      EVIDENCE_COMPLETE: ['Evidence is complete', 'info'],
+      RECOMMENDATION_RECORDED: [e.payload.action === 'ESCALATE_HUMAN' ? 'Rules sent the case to a reviewer' : 'Rules made a recommendation', 'info'],
+      DECISION: [`Reviewer decided: ${DECISION_TEXT[String(e.payload.outcome)] ?? 'decision recorded'}`, 'done'],
+      HUMAN_SPLIT_PENDING: ['Reviewer recorded a split (pending)', 'done'],
+      PARTIAL_REFUND_COMPLETED: ['Partial refund sent to the buyer', 'money'],
+      SHIP_DEADLINE_PASSED: ['Ship-by date missed · authorization voided', 'money'],
+      EXTERNAL_DISPUTE: ['PayPal case opened · deal frozen', 'dispute'],
+      EXTERNAL_RESOLVED: ['PayPal case resolved', 'done'],
+      RETURN_DELIVERED: ['Return delivered to the seller', 'ship'],
+      RETURN_DEADLINE_PASSED: ['Return not shipped in time · payment captured', 'money'],
+      CANCEL: ['Deal cancelled', 'info'],
+      COURIER_CLAIM_PACK_CREATED: ['Seller prepared a courier claim', 'ship'],
+    } as Record<string, [string, ActivityKind]>)[e.type] ?? [eventTitle(e.type), 'info'];
+    items.push({ seq: e.seq, text, kind, ts: e.ts });
+    if (items.length >= limit) break;
+  }
+  return items;
+}
+
+export function relativeTime(ts: string, now: string): string {
+  const minutes = Math.max(0, Math.round((Date.parse(now) - Date.parse(ts)) / 60_000));
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / 1440)}d ago`;
+}

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, CSSProperties, InputHTMLAttributes, ReactNode } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, InputHTMLAttributes, ReactNode } from 'react';
 import { CountUp } from './motion';
 import Link from 'next/link';
 import type { TxStatus } from '../lib/domain/types';
@@ -18,7 +18,7 @@ const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
 };
 const toneStyle = (tone: Tone) => ({ backgroundColor: `var(--${tone}-bg)`, color: `var(--${tone}-text)` });
 
-export function Button({ variant = 'accent', fullWidth = false, className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean }) {
+export function Button({ variant = 'accent', fullWidth = false, className = '', ...props }: ComponentPropsWithRef<'button'> & { variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean }) {
   const colors = { accent: 'bg-accent text-on-accent', ghost: 'border border-line bg-surface text-heading', strong: 'bg-strong text-on-strong' };
   return <button className={`min-h-[46px] rounded-full px-5 text-sm font-bold hv-press hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${colors[variant]} ${fullWidth ? 'w-full' : ''} ${className}`} {...props} />;
 }

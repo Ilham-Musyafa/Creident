@@ -170,6 +170,12 @@ Still open:
 
 ## Log
 
+- 2026-10-22 18:40 WIB (Claude, owner-approved UI patterns): confirmation sheet before money
+  moves (checkout, confirm receipt, every reviewer decision), receipt reference + Save as
+  PDF, plain-language activity feed on the deal page, three-step dispute opening (old
+  DisputeForm removed). Documented in docs/UI.md "Finance-app patterns". Browser-tested:
+  sheets, Escape to cancel, partial refund via sheet -> PARTIALLY_REFUNDED, dispute steps ->
+  evidence page, receipt at 1440 dark, feed at 390; no console errors or native dialogs.
 - 2026-10-22 18:05 WIB (Claude): back link replaced by a round chevron icon button in PageHeader
   (owner choice); docs/UI.md updated.
 - 2026-10-22 17:50 WIB (Claude, owner UI review): clarity pass. Payment wording ("Payment
