@@ -62,6 +62,24 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {simulated && <div className="mb-4"><Notice tone="warning">Simulated payment. The PayPal steps of this deal were simulated: nothing was sent to PayPal and no money moved.</Notice></div>}
           {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal refused to capture this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The authorization may be past PayPal's 3-day honor period. Nothing was charged and the deal has not moved; the seller is not paid until this is resolved. This prototype does not reauthorize automatically.</Notice></div>}
           <PartialRefundNotice tx={tx} events={allEvents}/>
+          {(() => {
+            // The main action first; the timeline below is supporting context (owner request).
+            const next: Partial<Record<typeof action, { label: string; href: string; cta: string }>> = {
+              'accept-terms': role === 'buyer' ? { label: 'review and accept the terms', href: `/deals/${id}/checkout`, cta: 'Review terms & pay' } : { label: 'accept the terms', href: '#next-step', cta: 'Go to accept' },
+              pay: { label: 'review and pay', href: `/deals/${id}/checkout`, cta: 'Review & pay' },
+              'wait-approval': { label: 'approve the payment on PayPal', href: `/deals/${id}/checkout`, cta: 'Open checkout' },
+              ship: { label: 'add the tracking number', href: '#next-step', cta: 'Add tracking' },
+              'confirm-or-dispute': { label: 'confirm receipt or open a dispute', href: '#next-step', cta: 'Choose' },
+              'add-evidence': { label: 'submit your evidence', href: `/deals/${id}/evidence`, cta: 'Add evidence' },
+              review: { label: 'review the dispute', href: `/deals/${id}/review`, cta: 'Review dispute' },
+              'ship-return': { label: 'ship the item back', href: '#next-step', cta: 'Add return tracking' },
+            };
+            const step = next[action];
+            return step ? <section aria-label="Next step summary" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border-2 border-accent bg-surface p-4">
+              <div className="min-w-0"><p className="text-sm font-bold text-heading">Next: {step.label}</p>{deadline && <p className="mt-0.5 text-xs text-muted">Time left: {deadline}</p>}</div>
+              <ButtonLink href={step.href} className="shrink-0">{step.cta}</ButtonLink>
+            </section> : null;
+          })()}
           <Card><h2 className="mb-4 text-sm font-bold text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)}/></Card>
           <SectionTitle>Locked terms</SectionTitle>
           <KeyValue items={[
@@ -78,7 +96,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
         <aside className="space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
           {role === 'seller' && disputeType === 'damaged' && <><SectionTitle>Courier claim</SectionTitle><Card><CourierClaimPack txId={id}/></Card></>}
-          <SectionTitle>Next step</SectionTitle>
+          <div id="next-step" className="scroll-mt-6"><SectionTitle>Next step</SectionTitle></div>
           {action === 'accept-terms' && (role === 'buyer'
             ? <ButtonLink href={`/deals/${id}/checkout`} fullWidth>Review terms & pay</ButtonLink>
             : <ActionButton path={`/api/transactions/${id}/accept`} role={role} label="Accept terms" fullWidth/>)}

@@ -27,7 +27,7 @@ export function OversightClient({ licenseKey }: { licenseKey?: string }) {
       <p className="text-xs text-muted">{snapshot ? `Snapshot ${shortDate(snapshot.asOf)} · ${snapshot.totalDeals} deals · ${snapshot.demoDeals} labelled demo deals` : 'Read-only local data'}</p>
       <Button variant="ghost" disabled={loading} onClick={() => void load()}>{loading ? 'Refreshing…' : 'Refresh snapshot'}</Button>
     </div>
-    {!licenseKey && <Notice>AG Studio local evaluation. Watermark and licence console warnings are expected until the owner supplies a key.</Notice>}
+    {!licenseKey && <Notice>AG Studio evaluation mode (no licence key yet).</Notice>}
     {error && <Notice tone="warning">{error}</Notice>}
     {loading && !snapshot && <p role="status" className="p-4 text-sm text-muted">Loading oversight data…</p>}
     {snapshot && !error && (snapshot.totalDeals === 0 ? <Notice>No deals yet. Load labelled demo deals in Menu to explore the dashboard.</Notice>

@@ -20,9 +20,17 @@ export function TermsAssistant({ onApply, appliedReceipt }: { appliedReceipt: st
   const [result, setResult] = useState<TermsDraftResponse | null>(null);
   const [error, setError] = useState('');
   const applied = appliedReceipt !== null && appliedReceipt === result?.receipt;
-  return <section aria-labelledby="terms-assist-title" className="min-w-0 space-y-3 rounded-[18px] border border-line bg-surface-2 p-4">
-    <h2 id="terms-assist-title" className="text-[15px] font-bold text-heading">AI draft – check before you lock the terms</h2>
-    <p className="text-xs leading-relaxed text-muted">Optional: paste a listing or chat to draft the item, condition, included items and photo checks. Price stays manual. Use synthetic data for this demo; remove personal details before a live AI call.</p>
+  // Collapsed by default so the item and price fields are visible first (owner request).
+  return <details className="group min-w-0 rounded-[18px] border border-line bg-surface-2">
+    <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+      <span className="min-w-0">
+        <span id="terms-assist-title" className="block text-[15px] font-bold text-heading">Draft terms with AI · Optional</span>
+        <span className="block text-xs text-muted">Paste a listing or chat; you check the draft before anything locks.</span>
+      </span>
+      <span aria-hidden="true" className="shrink-0 text-muted transition-transform group-open:rotate-180">⌄</span>
+    </summary>
+    <section aria-labelledby="terms-assist-title" className="min-w-0 space-y-3 border-t border-line p-4">
+    <p className="text-xs leading-relaxed text-muted">The AI drafts the item, condition, included items and photo checks. Price stays manual. Use synthetic data for this demo; remove personal details before a live AI call.</p>
     <label htmlFor="listing-text" className="block text-xs font-medium text-muted">Listing or chat (maximum 4,000 characters)</label>
     <textarea id="listing-text" value={text} disabled={busy} maxLength={4000} rows={4} placeholder="Describe the item, condition and what is included…"
       className="w-full min-w-0 rounded-[14px] border border-line bg-surface px-4 py-3 text-sm text-text placeholder:text-muted"
@@ -53,5 +61,6 @@ export function TermsAssistant({ onApply, appliedReceipt }: { appliedReceipt: st
       }}>{applied ? 'Draft applied to the fields below' : 'Use draft in form'}</Button>
       <p role="status" className="text-xs text-muted">{applied ? 'Edit the fields below, then create the deal. The buyer still needs to accept.' : 'Using this draft replaces the item, condition, description, included items and checks below. Your price stays as entered.'}</p>
     </div>}
-  </section>;
+    </section>
+  </details>;
 }

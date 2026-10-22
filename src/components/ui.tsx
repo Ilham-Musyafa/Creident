@@ -61,10 +61,23 @@ export function FindingCard({ criterion, supports, evidenceIds }: { criterion: s
   return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-[11px] font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 font-mono text-[11px] text-muted">{id}</span>)}</div></article>;
 }
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
-  return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>Rule {rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
+  return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>{rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
 }
-export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number }) {
-  return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`flex gap-3 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}><span className="h-fit rounded-full bg-surface-2 px-2 py-1 font-mono text-xs text-muted">#{seq}</span><div className="min-w-0 flex-1"><p title={rawType} className="text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{simulated && <span className="ml-2 rounded-full px-2 py-0.5 align-middle text-[11px] font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>Simulated</span>}</p><p className="break-all font-mono text-xs text-muted">{actor} · {time} · prev <span className="hv-hash">{prevHash}</span></p></div></li>;
+export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string }) {
+  // Metadata items never break inside a short hash; the full hashes show when the event is opened.
+  const meta = <p className="mt-0.5 flex flex-wrap gap-x-2 font-mono text-xs text-muted"><span className="whitespace-nowrap">{actor}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">{time}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">prev <span className="hv-hash">{prevHash}</span></span></p>;
+  const heading = <p title={rawType} className="text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{simulated && <span className="ml-2 rounded-full px-2 py-0.5 align-middle text-[11px] font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>Simulated</span>}</p>;
+  return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`flex gap-3 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}>
+    <span className="h-fit rounded-full bg-surface-2 px-2 py-1 font-mono text-xs text-muted">#{seq}</span>
+    <div className="min-w-0 flex-1">{fullPrevHash || hash
+      ? <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{heading}{meta}</summary>
+          <dl className="mt-2 space-y-1 rounded-[12px] bg-surface-2 p-2 font-mono text-[11px] text-muted">
+            {hash && <div><dt className="font-sans font-semibold text-heading">Event hash</dt><dd className="break-all">{hash}</dd></div>}
+            {fullPrevHash && <div><dt className="font-sans font-semibold text-heading">Previous hash</dt><dd className="break-all">{fullPrevHash}</dd></div>}
+            {rawType && <div><dt className="font-sans font-semibold text-heading">Type</dt><dd className="break-all">{rawType}</dd></div>}
+          </dl></details>
+      : <>{heading}{meta}</>}</div>
+  </li>;
 }
 export function ChainStatus({ verified, count, headHash, revealAfterMs }: { verified: boolean; count: number; headHash: string; revealAfterMs?: number }) {
   return <div role="status" className={`rounded-[18px] border p-4 text-sm ${revealAfterMs === undefined ? '' : 'hv-verified'}`} style={{ ...(revealAfterMs === undefined ? {} : { '--after': `${revealAfterMs}ms` }), background: verified ? 'var(--success-bg)' : 'var(--warning-bg)', borderColor: verified ? 'var(--success-line)' : 'var(--warning-line)', color: verified ? 'var(--success-text)' : 'var(--warning-text)' }}><strong>{verified ? `Chain verified · ${count} events` : 'Chain verification failed'}</strong><p className="mt-1 break-all font-mono text-xs">Head {headHash}</p></div>;

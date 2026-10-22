@@ -44,7 +44,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           {!rec ? <EmptyState title="No recommendation yet">It is prepared when the deal enters review.</EmptyState>
             : !rec.aiSummary ? <Notice tone="warning">No AI summary is available (the AI was unavailable, returned invalid output, or there was too little evidence). A human decides.</Notice>
             : <div className="space-y-2">{rec.aiSummary.findings.map((f) => <FindingCard key={f.criterion} criterion={f.criterion} supports={f.supports} evidenceIds={f.evidenceIds.map((ref) => label.get(ref) ?? ref)}/>)}</div>}
-          {ruleId && <div className="mt-3"><RuleNotice rule={ruleId} reason={`${ACTION_TEXT[rec!.action] ?? rec!.action}${rec!.requiresHuman ? ' · needs a human decision' : ''}`}/></div>}
+          {ruleId && <div className="mt-3"><RuleNotice rule={ruleId} reason={rec!.action === 'ESCALATE_HUMAN' ? 'Human decision required' : `${ACTION_TEXT[rec!.action] ?? rec!.action}${rec!.requiresHuman ? ' · human decision required' : ''}`}/></div>}
           {rec && <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted">{rec.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
           <SectionTitle>Evidence ({evidence.length})</SectionTitle>
           <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p>{translateAllowed && <EvidenceTranslation key={sha256(e.content)} txId={id} evidenceId={e.id} sourceHash={sha256(e.content)}/>}</Card>)}</div>

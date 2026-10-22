@@ -36,6 +36,12 @@ const configuredWidgets = createWidgets<OversightRegistry>({ additionalTypes: [{
 const widgets = { ...configuredWidgets, widgets: configuredWidgets.widgets.map(definition =>
   definition.id === 'grid' ? { ...definition, options: gridOptions } : definition) };
 const title = (text: string) => ({ title: { enabled: true, text } });
+// Case counts are whole numbers: AG Studio has no tick-interval option, so the value axis
+// labels and grid lines are hidden and each bar carries its own integer label.
+const countBars = (text: string) => ({ ...title(text), style: {
+  theme: { bar: { series: { label: { enabled: true, color: '#FFFFFF' } } } },
+  custom: { valueAxis: { label: { color: 'transparent' }, gridLine: { enabled: false }, tick: { enabled: false } } },
+} });
 const sum = (id: string) => ({ id, aggregation: 'sum' as const });
 const field = (id: string, name: string, numeric = false) => ({ id, name, format: numeric ? 'integerFormat' as const : 'textFormat' as const });
 const timeLeft = (minutes: number) => minutes <= 0 ? `Due now (${Math.abs(minutes)}m overdue)`
@@ -72,8 +78,8 @@ function report(snapshot: OversightSnapshot, width: number): { state: AgReportSt
     format: { ...title(text), style: { columnAutoSize: false, columnWidth: Math.max(68, Math.floor((width - 64) / cols.length)), headerRow: { wrapText: true } } } });
   const state: AgReportState<OversightRegistry> = { selectedPageId: 'oversight', pages: [{ id: 'oversight',
     widgets: {
-      status: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'status.name' }], valueKey: [sum('status.count')] }, format: title('Disputes by status') },
-      type: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'type.name' }], valueKey: [sum('type.count')] }, format: title('Disputes by type') },
+      status: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'status.name' }], valueKey: [sum('status.count')] }, format: countBars('Disputes by status') },
+      type: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'type.name' }], valueKey: [sum('type.count')] }, format: countBars('Disputes by type') },
       rate: { type: 'value', dataMapping: { value: [{ id: 'escalation.rate', aggregation: 'max' }] },
         format: { ...title('Escalation rate (%)'), caption: { enabled: true, text: `${snapshot.escalation.escalated} of ${snapshot.escalation.recommendations} stored recommendations` } } },
       audit: { type: 'audit-health', dataMapping: {}, format: title('Audit chain health') },
