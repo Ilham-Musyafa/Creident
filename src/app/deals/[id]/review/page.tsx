@@ -1,3 +1,4 @@
+import { EvidenceTranslation } from '../../../../components/EvidenceTranslation';
 import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
@@ -5,7 +6,7 @@ import { FindingCard, KeyValue, RuleNotice, StatusPill } from '../../../../compo
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ReviewDecision } from '../../../../components/ReviewDecision';
 import { money } from '../../../../components/view';
-import { data, getRole, isUuid, reviewerUnlocked, simulatedPayPal } from '../../../_server';
+import { data, getRole, isUuid, reviewerUnlocked, simulatedPayPal, sha256 } from '../../../_server';
 import { disputeType } from '../../../../lib/disputeTypes';
 
 export const dynamic = 'force-dynamic';
@@ -22,6 +23,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   const tx = ctx.repo.loadTransaction(id);
   if (!tx) notFound();
   const role = await getRole();
+  const translateAllowed = role === 'reviewer' && await reviewerUnlocked();
   const rec = ctx.repo.loadRecommendation(id);
   const pendingSplit = ctx.repo.hasPendingSplit(id);
   const evidence = ctx.repo.loadEvidence(id);
@@ -42,7 +44,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           {ruleId && <div className="mt-3"><RuleNotice rule={ruleId} reason={`${ACTION_TEXT[rec!.action] ?? rec!.action}${rec!.requiresHuman ? ' · needs a human decision' : ''}`}/></div>}
           {rec && <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted">{rec.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
           <SectionTitle>Evidence ({evidence.length})</SectionTitle>
-          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p></Card>)}</div>
+          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p>{translateAllowed && <EvidenceTranslation key={sha256(e.content)} txId={id} evidenceId={e.id} sourceHash={sha256(e.content)}/>}</Card>)}</div>
         </div>
         <aside className="min-w-0 space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>

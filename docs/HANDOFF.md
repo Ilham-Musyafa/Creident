@@ -70,6 +70,9 @@ webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
+1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
+2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
+3. C20 evidence translation: implemented and verified on `feat/c20-evidence-translation` from current main (C18); awaiting Claude review, do not merge. C19 remains a separate review branch.
 1. C18 reviewer copilot: merged by Claude in PR #56.
 2. C19 partial refund Part A: implemented and verified on `feat/c19-partial-refund`, based on merged C18 PR #56; awaiting Claude review, do not merge.
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
@@ -168,6 +171,59 @@ Still open:
 
 ## Log
 
+- 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
+  browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
+  correct) and C20 evidence translation (import-only conflict on the review page resolved;
+  474 tests, build, browser check 390 light / 1440 dark). AI assists 1-5 are all merged.
+  Next for Codex: C21 AG Studio dashboard (no key), then C22 Postman collection.
+- 2026-10-22 08:45 WIB (Codex, C20): implemented and verified on
+  `feat/c20-evidence-translation`, independently based on current main b966c8d
+  (C18 merged; C19 remains a separate review branch). runAssist feature translate,
+  promptVersion translate-v1 takes exactly one original text and target en/id.
+  Strict two-key output bounds translation at 8,000 characters and language at
+  en/id/unknown. Validator preserves numeric/date/decimal tokens and occurrences,
+  mixed alphanumeric/uppercase identifiers, explicitly labelled serials and
+  existing URL/email/link targets; added links/codes/numbers are rejected.
+  Conservative pattern checks may reject harmless localization and do not prove
+  semantic accuracy or recognize every code format. The original stays authoritative.
+  Reviewer-only POST `/api/transactions/{id}/ai/translate` validates evidenceId,
+  target, body size and deal ownership; reviewer code gate applies on cache hits too.
+  Cache uses existing ai_drafts feature translate with evidence/source hash,
+  target/version/mode/model/provider scope (no API key); atomic cache+audit writes
+  use a small repository helper. Same-process concurrent requests share a call;
+  separate workers may duplicate an AI call on simultaneous misses but publish
+  one row/event. Source changes invalidate cache; changes during the call reject
+  the result. Failed attempts are logged but not cached, allowing manual retry.
+  EVIDENCE_TRANSLATED contains ids, source/translation/prompt/output hashes,
+  languages, mode/model and injection/unavailable metadata only, never either text.
+  Cache hits add no event. No evidence/transaction/decision/recommendation changes.
+  New EvidenceTranslation component puts Translate/target controls and result below
+  each original, labelled "AI translation – check the original", with both full
+  SHA-256 hashes, loading/fallback and injection warning. Text is plain React data.
+  Replay covers both seeded evidence texts (watch photo/packing), their Indonesian
+  equivalents in both directions/same-language echoes, plus a synthetic coded example.
+  `npm test` 430/430 (41 files), typecheck, build and diff check passed. Production
+  Chromium with fresh temp DB, simulated PayPal/replay: 390/1440px light/dark,
+  both directions, two per-item controls, same-language echo, cache hits with one
+  audit per source/target, unchanged original/state/rules summary, injection fallback,
+  plain-text script rendering and hidden buyer controls. No overflow or console
+  errors/warnings; read-back chain verified. DESIGN 6.1 updated; no dependencies.
+  Rules, state machine, evidence summary, PayPal/bridge and protected drafts/UI
+  modules untouched. Real live-provider translation remains pending. C21 not started.
+  All work is committed and pushed. PR creation returned GitHub API 403 Forbidden;
+  ready-to-paste English description: `/tmp/c20-pr-description.md`. Open one PR
+  from this branch for Claude review when API access is available; do not merge.
+
+- 2026-10-22 08:41 WIB (Codex, C20 checkpoint): added translate/runAssist,
+  strict two-key output with numeric/code/link preservation, English/Indonesian
+  demo replays, reviewer/gate endpoint, hash/version/mode-aware ai_drafts cache
+  with atomic metadata-only audit and same-process concurrent-call sharing.
+  New EvidenceTranslation component displays the result below its original,
+  full hashes, target selection, injection warning and manual fallback. Original
+  evidence, rules and recommendation are untouched. 37 targeted tests and
+  typecheck passed. Next: full tests/typecheck/build, browser check, documentation
+  and one PR. No dependencies. C20 starts independently from current origin/main
+  (b966c8d, merged C18); it does not include unmerged C19 changes.
 - 2026-10-22 08:20 WIB (Codex, C19 Part A): implemented on
   `feat/c19-partial-refund` from main including merged C18 PR #56. Reviewer types
   a canonical two-decimal positive USD amount below the deal total and a reason.
