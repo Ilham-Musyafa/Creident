@@ -39,6 +39,15 @@ arrives. It works when the admin is honest. When something goes wrong, the buyer
 seller rely on one person's judgment, there is usually no record of why a decision was
 made, and admins who side with a seller have been reported.
 
+The same gap exists elsewhere, and large platforms answer it with their own checkout:
+Facebook Marketplace offers shipped checkout with Purchase Protection to US sellers only, for
+a 10% seller fee; Germany's Kleinanzeigen holds the buyer's payment until receipt is
+confirmed, for 4.5% + €0.50 paid by the buyer; hardware-swap communities on Reddit tell
+sellers to accept PayPal Goods & Services so buyers have protection. Each works inside one
+platform. Sellers who trade through chat, groups or forums either open a store on a
+marketplace, with its listing work and commission, or meet in person (fees and coverage as
+reported in October 2026).
+
 HalcyVault explores a different shape for the same job:
 
 - the terms (item, condition, checks) are **locked and hashed before payment**,
