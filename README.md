@@ -1,4 +1,4 @@
-# HalcyVault (working name)
+# HalcyVault
 
 **A dispute-mediation prototype for peer-to-peer sales of physical goods.**
 Rules first, AI summarises evidence, a human confirms every dispute outcome, and every
