@@ -35,6 +35,7 @@ export default async function MenuPage() {
           <h2 id="about-transparency" className="mb-3 text-[15px] font-bold text-heading">About &amp; transparency</h2>
         <Card className="py-1">
           <ul>
+            {role === 'reviewer' && <li className="border-b border-line"><Link href="/reviewer/oversight" className="flex min-h-[60px] items-center justify-between gap-3 py-2"><span><span className="block text-sm font-semibold text-heading">Reviewer oversight</span><span className="text-xs text-muted">Disputes, deadlines and audit health · read-only</span></span><span aria-hidden="true" className="text-muted">›</span></Link></li>}
             {LINKS.map((l) => (
               <li key={l.href} className="border-b border-line last:border-0">
                 <Link href={l.href} className="flex min-h-[60px] items-center justify-between gap-3 py-2">

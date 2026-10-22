@@ -17,7 +17,7 @@ export function AppShell({ active, children }: { active?: Active; children: Reac
         </div>
         <BottomNav active={active}/>
       </div>
-      <main className="mx-auto w-full max-w-[1100px] px-5 pb-32 pt-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
+      <main className="mx-auto min-w-0 w-full max-w-[1100px] px-5 pb-32 pt-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
     </div>
   );
 }
