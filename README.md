@@ -273,6 +273,29 @@ The JSON API behind the screens lives in `src/app/api/**` (for example
 `.../dispute`, `.../evidence`, `.../review`, `GET /api/audit/{id}`,
 `GET /api/audit/verify`). Each request names its demo role in the `x-demo-role` header.
 
+### Try the API
+
+With Option A running locally, set `AI_MODE=replay` and import
+[`HalcyVault.postman_collection.json`](docs/postman/HalcyVault.postman_collection.json)
+into Postman, or run the command below in a second terminal. Set `baseUrl` to your
+local HTTP origin (default `http://localhost:3000`, no trailing slash) and run the
+**whole collection in order**; scripts pass IDs between its 40 requests. It creates
+two labelled synthetic deals, exercises a human refund/return, AI replays, audit/CSV
+and the simulated PayPal dispute bridge, and leaves those records in the database.
+Use a fresh `HALCYVAULT_DB_PATH` for an isolated run. No keys or global tools are
+needed; Newman is fetched temporarily without changing `package.json`. Leave the
+local reviewer code empty, or set `reviewerCode` privately if your reviewer gate is
+configured; never export or commit an actual code.
+
+```bash
+npx --yes newman@6.2.3 run docs/postman/HalcyVault.postman_collection.json --bail
+```
+
+The expected 409 response checks that simulation is enabled before payment; the
+unrecorded evidence-check replay deliberately returns an advisory fallback. Neither
+is a failing assertion. The collection permits loopback HTTP URLs only and does not
+test real Sandbox delivery, webhooks, or a live AI provider.
+
 ## 5. Test results
 
 **PayPal Sandbox** ([`docs/SANDBOX-NOTES.md`](docs/SANDBOX-NOTES.md)): create order

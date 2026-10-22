@@ -1,0 +1,1942 @@
+{
+  "info": {
+    "_postman_id": "88dfc001-f478-4fa1-8b4f-01d5be03c022",
+    "name": "HalcyVault — local simulated API walkthrough",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Synthetic demo only. Start a LOCAL server with PAYPAL_MODE=simulated and AI_MODE=replay; leave PP/AI keys empty. Node >=22.13. Run all 40 requests in order with Newman --bail or Postman Collection Runner. baseUrl defaults to http://localhost:3000; only loopback HTTP origins are permitted. reviewerCode is empty by default; if the local reviewer gate is configured, set its value only in your private local environment, never export it. Scripts pass new deal, order, evidence, AI draft and PayPal case ids; reset them at the start. The expected 409 mode probe and the documented unavailable completeness replay are deliberate checks, not server failures. No webhooks are forged, no public URL is needed, and no external provider should be called. The run creates two labelled deals in addition to seeded examples and leaves them in the database. Re-run creates new walkthrough deals; use a fresh HALCYVAULT_DB_PATH for an isolated run. A simulated refund decision before capture voids an authorization. A second completed deal demonstrates an external freeze, polling, inquiry message, claim escalation and locked PDF submission locally. Rules recommend; the reviewer request explicitly chooses the outcome. No AI output alone changes a payment."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "reviewerCode",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const origin = pm.variables.get('baseUrl');",
+          "if (!/^http:\\/\\/(localhost|127\\.0\\.0\\.1|\\[::1\\])(?::[0-9]+)?$/.test(origin)) { pm.execution.skipRequest(); throw new Error('This walkthrough permits a local loopback HTTP baseUrl only, without a trailing slash.'); }",
+          "const path = pm.request.url.getPath();",
+          "const modeProbe = pm.info.requestName === '03 Verify simulated mode (expected 409)';",
+          "const paymentOrBridge = /\\/(pay|confirm|return|review)$/.test(path) || path.includes('/paypal-dispute/') || path === '/api/paypal/disputes/sync';",
+          "if (!modeProbe && paymentOrBridge && pm.collectionVariables.get('simulatedVerified') !== 'true') { pm.execution.skipRequest(); throw new Error('Run the collection in order; simulated-mode verification must precede payment or bridge actions.'); }"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Seed and verify local simulation",
+      "description": "Run the entire collection in order. Seeded examples and newly created deals are labelled demo data. The expected 409 probe checks simulated mode without creating a PayPal case or moving money.",
+      "item": [
+        {
+          "name": "01 Seed labelled demo deals",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/demo/seed",
+            "description": "Adds missing labelled examples; accepts 201 on a fresh database or 200 when the examples already exist. Does not depend on the seed count (C21 adds another example).",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.toObject && Object.keys(pm.collectionVariables.toObject()).forEach(function (key) { if (!['baseUrl', 'reviewerCode'].includes(key)) pm.collectionVariables.unset(key); });"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Seed returns 200 or 201', function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });",
+                  "if (![200, 201].includes(pm.response.code)) { pm.execution.setNextRequest(null); throw new Error('Seed failed'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Seed reports a count and skip flag', function () { pm.expect(hvResponse.created).to.be.a('number').and.at.least(0); pm.expect(hvResponse.skipped).to.be.a('boolean'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Create a synthetic smartwatch dispute deal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions",
+            "description": "Creates a NEW deal each run. The exact synthetic terms/evidence match the existing copilot replay. It does not modify the seeded Smartwatch.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item\": \"[Demo] Smartwatch\",\n  \"amount\": \"64.00\",\n  \"currency\": \"USD\",\n  \"terms\": {\n    \"condition\": \"Good, minor scratches\",\n    \"criteria\": [\n      \"Screen has no cracks\",\n      \"Strap included\"\n    ],\n    \"demo\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code !== 201) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DRAFT', function () { pm.expect(hvResponse.transaction.status).to.eql('DRAFT'); });",
+                  "pm.collectionVariables.set('txId', hvResponse.transaction.id);",
+                  "pm.test('Demo label and terms are retained', function () { pm.expect(hvResponse.transaction.item).to.eql('[Demo] Smartwatch'); pm.expect(JSON.parse(hvResponse.transaction.termsJson).demo).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Verify simulated mode (expected 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/paypal-dispute/simulate",
+            "description": "A DRAFT is ineligible for a PayPal case, so simulated mode returns INVALID_STATE (409) before gateway calls. Sandbox mode returns 404 instead and must stop the run. This expected negative response is not a failed test.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });",
+                  "if (pm.response.code !== 409) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Simulation enabled; draft cannot open a PayPal case', function () { pm.expect(hvResponse.error).to.eql('INVALID_STATE'); });",
+                  "if (hvResponse.error !== 'INVALID_STATE') { pm.execution.setNextRequest(null); throw new Error('Start the server with PAYPAL_MODE=simulated'); }",
+                  "pm.collectionVariables.set('simulatedVerified', 'true');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Repeat seed without duplicating examples",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/demo/seed",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Seed is idempotent', function () { pm.expect(hvResponse).to.deep.equal({created: 0, skipped: true}); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Authorize, ship, dispute and collect evidence",
+      "description": "No PayPal network calls. A matching SIM- order token on the return endpoint stands in for buyer approval; the approval HTML is included for visibility. Seller and buyer explicitly accept the same terms before payment.",
+      "item": [
+        {
+          "name": "05 Seller accepts terms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/accept",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DRAFT', function () { pm.expect(hvResponse.transaction.status).to.eql('DRAFT'); });",
+                  "pm.test('Waiting for buyer', function () { pm.expect(hvResponse.waitingForOtherParty).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Buyer accepts and locks terms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/accept",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is TERMS_LOCKED', function () { pm.expect(hvResponse.transaction.status).to.eql('TERMS_LOCKED'); });",
+                  "pm.test('Terms hash stored', function () { pm.expect(hvResponse.transaction.termsHash).to.match(/^[a-f0-9]{64}$/); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 Pay creates a simulated authorization order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/pay",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is AWAITING_APPROVAL', function () { pm.expect(hvResponse.transaction.status).to.eql('AWAITING_APPROVAL'); });",
+                  "pm.collectionVariables.set('orderId', hvResponse.transaction.paypalOrderId);",
+                  "pm.test('Only a simulated local approval URL', function () { pm.expect(hvResponse.transaction.paypalOrderId).to.match(/^SIM-ORDER-/); pm.expect(hvResponse.approvalUrl).to.include('/paypal/simulated?'); pm.expect(hvResponse.approvalUrl.startsWith(pm.variables.get('baseUrl') + '/')).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 Read the labelled simulated approval screen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "text/html",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/paypal/simulated?txId={{txId}}&token={{orderId}}",
+            "description": "Read-only stand-in screen, not PayPal. The next JSON return request represents clicking Approve (simulated)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "pm.test('Clearly labelled simulation', function () { pm.expect(pm.response.text()).to.include('Simulated PayPal approval'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 Buyer approval return authorizes locally",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/paypal/return?txId={{txId}}&token={{orderId}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is AUTHORIZED', function () { pm.expect(hvResponse.transaction.status).to.eql('AUTHORIZED'); });",
+                  "pm.test('Simulated authorization', function () { pm.expect(hvResponse.transaction.paypalAuthId).to.match(/^SIM-AUTH-/); pm.expect(hvResponse.transaction.captured).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 Seller sends delivered sample tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ship",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tracking\": \"DEMO-DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is IN_INSPECTION', function () { pm.expect(hvResponse.transaction.status).to.eql('IN_INSPECTION'); });",
+                  "pm.test('Courier response is simulated', function () { pm.expect(hvResponse.courier.simulated).to.eql(true); pm.expect(hvResponse.courier.status).to.eql('DELIVERED'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 Buyer opens a damage dispute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/dispute",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"damaged\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DISPUTED', function () { pm.expect(hvResponse.transaction.status).to.eql('DISPUTED'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 Buyer submits a synthetic photo description",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/evidence",
+            "description": "Text description only, no photo upload or real personal data.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kind\": \"photo\",\n  \"content\": \"Photo of the watch face: a crack runs across the upper left corner. The one-time code is visible on paper.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code !== 201) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DISPUTED', function () { pm.expect(hvResponse.transaction.status).to.eql('DISPUTED'); });",
+                  "pm.collectionVariables.set('buyerEvidenceId', hvResponse.evidenceId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 Evidence check demonstrates safe replay fallback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ai/evidence-check",
+            "description": "This precise Smartwatch completeness snapshot has no recorded replay. The expected advisory fallback does not block seller evidence. It is not a provider failure.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Unrecorded snapshot falls back without a verdict', function () { pm.expect(hvResponse.output).to.eql(null); pm.expect(hvResponse.meta.mode).to.eql('replay'); pm.expect(hvResponse.meta.unavailable).to.eql('NO_REPLAY'); pm.expect(hvResponse.message).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14 Seller evidence prepares human review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/evidence",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kind\": \"note\",\n  \"content\": \"The watch was packed in bubble wrap; the listing photos showed no crack before shipping.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code !== 201) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is UNDER_REVIEW', function () { pm.expect(hvResponse.transaction.status).to.eql('UNDER_REVIEW'); });",
+                  "pm.collectionVariables.set('sellerEvidenceId', hvResponse.evidenceId);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. AI replay drafts and a human refund decision",
+      "description": "AI outputs are reading/drafting aids. The stored rules recommendation is read first. The request with outcome REFUND and a required written reason represents a human reviewer action, not an AI decision. A required return is completed with simulated tracking; because the payment was not captured, refund executes as a void.",
+      "item": [
+        {
+          "name": "15 Read the stored R5 recommendation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/review",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is UNDER_REVIEW', function () { pm.expect(hvResponse.transaction.status).to.eql('UNDER_REVIEW'); });",
+                  "pm.test('Damage requires human review', function () { pm.expect(hvResponse.recommendation.ruleId).to.eql('R5'); pm.expect(hvResponse.recommendation.action).to.eql('ESCALATE_HUMAN'); pm.expect(hvResponse.recommendation.requiresHuman).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16 Preview the synthetic terms replay (not saved)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/ai/terms-draft",
+            "description": "Independent sample listing preview. It never creates a transaction and is not used to replace the locked Smartwatch terms.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Used phone, 128 GB. Good condition with a small scratch on the back; the screen has no cracks. Battery health is 86%. Includes the phone, charging cable and original box. The battery-health screen and included items can be photographed.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Validated terms draft in replay mode', function () { pm.expect(hvResponse.meta.mode).to.eql('replay'); pm.expect(hvResponse.meta.feature).to.eql('terms'); pm.expect(hvResponse.draft.item).to.be.a('string'); pm.expect(hvResponse.receipt).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17 Reviewer translates original buyer evidence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ai/translate",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evidenceId\": \"{{buyerEvidenceId}}\",\n  \"target\": \"id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Recorded translation preserves the original hash', function () { pm.expect(hvResponse.meta.mode).to.eql('replay'); pm.expect(hvResponse.output.detectedLanguage).to.eql('en'); pm.expect(hvResponse.output.translation).to.include('Foto'); pm.expect(hvResponse.sourceHash).to.match(/^[a-f0-9]{64}$/); pm.expect(hvResponse.cacheHit).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18 Repeated translation uses cache",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ai/translate",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evidenceId\": \"{{buyerEvidenceId}}\",\n  \"target\": \"id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Translation cached', function () { pm.expect(hvResponse.cacheHit).to.eql(true); pm.expect(hvResponse.output.translation).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19 Seller drafts a courier claim (not sent)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ai-drafts",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feature\": \"courier-claim\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Courier draft is a recorded replay with citations', function () { pm.expect(hvResponse.mode).to.eql('replay'); pm.expect(hvResponse.draftId).to.be.a('string'); pm.expect(hvResponse.draft.citedEvidence).to.include.members(['B1','S1']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20 Reviewer copilot creates a cited draft",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/ai/copilot",
+            "description": "Passes the server-issued draft id and reason to the next explicitly human-selected REFUND request; the suggested range is never used as an amount.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Copilot replay remains a draft', function () { pm.expect(hvResponse.meta.mode).to.eql('replay'); pm.expect(hvResponse.meta.feature).to.eql('copilot'); pm.expect(hvResponse.draft.notes).to.have.length.above(0); pm.expect(hvResponse.draftId).to.be.a('string'); });",
+                  "pm.collectionVariables.set('reviewBody', JSON.stringify({outcome: 'REFUND', reason: hvResponse.draft.reason, requireReturn: true, copilotDraftId: hvResponse.draftId}));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "21 Human reviewer decides REFUND with a reason",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/review",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{{reviewBody}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is RETURN_REQUESTED', function () { pm.expect(hvResponse.transaction.status).to.eql('RETURN_REQUESTED'); });",
+                  "pm.test('No capture while waiting for return', function () { pm.expect(hvResponse.transaction.captured).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22 Buyer submits delivered return tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{txId}}/return",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tracking\": \"DEMO-DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is VOIDED', function () { pm.expect(hvResponse.transaction.status).to.eql('VOIDED'); });",
+                  "pm.test('Pre-capture refund voids the authorization', function () { pm.expect(hvResponse.transaction.captured).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Audit read, CSV and chain verification",
+      "description": "Checks the new dispute deal, including locked terms/evidence basis hashes and copilot acceptance metadata. CSV payload remains canonical JSON; the assertion counts CSV records without splitting quoted newlines.",
+      "item": [
+        {
+          "name": "23 Read the decision audit and verify its chain",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/audit/{{txId}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Chain and human decision basis verify', function () { pm.expect(hvResponse.verification.ok).to.eql(true); const decision = hvResponse.events.find(e => e.type === 'DECISION'); pm.expect(decision.payload.outcome).to.eql('REFUND'); pm.expect(decision.payload.termsHash).to.match(/^[a-f0-9]{64}$/); pm.expect(decision.payload.evidenceDigest).to.match(/^[a-f0-9]{64}$/); pm.expect(decision.payload.aiDraft.accepted).to.eql('unchanged'); pm.expect(hvResponse.events.find(e => e.type === 'RETURN_DELIVERED').payload.simulated).to.eql(true); });",
+                  "pm.collectionVariables.set('auditCount', hvResponse.events.length);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "24 Export audit CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "text/csv",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/audit/{{txId}}/export",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "pm.test('CSV download headers', function () { pm.expect(pm.response.headers.get('Content-Type')).to.include('text/csv'); pm.expect(pm.response.headers.get('Content-Disposition')).to.include('audit-' + pm.collectionVariables.get('txId') + '.csv'); });",
+                  "const csv = pm.response.text();",
+                  "let quoted = false, records = 0;",
+                  "for (let i = 0; i < csv.length; i++) { if (csv[i] === '\"') { if (quoted && csv[i + 1] === '\"') i++; else quoted = !quoted; } else if (csv[i] === '\\n' && !quoted) records++; }",
+                  "pm.test('CSV row count equals audit events', function () { pm.expect(quoted).to.eql(false); pm.expect(records - 1).to.eql(Number(pm.collectionVariables.get('auditCount'))); pm.expect(csv.split('\\r\\n')[0]).to.eql('seq,ts,actor,type,simulated,prevHash,hash,payload'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Complete a second deal and poll a simulated PayPal case",
+      "description": "A separate new Board game deal is captured by buyer confirmation, then frozen by a local SIM- PayPal case. Inquiry messages, irreversible escalation and claim evidence are explicitly simulated. No message, PDF or escalation leaves the app.",
+      "item": [
+        {
+          "name": "25 Create a second labelled board game deal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item\": \"[Demo] Board game set\",\n  \"amount\": \"22.00\",\n  \"currency\": \"USD\",\n  \"terms\": {\n    \"condition\": \"Complete, box worn\",\n    \"demo\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code !== 201) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DRAFT', function () { pm.expect(hvResponse.transaction.status).to.eql('DRAFT'); });",
+                  "pm.collectionVariables.set('bridgeTxId', hvResponse.transaction.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "26 Seller accepts the board game terms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/accept",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is DRAFT', function () { pm.expect(hvResponse.transaction.status).to.eql('DRAFT'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "27 Buyer locks the board game terms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/accept",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is TERMS_LOCKED', function () { pm.expect(hvResponse.transaction.status).to.eql('TERMS_LOCKED'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "28 Create the second simulated order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/pay",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is AWAITING_APPROVAL', function () { pm.expect(hvResponse.transaction.status).to.eql('AWAITING_APPROVAL'); });",
+                  "pm.collectionVariables.set('bridgeOrderId', hvResponse.transaction.paypalOrderId);",
+                  "pm.test('SIM order only', function () { pm.expect(hvResponse.transaction.paypalOrderId).to.match(/^SIM-ORDER-/); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "29 Approve and authorize the second simulated order",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/paypal/return?txId={{bridgeTxId}}&token={{bridgeOrderId}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is AUTHORIZED', function () { pm.expect(hvResponse.transaction.status).to.eql('AUTHORIZED'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "30 Seller ships the second deal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/ship",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tracking\": \"DEMO-DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is IN_INSPECTION', function () { pm.expect(hvResponse.transaction.status).to.eql('IN_INSPECTION'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "31 Buyer confirms and captures locally",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/confirm",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Transaction is COMPLETED', function () { pm.expect(hvResponse.transaction.status).to.eql('COMPLETED'); });",
+                  "pm.test('Capture and tracking are simulated', function () { pm.expect(hvResponse.transaction.paypalCaptureId).to.match(/^SIM-CAPTURE-/); pm.expect(hvResponse.transaction.captured).to.eql(true); pm.expect(hvResponse.paypalTracking).to.eql('sent'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "32 Buyer opens a simulated external PayPal case",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/paypal-dispute/simulate",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Only a simulated case is opened', function () { pm.expect(hvResponse.simulated).to.eql(true); pm.expect(hvResponse.results.some(r => r.txId === pm.collectionVariables.get('bridgeTxId') && r.cases > 0)).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "33 Reviewer polls simulated PayPal disputes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/paypal/disputes/sync",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Polling refreshes the new case without errors', function () { const row = hvResponse.results.find(r => r.txId === pm.collectionVariables.get('bridgeTxId')); pm.expect(row).to.be.an('object'); pm.expect(row.error).to.eql(undefined); pm.expect(row.cases).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "34 Read one detection and one external freeze",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/audit/{{bridgeTxId}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Polls do not duplicate detection or freeze', function () { pm.expect(hvResponse.verification.ok).to.eql(true); const found = hvResponse.events.filter(e => e.type === 'PAYPAL_DISPUTE_DETECTED'); pm.expect(found).to.have.length(1); pm.expect(found[0].payload.simulated).to.eql(true); pm.expect(hvResponse.events.filter(e => e.type === 'EXTERNAL_DISPUTE')).to.have.length(1); pm.expect(hvResponse.events.find(e => e.type === 'EXTERNAL_DISPUTE').payload.to).to.eql('FROZEN_EXTERNAL'); });",
+                  "pm.collectionVariables.set('paypalDisputeId', hvResponse.events.find(e => e.type === 'PAYPAL_DISPUTE_DETECTED').payload.disputeId);",
+                  "pm.test('SIM case id', function () { pm.expect(pm.collectionVariables.get('paypalDisputeId')).to.match(/^SIM-/); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "35 Seller drafts a PayPal inquiry message (replay)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/ai-drafts",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feature\": \"paypal-message\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Recorded PayPal message draft', function () { pm.expect(hvResponse.mode).to.eql('replay'); pm.expect(hvResponse.draft.message).to.be.a('string'); });",
+                  "pm.collectionVariables.set('paypalMessageBody', JSON.stringify({disputeId: pm.collectionVariables.get('paypalDisputeId'), note: hvResponse.draft.message, draftId: hvResponse.draftId}));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "36 Seller sends the approved simulated inquiry message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/paypal-dispute/evidence",
+            "description": "This request explicitly approves the recorded note. In simulated mode it records a local message only; inquiry does not support a PDF attachment.",
+            "body": {
+              "mode": "raw",
+              "raw": "{{paypalMessageBody}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Inquiry falls back to a simulated message', function () { pm.expect(hvResponse.simulated).to.eql(true); pm.expect(hvResponse.action).to.eql('send_message'); pm.expect(hvResponse.message).to.include('claim stage'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "37 Reviewer confirms simulated escalation to claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/paypal-dispute/escalate",
+            "description": "confirm:true is deliberate. This is a local simulated escalation, not a real PayPal action. The real Sandbox escalation cannot be undone.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disputeId\": \"{{paypalDisputeId}}\",\n  \"confirm\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Simulated escalation succeeds', function () { pm.expect(hvResponse.simulated).to.eql(true); pm.expect(hvResponse.action).to.eql('escalate'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "38 Seller sends locked evidence PDF to the simulated claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "seller",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{bridgeTxId}}/paypal-dispute/evidence",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disputeId\": \"{{paypalDisputeId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('Claim accepts simulated PDF evidence', function () { pm.expect(hvResponse.simulated).to.eql(true); pm.expect(hvResponse.action).to.eql('provide_evidence'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "39 Verify bridge audit labels and hashes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "buyer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/audit/{{bridgeTxId}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('All simulated bridge steps are recorded and chained', function () { pm.expect(hvResponse.verification.ok).to.eql(true); ['PAYPAL_DISPUTE_MESSAGE_SENT','PAYPAL_DISPUTE_ESCALATED','PAYPAL_DISPUTE_EVIDENCE_SENT'].forEach(type => { const e = hvResponse.events.find(e => e.type === type); pm.expect(e, type).to.be.an('object'); pm.expect(e.payload.simulated).to.eql(true); pm.expect(e.payload.termsHash).to.match(/^[a-f0-9]{64}$/); pm.expect(e.payload.headHash).to.match(/^[a-f0-9]{64}$/); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "40 Verify every local audit chain",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-demo-role",
+                "value": "reviewer",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-reviewer-code",
+                "value": "{{reviewerCode}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/audit/verify",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code !== 200) { pm.execution.setNextRequest(null); throw new Error('Unexpected HTTP status; stop this simulated demo run.'); }",
+                  "const hvResponse = pm.response.json();",
+                  "pm.test('All chains verify, including both new deals', function () { pm.expect(hvResponse.ok).to.eql(true); pm.expect(hvResponse.results.find(r => r.txId === pm.collectionVariables.get('txId')).ok).to.eql(true); pm.expect(hvResponse.results.find(r => r.txId === pm.collectionVariables.get('bridgeTxId')).ok).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -77,7 +77,8 @@ continues the same list from where HANDOFF says Codex stopped.
 2. C19 partial refund Part A: implemented and verified on `feat/c19-partial-refund`, based on merged C18 PR #56; awaiting Claude review, do not merge.
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
-5. C22 Postman collection of the HalcyVault API.
+5. C22 Postman collection: implemented on `docs/c22-postman`, verified with Newman;
+   awaiting Claude review (see latest log), do not merge automatically.
 Then feature freeze. Render deploy/Workflows and public-demo hardening come after, with the
 owner (account and credits).
 
@@ -171,6 +172,31 @@ Still open:
 
 ## Log
 
+- 2026-10-22 (Codex, C22): created `docs/c22-postman`
+  from latest origin/main 765dc30, independent of the unmerged C21 review branch.
+  Added Postman v2.1 collection at docs/postman/HalcyVault.postman_collection.json:
+  40 ordered requests, explicit demo roles, loopback baseUrl, empty optional reviewer
+  code, scripted deal/order/evidence/draft/case IDs and JSON-encoded draft bodies.
+  Covers seed/reseed, both terms acceptances, simulated approval/authorization,
+  delivered tracking, damage dispute, both sides' evidence, R5 recommendation,
+  terms/courier/copilot/translation replays, advisory no-replay fallback, human
+  refund with required return, pre-capture void, audit/CSV, a second captured deal,
+  simulated external freeze/sync, inquiry message, confirmed claim escalation and
+  locked PDF submission. No application or dependency files changed. First Newman
+  attempt exposed a Postman reserved `data` variable collision; renamed script
+  locals, then 40 requests / 93 assertions passed with zero failures. Final isolated
+  run on a freshly built main server (localhost:3143, temporary SQLite file,
+  PAYPAL_MODE=simulated, AI_MODE=replay, PP/AI keys and reviewer code empty):
+  `npx --yes newman@6.2.3 run docs/postman/HalcyVault.postman_collection.json
+  --env-var baseUrl=http://localhost:3143 --bail --reporters cli,json
+  --reporter-json-export /tmp/c22-newman-final.json` -> 40 requests, 40 test scripts,
+  41 prerequest scripts and 93 assertions, all zero failures (1 iteration, 1.216s).
+  First seed returned 201, repeat seed 200; final verification covered all 14 deals.
+  Production build passed. JSON scripts also parsed and loopback/mode guards were
+  checked locally. Newman ran only through npx (cache in /tmp), not package.json;
+  its Node 24 fs.F_OK deprecation warning is from the temporary CLI. README has a
+  short Try the API subsection. No real Sandbox/webhook/live-provider run claimed.
+  Awaiting one PR for Claude review; do not merge automatically.
 - 2026-10-22 15:20 WIB (Claude): reviewed and merged C19 partial refund (#57; simulated
   browser run: DECISION -> PARTIAL_REFUND_CAPTURED -> PARTIAL_REFUND_COMPLETED, receipt
   correct) and C20 evidence translation (import-only conflict on the review page resolved;
