@@ -216,6 +216,33 @@ Shared guard rails (all assists use `src/lib/ai/assist.ts`):
 | 4 | Outbound drafts | After a decision or a PayPal case | A message to PayPal for the dispute bridge and a courier claim pack for transit damage | Seller (or reviewer) approves before anything is sent or downloaded | Claude (done 2026-10-22) |
 | 5 | Evidence translation | Review | A translation of evidence text into the reviewer's language; the original and its hash stay authoritative | Reviewer reads both | Claude, after C18 |
 
+Implementation of #2 (C17): buyer/seller-only `POST
+/api/transactions/{id}/ai/evidence-check` accepts an empty JSON object during an open
+`DISPUTED` evidence window. It reads locked `criteria` and `includedItems` (up to 12
+of each, 200 characters per item); legacy terms without criteria use the condition
+line. Unsupported/empty checklists fall back to manual guidance. Only the requesting
+side's evidence is sent, as B1/B2 or S1/S2 aliases, with that side's dispute-type
+guidance. Internal evidence ids and the other side's evidence are excluded.
+
+`runAssist` uses feature `evidence-check`, version `evidence-check-v1`. Exact JSON
+contains one covered/missing/unclear entry per known check id and known cited aliases;
+covered without a citation becomes unclear. Up to five suggestions must come from a
+small fixed vocabulary, preventing generated names, links or verdict words in them.
+This checks text descriptions only: covered does not mean proven or inspected photos.
+Replay fixtures match the full own-side snapshot of the labelled Road bike helmet
+(empty buyer/seller evidence and one recorded buyer photo description); unmatched
+snapshots return unavailable, not a generic reused finding. No live-provider run has
+been verified.
+
+A durable reservation in the existing `idempotency` table permits one initial run per
+side, then one per new own evidence item (up to 50). Failed/unavailable and interrupted
+runs consume that reservation too; reloads and concurrent requests cannot bypass it.
+`EVIDENCE_CHECK_RUN` records metadata, side, own evidence count, status counts and the
+injection flag, with no checklist, evidence or suggestion text. Results are not saved
+as recommendations, never feed the rule engine/review summary, never block evidence
+submission and never extend deadlines. If the window closes or own evidence changes
+during the call, the result is discarded; metadata is still audited.
+
 Implementation of #4: `POST /api/transactions/{id}/ai-drafts` (`paypal-message` for seller or
 reviewer when a PayPal case is open; `courier-claim` for the seller of a "damaged" dispute)
 stores the draft in `ai_drafts` and logs `AI_DRAFT_CREATED` (metadata only). The PayPal
