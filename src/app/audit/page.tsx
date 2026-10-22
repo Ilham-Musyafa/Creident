@@ -21,16 +21,18 @@ export default function AuditIndexPage() {
   return (
     <AppShell active="Audit">
       <PageHeader title="Deal records" subtitle="Every step of every deal is saved and checked for changes. Open a deal to see its steps."/>
-      <div className="mb-4"><Notice tone={published.available && !published.result.valid ? 'warning' : 'info'}>
-        {checkpoint ? `Latest sealed copy: ${checkpoint.createdAt}`
-          : published.available ? `Sealed copy could not be checked: ${published.result.valid ? '' : published.result.reason}` : published.message}
-        {missing.length > 0 && ` · ${missing.length} deal(s) in the sealed copy are missing from the current records.`}
-      </Notice></div>
       {rows.length > 0 && (
-        <div role="status" className="mb-4 rounded-[18px] border p-4 text-sm font-semibold" style={broken
+        <div role="status" className="mb-4 rounded-[18px] border p-4 text-sm" style={broken
           ? { background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }
           : { background: 'var(--success-bg)', borderColor: 'var(--success-line)', color: 'var(--success-text)' }}>
-          {broken ? `${broken} of ${rows.length} records were changed` : `All ${rows.length} records intact`}
+          <strong className="block">{broken ? `${broken} of ${rows.length} records were changed` : `All ${rows.length} records intact`}</strong>
+          {/* One status: the local check first, then what the sealed copy adds (or that none exists yet). */}
+          <span className="mt-1 block text-xs">
+            {checkpoint ? `Also checked against the sealed copy from ${checkpoint.createdAt}.`
+              : published.available ? `The sealed copy could not be checked: ${published.result.valid ? '' : published.result.reason}`
+              : 'Checked step by step on this server. No sealed copy has been published yet, so a full rewrite of the database would not show here.'}
+            {missing.length > 0 && ` ${missing.length} deal(s) in the sealed copy are missing from the current records.`}
+          </span>
         </div>
       )}
       {rows.length === 0 ? <EmptyState title="No deals yet"/> : (

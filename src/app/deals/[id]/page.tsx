@@ -57,11 +57,12 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <p className="text-sm text-muted">{tx.item}</p>
             <p className="mt-1 text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <StatusPill status={tx.status} suffix={deadline ?? undefined}/>
+            {simulated && <p className="mt-2 text-xs font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
           </div>
           {created && role === 'seller' && (
             <div className="mb-4 space-y-2"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></div>
           )}
-          {simulated && <div className="mb-4"><Notice tone="warning">Demo payment: no real money moved and nothing was sent to PayPal.</Notice></div>}
+          
           {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal refused to capture this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The authorization may be past PayPal's 3-day honor period. Nothing was charged and the deal has not moved; the seller is not paid until this is resolved. This prototype does not reauthorize automatically.</Notice></div>}
           <PartialRefundNotice tx={tx} events={allEvents}/>
           {(() => {

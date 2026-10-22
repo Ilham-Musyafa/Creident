@@ -18,7 +18,9 @@ export default async function HomePage() {
   const ctx = data();
   const deals = ctx.repo.listTransactions();
   const now = ctx.now();
-  const reserved = deals.filter((d) => isReserved(d.status, d.captured)).reduce((sum, d) => sum + Number(d.amount), 0);
+  const reservedList = deals.filter((d) => isReserved(d.status, d.captured));
+  const reserved = reservedList.reduce((sum, d) => sum + Number(d.amount), 0);
+  const reservedDeals = reservedList.length;
   const inDispute = deals.filter((d) => d.status === 'DISPUTED' || d.status === 'UNDER_REVIEW').length;
   const completed = deals.filter((d) => ['COMPLETED', 'PARTIALLY_REFUNDED'].includes(d.status)).length;
   const active = deals.filter((d) => isActive(d.status)).length;
@@ -52,7 +54,7 @@ export default async function HomePage() {
               <p className="mt-3 text-xs text-muted">Example deals use demo payments (no real money).</p>
             </Card>
           ) : <AmountCard
-            label="Approved payments · not charged yet"
+            label={`Approved, waiting to be charged · ${reservedDeals} open deal${reservedDeals === 1 ? '' : 's'}`}
             amount={money(reserved)}
             stats={[{ label: 'Active', value: String(active) }, { label: 'In dispute', value: String(inDispute) }, { label: 'Completed', value: String(completed) }]}
             {...(role === 'seller' ? { actionHref: '/deals/new', actionLabel: '+ New deal' }
