@@ -7,6 +7,12 @@ Stacking rule (official rules): a project can win at most **one Grand Prize or H
 Mention plus one Sponsor Prize**. Using more sponsor tools adds chances, not prizes, so each
 tool must earn its place in the product.
 
+Owner decision (2026-10-22): approved AG Studio (main), Render (deploy + Workflows),
+APIMatic Context Plugin (optional), Bryntum (backup only) and a Postman collection of the
+HalcyVault API (no prize; shows the API as an integration layer). Skip Channel3, Elastic,
+KERNEL, Astropods and Zapier. Notifications stay in-app; an outgoing webhook that a
+marketplace could connect to Zapier is a roadmap item only.
+
 ## Tools with a prize
 
 | Tool | Prize | What the page asks for | Access | Fit for us | Plan |
@@ -21,7 +27,7 @@ tool must earn its place in the product.
 
 | Tool | What it is / offers | Fit | Plan |
 |---|---|---|---|
-| Postman | PayPal API collection, free plan, learning path | Useful for manual API checks only | Optional for testing; no submission work |
+| Postman | PayPal API collection, free plan, learning path | Medium: a collection of the HalcyVault API (simulated-mode flow) shows the integration-layer story | **Do** after the feature freeze: `docs/postman/` collection + README paragraph |
 | Elastic | 14-day trial (+30 self-extension); asks for a multi-step agent using Elasticsearch with Jina embeddings | Low | Skip |
 | KERNEL | Browser infrastructure for agents; $50 credits | Low (real courier integration is out of scope) | Skip |
 | Astropods | Agent operating system; free account | Low | Skip |
