@@ -170,6 +170,15 @@ Still open:
 
 ## Log
 
+- 2026-10-22 18:20 WIB (Claude, owner request): Records in two levels. Index: one status box
+  "✓ N records verified" + "Verified on this server" (or "...and against the sealed copy from
+  <date>") + link "How verification works"; deal rows show name, status and step count, with
+  a warning only for a failed step or a sealed-copy mismatch. Record page: "15 of 15 steps
+  verified", rows without per-step badges ("⚠ Not verified" only on failure), details on tap,
+  Export moved to a "⋯" menu (Download as CSV, How verification works). New page
+  /audit/how-it-works holds the sealed-copy explanation and what a same-server check does not
+  prove. Home and the oversight widget say "verified" instead of "intact". Checked with a
+  tampered DB copy: failure states render correctly.
 - 2026-10-22 18:00 WIB (Claude, owner request): Appearance picker in Menu is now three icon
   tiles (sun Light, moon Dark, half circle System on the right) with labels under the icons.
 - 2026-10-22 20:30 WIB (Claude, owner request): clarity pass 2. Demo decision reasons say

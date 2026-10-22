@@ -240,25 +240,44 @@ export function PayPalReturn() {
 }
 
 /** Download through fetch so the API receives the current demo-role header. */
-export function AuditExportButton({ txId, role }: { txId: string; role: Role }) {
+async function downloadAuditCsv(txId: string, role: Role) {
+  const response = await fetch(`/api/audit/${txId}/export`, { headers: { 'x-demo-role': role } });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+    throw new ApiError(String(body.error ?? 'EXPORT_FAILED'), String(body.message ?? 'The record could not be downloaded. Please try again.'));
+  }
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `audit-${txId}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** The "⋯" menu on a deal record: less-used actions kept out of the main list. */
+export function RecordMenu({ txId, role }: { txId: string; role: Role }) {
   const { busy, error, run } = useAction();
-  return <div>
-    <Button variant="ghost" disabled={busy} onClick={() => run(async () => {
-      const response = await fetch(`/api/audit/${txId}/export`, { headers: { 'x-demo-role': role } });
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({})) as Record<string, unknown>;
-        throw new ApiError(String(body.error ?? 'EXPORT_FAILED'), String(body.message ?? 'The audit export could not be downloaded. Please try again.'));
-      }
-      const url = URL.createObjectURL(await response.blob());
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `audit-${txId}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    })}>{busy ? 'Exporting…' : 'Export CSV'}</Button>
-    <ErrorNote error={error}/>
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: Event) => { if (e instanceof KeyboardEvent ? e.key === 'Escape' : !(e.target as Element).closest('[data-record-menu]')) setOpen(false); };
+    document.addEventListener('keydown', close); document.addEventListener('pointerdown', close);
+    return () => { document.removeEventListener('keydown', close); document.removeEventListener('pointerdown', close); };
+  }, [open]);
+  const item = 'flex min-h-11 w-full items-center rounded-[10px] px-3 text-left text-sm font-semibold text-heading hover:bg-surface-2';
+  return <div data-record-menu className="relative">
+    <button type="button" aria-label="More options" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}
+      className="hv-press grid size-11 place-items-center rounded-full border border-line bg-surface text-heading hover:bg-surface-2">
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+    </button>
+    {open && <div role="menu" className="hv-page absolute right-0 z-30 mt-2 w-56 rounded-[14px] border border-line bg-surface p-1 shadow-lg">
+      <button role="menuitem" type="button" disabled={busy} className={item}
+        onClick={() => run(async () => { await downloadAuditCsv(txId, role); setOpen(false); })}>{busy ? 'Downloading…' : 'Download as CSV'}</button>
+      <a role="menuitem" href="/audit/how-it-works" className={item}>How verification works</a>
+    </div>}
+    {error && <div className="absolute right-0 mt-14 w-64"><ErrorNote error={error}/></div>}
   </div>;
 }
 

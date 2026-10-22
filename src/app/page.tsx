@@ -97,7 +97,7 @@ export default async function HomePage() {
             <Card>
               <p className="text-xs text-muted">Audit & verification</p>
               <p className="mt-1 text-sm font-bold" style={{ color: verified === chains.length ? 'var(--success-text)' : 'var(--warning-text)' }}>
-                {verified === chains.length ? `All ${chains.length} records intact` : `${chains.length - verified} of ${chains.length} records changed`}
+                {verified === chains.length ? `${chains.length} records verified on this server` : `${chains.length - verified} of ${chains.length} records changed`}
               </p>
               <Link href="/audit" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-heading underline-offset-4 hover:underline">Open deal records</Link>
             </Card>
