@@ -170,6 +170,8 @@ Still open:
 
 ## Log
 
+- 2026-10-22 19:50 WIB (Claude, owner request): Home section "Recent deals" renamed "Recent
+  transactions". The rest of the app keeps "deal" (owner decision).
 - 2026-10-22 19:40 WIB (Claude, owner request): Records failure states. Index: failed records
   sort first with a warning border, banner button "View affected record(s)". Record page: the
   first mismatching step shows "Verification failed here", later steps are dimmed with "Cannot
