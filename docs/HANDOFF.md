@@ -71,7 +71,7 @@ Owner: Codex works first, in order, one task per branch and PR (do not merge; Cl
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
 1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
-2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
+2. C19 partial refund Part A: in progress on `feat/c19-partial-refund`, based on merged C18 PR #56. Core/route tests pass; full verification and docs pending.
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
 5. C22 Postman collection of the HalcyVault API.
@@ -166,6 +166,17 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 08:12 WIB (Codex, C19 checkpoint): Part A implemented locally:
+  bounded USD reviewer amount, staged capture/refund with separate durable claims,
+  partial decision storage/migration, required-return path, final PARTIALLY_REFUNDED,
+  pending/error notice, receipt amount, manual UI amount and C18 audit provenance.
+  Shared capture request id prevents a second capture across release/partial paths.
+  42 targeted tests and typecheck passed before final compatibility refinements.
+  C18 was merged by Claude (#56) and integrated before this commit. No Part B or
+  new dependencies. APIMatic PayPal plugin is unavailable; existing PayPalClient
+  already supports refund with amount. Next: full tests/typecheck/build, browser
+  390/1440 light/dark, README/DESIGN/HANDOFF completion and one review PR.
 
 - 2026-10-22 08:15 WIB (Claude): reviewed and merged C18 reviewer copilot (391 tests,
   build, browser check 390 light / 1440 dark). Watch in the live-model eval: the copilot

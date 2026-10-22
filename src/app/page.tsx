@@ -20,7 +20,7 @@ export default async function HomePage() {
   const now = ctx.now();
   const reserved = deals.filter((d) => isReserved(d.status, d.captured)).reduce((sum, d) => sum + Number(d.amount), 0);
   const inDispute = deals.filter((d) => d.status === 'DISPUTED' || d.status === 'UNDER_REVIEW').length;
-  const completed = deals.filter((d) => d.status === 'COMPLETED').length;
+  const completed = deals.filter((d) => ['COMPLETED', 'PARTIALLY_REFUNDED'].includes(d.status)).length;
   const active = deals.filter((d) => isActive(d.status)).length;
   const reviewQueue = deals.filter((d) => d.status === 'UNDER_REVIEW');
   const shown = role === 'reviewer' && reviewQueue.length ? reviewQueue : deals.slice(0, 5);

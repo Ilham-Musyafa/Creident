@@ -1,3 +1,4 @@
+import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { decisionBasis } from '../../../../lib/decisionBasis';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue, StatusPill } from '../../../../components/ui';
@@ -9,11 +10,11 @@ import { data, isUuid, sha256 } from '../../../_server';
 export const dynamic = 'force-dynamic';
 
 const OUTCOME: Record<string, string> = {
-  RELEASE: 'Released to the seller', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)',
+  RELEASE: 'Released to the seller', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
 };
 const MONEY_STEP: Record<string, string> = {
   PAYPAL_CAPTURE: 'Payment captured on PayPal', PAYPAL_VOID: 'Authorization voided on PayPal (nothing was charged)',
-  PAYPAL_REFUND: 'Captured payment refunded on PayPal',
+  PAYPAL_REFUND: 'Captured payment refunded on PayPal', PAYPAL_PARTIAL_REFUND: 'Reviewer amount refunded on PayPal',
 };
 const RULE_ACTION: Record<string, string> = {
   RELEASE: 'Release', REFUND: 'Refund', VOID: 'Void', ESCALATE_HUMAN: 'Escalate to a human', FREEZE: 'Freeze', WAIT: 'Wait',
@@ -40,9 +41,13 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
     ? recorded === current ? 'Matches' : 'Changed since decision' : 'Not recorded';
   const chain = verifyChain(events);
   // The money can move at the decision, or later when a required return arrives or is not made.
-  const moneyEvent = [...events].reverse().find((e) => ['DECISION', 'RETURN_DELIVERED', 'RETURN_DEADLINE_PASSED'].includes(e.type) && e.payload.effect && e.payload.effect !== 'NONE');
+  const moneyEvent = [...events].reverse().find((e) => ['DECISION', 'RETURN_DELIVERED', 'RETURN_DEADLINE_PASSED', 'PARTIAL_REFUND_CAPTURED', 'PARTIAL_REFUND_COMPLETED'].includes(e.type) && e.payload.effect && e.payload.effect !== 'NONE');
   const moneyStep = moneyEvent ? MONEY_STEP[String(moneyEvent.payload.effect ?? '')] : undefined;
-  const outcomeText = !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
+  const outcomeText = decision?.outcome === 'PARTIAL_REFUND'
+    ? tx.partialRefundState === 'completed' ? `Partially refunded ${money(decision.amount ?? tx.partialRefundAmount ?? '0.00')}`
+    : tx.partialRefundState === 'cancelled' ? 'Partial refund not executed: item not returned in time'
+    : tx.status === 'RETURN_REQUESTED' ? 'Partial refund after the item is returned' : 'Partial refund pending'
+    : !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
     : tx.status === 'RETURN_REQUESTED' ? 'Refund after the item is returned'
     : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Released to the seller: item not returned in time'
     : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refunded to the buyer after the return'
@@ -54,13 +59,15 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
       {!decision ? (
         <EmptyState title="No dispute decision on this deal">A receipt appears here after a reviewer decides a dispute.</EmptyState>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
-          <div className="space-y-4">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="min-w-0 space-y-4">
+            <PartialRefundNotice tx={tx} events={events}/>
             <Card>
               <p className="text-xs text-muted">Outcome</p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
               {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (simulated)' : ''}</p>}
-              {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">No money has moved yet. The refund runs when the return reaches the seller.</p>}
+              {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">{tx.captured ? 'The earlier payment was captured. The refund waits for the required return.' : 'No money has moved yet. The refund runs when the return reaches the seller.'}</p>}
+              {decision.amount && <p className="mt-3 text-sm font-semibold text-heading">Reviewer refund amount: {money(decision.amount)} USD · fee borne by Platform</p>}
               <p className="mt-4 text-xs text-muted">Reviewer's reason</p>
               <p className="mt-1 text-sm text-text">{decision.reason}</p>
               <p className="mt-2 text-xs text-muted">Decided by the demo reviewer · {shortDate(decision.createdAt)}</p>

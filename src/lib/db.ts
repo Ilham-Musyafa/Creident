@@ -19,17 +19,17 @@ export function openDatabase(filename = process.env.HALCYVAULT_DB_PATH ?? "data/
 }
 
 /**
- * Older databases have a status CHECK without RETURN_REQUESTED. SQLite cannot change a CHECK
+ * Older databases may lack RETURN_REQUESTED or PARTIALLY_REFUNDED in the status CHECK. SQLite cannot change a CHECK
  * in place, so copy the table into the new definition (data and ids are unchanged; the audit
  * events table is not touched).
  */
 function widenStatusCheck(db: DatabaseSync): void {
   const row = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'transactions'").get() as { sql?: string } | undefined;
-  if (!row?.sql || row.sql.includes("'RETURN_REQUESTED'")) return;
-  const widened = row.sql
-    .replace(/CREATE TABLE\s+"?transactions"?/i, 'CREATE TABLE transactions_widened')
-    .replace("'UNDER_REVIEW',", "'UNDER_REVIEW', 'RETURN_REQUESTED',");
-  if (!widened.includes("'RETURN_REQUESTED'")) throw new Error('Could not widen the transactions status check');
+  if (!row?.sql || (row.sql.includes("'RETURN_REQUESTED'") && row.sql.includes("'PARTIALLY_REFUNDED'"))) return;
+  let widened = row.sql.replace(/CREATE TABLE\s+"?transactions"?/i, 'CREATE TABLE transactions_widened');
+  if (!widened.includes("'RETURN_REQUESTED'")) widened = widened.replace("'UNDER_REVIEW',", "'UNDER_REVIEW', 'RETURN_REQUESTED',");
+  if (!widened.includes("'PARTIALLY_REFUNDED'")) widened = widened.replace("'REFUNDED',", "'REFUNDED', 'PARTIALLY_REFUNDED',");
+  if (!widened.includes("'RETURN_REQUESTED'") || !widened.includes("'PARTIALLY_REFUNDED'")) throw new Error('Could not widen the transactions status check');
   db.exec('PRAGMA foreign_keys = OFF');
   try {
     db.exec('BEGIN IMMEDIATE');
@@ -71,7 +71,7 @@ export function migrate(db: DatabaseSync): void {
       status TEXT NOT NULL CHECK (status IN (
         'DRAFT', 'TERMS_LOCKED', 'AWAITING_APPROVAL', 'AUTHORIZED', 'SHIPPED',
         'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'RETURN_REQUESTED', 'FROZEN_EXTERNAL',
-        'COMPLETED', 'REFUNDED', 'VOIDED', 'CANCELLED'
+        'COMPLETED', 'REFUNDED', 'PARTIALLY_REFUNDED', 'VOIDED', 'CANCELLED'
       )),
       buyer_id TEXT NOT NULL REFERENCES users(id),
       seller_id TEXT NOT NULL REFERENCES users(id),
@@ -215,6 +215,8 @@ export function migrate(db: DatabaseSync): void {
   if (!txColumns.some((column) => column.name === 'return_tracking')) {
     db.exec('ALTER TABLE transactions ADD COLUMN return_tracking TEXT');
   }
+  if (!txColumns.some(column => column.name === 'partial_refund_amount')) db.exec('ALTER TABLE transactions ADD COLUMN partial_refund_amount TEXT');
+  if (!txColumns.some(column => column.name === 'partial_refund_state')) db.exec("ALTER TABLE transactions ADD COLUMN partial_refund_state TEXT CHECK (partial_refund_state IN ('awaiting_return','ready','pending','completed','cancelled'))");
   const paypalEventColumns = db.prepare('PRAGMA table_info(paypal_events)').all() as { name: string }[];
   if (!paypalEventColumns.some((column) => column.name === 'tx_id')) {
     db.exec('ALTER TABLE paypal_events ADD COLUMN tx_id TEXT REFERENCES transactions(id)');
@@ -232,5 +234,7 @@ export function migrate(db: DatabaseSync): void {
   if (!decisionColumns.some((column) => column.name === 'requires_human')) {
     db.exec('ALTER TABLE decisions ADD COLUMN requires_human INTEGER CHECK (requires_human IS NULL OR requires_human IN (0, 1))');
   }
+  if (!decisionColumns.some(column => column.name === 'amount')) db.exec('ALTER TABLE decisions ADD COLUMN amount TEXT');
+  if (!decisionColumns.some(column => column.name === 'require_return')) db.exec('ALTER TABLE decisions ADD COLUMN require_return INTEGER');
   db.exec("CREATE UNIQUE INDEX IF NOT EXISTS one_recommendation_per_tx ON decisions(tx_id) WHERE rule_id <> 'HUMAN_REVIEW'");
 }
