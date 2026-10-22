@@ -63,20 +63,21 @@ export function FindingCard({ criterion, supports, evidenceIds }: { criterion: s
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
   return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>{rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
 }
-export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string }) {
-  // Metadata items never break inside a short hash; the full hashes show when the event is opened.
-  const meta = <p className="mt-0.5 flex flex-wrap gap-x-2 font-mono text-xs text-muted"><span className="whitespace-nowrap">{actor}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">{time}</span><span aria-hidden="true">·</span><span className="whitespace-nowrap">linked to <span className="hv-hash">{prevHash}</span></span></p>;
-  const heading = <p title={rawType} className="text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{simulated && <span className="ml-2 rounded-full px-2 py-0.5 align-middle text-[11px] font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>Demo</span>}</p>;
-  return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`flex gap-3 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}>
-    <span className="h-fit rounded-full bg-surface-2 px-2 py-1 font-mono text-xs text-muted">#{seq}</span>
-    <div className="min-w-0 flex-1">{fullPrevHash || hash
-      ? <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{heading}{meta}</summary>
-          <dl className="mt-2 space-y-1 rounded-[12px] bg-surface-2 p-2 font-mono text-[11px] text-muted">
-            {hash && <div><dt className="font-sans font-semibold text-heading">Fingerprint</dt><dd className="break-all">{hash}</dd></div>}
-            {fullPrevHash && <div><dt className="font-sans font-semibold text-heading">Linked to</dt><dd className="break-all">{fullPrevHash}</dd></div>}
-            {rawType && <div><dt className="font-sans font-semibold text-heading">Technical name</dt><dd className="break-all">{rawType}</dd></div>}
-          </dl></details>
-      : <>{heading}{meta}</>}</div>
+export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash, intact = true }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string; intact?: boolean }) {
+  // The row shows only what happened, when, and whether it is intact; who, step number,
+  // demo label and fingerprints open on tap (owner request: a lighter record page).
+  const status = <span className="hv-tick shrink-0 text-xs font-semibold" style={{ color: intact ? 'var(--success-text)' : 'var(--warning-text)' }}>{intact ? '✓ Intact' : 'Changed'}</span>;
+  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-xs text-muted">{time}</span></span>{status}</span>;
+  const details = <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-[12px] bg-surface-2 p-3 text-xs">
+    <dt className="text-muted">Step</dt><dd className="font-mono text-heading">#{seq}</dd>
+    <dt className="text-muted">By</dt><dd className="capitalize text-heading">{actor}</dd>
+    {simulated && <><dt className="text-muted">Source</dt><dd className="text-heading">Demo (not from PayPal)</dd></>}
+    {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-[11px] text-muted">{hash}</dd></>}
+    <dt className="text-muted">Linked to</dt><dd className="break-all font-mono text-[11px] text-muted">{fullPrevHash ?? prevHash}</dd>
+    {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-[11px] text-muted">{rawType}</dd></>}
+  </dl>;
+  return <li style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'}`}>
+    <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary>{details}</details>
   </li>;
 }
 export function ChainStatus({ verified, count, headHash, revealAfterMs }: { verified: boolean; count: number; headHash: string; revealAfterMs?: number }) {

@@ -170,6 +170,13 @@ Still open:
 
 ## Log
 
+- 2026-10-22 20:30 WIB (Claude, owner request): clarity pass 2. Demo decision reasons say
+  "Cancel the payment authorization once the return is received" (matches "not charged";
+  only freshly seeded demo data). Home total labelled "Approved, waiting to be charged · N
+  open deals". One short demo line on deal and checkout instead of a big notice. Checkout
+  button "Accept terms & continue". Record rows show title, time and "Intact"; step number,
+  actor, source and fingerprints open on tap. Records index merges the sealed-copy note into
+  the single status box. Tests 482 passed, build OK, 390px screenshots without console errors.
 - 2026-10-22 19:20 WIB (Claude, owner request): plain-language pass. Glossary in docs/UI.md
   "Plain language" (approved -> not charged yet, captured -> payment completed, voided ->
   payment cancelled, audit log -> deal record, hash -> fingerprint, checkpoint -> sealed

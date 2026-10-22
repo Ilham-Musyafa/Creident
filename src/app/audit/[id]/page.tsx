@@ -27,11 +27,11 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
         <Card className="px-4 py-1">
           <ol>
             {[...events].reverse().map((e, index) => (
-              <AuditEvent index={index} key={e.seq} seq={e.seq} title={eventTitle(e.type)} rawType={e.type} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} fullPrevHash={e.prevHash} hash={e.hash} simulated={e.payload.simulated === true}/>
+              <AuditEvent index={index} key={e.seq} seq={e.seq} title={eventTitle(e.type)} rawType={e.type} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} fullPrevHash={e.prevHash} hash={e.hash} intact={check.ok || e.seq < check.brokenAtSeq} simulated={e.payload.simulated === true}/>
             ))}
           </ol>
         </Card>
-        <Notice>Each step stores a fingerprint of the step before it, so changing, deleting or reordering a step shows up here. Steps marked Demo come from demo payments, example deals or the demo courier, not from PayPal. Tap a step for its technical details.</Notice>
+        <Notice>Each step stores a fingerprint of the step before it, so changing, deleting or reordering a step shows up here. Tap a step to see who did it and its fingerprints.</Notice>
       </div>
     </AppShell>
   );
