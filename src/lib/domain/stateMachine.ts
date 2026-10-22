@@ -1,3 +1,4 @@
+import { validPartialAmount } from '../partialAmount.ts';
 import { isFinal } from './types.ts';
 import type { Effect, Trigger, TransitionResult, Tx, TxStatus } from './types.ts';
 
@@ -103,6 +104,12 @@ export function transition(tx: Tx, trigger: Trigger): TransitionResult {
 
     case 'DECISION':
       if (tx.status !== 'UNDER_REVIEW') return wrongState(tx, trigger, ['UNDER_REVIEW']);
+      if (trigger.outcome === 'PARTIAL_REFUND') {
+        if (!validPartialAmount(trigger.amount, tx.amount)) return fail('INVALID_AMOUNT', 'Partial refund must be positive USD below the deal amount with two decimals');
+        return trigger.requireReturn
+          ? move(tx, 'RETURN_REQUESTED', NONE, { partialRefundAmount: trigger.amount, partialRefundState: 'awaiting_return' })
+          : move(tx, 'PARTIALLY_REFUNDED', { kind: 'PAYPAL_PARTIAL_REFUND' }, { captured: true, partialRefundAmount: trigger.amount, partialRefundState: 'completed' });
+      }
       if (trigger.outcome === 'RELEASE') return move(tx, 'COMPLETED', { kind: 'PAYPAL_CAPTURE' });
       // Refund only after the item is back with the seller, unless the reviewer waives the return
       // (for example when the item never arrived). No money moves while the return is pending.
@@ -114,14 +121,16 @@ export function transition(tx: Tx, trigger: Trigger): TransitionResult {
       if (!tx.returnBy) return fail('NO_DEADLINE', 'Transaction has no return deadline');
       if (at(trigger.now) > at(tx.returnBy)) return fail('DEADLINE_PASSED', 'Return tracking submitted after the return deadline');
       if (!trigger.destinationMatches) return fail('RETURN_WRONG_DESTINATION', "Return tracking does not show delivery to the seller's address");
+      if (tx.partialRefundAmount) return move(tx, 'PARTIALLY_REFUNDED', { kind: 'PAYPAL_PARTIAL_REFUND' }, { captured: true, partialRefundState: 'completed' });
       return refundOrVoid(tx);
 
     case 'RETURN_DEADLINE_PASSED':
+      if (tx.partialRefundAmount && tx.partialRefundState !== 'awaiting_return') return fail('RETURN_ALREADY_RECORDED', 'A delivered return cannot be cancelled by the deadline job');
       if (tx.status !== 'RETURN_REQUESTED') return wrongState(tx, trigger, ['RETURN_REQUESTED']);
       if (!tx.returnBy) return fail('NO_DEADLINE', 'Transaction has no return deadline');
       if (at(trigger.now) <= at(tx.returnBy)) return fail('DEADLINE_NOT_REACHED', 'Return deadline has not passed');
       // The buyer kept the item without returning it, so the payment goes to the seller.
-      return move(tx, 'COMPLETED', { kind: 'PAYPAL_CAPTURE' });
+      return move(tx, 'COMPLETED', tx.captured ? NONE : { kind: 'PAYPAL_CAPTURE' }, tx.partialRefundAmount ? { partialRefundState: 'cancelled' } : {});
 
     case 'EXTERNAL_DISPUTE':
       if (tx.status === 'FROZEN_EXTERNAL') return fail('ALREADY_FROZEN', 'Transaction is already frozen');

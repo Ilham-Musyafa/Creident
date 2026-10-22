@@ -83,13 +83,16 @@ Seller writes terms ─▶ both accept (terms hash) ─▶ buyer approves on Pay
                          │    │                              ─▶ VOIDED / REFUNDED
                          │    └─ no delivered return by deadline ─▶ capture ─▶ COMPLETED
                          ├─ refund without return (e.g. never arrived) ─▶ void / refund
+                         ├─ partial refund (typed USD amount) ─▶ capture then refund amount
+                         │                              ─▶ PARTIALLY_REFUNDED
+                         │    optional required return waits in RETURN_REQUESTED first
                          └─ split ─▶ recorded as pending, no money moves
 A matching PayPal dispute poll or verified dispute/reversal webhook ─▶ FROZEN_EXTERNAL
 A resolved PayPal case ─▶ prior local state (check the financial outcome separately)
 ```
 
 - **State machine** (`src/lib/domain/stateMachine.ts`): pure TypeScript. Each transition
-  returns the one PayPal call it requires. Full table in [`docs/DESIGN.md`](docs/DESIGN.md#4-state-machine).
+  returns the required effect; partial refunds use separate capture and refund stages. Full table in [`docs/DESIGN.md`](docs/DESIGN.md#4-state-machine).
 - **PayPal** (`src/lib/paypal/client.ts`): Orders v2 with `intent: AUTHORIZE`, then
   authorize, capture, void and refund. Every money-moving call sends a unique
   `PayPal-Request-Id`, the id is reserved in our database before the call, and an
@@ -99,6 +102,20 @@ A resolved PayPal case ─▶ prior local state (check the financial outcome sep
   because the courier is simulated). A tracking record on PayPal is not proof that
   a real shipment occurred. PayPal only accepts tracking after capture; a failure
   never undoes the capture, is logged, and is retried up to three times.
+- **Reviewer partial refund (Part A)**: the reviewer enters a USD amount with two
+  decimals, strictly above zero and below the deal total, and a reason. AI ranges
+  are display-only and never fill that amount. Return is unchecked by default for
+  a partial refund; if required, the existing return deadline/delivery flow applies.
+  The app captures the authorization, records that capture, then refunds the typed
+  amount through Payments v2. Each stage has its own durable request-id reservation.
+  If refund fails after capture, the deal stays `COMPLETED` with a visible **refund
+  pending** notice. Errors/interrupted calls are not resent by repeat requests or
+  tick; manual PayPal checking is required. The platform bears the fee on the
+  refunded part, so it is not deducted from the decided amount. Remaining funds
+  are in the Sandbox merchant account; seller payout is not implemented. `SPLIT`
+  remains recorded-only. PayPal accept-claim/make-offer (Part B) is not built.
+  Partial refund is tested with fake clients and labelled simulation; an integrated
+  real Sandbox partial-refund check remains pending.
 - **Rules** (`src/lib/rules/engine.ts`):
 
   | Rule | Situation | Recommendation |
@@ -107,7 +124,7 @@ A resolved PayPal case ─▶ prior local state (check the financial outcome sep
   | R2 | Delivered to the agreed destination, no dispute in the window | Release |
   | R3 | Tracking destination or date inconsistent with the order | Human review |
   | R4 | Both sides gave evidence and the summary clearly supports one side | Recommend that side; a human confirms |
-  | R5 | Evidence missing or contradictory, no usable AI summary, or the buyer reports damage or missing parts (always a person: full or partial refund, seller or courier) | Human review (split possible) |
+  | R5 | Evidence missing or contradictory, no usable AI summary, or the buyer reports damage or missing parts (always a person: full or partial refund, seller or courier) | Human review (partial refund available; split recorded only) |
   | R6 | PayPal dispute or reversal event | Freeze |
   | R7 | Evidence looks like instructions aimed at the AI | Flag, ignore for scoring, human review |
 
@@ -306,12 +323,13 @@ The same numbers are shown in the app on the **Fairness results** page (`/fairne
 
 Questions we expect, with the honest answer and what the prototype does about each.
 
-**If the buyer wins a refund, do they keep the item too?** No. By default a refund waits
+**If the reviewer refunds the buyer, is a return required?** A full refund normally waits
 for the item to come back: the deal moves to `RETURN_REQUESTED`, the buyer submits return
 tracking, and the void or refund runs only when the return is delivered to the seller
 before the deadline (`RETURN_DAYS`, default 3). If no delivered return is recorded in time,
 the payment is released to the seller. The reviewer can waive the return, which is the
-default when the buyer reported that the item never arrived.
+default when the buyer reported that the item never arrived. A partial refund normally
+lets the buyer keep the item; the reviewer can explicitly require a return before it runs.
 
 **The operator still runs the server. How is this different from a rekber admin?** We do
 not remove the need to trust an operator. We make every operator action recorded,
@@ -421,8 +439,9 @@ to them; buyers pay nothing extra. The prototype does not charge it, because sel
 is not built.
 
 **Why is a split decision not paid out?** A split is recorded with its reason and moves no
-money. PayPal supports partial refunds, so a later version can capture the payment and
-refund the buyer's share; we kept the prototype to full outcomes.
+money; its execution was deferred by the owner. The separate **Partial refund** decision
+now captures the payment and refunds the reviewer-entered USD amount. It is distinct from
+SPLIT and does not implement a split payout or seller payout.
 
 ## 7. Limitations and production path
 

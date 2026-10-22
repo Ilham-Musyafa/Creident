@@ -1,3 +1,4 @@
+import { usdCents } from './partialAmount';
 // Demo data so every screen can be shown without calling PayPal.
 // Transactions are moved through the real state machine and orchestrator, so their audit
 // chains are genuine, but PayPal is replaced by a stub that returns DEMO-* ids.
@@ -17,13 +18,16 @@ import { addDays, type TimeConfig } from './timeConfig';
 
 type PaymentStub = NonNullable<OrchestratorDeps['paypal']>;
 
-function stubPayPal(prefix: string): PaymentStub & TrackingClient {
+function stubPayPal(prefix: string, total: string): PaymentStub & TrackingClient {
   return {
     createAuthorizeOrder: async () => ({ orderId: `DEMO-ORDER-${prefix}`, status: 'PAYER_ACTION_REQUIRED', approvalUrl: '#demo' }),
     authorizeOrder: async () => ({ orderStatus: 'COMPLETED', authorizationId: `DEMO-AUTH-${prefix}`, authorizationStatus: 'CREATED' }),
     captureAuthorization: async () => ({ captureId: `DEMO-CAPTURE-${prefix}`, status: 'COMPLETED' }),
     voidAuthorization: async () => undefined,
-    refundCapture: async () => ({ refundId: `DEMO-REFUND-${prefix}`, status: 'COMPLETED' }),
+    refundCapture: async (_captureId, _requestId, amount) => {
+      if (amount && (amount.currency !== 'USD' || !(usdCents(amount.value)! > 0) || usdCents(amount.value)! > usdCents(total)!)) throw new Error('Invalid demo refund amount');
+      return { refundId: `DEMO-REFUND-${prefix}`, status: 'COMPLETED' };
+    },
     addTracking: async () => ({ trackerId: `DEMO-TRACKER-${prefix}` }),
   };
 }
@@ -92,7 +96,7 @@ export async function seedDemoData(options: SeedOptions): Promise<{ created: num
     // A seller always accepts their own terms when creating a deal (as the UI does).
     if (spec.steps[0] !== 'accept') repo.recordAcceptance(id, 'seller', hash(termsJson), now());
 
-    const paypal = stubPayPal(id.slice(0, 8));
+    const paypal = stubPayPal(id.slice(0, 8), spec.amount);
     const deps = (actor: string, extra: Partial<OrchestratorDeps> = {}): OrchestratorDeps => ({
       repo, actor, now, paypal,
       returnUrl: 'https://example.com/demo-return', cancelUrl: 'https://example.com/demo-cancel',

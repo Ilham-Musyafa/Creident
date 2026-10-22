@@ -42,7 +42,7 @@ export function isReserved(status: TxStatus, captured: boolean): boolean {
 }
 
 export function isActive(status: TxStatus): boolean {
-  return !['COMPLETED', 'REFUNDED', 'VOIDED', 'CANCELLED'].includes(status);
+  return !['COMPLETED', 'REFUNDED', 'PARTIALLY_REFUNDED', 'VOIDED', 'CANCELLED'].includes(status);
 }
 
 export type StepState = 'done' | 'current' | 'upcoming';
@@ -61,7 +61,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   const doneUntil: Record<TxStatus, number> = {
     DRAFT: 0, CANCELLED: 0, TERMS_LOCKED: 1, AWAITING_APPROVAL: 1, AUTHORIZED: 2, VOIDED: 2,
     SHIPPED: 2, IN_INSPECTION: 3, DISPUTED: 3, UNDER_REVIEW: 3, RETURN_REQUESTED: 4, FROZEN_EXTERNAL: 3,
-    COMPLETED: 5, REFUNDED: 5,
+    COMPLETED: 5, REFUNDED: 5, PARTIALLY_REFUNDED: 5,
   };
   const done = doneUntil[effective];
   const steps: Step[] = base.map((step, i) => ({ ...step, state: i < done ? 'done' : i === done ? 'current' : 'upcoming' }));
@@ -81,6 +81,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   }
   if (effective === 'VOIDED') steps.splice(2, 3, { title: 'Authorization voided', detail: 'No money was taken', state: 'done' });
   if (effective === 'CANCELLED') steps.splice(0, 5, { title: 'Cancelled', detail: 'Cancelled before payment', state: 'done' });
+  if (effective === 'PARTIALLY_REFUNDED' && steps[4]) steps[4] = { title: 'Partially refunded', detail: 'Captured, then the reviewer amount was refunded', state: 'done' };
   if (effective === 'REFUNDED' && steps[4]) steps[4] = { title: 'Refunded to buyer', detail: 'Captured, then refunded via PayPal', state: 'done' };
   return steps;
 }
@@ -102,6 +103,8 @@ const EVENT_TITLES: Record<string, string> = {
   EVIDENCE_CHECK_RUN: 'AI evidence completeness checked (advisory)',
   RECOMMENDATION_RECORDED: 'Rule recommendation recorded',
   DECISION: 'Reviewer decision',
+  PARTIAL_REFUND_CAPTURED: 'Partial refund: payment captured',
+  PARTIAL_REFUND_COMPLETED: 'Reviewer partial refund completed',
   HUMAN_SPLIT_PENDING: 'Split decision (pending)',
   SHIP_DEADLINE_PASSED: 'Ship-by deadline missed, authorization voided',
   EXTERNAL_DISPUTE: 'Frozen by a PayPal dispute',

@@ -1,3 +1,4 @@
+import { usdCents } from '../partialAmount';
 // Simulated PayPal for demos without Sandbox keys (PAYPAL_MODE=simulated).
 // No network calls are made and no money, real or Sandbox, moves. Ids start with "SIM-"
 // so they can never be mistaken for PayPal ids, and the API marks every money step
@@ -75,7 +76,10 @@ export function createSimulatedPayPal(initialCases: PayPalCase[] = []): Simulate
     async authorizeOrder() { return { orderStatus: 'COMPLETED', authorizationId: id('AUTH'), authorizationStatus: 'CREATED' }; },
     async captureAuthorization() { return { captureId: id('CAPTURE'), status: 'COMPLETED' }; },
     async voidAuthorization() { return undefined; },
-    async refundCapture() { return { refundId: id('REFUND'), status: 'COMPLETED' }; },
+    async refundCapture(_captureId, _requestId, amount) {
+      if (amount && (amount.currency !== 'USD' || !(usdCents(amount.value)! > 0))) throw new PayPalError(400, 'INVALID_REQUEST', 'INVALID_AMOUNT', undefined, 'Invalid simulated refund amount');
+      return { refundId: id('REFUND'), status: 'COMPLETED' };
+    },
     async addTracking({ trackingNumber }) { return { trackerId: `${id('TRACKER')}-${trackingNumber}` }; },
   };
 }

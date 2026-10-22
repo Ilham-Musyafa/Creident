@@ -70,8 +70,8 @@ webhook delivery (needs a public HTTPS URL), and any live AI provider call.
 Owner: Codex works first, in order, one task per branch and PR (do not merge; Claude reviews
 when Codex runs out). Claude only reviews/merges until Codex usage is exhausted, then
 continues the same list from where HANDOFF says Codex stopped.
-1. C18 reviewer copilot (DESIGN 6.1 row 3): implemented and verified on `feat/c18-reviewer-copilot`, awaiting Claude review; do not merge.
-2. C19 partial refund (docs/PROPOSAL-PARTIAL-REFUND.md, part A only, owner-approved).
+1. C18 reviewer copilot: merged by Claude in PR #56.
+2. C19 partial refund Part A: implemented and verified on `feat/c19-partial-refund`, based on merged C18 PR #56; awaiting Claude review, do not merge.
 3. C20 evidence translation (DESIGN 6.1 row 5; was Claude's, moved to Codex).
 4. C21 AG Studio oversight dashboard, built without a licence key (docs/SPONSOR-TOOLS.md).
 5. C22 Postman collection of the HalcyVault API.
@@ -95,9 +95,10 @@ npm run smoke      # owner's PC only: real PayPal Sandbox, reads .env
 
 1. Done 2026-10-21: owner ran `npm run smoke`, both paths pass (see docs/SANDBOX-NOTES.md).
 2. Done: AI evidence summary wired into review preparation (PR #5). Only the human review
-   POST records RELEASE or REFUND decisions for disputed transactions; a required return
+   POST records RELEASE, REFUND or PARTIAL_REFUND decisions for disputed transactions; a required return
    defers the money call. SPLIT remains recorded-only by owner decision (2026-10-21);
-   partial execution is deferred.
+   SPLIT execution is deferred; the separate C19 PARTIAL_REFUND flow is implemented
+   on its review branch, pending Claude review.
 3. Done: the eight UI screens (PR "UI screens"), plus Deals list, About, PayPal return
    page, loading/error/not-found states. Pages read through `src/app/_server.ts`; every
    change goes through the JSON API. Demo deals: Menu > "Load demo deals"
@@ -166,6 +167,59 @@ Still open:
 - Make the repo public before submitting.
 
 ## Log
+
+- 2026-10-22 08:20 WIB (Codex, C19 Part A): implemented on
+  `feat/c19-partial-refund` from main including merged C18 PR #56. Reviewer types
+  a canonical two-decimal positive USD amount below the deal total and a reason.
+  The partial-return checkbox defaults unchecked and is separate from full-refund
+  return settings. Copilot ranges never fill the amount or enter payment logic;
+  adopted reason metadata is preserved as unchanged/edited.
+  UNDER_REVIEW partial decisions persist amount/reason/return choice and original
+  decisionBasis/aiDraft metadata before payment. The staged orchestrator reserves
+  the shared PAYPAL_CAPTURE request id, captures, then atomically saves capture id,
+  COMPLETED and PARTIAL_REFUND_CAPTURED before reserving PAYPAL_PARTIAL_REFUND.
+  A confirmed amount refund reaches final PARTIALLY_REFUNDED with refund id/audit.
+  Failed/uncertain/interrupted calls are not resent by repeat requests or tick.
+  Refund failure after capture stays COMPLETED with PAYPAL_ERROR, request/debug
+  ids and a visible refund-pending notice. No reconciliation worker is added.
+  Required returns reuse RETURN_REQUESTED/deadline/delivery; a missed return
+  cancels the conditional partial refund, but tick cannot cancel a return already
+  delivered. Existing captures are reused. A competing pending full money action
+  blocks initial partial-decision storage inside the SQLite transaction.
+  Existing-database migration widens the CHECK and adds partial-refund fields plus
+  decision amount/return choice, preserving ids, rows, audit hashes and triggers.
+  Simulated gateway and demo stub accept explicit amounts. UI has manual amount,
+  pending notices on deal/review/receipt, new status/timeline and receipt amount;
+  SPLIT remains recorded-only and is explained separately. Platform bears the fee
+  on the refunded part; no seller payout or partial-fee deduction is implemented.
+  README, DESIGN, UI status mapping and proposal status updated. Part B untouched;
+  no accept-claim/make-offer calls and no new dependencies. APIMatic PayPal context
+  tools unavailable; used existing PayPalClient.refundCapture amount support.
+  `npm test` 435/435 (41 files), typecheck, build and diff check passed. Tests cover
+  amount/role/gate checks, call ordering, errors after capture, uncertain results,
+  concurrency/idempotency, returns/deadlines, migration, receipts, C18 metadata,
+  simulated mode, tick not retrying and valid chains. Production Chromium with a
+  fresh temp DB, simulated PayPal/replay: form, successful receipt and pending
+  review at 390/1440px light/dark; manual amount, unchecked partial return, AI
+  provenance, capture-before-refund and pending debug/request ids verified.
+  A labelled fake-client failure fixture supplied the pending browser state.
+  First browser pass caught nested-paragraph hydration errors in the new notice;
+  changed its child text to spans. Final pass: no overflow or console errors/warnings.
+  Real integrated Sandbox partial-refund execution remains pending; C20 not started.
+  All work is committed and pushed. PR creation returned GitHub API 403 Forbidden;
+  ready-to-paste English description: `/tmp/c19-pr-description.md`. Open one PR
+  from this branch for Claude review when API access is available; do not merge.
+
+- 2026-10-22 08:12 WIB (Codex, C19 checkpoint): Part A implemented locally:
+  bounded USD reviewer amount, staged capture/refund with separate durable claims,
+  partial decision storage/migration, required-return path, final PARTIALLY_REFUNDED,
+  pending/error notice, receipt amount, manual UI amount and C18 audit provenance.
+  Shared capture request id prevents a second capture across release/partial paths.
+  42 targeted tests and typecheck passed before final compatibility refinements.
+  C18 was merged by Claude (#56) and integrated before this commit. No Part B or
+  new dependencies. APIMatic PayPal plugin is unavailable; existing PayPalClient
+  already supports refund with amount. Next: full tests/typecheck/build, browser
+  390/1440 light/dark, README/DESIGN/HANDOFF completion and one review PR.
 
 - 2026-10-22 08:15 WIB (Claude): reviewed and merged C18 reviewer copilot (391 tests,
   build, browser check 390 light / 1440 dark). Watch in the live-model eval: the copilot
