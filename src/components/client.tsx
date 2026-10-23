@@ -46,7 +46,7 @@ export function ErrorNote({ error }: { error: ApiError | Error | null }) {
   return (
     <p role="alert" className="mt-3 rounded-[14px] border p-3 text-sm" style={{ background: 'var(--disputed-bg)', borderColor: 'var(--line)', color: 'var(--disputed-text)' }}>
       {error.message}
-      {debugId && <span className="mt-1 block font-mono text-xs">PayPal debug id: {debugId}</span>}
+      {debugId && <span className="mt-1 block font-mono text-sm">PayPal debug id: {debugId}</span>}
     </p>
   );
 }
@@ -108,7 +108,7 @@ export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
       <Label htmlFor="reviewer-code">Reviewer access code</Label>
       <input id="reviewer-code" type="password" autoComplete="off" className={fieldClass} value={code} onChange={(e) => setCode(e.target.value)} placeholder={unlocked ? 'Saved on this device' : 'Ask the demo owner'}/>
       <Button type="submit" variant="ghost" fullWidth disabled={!code.trim()}>Save code</Button>
-      <p className="text-xs text-muted">{unlocked ? 'Reviewer actions are unlocked on this device.' : 'This demo needs a code before anyone can act as the reviewer.'}</p>
+      <p className="text-sm text-muted">{unlocked ? 'Reviewer actions are unlocked on this device.' : 'This demo needs a code before anyone can act as the reviewer.'}</p>
     </form>
   );
 }
@@ -137,7 +137,7 @@ export function PayButton({ txId, simulated = false, amount, item }: { txId: str
 const fieldClass = 'min-h-11 w-full rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted';
 
 function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNode; hint?: string }) {
-  return <label htmlFor={htmlFor} className="mb-2 block text-xs font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
+  return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
 
@@ -175,7 +175,7 @@ export function EvidenceForm({ txId, role }: { txId: string; role: Role }) {
           <option value="chat">Chat excerpt</option>
           <option value="note">Note</option>
         </select>
-        <p className="mt-1 text-xs text-muted">{kind === 'photo' ? 'Describe what the photo shows, including the one-time code.'
+        <p className="mt-1 text-sm text-muted">{kind === 'photo' ? 'Describe what the photo shows, including the one-time code.'
           : kind === 'chat' ? 'Paste the relevant messages from your chat with the other party.' : 'Anything else the reviewer should know.'}</p>
       </div>
       <div><Label htmlFor="content">Evidence</Label><textarea id="content" required maxLength={4000} rows={4} className={`${fieldClass} py-3`} value={content} onChange={(e) => setContent(e.target.value)} placeholder="What does it show? Mention the one-time code if it is a photo."/></div>
@@ -295,7 +295,7 @@ export function PayPalDisputeActions({ txId, disputeId, role, actions }: { txId:
     router.refresh();
   }
   return <div className="space-y-3">
-    {!actions.includes('provide_evidence') && actions.includes('send_message') && <p className="text-xs text-muted">Inquiry stage: this sends a short message. The evidence PDF needs the claim stage and PayPal must offer provide_evidence first.</p>}
+    {!actions.includes('provide_evidence') && actions.includes('send_message') && <p className="text-sm text-muted">Inquiry stage: this sends a short message. The evidence PDF needs the claim stage and PayPal must offer provide_evidence first.</p>}
     {(actions.includes('provide_evidence') || actions.includes('send_message')) && <Button variant="ghost" fullWidth disabled={busy} onClick={() => act('evidence')}>{busy ? 'Sending…' : 'Send Creident evidence to PayPal'}</Button>}
     {actions.includes('escalate') && (confirming ? <div className="space-y-3 rounded-[18px] border border-line bg-surface p-4">
       <p className="text-sm text-heading">Ask PayPal to step in? This turns the inquiry into a PayPal claim and cannot be undone.</p>

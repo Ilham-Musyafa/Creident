@@ -31,7 +31,7 @@ export default function HowVerificationWorksPage() {
         <Card>
           <p>The platform runs this database. Someone with full control of it could rewrite every step and recompute all fingerprints, and a check on the same server would still pass.</p>
           <p className="mt-2">A <strong className="text-heading">sealed copy</strong> closes that gap: a signed list of each record's latest fingerprint, published outside this server. Anyone holding it can spot a later rewrite. It makes rewriting detectable, not impossible.</p>
-          <p className="mt-3 rounded-[12px] bg-surface-2 p-3 text-xs font-semibold text-heading">
+          <p className="mt-3 rounded-[12px] bg-surface-2 p-3 text-sm font-semibold text-heading">
             {sealed ? `Latest sealed copy: ${shortDate(sealed.createdAt)}. Records are also checked against it.`
               : published.available ? `A sealed copy exists but could not be checked: ${published.result.valid ? '' : published.result.reason}`
               : 'No sealed copy has been published yet, so records are verified on this server only.'}

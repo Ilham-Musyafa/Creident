@@ -25,9 +25,9 @@ export default async function SimulatedApprovalPage({ searchParams }: { searchPa
         <Card>
           <p className="text-sm text-muted">{tx.item}</p>
           <p className="mt-1 text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
-          <p className="mt-1 text-xs text-muted">You approve now; you are charged only after you confirm the item or a problem is decided.</p>
+          <p className="mt-1 text-sm text-muted">You approve now; you are charged only after you confirm the item or a problem is decided.</p>
         </Card>
-        <KeyValue items={[{ label: 'Demo order', value: <span className="font-mono text-xs">{token}</span> }]}/>
+        <KeyValue items={[{ label: 'Demo order', value: <span className="font-mono text-sm">{token}</span> }]}/>
         <div className="grid grid-cols-[1fr_1.3fr] gap-2">
           <ButtonLink href={back({ cancel: '1' })} variant="ghost" fullWidth>Cancel</ButtonLink>
           <ButtonLink href={back({ token })} fullWidth>Approve payment (demo)</ButtonLink>

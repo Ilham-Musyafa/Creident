@@ -173,6 +173,56 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Readability, product introduction and About
+
+- Owner approved these three priorities. Raised explanatory/help/subtitle copy to
+  14px and former 11px status/navigation/technical labels to at least 12px. Increased
+  oversight table/body text to 14px; brand signature and existing font pairing remain.
+- Replaced Home's short demo guide with a three-step product introduction before the
+  dashboard (terms → PayPal approval → R1–R7/evidence/human dispute review). Role CTA
+  buttons reuse demo cookies and refresh Home; no transactions or payments are made.
+  Intro is dismissible/reopenable, handles blocked storage, restores keyboard focus,
+  and states simulated/Sandbox mode and reviewer access-code limits accurately.
+- About uses native R1–R7 accordions, clear section headings and expandable bridge/
+  limitation details. Core demo/no-money/no-sign-in/no-payout limits and audit rewrite
+  caveat stay visible. Replaced stale hard-coded eval counts with a link to the current
+  results and retained replay caveats. No state/rule/payment changes or dependencies.
+- Verification: 489 tests (47 files), typecheck and production build passed. Browser
+  layout/font/theme checks covered 15 pages × 360/390/1024/1440px × light/dark (120
+  combinations), with no horizontal page overflow or unexpected console/page errors;
+  existing AG Studio missing-license notices only. Final intro/About interactions
+  passed for all three roles across the same widths/themes (24 flows), including
+  persistence/reopen, focus, keyboard accordions, unchanged URL and no write requests.
+- Contrast/minimum-size spot audit: 1,218 visible text samples on Home, Transactions,
+  New deal, About, Fairness, styleguide, Records and Menu in light/dark had no failures
+  against 12px minimum and AA contrast thresholds (4.5 normal / 3 large). Existing
+  palette passed, so no color changes were needed. This is not a full WCAG certification.
+- Full-page review captures (390/1440, light/dark) in docs/ui/screens/readability/;
+  viewport height expanded for capture so fixed mobile tabs sit at the image bottom.
+- Continued pending `ui/quick-role-switch` branch to avoid stacking an unmerged task;
+  includes the previously approved mobile Buyer/Seller shortcut. Pushed successfully.
+  GitHub PR creation returned `Forbidden`; open `/pull/new/ui/quick-role-switch`
+  manually (or update the existing PR). Body: `/tmp/creident-readability-pr.md`.
+  Await review/merge; no deployment or merge performed.
+
+
+### 2026-10-23 — In-place mobile demo role toggle
+
+- Branch `ui/quick-role-switch` from merged PR #79 (`9c6c372`). Owner requested that
+  tapping the Home avatar switches roles without opening settings. New small client
+  component toggles Buyer ↔ Seller via the existing `hv-role` cookie and refreshes
+  the current page. Pending disables repeat taps; title/accessibility label identifies
+  the next role, with a small swap icon. Reviewer selection/gate stays in Menu;
+  a reviewer can use the shortcut to return to Buyer. No real authentication added.
+- Verification: 489 tests (47 files), typecheck, production build and diff check passed.
+  Chromium at 360/390px light/dark verified click/keyboard toggle both ways, unchanged
+  Home URL, persisted role after reload, updated role summary, 44px target, no overflow
+  or console errors. Reviewer-to-buyer and unchanged desktop greeting also checked.
+- Updated docs/UI.md; review captures in docs/ui/screens/quick-role/. No dependencies
+  or business logic changes. Pushed successfully; PR creation returned GitHub `Forbidden`.
+  Open `/pull/new/ui/quick-role-switch` manually; body: `/tmp/quick-role-pr.md`.
+
+
 ### 2026-10-23 — Compact mobile Home identity
 
 - Owner requested reducing crowding around “Hi, Demo Buyer”. Mobile Home now pairs

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { QuickRoleSwitch } from '../components/QuickRoleSwitch';
 import { DemoGuide } from '../components/DemoGuide';
 import { BrandLogo } from '../components/BrandLogo';
 import { verifyChain } from '../lib/audit/chain';
@@ -37,16 +38,6 @@ export default async function HomePage() {
   const shipCount = todo.filter(entry => entry.action === 'ship').length;
   const roleSummary = role === 'seller' ? `${shipCount} deal${shipCount === 1 ? ' needs' : 's need'} shipping · ${actionCount} seller task${actionCount === 1 ? '' : 's'}` : role === 'reviewer' ? `${reviewQueue.length} dispute${reviewQueue.length === 1 ? '' : 's'} awaiting a human decision` : `${actionCount} deal${actionCount === 1 ? '' : 's'} waiting for you`;
   const actionTitle = role === 'buyer' ? 'Waiting for you' : role === 'seller' ? 'Your seller tasks' : 'Waiting for your review';
-  const draftDeal = deals.find(d => d.status === 'DRAFT');
-  const disputedDeal = deals.find(d => d.status === 'DISPUTED');
-  const reviewDeal = reviewQueue[0];
-  const exampleDeal = disputedDeal ?? reviewDeal ?? deals[0];
-  const guideSteps = [
-    { title: 'Explore a deal', detail: role === 'seller' ? 'Create terms as the seller.' : 'Check the agreed terms as the buyer.', href: role === 'seller' ? '/deals/new' : role === 'buyer' && draftDeal ? `/deals/${draftDeal.id}/checkout` : '/deals' },
-    { title: 'See a dispute', detail: 'Read the evidence and agreed checks.', href: exampleDeal ? `/deals/${exampleDeal.id}` : '/deals' },
-    { title: 'Human decision', detail: role === 'reviewer' ? 'Review the recommendation; a person decides.' : 'Switch to Reviewer in Menu to explore review.', href: role === 'reviewer' && reviewDeal ? `/deals/${reviewDeal.id}/review` : '/menu' },
-    { title: 'Check the record', detail: 'Inspect events and verify the audit chain.', href: '/audit' },
-  ];
   const chains = deals.map((d) => verifyChain(ctx.repo.readEvents(d.id)));
   const verified = chains.filter((c) => c.ok).length;
 
@@ -54,32 +45,31 @@ export default async function HomePage() {
     <AppShell active="Home">
       <header className="mb-4 flex items-center justify-between gap-3 lg:hidden">
         <div className="-ml-3"><BrandLogo/></div>
-        <Link href="/menu" aria-label={`Demo ${role}: switch role in Menu`} className="flex min-h-11 min-w-11 shrink-0 flex-col items-center gap-1 rounded-xl p-1 text-heading hover:bg-surface-2">
-          <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold">{role[0]!.toUpperCase()}</span>
-          <span className="text-[11px] font-semibold capitalize">{role}</span>
-        </Link>
+        <QuickRoleSwitch current={role}/>
       </header>
       <h1 className="sr-only lg:hidden">Home</h1>
       <header className="mb-5 hidden items-center gap-3 lg:flex">
         <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold text-heading">{role[0]!.toUpperCase()}</span>
-        <div><p className="text-xs text-muted">Demo account · switch role in Menu</p><h1 className="text-base font-bold capitalize text-heading">Hi, demo {role}</h1></div>
+        <div><p className="text-sm text-muted">Demo account · switch role in Menu</p><h1 className="text-2xl font-bold capitalize text-heading">Hi, demo {role}</h1></div>
       </header>
 
+      <DemoGuide simulated={simulatedPayPal()}/>
+
+      <section id="demo-dashboard" tabIndex={-1} aria-label="Demo dashboard">
       <p className="mb-4 text-sm text-muted">{roleSummary}</p>
-      <DemoGuide steps={guideSteps}/>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0">
           {deals.length === 0 ? (
             <Card className="p-6 lg:p-8">
-              <p className="text-xs font-semibold text-muted">Get started</p>
+              <p className="text-sm font-semibold text-muted">Get started</p>
               <h2 className="mt-3 text-xl font-extrabold tracking-tight text-heading">{role === 'seller' ? 'Create your first deal' : role === 'reviewer' ? 'Your review queue starts here' : 'Your deals start here'}</h2>
               <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">{role === 'seller' ? 'Agree on the terms, track delivery, and keep a record of every step.' : 'Explore labelled demo deals to see payments, delivery, and dispute review in action.'}</p>
               <div className="mt-6 space-y-3">
                 {role === 'seller' && <ButtonLink href="/deals/new">+ New deal</ButtonLink>}
                 <SeedButton role={role}/>
               </div>
-              <p className="mt-3 text-xs text-muted">Example deals use demo payments (no real money).</p>
+              <p className="mt-3 text-sm text-muted">Example deals use demo payments (no real money).</p>
             </Card>
           ) : <AmountCard
             label={`Approved, waiting to be charged · ${reservedDeals} open deal${reservedDeals === 1 ? '' : 's'}`}
@@ -96,7 +86,7 @@ export default async function HomePage() {
         <aside className="min-w-0 space-y-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <div>
             <SectionTitle>{actionTitle}{actionCount > 0 ? ` (${actionCount})` : ''}</SectionTitle>
-            {actionCount > 0 && <p className="mb-3 text-xs text-muted">Deadlines first, soonest at the top.</p>}
+            {actionCount > 0 && <p className="mb-3 text-sm text-muted">Deadlines first, soonest at the top.</p>}
             {todo.length === 0 ? <p className="text-sm leading-relaxed text-muted">You’re all caught up.<br/><Link href="/menu" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Switch demo role →</Link></p> : (
               <ul className="space-y-2">
                 {todo.slice(0, 6).map(({ d, action, deadline }) => {
@@ -106,7 +96,7 @@ export default async function HomePage() {
                     <li key={d.id}>
                       <Link href={action === 'review' ? `/deals/${d.id}/review` : action === 'add-evidence' ? `/deals/${d.id}/evidence` : action === 'pay' || (action === 'accept-terms' && role === 'buyer') ? `/deals/${d.id}/checkout` : `/deals/${d.id}`}
                         className="flex min-h-[60px] items-center justify-between gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2">
-                        <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{ACTION_LABEL[action]}</span><span className="block break-words text-xs text-muted">{d.item}{left ? ` · ${left}` : ''}</span></span>
+                        <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{ACTION_LABEL[action]}</span><span className="block break-words text-sm text-muted">{d.item}{left ? ` · ${left}` : ''}</span></span>
                         <StatusPill status={d.status} className="w-32 shrink-0 justify-center text-center text-balance"/>
                       </Link>
                     </li>
@@ -119,7 +109,7 @@ export default async function HomePage() {
 
           {deals.length > 0 && (
             <Card>
-              <p className="text-xs text-muted">Audit & verification</p>
+              <p className="text-sm text-muted">Audit & verification</p>
               <p className="mt-1 text-sm font-bold" style={{ color: verified === chains.length ? 'var(--success-text)' : 'var(--warning-text)' }}>
                 {verified === chains.length ? `${chains.length} records verified on this server` : `${chains.length - verified} of ${chains.length} records changed`}
               </p>
@@ -128,9 +118,9 @@ export default async function HomePage() {
           )}
 
           <div className="border-t border-line pt-4">
-            <span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">Sandbox demo</span>
-            <p className="mt-2 text-xs leading-relaxed text-muted">{simulatedPayPal() ? 'Demo payments only. No real money moves.' : 'A dispute-mediation prototype. No real money.'}</p>
-            <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">View limitations</Link>
+            <span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold text-heading">Sandbox demo</span>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{simulatedPayPal() ? 'Demo payments only. No real money moves.' : 'A dispute-mediation prototype. No real money.'}</p>
+            <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-sm font-semibold text-heading hover:underline">View limitations</Link>
           </div>
         </aside>
         <div className="min-w-0 lg:col-start-1 lg:row-start-2">
@@ -144,6 +134,7 @@ export default async function HomePage() {
           </>}
         </div>
       </div>
+      </section>
     </AppShell>
   );
 }

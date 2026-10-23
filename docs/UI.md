@@ -99,7 +99,10 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 - Page titles: 28px on mobile / 32px from the small breakpoint; subheads 15px/700.
 - Monospace (hashes, codes): system `ui-monospace`.
 - Scale: amount 32/800 (tight letter-spacing), section 15/700,
-  body 14/400–600, caption 12/400, micro 11/700 (pills).
+  body 14/400–600, caption/label 12/400–700, pills at least 12/700.
+- Explanatory paragraphs, transaction subtitles and form help use 14px or larger.
+  Compact navigation, status labels and technical fingerprints use at least 12px.
+  Brand wordmark/tagline retain the supplied Georgia/Arial treatment (tagline 12px).
 - Use tabular numbers for money (`font-variant-numeric: tabular-nums`).
 
 ## 5. Shape, spacing, elevation
@@ -251,8 +254,13 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 
 ### Home demo guidance (owner-approved 2026-10-23)
 
-- A dismissible “Try the demo” guide links to terms/deal, dispute, human review and
-  audit examples. Demo roles are explicit; dismissal is an optional localStorage preference.
+- First-time visitors see a dismissible product introduction before the dashboard:
+  agree on terms → approve with PayPal → rules R1–R7 and human dispute review.
+- Seller/Buyer/Reviewer buttons reuse the existing demo role cookie, refresh Home and
+  focus the dashboard. This does not unlock reviewer actions or create transactions.
+  “Open dashboard” keeps the current role. Reopen with “About this demo”.
+- Dismissal uses an optional localStorage preference with a blocked-storage fallback.
+  State simulated/Sandbox payment mode, no real money, demo data and access-code limits.
 - Show a short role-specific task summary. Sort action cards by the nearest stored
   deadline first, then undated actions; display up to six, with a link to all deals.
 - On mobile, show the action queue before recent transactions. These are presentation
@@ -275,6 +283,20 @@ must never be described as a refund. Pending refunds/returns stay labelled pendi
 Technical state/event codes remain intact in APIs, stored data and audit details.
 
 Mobile Home header refinement (owner-approved 2026-10-23): keep the full brand
-signature on the left and a compact, labelled avatar/role link to Menu on the right.
+signature on the left and a compact, labelled avatar/role toggle on the right.
 The separate greeting and role-switch instruction remain desktop-only; mobile keeps
 an accessible Home heading. Use a 44px minimum target and the existing focus tokens.
+The avatar switches Buyer ↔ Seller in place using the existing demo role cookie;
+its accessible name/title describes the next role. Reviewer selection stays in Menu;
+a reviewer can use the shortcut to return to Buyer. Refresh Home without changing URL.
+
+### About and readability pass (owner-approved 2026-10-23)
+
+- R1–R7 use native keyboard-accessible accordions with short titles and the full rule
+  explanation. Rule behavior is unchanged. Audit caveats remain visible.
+- Limitations keep a visible demo/no-real-money/no-real-sign-in/no-payout summary;
+  remaining details can be expanded. Direct `#decisions`, `#audit` and `#limitations`
+  links target visible sections. Link to current evaluation results rather than
+  repeating hard-coded case counts that can become stale.
+- Retain the selected font pairing, palette, logo, desktop drawer and demo labels.
+  No new libraries or decorative animations are needed for this pass.

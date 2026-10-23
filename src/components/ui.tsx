@@ -24,15 +24,15 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
 }
 export function StatusPill({ status, suffix, className = '' }: { status: TxStatus; suffix?: string; className?: string }) {
   const { label, tone } = statusMap[status];
-  return <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  return <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
 export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
     <section className="rounded-[26px] bg-hero p-5 text-hero-text" aria-label="Amount overview">
-      <p className="text-xs text-hero-sub">{label}</p>
+      <p className="text-sm text-hero-sub">{label}</p>
       <p className="mt-1 text-[32px] font-extrabold tracking-tight tabular-nums"><CountUp value={amount}/></p>
       <div className="my-5 grid grid-cols-3 gap-2">
-        {stats.map(s => <div key={s.label} className="rounded-[14px] bg-white/10 p-3"><strong className="block tabular-nums">{s.value}</strong><span className="text-xs text-hero-sub">{s.label}</span></div>)}
+        {stats.map(s => <div key={s.label} className="rounded-[14px] bg-white/10 p-3"><strong className="block tabular-nums">{s.value}</strong><span className="text-sm text-hero-sub">{s.label}</span></div>)}
       </div>
       {actionHref ? <ButtonLink href={actionHref}>{actionLabel}</ButtonLink> : onAction ? <Button onClick={onAction}>{actionLabel}</Button> : null}
     </section>
@@ -50,7 +50,7 @@ export function DealListItem({ title, amount, status, href, icon = '◇' }: { ti
   return <Link href={href} className="flex min-h-[72px] min-w-0 items-center gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2"><span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-[14px] text-xl" style={toneStyle(tone)}>{icon}</span><span className="min-w-0 flex-1"><span className="block break-words text-sm font-bold text-heading">{title}</span><StatusPill status={status}/></span><strong className="shrink-0 text-sm tabular-nums">{amount}</strong></Link>;
 }
 export function Timeline({ steps }: { steps: { title: string; detail?: string; state: 'done' | 'current' | 'upcoming' }[] }) {
-  return <ol className="space-y-0">{steps.map((s, i) => <li key={`${s.title}-${i}`} className="flex gap-3"><div className="flex flex-col items-center"><span style={{ '--i': i } as CSSProperties} className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-xs font-bold ${s.state === 'done' ? 'hv-step-done ' : s.state === 'current' ? 'hv-step-current ' : ''}${s.state === 'done' ? 'border-heading bg-heading text-on-strong' : s.state === 'current' ? 'border-[var(--inspection-text)] bg-[var(--inspection-bg)] text-[var(--inspection-text)]' : 'border-line text-muted'}`}>{s.state === 'done' ? '✓' : i + 1}</span>{i < steps.length - 1 && <span className="h-8 w-px bg-line"/>}</div><div className="pb-4"><p className="text-sm font-semibold text-heading">{s.title}</p>{s.detail && <p className="text-xs text-muted">{s.detail}</p>}</div></li>)}</ol>;
+  return <ol className="space-y-0">{steps.map((s, i) => <li key={`${s.title}-${i}`} className="flex gap-3"><div className="flex flex-col items-center"><span style={{ '--i': i } as CSSProperties} className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-sm font-bold ${s.state === 'done' ? 'hv-step-done ' : s.state === 'current' ? 'hv-step-current ' : ''}${s.state === 'done' ? 'border-heading bg-heading text-on-strong' : s.state === 'current' ? 'border-[var(--inspection-text)] bg-[var(--inspection-bg)] text-[var(--inspection-text)]' : 'border-line text-muted'}`}>{s.state === 'done' ? '✓' : i + 1}</span>{i < steps.length - 1 && <span className="h-8 w-px bg-line"/>}</div><div className="pb-4"><p className="text-sm font-semibold text-heading">{s.title}</p>{s.detail && <p className="text-sm text-muted">{s.detail}</p>}</div></li>)}</ol>;
 }
 export function KeyValue({ items }: { items: { label: string; value: ReactNode }[] }) {
   return <dl className="rounded-[22px] border border-line bg-surface p-4">{items.map(item => <div key={item.label} className="flex justify-between gap-4 border-b border-dashed border-line py-2 last:border-0"><dt className="text-sm text-muted">{item.label}</dt><dd className="text-right text-sm font-semibold tabular-nums">{item.value}</dd></div>)}</dl>;
@@ -58,7 +58,7 @@ export function KeyValue({ items }: { items: { label: string; value: ReactNode }
 export function FindingCard({ criterion, supports, evidenceIds }: { criterion: string; supports: 'buyer' | 'seller' | 'unclear'; evidenceIds: string[] }) {
   // Matches docs/UI.md mockups: buyer = disputed tone, seller = completed tone, unclear = neutral.
   const tone: Tone = supports === 'unclear' ? 'void' : supports === 'buyer' ? 'disputed' : 'completed';
-  return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-[11px] font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 font-mono text-[11px] text-muted">{id}</span>)}</div></article>;
+  return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-xs font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 font-mono text-xs text-muted">{id}</span>)}</div></article>;
 }
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
   return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>{rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
@@ -69,17 +69,17 @@ export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulat
   // A row shows only what happened and when. A normal step gets no badge (the summary above
   // already says how many steps are verified); only a step that failed verification is flagged.
   // Step number, actor, source and fingerprints open on tap.
-  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-xs text-muted">{time}</span>
-    {check === 'failed' && <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Verification failed here</span>}
-    {check === 'after' && <span className="mt-0.5 block text-xs text-muted">Cannot verify after the failed step</span>}</span>
+  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-sm text-muted">{time}</span>
+    {check === 'failed' && <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-sm font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Verification failed here</span>}
+    {check === 'after' && <span className="mt-0.5 block text-sm text-muted">Cannot verify after the failed step</span>}</span>
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>;
-  const details = <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-[12px] bg-surface-2 p-3 text-xs">
+  const details = <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-[12px] bg-surface-2 p-3 text-sm">
     <dt className="text-muted">Step</dt><dd className="font-mono text-heading">#{seq}</dd>
     <dt className="text-muted">By</dt><dd className="capitalize text-heading">{actor}</dd>
     {simulated && <><dt className="text-muted">Source</dt><dd className="text-heading">Demo (not from PayPal)</dd></>}
-    {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-[11px] text-muted">{hash}</dd></>}
-    <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-[11px] text-muted">{fullPrevHash ?? prevHash}</dd>
-    {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-[11px] text-muted">{rawType}</dd></>}
+    {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-xs text-muted">{hash}</dd></>}
+    <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-xs text-muted">{fullPrevHash ?? prevHash}</dd>
+    {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-xs text-muted">{rawType}</dd></>}
   </dl>;
   return <li id={`step-${seq}`} style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`scroll-mt-24 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'} ${check === 'after' ? 'opacity-60' : ''}`}>
     <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary>{details}</details>
@@ -90,15 +90,15 @@ export function ChainStatus({ verifiedSteps, count, where, revealAfterMs }: { ve
   const verified = verifiedSteps === count;
   return <div role="status" className={`rounded-[18px] border p-4 text-sm ${revealAfterMs === undefined ? '' : 'hv-verified'}`} style={{ ...(revealAfterMs === undefined ? {} : { '--after': `${revealAfterMs}ms` }), background: verified ? 'var(--success-bg)' : 'var(--warning-bg)', borderColor: verified ? 'var(--success-line)' : 'var(--warning-line)', color: verified ? 'var(--success-text)' : 'var(--warning-text)' }}>
     <strong className="block">{verified ? '✓ ' : '⚠ '}{verifiedSteps} of {count} steps verified</strong>
-    <span className="mt-0.5 block text-xs">{verified ? where : `Step #${verifiedSteps + 1} does not match the steps before it.`}</span>
-    {!verified && <a href={`#step-${verifiedSteps + 1}`} className="mt-1 inline-flex min-h-11 items-center text-xs font-bold underline underline-offset-4">Go to step #{verifiedSteps + 1}</a>}
+    <span className="mt-0.5 block text-sm">{verified ? where : `Step #${verifiedSteps + 1} does not match the steps before it.`}</span>
+    {!verified && <a href={`#step-${verifiedSteps + 1}`} className="mt-1 inline-flex min-h-11 items-center text-sm font-bold underline underline-offset-4">Go to step #{verifiedSteps + 1}</a>}
   </div>;
 }
 export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`min-h-11 w-full rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted ${className}`} {...props}/>;
 }
 export function Field({ label, id, hint, ...props }: InputHTMLAttributes<HTMLInputElement> & { label: string; id: string; hint?: string }) {
-  return <label htmlFor={id} className="block text-xs font-medium text-muted"><span className="mb-2 block">{label}</span><Input id={id} aria-describedby={hint ? `${id}-hint` : undefined} {...props}/>{hint && <span id={`${id}-hint`} className="mt-1 block text-xs">{hint}</span>}</label>;
+  return <label htmlFor={id} className="block text-sm font-medium text-muted"><span className="mb-2 block">{label}</span><Input id={id} aria-describedby={hint ? `${id}-hint` : undefined} {...props}/>{hint && <span id={`${id}-hint`} className="mt-1 block text-sm">{hint}</span>}</label>;
 }
 export function CodeBadge({ code }: { code: string }) { return <strong className="inline-block rounded-xl bg-surface-2 px-3 py-2 font-mono text-sm tracking-widest text-heading">{code}</strong>; }
 
@@ -109,5 +109,5 @@ function NavIcon({ name }: { name: NavItem['label'] }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">{path}</svg>;
 }
 export function BottomNav({ active = 'Home' }: { active?: NavItem['label'] }) {
-  return <nav aria-label="Main navigation" className="border-t border-line bg-surface lg:w-64 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-14 min-w-12 flex-col items-center justify-center gap-1 text-[11px] font-semibold lg:min-h-11 lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm ${item.label === 'New' ? 'text-heading lg:hover:bg-surface-2' : active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'} ${item.label === 'New' ? '[&>svg]:size-11 [&>svg]:rounded-full [&>svg]:bg-accent [&>svg]:p-3 [&>svg]:text-on-accent lg:[&>svg]:size-5 lg:[&>svg]:rounded-none lg:[&>svg]:bg-transparent lg:[&>svg]:text-heading lg:[&>svg]:p-0' : ''}`}><NavIcon name={item.label}/><span>{item.label === 'Audit' ? 'Records' : item.label === 'Deals' ? 'Transactions' : item.label}</span></Link>)}</div></nav>;
+  return <nav aria-label="Main navigation" className="border-t border-line bg-surface lg:w-64 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-14 min-w-12 flex-col items-center justify-center gap-1 text-xs font-semibold lg:min-h-11 lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm ${item.label === 'New' ? 'text-heading lg:hover:bg-surface-2' : active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'} ${item.label === 'New' ? '[&>svg]:size-11 [&>svg]:rounded-full [&>svg]:bg-accent [&>svg]:p-3 [&>svg]:text-on-accent lg:[&>svg]:size-5 lg:[&>svg]:rounded-none lg:[&>svg]:bg-transparent lg:[&>svg]:text-heading lg:[&>svg]:p-0' : ''}`}><NavIcon name={item.label}/><span>{item.label === 'Audit' ? 'Records' : item.label === 'Deals' ? 'Transactions' : item.label}</span></Link>)}</div></nav>;
 }

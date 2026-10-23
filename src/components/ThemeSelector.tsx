@@ -24,7 +24,7 @@ export function ThemeSelector() {
     {options.map((option) => {
       const active = option === choice;
       return <button key={option} type="button" aria-pressed={active} onClick={() => change(option)}
-        className={`hv-press flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-[16px] border text-xs font-semibold transition-colors ${active ? 'border-heading bg-surface-2 text-heading' : 'border-line text-muted hover:text-heading'}`}>
+        className={`hv-press flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-[16px] border text-sm font-semibold transition-colors ${active ? 'border-heading bg-surface-2 text-heading' : 'border-line text-muted hover:text-heading'}`}>
         <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icons[option]}</svg>
         {option}
       </button>;

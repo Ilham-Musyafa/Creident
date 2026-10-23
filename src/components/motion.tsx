@@ -74,7 +74,7 @@ export function SuccessBurst({ storageKey, label }: { storageKey: string; label:
             <path d="M5 12.5 10 17.5 19 7" style={{ strokeDasharray: 24, strokeDashoffset: 24, animation: 'hv-draw .4s ease-out .25s forwards' }}/>
           </svg>
         </div>
-        <p className="hv-page mt-3 rounded-full bg-surface px-3 py-1 text-xs font-bold text-heading shadow">{label}</p>
+        <p className="hv-page mt-3 rounded-full bg-surface px-3 py-1 text-sm font-bold text-heading shadow">{label}</p>
       </div>
     </div>,
     document.body,

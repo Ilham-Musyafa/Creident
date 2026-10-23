@@ -15,7 +15,7 @@ export function ActivityFeed({ txId, items, now }: { txId: string; items: Activi
   if (!items.length) return null;
   return <section aria-label="Activity" className="rounded-[22px] border border-line bg-surface p-4">
     <div className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-bold text-heading">Activity</h2>
-      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">Full deal record</Link></div>
+      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-heading hover:underline">Full deal record</Link></div>
     <ol className="hv-stagger">
       {items.map((item) => {
         const icon = ICON[item.kind];
@@ -24,7 +24,7 @@ export function ActivityFeed({ txId, items, now }: { txId: string; items: Activi
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d={icon.path}/></svg>
           </span>
           <p className="min-w-0 flex-1 text-sm text-text">{item.text}</p>
-          <time dateTime={item.ts} className="shrink-0 text-xs text-muted">{relativeTime(item.ts, now)}</time>
+          <time dateTime={item.ts} className="shrink-0 text-sm text-muted">{relativeTime(item.ts, now)}</time>
         </li>;
       })}
     </ol>

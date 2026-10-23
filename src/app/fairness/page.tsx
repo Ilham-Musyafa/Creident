@@ -13,9 +13,9 @@ function Metric({ label, value, detail, good: goodIn }: { label: string; value: 
   const good = coloured ? goodIn : undefined;
   return (
     <Card className="min-w-0">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-sm text-muted">{label}</p>
       <p className="mt-1 text-[26px] font-extrabold tracking-tight tabular-nums" style={{ color: good === undefined ? 'var(--heading)' : good ? 'var(--success-text)' : 'var(--warning-text)' }}>{value}</p>
-      <p className="mt-1 text-xs text-muted">{detail}</p>
+      <p className="mt-1 text-sm text-muted">{detail}</p>
     </Card>
   );
 }
@@ -81,7 +81,7 @@ export default function FairnessPage() {
         {results.differing.length > 0 && (
           <Card>
             <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from the expected outcome</h2>
-            <ul className="space-y-1 text-sm">{results.differing.map((d) => <li key={d.id} className="font-mono text-xs break-all">{d.id}: expected {d.expected}, got {d.actual}</li>)}</ul>
+            <ul className="space-y-1 text-sm">{results.differing.map((d) => <li key={d.id} className="font-mono text-sm break-all">{d.id}: expected {d.expected}, got {d.actual}</li>)}</ul>
           </Card>
         )}
 

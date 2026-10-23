@@ -12,7 +12,7 @@ import { descriptionForDraft } from '../lib/ai/termsFields';
 
 const fieldClass = 'min-h-11 w-full rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted';
 function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNode; hint?: string }) {
-  return <label htmlFor={htmlFor} className="mb-2 block text-xs font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
+  return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
 export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
@@ -54,10 +54,10 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
           description: descriptionForDraft(draft), includedItems: draft.includedItems.join('\n'), criteria: draft.criteria.join('\n'), category: '' }));
         setReceipt(draftReceipt);
       }}/>
-      {receipt && <div className="space-y-2"><p className="text-xs text-muted">AI draft applied. Check and edit every field before sharing.</p><Button type="button" variant="ghost" onClick={() => {
+      {receipt && <div className="space-y-2"><p className="text-sm text-muted">AI draft applied. Check and edit every field before sharing.</p><Button type="button" variant="ghost" onClick={() => {
         if (manualFields) setForm(current => ({ ...manualFields, amount: current.amount }));
         setReceipt(null);
-      }}>Continue with manual terms</Button><p className="text-xs text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
+      }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
       <div><Label htmlFor="item">Item</Label><input id="item" required maxLength={200} className={fieldClass} placeholder="Used phone, 128 GB" value={form.item} onChange={set('item')}/></div>
@@ -69,12 +69,12 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
       </fieldset>
       <fieldset className="min-w-0 space-y-3 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">What’s included</legend>
-        <p className="text-xs leading-relaxed text-muted">Optional. List the accessories and parts the buyer should receive.</p>
+        <p className="text-sm leading-relaxed text-muted">Optional. List the accessories and parts the buyer should receive.</p>
         <TermsListEditor id="included-items" label="Item" value={form.includedItems} maxLength={1000} placeholder="e.g. Charging cable" onChange={value => setForm(current => ({ ...current, includedItems: value }))}/>
       </fieldset>
       <fieldset className="min-w-0 space-y-4 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">Buyer checks</legend>
-        <p className="text-xs leading-relaxed text-muted">Optional. Add specific checks the buyer can support with a photo or short video.</p>
+        <p className="text-sm leading-relaxed text-muted">Optional. Add specific checks the buyer can support with a photo or short video.</p>
       <div>
         <Label htmlFor="category" hint="optional">Item type</Label>
         <select id="category" className={fieldClass} value={form.category} onChange={(e) => {
@@ -95,7 +95,7 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
           <div className="border-b border-line pb-4">
             <p className="break-words text-sm font-semibold text-heading">{form.item.trim() || 'Your item'}</p>
             <p className="mt-2 break-words text-3xl font-bold tabular-nums text-heading">{amountPreview}</p>
-            <p className="mt-1 text-xs text-muted">USD · Sandbox demo</p>
+            <p className="mt-1 text-sm text-muted">USD · Sandbox demo</p>
           </div>
           <dl className="space-y-3 text-sm">
             {[
@@ -108,7 +108,7 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
           </dl>
           <details className="border-t border-line pt-3">
             <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-heading">Fees & refunds</summary>
-            <p className="pb-2 text-xs leading-relaxed text-muted">PayPal fees are shown after payment and are not returned on a refund. The platform bears those fees, so the buyer receives the full refund amount.</p>
+            <p className="pb-2 text-sm leading-relaxed text-muted">PayPal fees are shown after payment and are not returned on a refund. The platform bears those fees, so the buyer receives the full refund amount.</p>
           </details>
         </Card>
         <Notice>Demo payments only. No real money moves.</Notice>
@@ -116,7 +116,7 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
 
       <div className="min-w-0 space-y-3 lg:col-start-1 lg:row-start-2">
         <Button type="submit" fullWidth disabled={busy}>{busy ? 'Creating…' : 'Create deal link'}</Button>
-        <p className="text-center text-xs leading-relaxed text-muted">Creates a draft to share with the buyer. Terms lock after both parties accept.</p>
+        <p className="text-center text-sm leading-relaxed text-muted">Creates a draft to share with the buyer. Terms lock after both parties accept.</p>
         <ErrorNote error={error}/>
       </div>
     </form>
