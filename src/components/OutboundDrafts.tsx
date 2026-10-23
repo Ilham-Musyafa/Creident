@@ -11,18 +11,18 @@ const fieldClass = 'w-full rounded-[14px] border border-line bg-surface px-4 py-
 
 function AiLabel({ mode, injection }: { mode?: string; injection?: boolean }) {
   return <div className="space-y-2">
-    <p className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">
+    <p className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold text-heading">
       AI draft – check before you send{mode === 'replay' ? ' (recorded demo draft)' : ''}
     </p>
-    {injection && <p role="note" className="text-xs" style={{ color: 'var(--warning-text)' }}>
+    {injection && <p role="note" className="text-sm" style={{ color: 'var(--warning-text)' }}>
       Some evidence text looks like an instruction to the AI. It was treated as data; read the draft carefully.
     </p>}
   </div>;
 }
 
 function Cited({ ids }: { ids: string[] }) {
-  if (!ids.length) return <p className="text-xs text-muted">Cites no evidence item.</p>;
-  return <p className="text-xs text-muted">Cites evidence: {ids.map((id) => <span key={id} className="mr-1 rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-heading">{id}</span>)}</p>;
+  if (!ids.length) return <p className="text-sm text-muted">Cites no evidence item.</p>;
+  return <p className="text-sm text-muted">Cites evidence: {ids.map((id) => <span key={id} className="mr-1 rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-heading">{id}</span>)}</p>;
 }
 
 function useBusy() {
@@ -66,14 +66,14 @@ export function PayPalMessageDraft({ txId, disputeId, role, evidenceStage }: { t
   </div>;
 
   return <div className="space-y-3 rounded-[18px] border border-line bg-surface p-4">
-    {draft?.draft ? <AiLabel mode={draft.mode} injection={draft.inputContainsInjection}/> : draft ? <p className="text-xs text-muted">{draft.message}</p> : null}
-    <label htmlFor={`note-${disputeId}`} className="block text-xs font-medium text-muted">
+    {draft?.draft ? <AiLabel mode={draft.mode} injection={draft.inputContainsInjection}/> : draft ? <p className="text-sm text-muted">{draft.message}</p> : null}
+    <label htmlFor={`note-${disputeId}`} className="block text-sm font-medium text-muted">
       {evidenceStage ? 'Note sent with the evidence PDF' : 'Message to PayPal'}
     </label>
     <textarea id={`note-${disputeId}`} rows={7} maxLength={1500} className={fieldClass} value={text} onChange={(e) => setText(e.target.value)}
       placeholder="Stick to what the locked terms and evidence show."/>
     {draft?.draft && <Cited ids={draft.draft.citedEvidence}/>}
-    <p className="text-xs text-muted">The app adds the terms hash and audit head under your text. {text.length}/1500</p>
+    <p className="text-sm text-muted">The app adds the terms hash and audit head under your text. {text.length}/1500</p>
     <div className="flex flex-wrap gap-2">
       <Button variant="ghost" disabled={busy} onClick={() => setOpen(false)}>Cancel</Button>
       <Button disabled={busy || text.trim().length < 20} onClick={send}>{busy ? 'Sending…' : evidenceStage ? 'Send evidence with this note' : 'Send message to PayPal'}</Button>
@@ -124,22 +124,22 @@ export function CourierClaimPack({ txId }: { txId: string }) {
     </div>;
   } else {
     content = <div className="space-y-3">
-      {draft?.draft ? <AiLabel mode={draft.mode} injection={draft.inputContainsInjection}/> : draft?.message ? <p className="text-xs text-muted">{draft.message}</p> : null}
-      <label htmlFor="claim-subject" className="block text-xs font-medium text-muted">Subject</label>
+      {draft?.draft ? <AiLabel mode={draft.mode} injection={draft.inputContainsInjection}/> : draft?.message ? <p className="text-sm text-muted">{draft.message}</p> : null}
+      <label htmlFor="claim-subject" className="block text-sm font-medium text-muted">Subject</label>
       <input id="claim-subject" maxLength={120} className={`${fieldClass} min-h-11 py-0`} value={subject} onChange={(e) => setSubject(e.target.value)}/>
-      <label htmlFor="claim-body" className="block text-xs font-medium text-muted">Claim letter</label>
+      <label htmlFor="claim-body" className="block text-sm font-medium text-muted">Claim letter</label>
       <textarea id="claim-body" rows={9} maxLength={2500} className={fieldClass} value={body} onChange={(e) => setBody(e.target.value)}/>
       {draft?.draft && <>
         <div>
-          <p className="mb-1 text-xs font-medium text-muted">Timeline (each line cites recorded evidence)</p>
-          <ul className="space-y-1 text-sm text-text">{draft.draft.timeline.map((t, i) => <li key={i}><span className="font-semibold text-heading">{t.when}:</span> {t.event} <span className="font-mono text-xs text-muted">[{t.evidence.join(', ')}]</span></li>)}</ul>
+          <p className="mb-1 text-sm font-medium text-muted">Timeline (each line cites recorded evidence)</p>
+          <ul className="space-y-1 text-sm text-text">{draft.draft.timeline.map((t, i) => <li key={i}><span className="font-semibold text-heading">{t.when}:</span> {t.event} <span className="font-mono text-sm text-muted">[{t.evidence.join(', ')}]</span></li>)}</ul>
         </div>
         <div>
-          <p className="mb-1 text-xs font-medium text-muted">Attach</p>
+          <p className="mb-1 text-sm font-medium text-muted">Attach</p>
           <ul className="list-disc pl-5 text-sm text-text">{draft.draft.attachments.map((a) => <li key={a}>{a}</li>)}</ul>
         </div>
       </>}
-      <p className="text-xs text-muted">The PDF adds fingerprints of the evidence, terms and deal record. This demo does not contact couriers.</p>
+      <p className="text-sm text-muted">The PDF adds fingerprints of the evidence, terms and deal record. This demo does not contact couriers.</p>
       <div className="flex flex-wrap gap-2">
         <Button variant="ghost" disabled={busy} onClick={() => { setDraft(null); setManual(false); }}>Cancel</Button>
         <Button disabled={busy || subject.trim().length < 5 || body.trim().length < 20} onClick={download}>{busy ? 'Building…' : 'Download claim pack (PDF)'}</Button>
@@ -147,7 +147,7 @@ export function CourierClaimPack({ txId }: { txId: string }) {
     </div>;
   }
   return <section className="min-w-0 space-y-3" aria-label="Courier claim">
-    <p className="text-xs text-muted">The buyer reported the item arrived damaged. If the courier may be at fault, prepare a claim for the courier.</p>
+    <p className="text-sm text-muted">The buyer reported the item arrived damaged. If the courier may be at fault, prepare a claim for the courier.</p>
     {content}
     {done && <p role="status" className="text-sm text-heading">{done}</p>}
     <ErrorNote error={error}/>

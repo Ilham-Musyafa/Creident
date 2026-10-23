@@ -28,18 +28,18 @@ export default async function MenuPage() {
             <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">View as</p><RoleSwitch current={role}/></div>
             {codeRequired && <div className="py-4"><ReviewerCodeForm unlocked={unlocked}/></div>}
             <div className="py-4"><p className="mb-3 text-sm font-semibold text-heading">Appearance</p><ThemeSelector/></div>
-            <div className="py-4"><p className="mb-1 text-sm font-semibold text-heading">Demo data</p><p className="mb-3 text-xs text-muted">Example deals with demo payments (no real money).</p><SeedButton role={role}/></div>
+            <div className="py-4"><p className="mb-1 text-sm font-semibold text-heading">Demo data</p><p className="mb-3 text-sm text-muted">Example deals with demo payments (no real money).</p><SeedButton role={role}/></div>
           </Card>
         </section>
         <section aria-labelledby="about-transparency" className="pt-3">
           <h2 id="about-transparency" className="mb-3 text-[15px] font-bold text-heading">About &amp; transparency</h2>
         <Card className="py-1">
           <ul>
-            {role === 'reviewer' && <li className="border-b border-line"><Link href="/reviewer/oversight" className="flex min-h-[60px] items-center justify-between gap-3 py-2"><span><span className="block text-sm font-semibold text-heading">Reviewer oversight</span><span className="text-xs text-muted">Disputes, deadlines and audit health · read-only</span></span><span aria-hidden="true" className="text-muted">›</span></Link></li>}
+            {role === 'reviewer' && <li className="border-b border-line"><Link href="/reviewer/oversight" className="flex min-h-[60px] items-center justify-between gap-3 py-2"><span><span className="block text-sm font-semibold text-heading">Reviewer oversight</span><span className="text-sm text-muted">Disputes, deadlines and audit health · read-only</span></span><span aria-hidden="true" className="text-muted">›</span></Link></li>}
             {LINKS.map((l) => (
               <li key={l.href} className="border-b border-line last:border-0">
                 <Link href={l.href} className="flex min-h-[60px] items-center justify-between gap-3 py-2">
-                  <span><span className="block text-sm font-semibold text-heading">{l.title}</span><span className="text-xs text-muted">{l.detail}</span></span>
+                  <span><span className="block text-sm font-semibold text-heading">{l.title}</span><span className="text-sm text-muted">{l.detail}</span></span>
                   <span aria-hidden="true" className="text-muted">›</span>
                 </Link>
               </li>

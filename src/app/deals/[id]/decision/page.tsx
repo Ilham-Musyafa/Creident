@@ -72,20 +72,20 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
               {/* Bank-style receipt header: reference, date and a save action (docs/UI.md). */}
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-dashed border-line pb-4">
                 <div className="min-w-0">
-                  <p className="text-xs text-muted">Reference</p>
+                  <p className="text-sm text-muted">Reference</p>
                   <p className="font-mono text-sm font-bold tracking-wide text-heading">{`CR-${id.slice(0, 8).toUpperCase()}-${decisionEvent?.seq ?? 0}`}</p>
-                  <p className="mt-1 text-xs text-muted">{shortDate(decision.createdAt)} · {money(tx.amount, tx.currency)}</p>
+                  <p className="mt-1 text-sm text-muted">{shortDate(decision.createdAt)} · {money(tx.amount, tx.currency)}</p>
                 </div>
                 <PrintButton/>
               </div>
-              <p className="text-xs text-muted">Outcome</p>
+              <p className="text-sm text-muted">Outcome</p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
               {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (demo)' : ''}</p>}
               {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">{tx.captured ? 'The payment was already charged. The refund waits for the required return.' : 'No money has moved yet. The refund runs when the return reaches the seller.'}</p>}
               {decision.amount && <p className="mt-3 text-sm font-semibold text-heading">Reviewer refund amount: {money(decision.amount)} USD · fee borne by Platform</p>}
-              <p className="mt-4 text-xs text-muted">Reviewer's reason</p>
+              <p className="mt-4 text-sm text-muted">Reviewer's reason</p>
               <p className="mt-1 text-sm text-text">{decision.reason}</p>
-              <p className="mt-2 text-xs text-muted">Decided by the demo reviewer · {shortDate(decision.createdAt)}</p>
+              <p className="mt-2 text-sm text-muted">Decided by the demo reviewer · {shortDate(decision.createdAt)}</p>
             </Card>
 
             <div>
@@ -103,9 +103,9 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
               <div className="space-y-2">
                 {evidence.map((e, i) => (
                   <Card key={e.id}>
-                    <p className="text-xs font-semibold text-muted">E{i + 1} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p>
+                    <p className="text-sm font-semibold text-muted">E{i + 1} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p>
                     <p className="mt-1 text-sm">{e.content}</p>
-                    <p className="mt-1 break-all font-mono text-[11px] text-muted">sha256 {shortHash(sha256(e.content), 8)}</p>
+                    <p className="mt-1 break-all font-mono text-xs text-muted">sha256 {shortHash(sha256(e.content), 8)}</p>
                   </Card>
                 ))}
               </div>
@@ -115,14 +115,14 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
           <aside className="space-y-3">
             <SectionTitle>On the record</SectionTitle>
             <KeyValue items={[
-              { label: 'Terms fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedTermsHash === 'string' ? recordedTermsHash : 'Not recorded'}</span> },
+              { label: 'Terms fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-sm">{typeof recordedTermsHash === 'string' ? recordedTermsHash : 'Not recorded'}</span> },
               { label: 'Current terms', value: verification(recordedTermsHash, currentBasis.termsHash) },
-              { label: 'Evidence fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-xs">{typeof recordedEvidenceDigest === 'string' ? recordedEvidenceDigest : 'Not recorded'}</span> },
+              { label: 'Evidence fingerprint at decision', value: <span className="block max-w-[180px] break-all font-mono text-sm">{typeof recordedEvidenceDigest === 'string' ? recordedEvidenceDigest : 'Not recorded'}</span> },
               { label: 'Current evidence', value: verification(recordedEvidenceDigest, currentBasis.evidenceDigest) },
               ...(decisionEvent?.payload.evidenceChangedSinceRecommendation === true
                 ? [{ label: 'Evidence after the recommendation', value: 'Changed before the decision' }] : []),
               { label: 'Decision step', value: decisionEvent ? `#${decisionEvent.seq}` : '—' },
-              { label: 'Step fingerprint', value: <span className="font-mono text-xs">{decisionEvent ? shortHash(decisionEvent.hash, 6) : '—'}</span> },
+              { label: 'Step fingerprint', value: <span className="font-mono text-sm">{decisionEvent ? shortHash(decisionEvent.hash, 6) : '—'}</span> },
               { label: 'Deal record', value: chain.ok ? `Intact, ${events.length} steps` : 'Changed after recording' },
             ]}/>
             <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Open deal record</ButtonLink>

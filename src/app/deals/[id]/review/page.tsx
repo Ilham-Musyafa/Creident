@@ -45,9 +45,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             : !rec.aiSummary ? <Notice tone="warning">No AI summary is available (the AI was unavailable, returned invalid output, or there was too little evidence). A human decides.</Notice>
             : <div className="space-y-2">{rec.aiSummary.findings.map((f) => <FindingCard key={f.criterion} criterion={f.criterion} supports={f.supports} evidenceIds={f.evidenceIds.map((ref) => label.get(ref) ?? ref)}/>)}</div>}
           {ruleId && <div className="mt-3"><RuleNotice rule={ruleId} reason={rec!.action === 'ESCALATE_HUMAN' ? 'Human decision required' : `${ACTION_TEXT[rec!.action] ?? rec!.action}${rec!.requiresHuman ? ' · human decision required' : ''}`}/></div>}
-          {rec && <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted">{rec.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
+          {rec && <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">{rec.reasons.map((r) => <li key={r}>{r}</li>)}</ul>}
           <SectionTitle>Evidence ({evidence.length})</SectionTitle>
-          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-xs font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p>{translateAllowed && <EvidenceTranslation key={sha256(e.content)} txId={id} evidenceId={e.id} sourceHash={sha256(e.content)}/>}</Card>)}</div>
+          <div className="space-y-2">{evidence.map((e) => <Card key={e.id}><p className="text-sm font-semibold text-muted">{label.get(e.id)} · <span className="capitalize">{e.kind} · {e.submittedBy}</span></p><p className="mt-1 text-sm [overflow-wrap:anywhere]">{e.content}</p>{translateAllowed && <EvidenceTranslation key={sha256(e.content)} txId={id} evidenceId={e.id} sourceHash={sha256(e.content)}/>}</Card>)}</div>
         </div>
         <aside className="min-w-0 space-y-3">
           <PayPalDisputePanel tx={tx} cases={ctx.repo.listPayPalDisputes(id)} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>

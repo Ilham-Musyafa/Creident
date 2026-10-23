@@ -23,9 +23,9 @@ function AuditHealth() {
     <h2 className="mb-3 text-[15px] font-bold text-heading">Record integrity</h2>
     <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">records verified</span></p>
     <p className="mt-2">{audit.events} steps · {audit.failed} changed · {audit.empty} empty</p>
-    <p className="mt-3 text-xs text-muted [overflow-wrap:anywhere]">{message}</p>
+    <p className="mt-3 text-sm text-muted [overflow-wrap:anywhere]">{message}</p>
     {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed} differ from the sealed copy</p>}
-    <p className="mt-2 text-xs text-muted">A record checked only here cannot reveal a full rewrite; a published sealed copy can.</p>
+    <p className="mt-2 text-sm text-muted">A record checked only here cannot reveal a full rewrite; a published sealed copy can.</p>
     <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal records →</Link>
   </div>;
 }
@@ -122,7 +122,7 @@ export default function StudioDashboard({ snapshot, licenseKey }: { snapshot: Ov
     if (ref.current) observer.observe(ref.current); return () => observer.disconnect(); }, []);
   const data = useMemo(() => studioData(snapshot), [snapshot]);
   const layout = useMemo(() => report(snapshot, width, tokens['on-accent'] || 'currentColor'), [snapshot, width, tokens['on-accent']]);
-  const theme = useMemo(() => studioTheme.withParams({ fontFamily: tokens.font || 'sans-serif', fontSize: 13,
+  const theme = useMemo(() => studioTheme.withParams({ fontFamily: tokens.font || 'sans-serif', fontSize: 14,
     backgroundColor: tokens.surface || 'var(--surface)', foregroundColor: tokens.text || 'var(--text)', textColor: tokens.text || 'var(--text)',
     subtleTextColor: tokens.muted || 'var(--muted)', borderColor: tokens.line || 'var(--line)', accentColor: tokens.accent || 'var(--accent)',
     studioMinWidth: 0, studioMinHeight: 0, studioCanvasMinWidth: 0, studioCanvasPadding: 0, studioCanvasRowHeight: 16,
@@ -131,7 +131,7 @@ export default function StudioDashboard({ snapshot, licenseKey }: { snapshot: Ov
     studioWidgetBorderRadius: 22, studioWidgetPadding: 12, studioWidgetBackgroundColor: tokens.surface,
     studioWidgetBorder: { width: 1, color: tokens.line }, studioWidgetTitleFontSize: 15, studioWidgetTitleFontWeight: 700,
     studioWidgetTitleTextColor: tokens.heading, studioWidgetCaptionTextColor: tokens.muted,
-    gridFontFamily: tokens.font, gridFontSize: 12, gridRowHeight: layout.narrow ? 100 : 54,
+    gridFontFamily: tokens.font, gridFontSize: 14, gridRowHeight: layout.narrow ? 100 : 54,
     gridHeaderFontSize: 12, gridHeaderHeight: 44, gridHeaderTextColor: tokens.muted, gridHeaderBackgroundColor: tokens.surface,
     gridCellTextColor: tokens.text, gridDataBackgroundColor: tokens.surface, gridOddRowBackgroundColor: tokens.surface,
     chartFontFamily: tokens.font, chartTextColor: tokens.text, chartSubtleTextColor: tokens.muted,

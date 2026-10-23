@@ -17,7 +17,7 @@ export function QuickRoleSwitch({ current }: { current: Role }) {
       startTransition(() => router.refresh());
     }}>
     <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold">{current[0]!.toUpperCase()}</span>
-    <span className="flex items-center gap-1 text-[11px] font-semibold capitalize">{current}
+    <span className="flex items-center gap-1 text-xs font-semibold capitalize">{current}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-3.5"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></svg>
     </span>
     <span className="sr-only" role="status">{pending ? `Switching to ${next}` : `Current demo role: ${current}`}</span>

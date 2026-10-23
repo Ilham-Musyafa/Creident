@@ -21,7 +21,7 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
     {cases.length === 0 && <Notice>No PayPal case has been detected for this deal. A reviewer can check for cases; the deadline check also looks at completed payments.</Notice>}
     {role === 'reviewer' && reviewerAllowed && <ActionButton path="/api/paypal/disputes/sync" role="reviewer" label="Check PayPal disputes" variant="ghost" fullWidth/>}
     {canSimulate && <Card>
-      <p className="mb-3 text-xs text-muted">Demo only. Open a case for this completed example deal without contacting PayPal or moving money.</p>
+      <p className="mb-3 text-sm text-muted">Demo only. Open a case for this completed example deal without contacting PayPal or moving money.</p>
       {role === 'buyer' || (role === 'reviewer' && reviewerAllowed)
         ? <ActionButton path={`/api/transactions/${tx.id}/paypal-dispute/simulate`} role={role} label="Open demo PayPal case" variant="ghost" fullWidth/>
         : <Notice>Switch to Buyer in Menu to open a demo PayPal case.</Notice>}

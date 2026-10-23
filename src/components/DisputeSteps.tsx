@@ -32,7 +32,7 @@ export function DisputeSteps({ txId, evidenceWindow }: { txId: string; evidenceW
         {STEPS.map((name, i) => <li key={name} title={name} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-heading' : i < step ? 'w-3 bg-heading/60' : 'w-3 bg-line'}`}/>)}
       </ol>
     </div>
-    <p className="text-xs text-muted">Step {step + 1} of {STEPS.length}: {['What went wrong?', 'What you will need', 'Check and open'][step]}</p>
+    <p className="text-sm text-muted">Step {step + 1} of {STEPS.length}: {['What went wrong?', 'What you will need', 'Check and open'][step]}</p>
 
     {step === 0 && <fieldset className="space-y-2">
       <legend className="sr-only">What went wrong?</legend>
@@ -45,7 +45,7 @@ export function DisputeSteps({ txId, evidenceWindow }: { txId: string; evidenceW
     {step === 1 && chosen && <div className="space-y-3">
       <p className="text-sm font-semibold text-heading">{chosen.label}: evidence that usually settles it</p>
       <ul className="list-disc space-y-1 pl-5 text-sm text-text">{chosen.buyer.map((b) => <li key={b}>{b}</li>)}</ul>
-      <p className="text-xs text-muted">You describe each item as text in this demo.{evidenceWindow ? ` You will have ${evidenceWindow} to add it.` : ''}</p>
+      <p className="text-sm text-muted">You describe each item as text in this demo.{evidenceWindow ? ` You will have ${evidenceWindow} to add it.` : ''}</p>
       <div className="grid grid-cols-2 gap-2"><Button variant="ghost" onClick={() => setStep(0)}>Back</Button><Button variant="ghost" onClick={() => setStep(2)}>Next</Button></div>
     </div>}
 
@@ -55,7 +55,7 @@ export function DisputeSteps({ txId, evidenceWindow }: { txId: string; evidenceW
         <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Payment</dt><dd className="text-right font-semibold text-heading">Stays held</dd></div>
         <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Next</dt><dd className="text-right font-semibold text-heading">Add your evidence</dd></div>
       </dl>
-      <p className="text-xs text-muted">The seller can add evidence too. Rules recommend an outcome; a person decides unclear cases.</p>
+      <p className="text-sm text-muted">The seller can add evidence too. Rules recommend an outcome; a person decides unclear cases.</p>
       <div className="grid grid-cols-2 gap-2"><Button variant="ghost" disabled={busy} onClick={() => setStep(1)}>Back</Button><Button variant="strong" disabled={busy} onClick={open}>{busy ? 'Opening…' : 'Open dispute'}</Button></div>
     </div>}
     <ErrorNote error={error}/>

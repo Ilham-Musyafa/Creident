@@ -57,7 +57,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <p className="text-sm text-muted">{tx.item}</p>
             <p className="mt-1 text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <StatusPill status={tx.status} suffix={deadline ?? undefined}/>
-            {simulated && <p className="mt-2 text-xs font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
+            {simulated && <p className="mt-2 text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
           </div>
           {created && role === 'seller' && (
             <div className="mb-4 space-y-2"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></div>
@@ -79,7 +79,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             };
             const step = next[action];
             return step ? <section aria-label="Next step summary" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border-2 border-accent bg-surface p-4">
-              <div className="min-w-0"><p className="text-sm font-bold text-heading">Next: {step.label}</p>{deadline && <p className="mt-0.5 text-xs text-muted">Time left: {deadline}</p>}</div>
+              <div className="min-w-0"><p className="text-sm font-bold text-heading">Next: {step.label}</p>{deadline && <p className="mt-0.5 text-sm text-muted">Time left: {deadline}</p>}</div>
               <ButtonLink href={step.href} className="shrink-0">{step.cta}</ButtonLink>
             </section> : null;
           })()}
@@ -92,7 +92,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             ...(Array.isArray(terms.includedItems) ? [{ label: 'Included items', value: terms.includedItems.filter((item): item is string => typeof item === 'string').join(', ') }] : []),
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
-            { label: 'Terms fingerprint', value: <span className="font-mono text-xs">{shortHash(tx.termsHash, 6)}</span> },
+            { label: 'Terms fingerprint', value: <span className="font-mono text-sm">{shortHash(tx.termsHash, 6)}</span> },
             ...(tx.trackingNumber ? [{ label: 'Tracking (demo courier)', value: tx.trackingNumber }] : []),
           ]}/>
         </div>
@@ -132,7 +132,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           ]}/>
           {hasDecision && <ButtonLink href={`/deals/${id}/decision`} fullWidth>Decision receipt</ButtonLink>}
           <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Deal record</ButtonLink>
-          <p className="text-center text-xs text-muted">Every step is saved in the deal record.</p>
+          <p className="text-center text-sm text-muted">Every step is saved in the deal record.</p>
         </aside>
       </div>
     </AppShell>
