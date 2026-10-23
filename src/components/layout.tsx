@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { BottomNav } from './ui';
+import { BrandLogo } from './BrandLogo';
 
 type Active = 'Home' | 'Deals' | 'New' | 'Audit' | 'Menu';
 
@@ -9,10 +10,9 @@ export function AppShell({ active, children }: { active?: Active; children: Reac
   return (
     <div className="min-h-screen bg-bg lg:flex">
       <div className="fixed inset-x-0 bottom-0 z-20 print:hidden lg:sticky lg:top-0 lg:h-screen lg:self-start lg:border-r lg:border-line lg:bg-surface">
-        <div className="hidden px-6 pt-6 lg:block">
-          <Link href="/" className="flex min-h-11 items-center gap-3">
-            <span aria-hidden="true" className="grid size-9 place-items-center rounded-xl bg-hero"><span className="size-3.5 rotate-45 rounded-[4px] bg-accent"/></span>
-            <span className="text-lg font-extrabold tracking-tight text-heading">Creident</span>
+        <div className="hidden px-4 pt-3 lg:block">
+          <Link href="/" aria-label="Creident home" className="inline-flex min-h-11 items-center">
+            <BrandLogo/>
           </Link>
         </div>
         <BottomNav active={active}/>
@@ -32,7 +32,7 @@ export function PageHeader({ title, back, subtitle, right }: { title: string; ba
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="size-5"><path d="m15 18-6-6 6-6"/></svg>
         </Link>}
         <div className="min-w-0">
-          <h1 className={`text-xl font-extrabold tracking-tight text-heading ${back ? 'flex min-h-11 items-center' : ''}`}>{title}</h1>
+          <h1 className={`text-[28px] leading-tight text-heading sm:text-[32px] ${back ? 'flex min-h-11 items-center' : ''}`}>{title}</h1>
           {subtitle && <p className="mt-0.5 text-sm text-muted">{subtitle}</p>}
         </div>
       </div>

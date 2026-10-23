@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BrandLogo } from '../components/BrandLogo';
 import { verifyChain } from '../lib/audit/chain';
 import { AmountCard, ButtonLink, DealListItem, StatusPill } from '../components/ui';
 import { AppShell, Card, SectionTitle } from '../components/layout';
@@ -35,6 +36,7 @@ export default async function HomePage() {
 
   return (
     <AppShell active="Home">
+      <div className="-ml-3 mb-3 lg:hidden"><BrandLogo/></div>
       <header className="mb-5 flex items-center gap-3">
         <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold text-heading">{role[0]!.toUpperCase()}</span>
         <div><p className="text-xs text-muted">Demo account · switch role in Menu</p><h1 className="text-base font-bold capitalize text-heading">Hi, demo {role}</h1></div>

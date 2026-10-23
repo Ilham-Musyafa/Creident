@@ -1,5 +1,12 @@
 # Creident
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/symbol-dark.png">
+  <img src="public/brand/symbol-light.png" alt="Creident two-node C symbol" width="64" height="64">
+</picture>
+
+**Every deal, on record.**
+
 **A dispute-mediation prototype for peer-to-peer sales of physical goods.**
 Rules first, AI summarises evidence, a human confirms every dispute outcome, and every
 action is recorded in a hash-chained, auditable log. Built for the PayPal AI Hackathon 2026
@@ -9,13 +16,14 @@ on the **PayPal Sandbox**.
 > anyone's money, and it does not handle real payments. PayPal authorizes the payment;
 > the platform calls capture, void or refund according to the rules.
 
-![Buyer home in the running app, light theme](docs/ui/screens/home-buyer.png)
+![Creident Sapphire Flow home, light theme](docs/ui/screens/brand/home-390-light.png)
 
 **Screens**
 
 Captured from the running app with a fresh SQLite database, simulated PayPal,
 and synthetic demo data. Mobile: 390 × 844, light. Desktop: 1440 × 900, dark.
-Screens are illustrative captures from before the R5 label update; the fairness image
+The lead image uses the current Sapphire Flow brand kit. The older gallery below contains
+illustrative captures from before the brand/R5 label updates; the fairness image
 contains older replay results. Current label counts and metrics are in section 5 and
 [`eval/report.md`](eval/report.md); neither is a live-model measurement.
 
@@ -526,7 +534,9 @@ SPLIT and does not implement a split payout or seller payout.
     `AgStudioProvider`. The [PayPal/AG Studio boilerplate](https://github.com/paypaldev/hackathon-paypal-ag-grid-boilerplate)
     was used only as an API reference. Creident supplies its own data, widgets,
     responsive layout and token-based light/dark theme.
-- Plus Jakarta Sans, self-hosted under the SIL Open Font License.
+- Sapphire Flow identity: Georgia for the signature/major headings and Arial for the
+  interface (system fonts, no font download). Original source-derived logo variants,
+  favicon and app icons: [`docs/brand/README.md`](docs/brand/README.md).
 - Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).
   Agent rules are in [`AGENTS.md`](AGENTS.md); working notes in
   [`docs/HANDOFF.md`](docs/HANDOFF.md).
