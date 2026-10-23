@@ -173,6 +173,21 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Desktop slide-out navigation
+
+- Owner requested a desktop Menu button instead of the always-visible sidebar.
+  Added `DesktopNavigation` with a left-edge modal drawer sliding to the right;
+  main content uses the available width. Existing bottom navigation stays on mobile.
+- Supports close button, outside click, Escape, focus containment/restoration,
+  scroll lock, close on navigation/mobile resize and reduced-motion preference.
+  Updated docs/UI.md; screenshots in docs/ui/screens/navigation/.
+- Verification: 489 tests, typecheck and build passed. Chromium light/dark at 1440px
+  exercised keyboard loops, dismissal, links and reduced motion; resizing to 390px
+  restored scrolling and showed only the mobile navigation. No overflow/console errors.
+- Continued the pending `ui/remove-limitations-arrow` UI polish branch; includes prior
+  arrow removal and action badge alignment. No new dependencies. Not merged.
+
+
 ### 2026-10-23 — Align Home action status badges
 
 - Follow-up Home polish on `ui/remove-limitations-arrow`: action status badges now

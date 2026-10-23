@@ -126,7 +126,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | `ChainStatus` | Success notice "Chain verified · N events" + head hash; error state when broken. |
 | `Field` / `Input` | Label above, 44px input, placeholder in muted. |
 | `SegmentedControl` | Used for role switch (demo) and appearance. |
-| `BottomNav` | Mobile: Home, Deals, (+) Sapphire Blue FAB, Audit, Menu, with text labels. Desktop (≥1024px): left sidebar with the same items, content max-width 1100px. |
+| `BottomNav` | Mobile: Home, Deals, (+) Sapphire Blue FAB, Audit, Menu, with text labels. Desktop (≥1024px): Menu button opens a modal sidebar sliding right from the left edge (owner-approved 2026-10-23), with the same items; close button, outside click and Escape dismiss it. Focus is contained and restored; reduced motion disables entry animation. Content max-width 1100px. |
 | `CodeBadge` | One-time evidence code in mono, e.g. `HV-1042 · 7K2Q`. |
 
 ## 7. Screens (see mockups)

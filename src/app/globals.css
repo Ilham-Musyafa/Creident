@@ -117,3 +117,11 @@ button, a, input, textarea, select { outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; } }
 @media print { body { background: #fff; } main { padding-bottom: 0 !important; } a[aria-label='Back'] { display: none; } }
+
+/* Desktop navigation enters from the left; native dialog handles modal focus. */
+@keyframes navigation-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.desktop-navigation[open] { animation: navigation-enter 180ms ease-out; }
+.desktop-navigation nav { width: 100%; border-right: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .desktop-navigation[open] { animation: none; }
+}

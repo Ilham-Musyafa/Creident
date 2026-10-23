@@ -1,20 +1,16 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { BottomNav } from './ui';
-import { BrandLogo } from './BrandLogo';
+import { DesktopNavigation } from './DesktopNavigation';
 
 type Active = 'Home' | 'Deals' | 'New' | 'Audit' | 'Menu';
 
-/** Bottom navigation on mobile, sidebar from 1024px, content max width 1100px. */
+/** Bottom navigation on mobile, slide-out menu from 1024px, content max width 1100px. */
 export function AppShell({ active, children }: { active?: Active; children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-bg lg:flex">
-      <div className="fixed inset-x-0 bottom-0 z-20 print:hidden lg:sticky lg:top-0 lg:h-screen lg:self-start lg:border-r lg:border-line lg:bg-surface">
-        <div className="hidden px-4 pt-3 lg:block">
-          <Link href="/" aria-label="Creident home" className="inline-flex min-h-11 items-center">
-            <BrandLogo/>
-          </Link>
-        </div>
+    <div className="min-h-screen bg-bg">
+      <DesktopNavigation><BottomNav active={active}/></DesktopNavigation>
+      <div className="fixed inset-x-0 bottom-0 z-20 print:hidden lg:hidden">
         <BottomNav active={active}/>
       </div>
       <main className="hv-page mx-auto min-w-0 w-full max-w-[1100px] px-5 pb-32 pt-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
