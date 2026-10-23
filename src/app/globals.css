@@ -1,11 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --brand-navy: #0B1F4B; --brand-sapphire: #3B82F6;
+  --brand-sky: #93C5FD; --brand-ice: #DBEAFE;
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
 :root, [data-theme="light"] {
   color-scheme: light;
-  --bg: #F7F7F4; --surface: #FFFFFF; --surface-2: #F1F5F9; --line: #E5E7EB;
-  --text: #0F172A; --muted: #64748B; --heading: #172554; --hero: #172554;
-  --hero-text: #FFFFFF; --hero-sub: #C7D2FE; --accent: #5EEAD4; --on-accent: #172554;
-  --strong: #172554; --on-strong: #FFFFFF;
+  --bg: #F7FAFF; --surface: #FFFFFF; --surface-2: #DBEAFE; --line: #D4DFEF;
+  --text: #0B1F4B; --muted: #465A78; --heading: #0B1F4B; --hero: #0B1F4B;
+  --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
+  --strong: #0B1F4B; --on-strong: #FFFFFF;
   --awaiting-bg: #FEF3C7; --awaiting-text: #B45309;
   --authorized-bg: #E0E7FF; --authorized-text: #4338CA;
   --inspection-bg: #DBEAFE; --inspection-text: #1D4ED8;
@@ -20,10 +26,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     color-scheme: dark;
-    --bg: #0B1020; --surface: #121A33; --surface-2: #1A2444; --line: #26325A;
-    --text: #E5E7EB; --muted: #94A3B8; --heading: #E0E7FF; --hero: #1B2A63;
-    --hero-text: #FFFFFF; --hero-sub: #A5B4FC; --accent: #5EEAD4; --on-accent: #0B1020;
-    --strong: #E0E7FF; --on-strong: #0B1020;
+    --bg: #07142F; --surface: #0B1F4B; --surface-2: #122F63; --line: #284674;
+    --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
+    --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
+    --strong: #93C5FD; --on-strong: #0B1F4B;
     --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
     --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
     --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -38,10 +44,10 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0B1020; --surface: #121A33; --surface-2: #1A2444; --line: #26325A;
-  --text: #E5E7EB; --muted: #94A3B8; --heading: #E0E7FF; --hero: #1B2A63;
-  --hero-text: #FFFFFF; --hero-sub: #A5B4FC; --accent: #5EEAD4; --on-accent: #0B1020;
-  --strong: #E0E7FF; --on-strong: #0B1020;
+  --bg: #07142F; --surface: #0B1F4B; --surface-2: #122F63; --line: #284674;
+  --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
+  --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
+  --strong: #93C5FD; --on-strong: #0B1F4B;
   --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
   --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
   --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -59,10 +65,21 @@
   --color-heading: var(--heading); --color-hero: var(--hero); --color-hero-text: var(--hero-text);
   --color-hero-sub: var(--hero-sub); --color-accent: var(--accent); --color-on-accent: var(--on-accent);
   --color-strong: var(--strong); --color-on-strong: var(--on-strong);
-  --font-sans: var(--font-jakarta), sans-serif;
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
 }
 
-body { background: var(--bg); color: var(--text); font-family: var(--font-jakarta), sans-serif; }
+body { background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+/* Sapphire Flow: serif identity/major headings; system sans for working UI. */
+h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.025em; }
+.brand-wordmark { font-family: var(--font-display); font-weight: 400; letter-spacing: -.025em; }
+.brand-symbol-dark { display: none; }
+[data-theme="dark"] .brand-symbol-light { display: none; }
+[data-theme="dark"] .brand-symbol-dark { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .brand-symbol-light { display: none; }
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .brand-symbol-dark { display: block; }
+}
 button, input, textarea, select { font: inherit; }
 button, a, input, textarea, select { outline-offset: 3px; }
 :where(button, a, input, textarea, select):focus-visible { outline: 3px solid var(--inspection-text); }

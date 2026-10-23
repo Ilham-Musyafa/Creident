@@ -1,18 +1,20 @@
 # UI.md — Creident visual guide
 
-Status: **approved direction, 2026-10-21** (owner chose Midnight Ink + Mint, with light
-and dark mode). Mockups: `docs/ui/halcyvault-ui-light.png`, `docs/ui/halcyvault-ui-dark.png`.
-The mockups are concept images with sample data; this file is the source of truth.
+Status: **Sapphire Flow, owner-approved 2026-10-23** via
+[`brand/Creident_Brand_Guidelines.pdf`](brand/Creident_Brand_Guidelines.pdf).
+This replaces the earlier Midnight Ink + Mint identity. Older mockups/screenshots are
+historical references; the supplied brand kit and this updated guide describe the current
+identity. Functional component patterns, plain-language copy and accessibility still apply.
 
 Goal: **clean, modern, simple, fast, and still attractive.**
 
 ## 1. Principles
 
-1. One main action per screen, in Mint. Everything else is neutral.
+1. One main action per screen, in Sapphire Blue. Everything else is neutral.
 2. Money and status first: the amount and the current status are readable at a glance.
 3. Status always has a **text label** (and ideally an icon). Never colour alone.
 4. Explain, do not hide: show what happens to the money next and what the AI did and did not do.
-5. Fast: no UI component library, no heavy animation, inline SVG icons, one web font.
+5. Fast: no UI component library, no heavy animation, inline SVG UI icons, system fonts and small source-derived brand PNGs.
 
 ## 2. Design tokens
 
@@ -21,20 +23,27 @@ To change the brand later, edit the token values only (one place: `src/app/globa
 
 | Token | Light | Dark | Use |
 | --- | --- | --- | --- |
-| `--bg` | `#F7F7F4` | `#0B1020` | Page background |
-| `--surface` | `#FFFFFF` | `#121A33` | Cards, inputs, nav |
-| `--surface-2` | `#F1F5F9` | `#1A2444` | Chips, segmented control, subtle fills |
-| `--line` | `#E5E7EB` | `#26325A` | Borders, dividers |
-| `--text` | `#0F172A` | `#E5E7EB` | Body text |
-| `--muted` | `#64748B` | `#94A3B8` | Secondary text |
-| `--heading` | `#172554` | `#E0E7FF` | Headings, back links, active nav |
-| `--hero` | `#172554` | `#1B2A63` | Amount card background |
+| `--bg` | `#F7FAFF` | `#07142F` | Page background |
+| `--surface` | `#FFFFFF` | `#0B1F4B` | Cards, inputs, nav |
+| `--surface-2` | `#DBEAFE` | `#122F63` | Chips, segmented control, subtle fills |
+| `--line` | `#D4DFEF` | `#284674` | Borders, dividers |
+| `--text` | `#0B1F4B` | `#DBEAFE` | Body text |
+| `--muted` | `#465A78` | `#A9BCD6` | Secondary text |
+| `--heading` | `#0B1F4B` | `#F1F6FF` | Headings, back links, active nav |
+| `--hero` | `#0B1F4B` | `#102C60` | Amount card background |
 | `--hero-text` | `#FFFFFF` | `#FFFFFF` | Text on the amount card |
-| `--hero-sub` | `#C7D2FE` | `#A5B4FC` | Secondary text on the amount card |
-| `--accent` | `#5EEAD4` | `#5EEAD4` | Main action only (Mint) |
-| `--on-accent` | `#172554` | `#0B1020` | Text/icon on Mint (contrast 9.9 in light) |
-| `--strong` | `#172554` | `#E0E7FF` | Strong secondary action (e.g. Refund) |
-| `--on-strong` | `#FFFFFF` | `#0B1020` | Text on `--strong` |
+| `--hero-sub` | `#93C5FD` | `#93C5FD` | Secondary text on the amount card |
+| `--accent` | `#3B82F6` | `#3B82F6` | Main action (Sapphire Blue) |
+| `--on-accent` | `#07142F` | `#07142F` | Darkened navy text/icon on sapphire for AA contrast |
+| `--strong` | `#0B1F4B` | `#93C5FD` | Strong secondary action (e.g. Refund) |
+| `--on-strong` | `#FFFFFF` | `#0B1F4B` | Text on `--strong` |
+
+The exact source palette is Midnight Navy `#0B1F4B`, Sapphire Blue `#3B82F6`,
+Sky Blue `#93C5FD`, and Ice Blue `#DBEAFE` (`--brand-*` variables). Background,
+muted and dark-mode values are supporting UI adaptations, not additional logo colours.
+The source logo pixels are never recoloured. Normal action text uses `#07142F` because
+white and the exact source navy do not reach 4.5:1 on Sapphire Blue. Semantic status
+and notice colours below retain distinct meanings and are not logo colours.
 
 Status tokens (background / text):
 
@@ -78,14 +87,17 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
   (`:root` = light, `[data-theme="dark"]` = dark, `prefers-color-scheme` for System).
 - Store the choice in `localStorage` (per-viewer convenience only; wrap in try/catch).
 - Set the attribute with a tiny inline script in `<head>` before paint to avoid a flash.
-- Mint stays the same in both modes; only `--on-accent` changes.
+- Sapphire Blue and its dark navy button text stay the same in both modes. Supporting surfaces adapt.
 
 ## 4. Typography
 
-- **Plus Jakarta Sans** (SIL Open Font License), loaded with `next/font` (self-hosted at
-  build, no layout shift). Weights 400, 500, 600, 700, 800 only.
+- **Georgia Regular** for the signature and major page headings, with Times New Roman/serif fallback.
+- **Arial** for body, labels, buttons, tables and captions, with Helvetica/sans-serif fallback.
+  These are installed system fonts; no font download is required. Do not redistribute
+  commercial font files. The older Jakarta font files remain historical, unused assets.
+- Page titles: 28px on mobile / 32px from the small breakpoint; subheads 15px Arial bold.
 - Monospace (hashes, codes): system `ui-monospace`.
-- Scale: amount 32/800 (tight letter-spacing), screen title 16/700, section 15/700,
+- Scale: amount 32/800 (tight letter-spacing), section 15/700,
   body 14/400–600, caption 12/400, micro 11/700 (pills).
 - Use tabular numbers for money (`font-variant-numeric: tabular-nums`).
 
@@ -103,9 +115,9 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | --- | --- |
 | `Button` | Variants: `accent` (main action, one per screen), `ghost` (bordered), `strong` (navy, e.g. Refund). Full-width option. Visible focus ring. |
 | `StatusPill` | Dot + label from the mapping above. Optional suffix such as "1d 4h left". |
-| `AmountCard` | Navy card, label "Authorized via PayPal, not yet captured" style wording, big amount, 3 stat tiles, one Mint action. |
+| `AmountCard` | Navy card, label "Authorized via PayPal, not yet captured" style wording, big amount, 3 stat tiles, one Sapphire Blue action. |
 | `DealListItem` | Icon tile tinted with the status token, title, status pill, amount right-aligned. |
-| `Timeline` | Steps: done (filled heading colour + Mint check), current (inspection token), upcoming (outline). |
+| `Timeline` | Steps: done (filled heading colour + brand-coloured check), current (inspection token), upcoming (outline). |
 | `KeyValue` | Label/value rows with dashed dividers (fees, ids). |
 | `FindingCard` | Criterion, "Supports buyer / Supports seller / Unclear" pill, evidence chips (E1, E3...). |
 | `RuleNotice` | Warning notice naming the rule (R1–R7) and stating the AI cannot move money. |
@@ -113,7 +125,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | `ChainStatus` | Success notice "Chain verified · N events" + head hash; error state when broken. |
 | `Field` / `Input` | Label above, 44px input, placeholder in muted. |
 | `SegmentedControl` | Used for role switch (demo) and appearance. |
-| `BottomNav` | Mobile: Home, Deals, (+) Mint FAB, Audit, Menu, with text labels. Desktop (≥1024px): left sidebar with the same items, content max-width 1100px. |
+| `BottomNav` | Mobile: Home, Deals, (+) Sapphire Blue FAB, Audit, Menu, with text labels. Desktop (≥1024px): left sidebar with the same items, content max-width 1100px. |
 | `CodeBadge` | One-time evidence code in mono, e.g. `HV-1042 · 7K2Q`. |
 
 ## 7. Screens (see mockups)
@@ -146,7 +158,7 @@ Follow the claim rules in `AGENTS.md`. In the UI specifically:
 
 ## 9. Accessibility and performance checklist
 
-- Text contrast 4.5:1 or more (Mint with navy text passes; never white text on Mint).
+- Text contrast 4.5:1 or more. Sapphire Blue uses darkened navy text: white on sapphire and the exact brand navy on sapphire fall below AA for normal text.
 - Every status, error and success has text, not only colour.
 - Keyboard focus visible; buttons are `<button>`, links are `<a>`.
 - Respect `prefers-reduced-motion`; transitions under 200ms.
@@ -221,3 +233,17 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 | Event | Step |
 | Replay mode | Recorded test run |
 
+
+## Sapphire Flow signature (2026-10-23)
+
+- Use `BrandLogo` for the original two-node C symbol, Georgia wordmark and exact
+  tagline **Every deal, on record.** Full lockups have a minimum width of 200px; below
+  that width use the symbol only (24px minimum, except supplied favicon sizes).
+- Preserve aspect ratio, both nodes and at least one node diameter of clear space.
+  The component uses a 48px square source image with 12px surrounding padding/gap.
+- Use the PDF's navy-arc symbol on light backgrounds and white-arc symbol on dark
+  backgrounds. No shadow, outline, rotation, recolouring or invented vector master.
+- Records navigation uses a document icon, not a shield. Do not pair the identity
+  with shields, locks or other company logos or imply guaranteed outcomes/custody.
+- Asset provenance, raster limits and available favicons/app icons are documented
+  in `docs/brand/README.md`. Older screenshot galleries have not all been regenerated.

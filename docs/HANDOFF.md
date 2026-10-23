@@ -173,6 +173,33 @@ Still open:
 
 ## Log
 
+- 2026-10-23 (Codex, owner-requested brand-kit application): branch
+  `ui/creident-brand-kit` from latest main 1b9bc1e. Applied the uploaded nine-page
+  Creident Brand Guidelines PDF (Sapphire Flow), which supersedes the older
+  Mint/diamond/Jakarta visual direction. Preserved the PDF's original navy-arc and
+  white-arc raster C symbols with their transparency; no approximate vector logo
+  or recolouring. Added reusable 200px-minimum signature, exact tagline, adaptive
+  favicon, Apple icon, PNG/ICO/app-tile exports and source PDF/provenance docs.
+  CSS tokens now use navy/sapphire/sky/ice with accessible supporting light/dark
+  values; normal sapphire button/chart-label text uses darker navy for AA.
+  Georgia major headings/wordmark, Arial interface, no font download; historical
+  Jakarta files retained unused. Records nav uses a document rather than shield;
+  256px desktop sidebar fits the full signature; mobile Home/About show it too.
+  README lead screenshot, brand guide and docs/UI.md updated. No new dependency,
+  state/rule/payment/auth changes or Render deployment. Existing prototype/AI/demo
+  limitations retained. Checks: 489 tests (47 files), typecheck and production build
+  pass. Chromium: 15 pages x 390/1440 x light/dark = 60 checks, no horizontal page
+  overflow or unexpected console/page errors, no web-font requests; tested System
+  logo switching and 16/32/48px favicon/ICO/Apple assets. Only expected AG Studio
+  missing-key evaluation messages remain. Brand contrast checks pass at >=4.5:1.
+  Screenshots: docs/ui/screens/brand/ (Home, New deal, About, Review, Receipt,
+  Oversight in all four combinations). Pushed implementation commit 5fffb2a.
+  `gh pr create --repo Ilham-Musyafa/Creident --base main --head
+  ui/creident-brand-kit` returned `Post https://api.github.com/graphql: Forbidden`
+  (403); no PR created or merged. PR description: /tmp/creident-brand-pr-description.md.
+  Owner/Claude can open the one review PR at
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-brand-kit.
+  No Render deployment performed; do not merge automatically.
 - 2026-10-22 22:30 WIB (Claude): public-demo hardening for Render. `PUBLIC_DEMO=1` locks the
   server to PAYPAL_MODE=simulated + AI_MODE=replay and exits at start if PP_ID, PP_SECRET,
   AI_API_KEY or AUDIT_SIGNING_KEY is set (src/lib/publicDemo.ts, src/instrumentation.ts,

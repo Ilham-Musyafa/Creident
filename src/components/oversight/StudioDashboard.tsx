@@ -38,8 +38,8 @@ const widgets = { ...configuredWidgets, widgets: configuredWidgets.widgets.map(d
 const title = (text: string) => ({ title: { enabled: true, text } });
 // Case counts are whole numbers: AG Studio has no tick-interval option, so the value axis
 // labels and grid lines are hidden and each bar carries its own integer label.
-const countBars = (text: string) => ({ ...title(text), style: {
-  theme: { bar: { series: { label: { enabled: true, color: '#FFFFFF' } } } },
+const countBars = (text: string, labelColor: string) => ({ ...title(text), style: {
+  theme: { bar: { series: { label: { enabled: true, color: labelColor } } } },
   custom: { valueAxis: { label: { color: 'transparent' }, gridLine: { enabled: false }, tick: { enabled: false } } },
 } });
 const sum = (id: string) => ({ id, aggregation: 'sum' as const });
@@ -72,14 +72,14 @@ function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<Oversi
   ] };
 }
 
-function report(snapshot: OversightSnapshot, width: number): { state: AgReportState<OversightRegistry>; height: number; narrow: boolean } {
+function report(snapshot: OversightSnapshot, width: number, labelColor: string): { state: AgReportState<OversightRegistry>; height: number; narrow: boolean } {
   const narrow = width < 700;
   const grid = (text: string, cols: string[]) => ({ type: 'grid' as const, dataMapping: { cols: cols.map(id => ({ id })) },
     format: { ...title(text), style: { columnAutoSize: false, columnWidth: Math.max(68, Math.floor((width - 64) / cols.length)), headerRow: { wrapText: true } } } });
   const state: AgReportState<OversightRegistry> = { selectedPageId: 'oversight', pages: [{ id: 'oversight',
     widgets: {
-      status: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'status.name' }], valueKey: [sum('status.count')] }, format: countBars('Disputes by status') },
-      type: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'type.name' }], valueKey: [sum('type.count')] }, format: countBars('Disputes by type') },
+      status: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'status.name' }], valueKey: [sum('status.count')] }, format: countBars('Disputes by status', labelColor) },
+      type: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'type.name' }], valueKey: [sum('type.count')] }, format: countBars('Disputes by type', labelColor) },
       rate: { type: 'value', dataMapping: { value: [{ id: 'escalation.rate', aggregation: 'max' }] },
         format: { ...title('Escalation rate (%)'), caption: { enabled: true, text: `${snapshot.escalation.escalated} of ${snapshot.escalation.recommendations} stored recommendations` } } },
       audit: { type: 'audit-health', dataMapping: {}, format: title('Audit chain health') },
@@ -107,7 +107,7 @@ function useTokens() {
   const [tokens, setTokens] = useState<Record<string, string>>({});
   useEffect(() => {
     const update = () => { const css = getComputedStyle(document.documentElement);
-      setTokens({ ...Object.fromEntries(['bg', 'surface', 'surface-2', 'line', 'text', 'muted', 'heading', 'accent', 'inspection-text', 'disputed-text', 'completed-text', 'frozen-text', 'warning-text']
+      setTokens({ ...Object.fromEntries(['bg', 'surface', 'surface-2', 'line', 'text', 'muted', 'heading', 'accent', 'on-accent', 'inspection-text', 'disputed-text', 'completed-text', 'frozen-text', 'warning-text']
         .map(name => [name, css.getPropertyValue('--' + name).trim()])), font: getComputedStyle(document.body).fontFamily }); };
     update(); const observer = new MutationObserver(update); observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
     const media = matchMedia('(prefers-color-scheme: dark)'); media.addEventListener('change', update);
@@ -121,7 +121,7 @@ export default function StudioDashboard({ snapshot, licenseKey }: { snapshot: Ov
   useEffect(() => { const observer = new ResizeObserver(([entry]) => setWidth(Math.floor(entry!.contentRect.width)));
     if (ref.current) observer.observe(ref.current); return () => observer.disconnect(); }, []);
   const data = useMemo(() => studioData(snapshot), [snapshot]);
-  const layout = useMemo(() => report(snapshot, width), [snapshot, width]);
+  const layout = useMemo(() => report(snapshot, width, tokens['on-accent'] || 'currentColor'), [snapshot, width, tokens['on-accent']]);
   const theme = useMemo(() => studioTheme.withParams({ fontFamily: tokens.font || 'sans-serif', fontSize: 13,
     backgroundColor: tokens.surface || 'var(--surface)', foregroundColor: tokens.text || 'var(--text)', textColor: tokens.text || 'var(--text)',
     subtleTextColor: tokens.muted || 'var(--muted)', borderColor: tokens.line || 'var(--line)', accentColor: tokens.accent || 'var(--accent)',
@@ -136,7 +136,7 @@ export default function StudioDashboard({ snapshot, licenseKey }: { snapshot: Ov
     gridCellTextColor: tokens.text, gridDataBackgroundColor: tokens.surface, gridOddRowBackgroundColor: tokens.surface,
     chartFontFamily: tokens.font, chartTextColor: tokens.text, chartSubtleTextColor: tokens.muted,
     chartGridLineColor: tokens.line, chartAxisLineColor: tokens.line,
-    chartPaletteFills1Color: tokens['inspection-text'], chartPaletteStrokes1Color: tokens['inspection-text'],
+    chartPaletteFills1Color: tokens.accent, chartPaletteStrokes1Color: tokens.accent,
     chartPaletteFills2Color: tokens['disputed-text'], chartPaletteStrokes2Color: tokens['disputed-text'],
     chartPaletteFills3Color: tokens['completed-text'], chartPaletteStrokes3Color: tokens['completed-text'],
   }), [tokens, layout.narrow]);

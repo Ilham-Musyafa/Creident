@@ -1,4 +1,5 @@
 import { AppShell, Card, PageHeader, SectionTitle } from '../../components/layout';
+import { BrandLogo } from '../../components/BrandLogo';
 
 const RULES = [
   ['R1', 'No tracking before the ship-by deadline: the authorization is voided. No money moves.'],
@@ -14,6 +15,7 @@ export default function AboutPage() {
   return (
     <AppShell active="Menu">
       <PageHeader title="About Creident" back="/menu" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026."/>
+      <div className="mb-4 rounded-[22px] border border-line bg-surface p-3"><BrandLogo/></div>
       <div className="mx-auto max-w-2xl space-y-2 text-sm leading-relaxed">
         <SectionTitle><span id="decisions">How decisions are made</span></SectionTitle>
         <Card>
