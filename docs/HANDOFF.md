@@ -193,7 +193,13 @@ Still open:
   logo switching and 16/32/48px favicon/ICO/Apple assets. Only expected AG Studio
   missing-key evaluation messages remain. Brand contrast checks pass at >=4.5:1.
   Screenshots: docs/ui/screens/brand/ (Home, New deal, About, Review, Receipt,
-  Oversight in all four combinations). Preparing one review PR; do not merge.
+  Oversight in all four combinations). Pushed implementation commit 5fffb2a.
+  `gh pr create --repo Ilham-Musyafa/Creident --base main --head
+  ui/creident-brand-kit` returned `Post https://api.github.com/graphql: Forbidden`
+  (403); no PR created or merged. PR description: /tmp/creident-brand-pr-description.md.
+  Owner/Claude can open the one review PR at
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-brand-kit.
+  No Render deployment performed; do not merge automatically.
 - 2026-10-22 22:30 WIB (Claude): public-demo hardening for Render. `PUBLIC_DEMO=1` locks the
   server to PAYPAL_MODE=simulated + AI_MODE=replay and exits at start if PP_ID, PP_SECRET,
   AI_API_KEY or AUDIT_SIGNING_KEY is set (src/lib/publicDemo.ts, src/instrumentation.ts,
