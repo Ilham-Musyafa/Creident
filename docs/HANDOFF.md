@@ -185,6 +185,9 @@ Still open:
   checked 15 pages at both widths/themes (60 checks): no horizontal overflow or
   unexpected console/page errors; only existing AG Studio missing-license notices.
   Fonts load locally; theme switching and brand assets passed. Live deployment awaits merge.
+- Pushed branch successfully. PR creation via GitHub GraphQL returned `Forbidden`;
+  owner can open `/pull/new/ui/creident-font-pair` in the canonical Creident repo.
+  Prepared PR body: `/tmp/creident-font-pr.md`.
 
 
 - 2026-10-23 (Codex, owner-requested brand-kit application): branch
