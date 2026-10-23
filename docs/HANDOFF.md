@@ -173,6 +173,16 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Align Home action status badges
+
+- Follow-up Home polish on `ui/remove-limitations-arrow`: action status badges now
+  share a 128px width, centered text/content and balanced line wrapping. Other uses
+  of StatusPill keep their existing layout through an optional className prop.
+- Verification: typecheck and production build passed; Chromium buyer Home at
+  360/390/1440px in light/dark passed (five centered badges, no overflow or console errors).
+- Included with the pending Home arrow change to avoid stacking an unmerged branch.
+
+
 ### 2026-10-23 — Remove Home limitations link arrow
 
 - Owner requested removing the trailing arrow from “View limitations”. Updated only

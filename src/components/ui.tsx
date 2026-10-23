@@ -22,9 +22,9 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
   const colors = { accent: 'bg-accent text-on-accent', ghost: 'border border-line bg-surface text-heading', strong: 'bg-strong text-on-strong' };
   return <button className={`min-h-[46px] rounded-full px-5 text-sm font-bold hv-press hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${colors[variant]} ${fullWidth ? 'w-full' : ''} ${className}`} {...props} />;
 }
-export function StatusPill({ status, suffix }: { status: TxStatus; suffix?: string }) {
+export function StatusPill({ status, suffix, className = '' }: { status: TxStatus; suffix?: string; className?: string }) {
   const { label, tone } = statusMap[status];
-  return <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold" style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  return <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
 export function AmountCard({ amount, label = 'Authorized via PayPal, not yet captured', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
