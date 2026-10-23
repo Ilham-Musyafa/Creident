@@ -200,7 +200,10 @@ Still open:
 - Full-page review captures (390/1440, light/dark) in docs/ui/screens/readability/;
   viewport height expanded for capture so fixed mobile tabs sit at the image bottom.
 - Continued pending `ui/quick-role-switch` branch to avoid stacking an unmerged task;
-  includes the previously approved mobile Buyer/Seller shortcut. Await review/merge.
+  includes the previously approved mobile Buyer/Seller shortcut. Pushed successfully.
+  GitHub PR creation returned `Forbidden`; open `/pull/new/ui/quick-role-switch`
+  manually (or update the existing PR). Body: `/tmp/creident-readability-pr.md`.
+  Await review/merge; no deployment or merge performed.
 
 
 ### 2026-10-23 — In-place mobile demo role toggle
