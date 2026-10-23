@@ -1,6 +1,5 @@
-import { AppShell, Card, Notice, PageHeader } from '../../../components/layout';
+import { AppShell, Notice, PageHeader } from '../../../components/layout';
 import { NewDealForm } from '../../../components/NewDealForm';
-import { KeyValue } from '../../../components/ui';
 import { data, getRole } from '../../_server';
 
 export const dynamic = 'force-dynamic';
@@ -14,19 +13,7 @@ export default async function NewDealPage() {
       {role !== 'seller' ? (
         <Notice>Only the seller creates a deal. Switch to Seller in Menu.</Notice>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <Card><NewDealForm/></Card>
-          <div className="space-y-3">
-            <KeyValue items={[
-              { label: 'Seller ships within', value: `${time.shipByDays} days` },
-              { label: 'Buyer checks the item', value: `${time.inspectionDays} days` },
-              { label: 'Evidence window', value: `${time.evidenceDays} days` },
-              { label: 'PayPal fee', value: 'Shown after payment' },
-              { label: 'Refund fees paid by', value: 'The platform (buyer gets the full refund)' },
-            ]}/>
-            <Notice>Currency is USD (PayPal Sandbox). PayPal fees are not returned on a refund; the platform bears them, so the buyer gets the full amount back.</Notice>
-          </div>
-        </div>
+        <NewDealForm time={time}/>
       )}
     </AppShell>
   );

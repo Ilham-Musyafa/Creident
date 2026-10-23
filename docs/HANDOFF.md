@@ -173,6 +173,22 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Modern New deal form
+
+- Branch `ui/new-deal-layout` from merged PR #77 (`50d64e3`). Owner approved grouped
+  Item details / What’s included / Buyer checks sections, editable list rows, live
+  transaction summary, collapsed AI assistance and clearer create-link copy.
+- Summary uses actual configured time values, sticks on desktop, and precedes submit
+  on mobile. Existing API payloads, seller acceptance, templates and AI receipt/manual
+  restore flow retained. No business-rule changes or dependencies.
+- Verification: 489 tests (47 files), typecheck and production build passed. Chromium
+  at 390/1440px in light/dark exercised add/remove rows, template merging, preview
+  counts/price, AI replay apply/manual restore (price retained), and actual create +
+  seller acceptance through the local API. No page overflow or console errors.
+- Four synthetic-data review captures in docs/ui/screens/new-deal/. Environment
+  briefly disconnected before commit; recovered workspace and verified files intact.
+
+
 ### 2026-10-23 — Transactions navigation label
 
 - Owner requested “Transactions” instead of “Deals” on the navigation tab; changed

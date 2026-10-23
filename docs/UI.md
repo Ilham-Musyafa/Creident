@@ -257,3 +257,15 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
   deadline first, then undated actions; display up to six, with a link to all deals.
 - On mobile, show the action queue before recent transactions. These are presentation
   changes only; transaction rules, deadlines and permissions remain on the server.
+
+### New deal form refinement (owner-approved 2026-10-23)
+
+- One-page form grouped into Item details, What’s included and Buyer checks, with
+  clear legends and spacing. AI listing assistance stays optional and collapsed.
+- Included items and checks use labelled add/remove rows, preserving the existing
+  newline-based form state, template merging, draft acceptance and API arrays.
+- Transaction summary previews item, USD amount, condition and list counts. Existing
+  configured deadlines are shown; fee details are expandable.
+- Summary is sticky beside the form on desktop and before the submit action on mobile.
+  “Create deal link” explains that both parties must accept before terms lock.
+- Review captures: `docs/ui/screens/new-deal/` (390/1440px, light/dark).

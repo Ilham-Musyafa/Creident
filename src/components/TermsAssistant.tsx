@@ -24,10 +24,10 @@ export function TermsAssistant({ onApply, appliedReceipt }: { appliedReceipt: st
   return <details className="group min-w-0 rounded-[18px] border border-line bg-surface-2">
     <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
       <span className="min-w-0">
-        <span id="terms-assist-title" className="block text-[15px] font-bold text-heading">Draft terms with AI · Optional</span>
+        <span id="terms-assist-title" className="block text-[15px] font-bold text-heading">Draft from a listing with AI · Optional</span>
         <span className="block text-xs text-muted">Paste a listing or chat; you check the draft before anything locks.</span>
       </span>
-      <span aria-hidden="true" className="shrink-0 text-muted transition-transform group-open:rotate-180">⌄</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6"/></svg>
     </summary>
     <section aria-labelledby="terms-assist-title" className="min-w-0 space-y-3 border-t border-line p-4">
     <p className="text-xs leading-relaxed text-muted">The AI drafts the item, condition, included items and photo checks. Price stays manual. Use synthetic data for this demo; remove personal details before a live AI call.</p>
