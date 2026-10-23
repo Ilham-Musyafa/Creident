@@ -173,6 +173,22 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Home demo guide and task priorities
+
+- Owner approved the Home recommendations: added a four-step dismissible/reopenable
+  demo guide, role-specific task summaries and deadline-first action ordering.
+  Remaining times use full words; overdue items say “Deadline passed”. Mobile actions
+  appear before recent deals. No transaction rules, permissions or deadlines changed.
+- `DemoGuide` stores only a viewer dismissal preference (try/catch); links use existing
+  deal/review/audit pages and clearly explain switching demo roles in Menu.
+- Verification: 489 tests, typecheck and build passed; 12 Chromium Home combinations
+  (buyer/seller/reviewer × 390/1440 × light/dark) passed. Checked guide links,
+  dismissal/reload/reopen, no overflow/errors and mobile content order. Independently
+  verified action order against the temporary demo database's stored deadlines.
+- Updated docs/UI.md; review screenshots in docs/ui/screens/home-guide/. Continued
+  pending UI branch `ui/remove-limitations-arrow`, no dependencies added. Await review/merge.
+
+
 ### 2026-10-23 — Desktop slide-out navigation
 
 - Owner requested a desktop Menu button instead of the always-visible sidebar.

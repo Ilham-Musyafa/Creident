@@ -248,3 +248,12 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
   with shields, locks or other company logos or imply guaranteed outcomes/custody.
 - Asset provenance, raster limits and available favicons/app icons are documented
   in `docs/brand/README.md`. Older screenshot galleries have not all been regenerated.
+
+### Home demo guidance (owner-approved 2026-10-23)
+
+- A dismissible “Try the demo” guide links to terms/deal, dispute, human review and
+  audit examples. Demo roles are explicit; dismissal is an optional localStorage preference.
+- Show a short role-specific task summary. Sort action cards by the nearest stored
+  deadline first, then undated actions; display up to six, with a link to all deals.
+- On mobile, show the action queue before recent transactions. These are presentation
+  changes only; transaction rules, deadlines and permissions remain on the server.
