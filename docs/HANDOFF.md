@@ -173,6 +173,15 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Icon-only desktop menu button
+
+- Owner requested removing the visible “Menu” label. Desktop trigger now shows only
+  the hamburger icon in a 44px circular button; aria-label/title preserve its name.
+  Drawer behavior and mobile navigation unchanged.
+- Verification: inspected the JSX diff, `npm run typecheck` and `git diff --check` passed.
+- Branch `ui/icon-only-menu` from merged PR #78. No new dependencies.
+
+
 ### 2026-10-23 — Modern New deal form
 
 - Branch `ui/new-deal-layout` from merged PR #77 (`50d64e3`). Owner approved grouped

@@ -26,11 +26,10 @@ export function DesktopNavigation({ children }: { children: ReactNode }) {
   const close = () => dialog.current?.close();
   return <div className="hidden print:hidden lg:block">
     <header className="flex items-center justify-between border-b border-line bg-surface px-6 py-2">
-      <button type="button" aria-haspopup="dialog" aria-controls="desktop-navigation" aria-expanded={open}
+      <button type="button" aria-label="Menu" title="Menu" aria-haspopup="dialog" aria-controls="desktop-navigation" aria-expanded={open}
         onClick={() => { dialog.current?.showModal(); setOpen(true); }}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 text-sm font-semibold text-heading hover:bg-surface-2">
+        className="grid size-11 shrink-0 place-items-center rounded-full border border-line text-heading hover:bg-surface-2">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="size-5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-        Menu
       </button>
       <Link href="/" aria-label="Creident home"><BrandLogo/></Link>
     </header>
