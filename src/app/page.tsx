@@ -108,7 +108,7 @@ export default async function HomePage() {
           <div className="border-t border-line pt-4">
             <span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">Sandbox demo</span>
             <p className="mt-2 text-xs leading-relaxed text-muted">{simulatedPayPal() ? 'Demo payments only. No real money moves.' : 'A dispute-mediation prototype. No real money.'}</p>
-            <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">View limitations →</Link>
+            <Link href="/about#limitations" className="inline-flex min-h-11 items-center text-xs font-semibold text-heading hover:underline">View limitations</Link>
           </div>
         </aside>
       </div>

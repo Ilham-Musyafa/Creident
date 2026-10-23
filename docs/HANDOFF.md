@@ -173,6 +173,14 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Remove Home limitations link arrow
+
+- Owner requested removing the trailing arrow from “View limitations”. Updated only
+  that link label; destination and accessible tap target are unchanged.
+- Verification: inspected the one-line JSX change; `npm run typecheck` passed.
+- Branch `ui/remove-limitations-arrow`; no dependencies or business logic changes.
+
+
 ### 2026-10-23 — Owner-approved application font pairing
 
 - Branch `ui/creident-font-pair`: Plus Jakarta Sans for headings, DM Sans for body,
