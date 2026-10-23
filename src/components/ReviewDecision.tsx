@@ -63,7 +63,7 @@ export function ReviewDecision({ txId, pendingSplit, returnByDefault = true, dea
       </div>
       <section aria-label="Partial refund decision" className="space-y-3 rounded-[18px] border border-line p-3">
         <h3 className="text-sm font-bold text-heading">Partial refund</h3>
-        <p className="text-xs text-muted">Capture the full payment, then refund the amount you enter. Any AI range is advice only. The platform bears the fee on the refunded part; no seller payout is implemented.</p>
+        <p className="text-xs text-muted">Charge the full payment, then refund the amount you enter. Any AI range is advice only. The platform bears the fee on the refunded part; no seller payout is implemented.</p>
         <div><Label htmlFor="partial-amount">Partial refund amount (USD)</Label><input id="partial-amount" disabled={busy} className={fieldClass} inputMode="decimal" value={partialAmount} maxLength={10} placeholder="e.g. 10.00" onChange={e => setPartialAmount(e.target.value)}/></div>
         <p className="text-xs text-muted">Enter two decimals, above zero and below {dealAmount} USD. The amount is never filled from an AI draft.</p>
         <label htmlFor="partial-return" className="flex min-h-11 items-start gap-3 text-sm"><input id="partial-return" disabled={busy} type="checkbox" className="mt-1 size-4" checked={partialRequireReturn} onChange={e => setPartialRequireReturn(e.target.checked)}/><span>Require the item returned before this partial refund</span></label>

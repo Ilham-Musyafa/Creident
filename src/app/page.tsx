@@ -52,8 +52,15 @@ export default async function HomePage() {
 
   return (
     <AppShell active="Home">
-      <div className="-ml-3 mb-3 lg:hidden"><BrandLogo/></div>
-      <header className="mb-5 flex items-center gap-3">
+      <header className="mb-4 flex items-center justify-between gap-3 lg:hidden">
+        <div className="-ml-3"><BrandLogo/></div>
+        <Link href="/menu" aria-label={`Demo ${role}: switch role in Menu`} className="flex min-h-11 min-w-11 shrink-0 flex-col items-center gap-1 rounded-xl p-1 text-heading hover:bg-surface-2">
+          <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold">{role[0]!.toUpperCase()}</span>
+          <span className="text-[11px] font-semibold capitalize">{role}</span>
+        </Link>
+      </header>
+      <h1 className="sr-only lg:hidden">Home</h1>
+      <header className="mb-5 hidden items-center gap-3 lg:flex">
         <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold text-heading">{role[0]!.toUpperCase()}</span>
         <div><p className="text-xs text-muted">Demo account · switch role in Menu</p><h1 className="text-base font-bold capitalize text-heading">Hi, demo {role}</h1></div>
       </header>

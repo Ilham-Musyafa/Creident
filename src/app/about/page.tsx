@@ -2,7 +2,7 @@ import { AppShell, Card, PageHeader, SectionTitle } from '../../components/layou
 import { BrandLogo } from '../../components/BrandLogo';
 
 const RULES = [
-  ['R1', 'No tracking before the ship-by deadline: the authorization is voided. No money moves.'],
+  ['R1', 'No tracking before the ship-by deadline: the payment is cancelled before charging. No money moves.'],
   ['R2', 'Delivered to the agreed address and the buyer confirmed or stayed silent through inspection: release.'],
   ['R3', 'Tracking does not fit the order (other destination or impossible ship date): a human reviews.'],
   ['R4', 'In a dispute, every criterion clearly supports one side with evidence: a recommendation, confirmed by a human.'],
@@ -19,7 +19,7 @@ export default function AboutPage() {
       <div className="mx-auto max-w-2xl space-y-2 text-sm leading-relaxed">
         <SectionTitle><span id="decisions">How decisions are made</span></SectionTitle>
         <Card>
-          <p>Terms are locked before payment. PayPal only authorizes the funds; capture, void and refund happen when deterministic rules allow it. The AI summarises the evidence against the agreed criteria. It has no tools and cannot release or refund.</p>
+          <p>Terms are locked before payment. PayPal first approves the payment without charging it. The rules allow charging or cancelling it; a refund returns a payment that was already charged. The AI summarises the evidence against the agreed criteria. It has no tools and cannot release or refund.</p>
           <ul className="mt-3 space-y-2">{RULES.map(([id, text]) => <li key={id} className="flex gap-3"><span className="font-mono text-xs font-bold text-heading">{id}</span><span>{text}</span></li>)}</ul>
         </Card>
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
           <ul className="list-disc space-y-1 pl-5">
             <li>PayPal Sandbox only. No real money. USD only.</li>
             <li>A dispute-mediation prototype, not an escrow service. A real launch needs an appropriately authorized payment partner, regulatory review and PayPal approval where required.</li>
-            <li>Courier tracking is simulated. Seller payout is not implemented: release means capture into the Sandbox merchant account. Demo deals use simulated PayPal payments.</li>
+            <li>Courier tracking is simulated. Seller payout is not implemented: completing a payment charges it into the Sandbox merchant account. Demo deals use simulated PayPal payments.</li>
             <li>Demo roles replace real sign-in.</li>
             <li>Evidence is text, including descriptions labelled as photos; camera capture and file upload are not built. Photo authenticity is not verified.</li>
             <li>On a refund the platform bears the PayPal fee; the buyer is refunded in full.</li>

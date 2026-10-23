@@ -65,19 +65,19 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 
 | TxStatus | Label | Token |
 | --- | --- | --- |
-| DRAFT | Draft | void |
-| TERMS_LOCKED | Terms locked | completed |
-| AWAITING_APPROVAL | Awaiting approval | awaiting |
-| AUTHORIZED | Authorized (funds reserved) | authorized |
+| DRAFT | Waiting for agreement | void |
+| TERMS_LOCKED | Agreed · ready to pay | completed |
+| AWAITING_APPROVAL | Waiting for payment | awaiting |
+| AUTHORIZED | Payment approved · not charged yet | authorized |
 | SHIPPED | Shipped | inspection |
-| IN_INSPECTION | Inspection | inspection |
-| DISPUTED | Disputed | disputed |
-| UNDER_REVIEW | Under review | disputed |
-| FROZEN_EXTERNAL | Frozen by PayPal | frozen |
+| IN_INSPECTION | Delivered · checking | inspection |
+| DISPUTED | Problem reported | disputed |
+| UNDER_REVIEW | Being reviewed | disputed |
+| FROZEN_EXTERNAL | On hold · PayPal dispute | frozen |
 | COMPLETED | Completed | completed |
-| REFUNDED | Refunded | void |
-| PARTIALLY_REFUNDED | Partially refunded | void |
-| VOIDED | Voided | void |
+| REFUNDED | Refund issued | void |
+| PARTIALLY_REFUNDED | Partial refund issued | void |
+| VOIDED | Cancelled · not charged | void |
 | CANCELLED | Cancelled | void |
 
 ## 3. Light, dark and system mode
@@ -219,13 +219,13 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 | Technical | Shown to users |
 |---|---|
 | Authorized / funds reserved | Payment approved · not charged yet |
-| Capture / captured | Payment completed (charged) |
-| Void / voided | Payment cancelled · nothing charged |
-| Refund / partial refund | Refunded / Partly refunded |
+| Capture / captured | Payment charged |
+| Void / voided | Cancelled · not charged |
+| Refund / partial refund | Refund issued / Partial refund issued |
 | Inspection | Checking the item |
 | Dispute opened | Problem reported |
-| Under review / escalate to a human / R5 | Being reviewed · a person decides (rule ID only in details) |
-| Frozen by PayPal | On hold by PayPal |
+| Under review / escalate to a human / R5 | Being reviewed / Needs a reviewer (rule ID only in details) |
+| Frozen by PayPal | On hold · PayPal dispute |
 | Simulated | Demo (no real money) |
 | Audit log / hash chain | Deal record / record intact |
 | Hash, head hash, digest | Fingerprint |
@@ -269,3 +269,12 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 - Summary is sticky beside the form on desktop and before the submit action on mobile.
   “Create deal link” explains that both parties must accept before terms lock.
 - Review captures: `docs/ui/screens/new-deal/` (390/1440px, light/dark).
+
+Payment wording update (owner-approved 2026-10-23): cancelling an uncharged approval
+must never be described as a refund. Pending refunds/returns stay labelled pending.
+Technical state/event codes remain intact in APIs, stored data and audit details.
+
+Mobile Home header refinement (owner-approved 2026-10-23): keep the full brand
+signature on the left and a compact, labelled avatar/role link to Menu on the right.
+The separate greeting and role-switch instruction remain desktop-only; mobile keeps
+an accessible Home heading. Use a 44px minimum target and the existing focus tokens.

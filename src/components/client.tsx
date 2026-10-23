@@ -125,7 +125,7 @@ export function PayButton({ txId, simulated = false, amount, item }: { txId: str
     <div>
       <Button fullWidth disabled={busy} onClick={() => amount ? setAsking(true) : pay()}>{busy ? 'Opening PayPal…' : label}</Button>
       {amount && <ConfirmSheet open={asking} busy={busy} onConfirm={pay} onCancel={() => setAsking(false)} details={{
-        title: 'Authorize payment', amount, amountCaption: item,
+        title: 'Approve payment', amount, amountCaption: item,
         rows: [{ label: 'Charged now', value: 'Nothing yet' }, { label: 'Charged when', value: 'You confirm the item, or a problem is decided' }, { label: 'Paid with', value: simulated ? 'Demo PayPal' : 'PayPal Sandbox' }],
         note: 'If the seller does not ship in time, the payment is cancelled and nothing is charged.', confirmLabel: 'Continue to PayPal',
       }}/>}

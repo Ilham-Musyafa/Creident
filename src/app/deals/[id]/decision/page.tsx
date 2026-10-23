@@ -13,14 +13,14 @@ import { data, isUuid, sha256 } from '../../../_server';
 export const dynamic = 'force-dynamic';
 
 const OUTCOME: Record<string, string> = {
-  RELEASE: 'Payment completed', REFUND: 'Refunded to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
+  RELEASE: 'Payment charged', REFUND: 'Refund issued to the buyer', SPLIT: 'Split (pending: no money moved yet)', PARTIAL_REFUND: 'Partial refund decided',
 };
 const MONEY_STEP: Record<string, string> = {
-  PAYPAL_CAPTURE: 'Payment completed on PayPal', PAYPAL_VOID: 'Payment cancelled on PayPal (nothing was charged)',
-  PAYPAL_REFUND: 'Payment refunded on PayPal', PAYPAL_PARTIAL_REFUND: 'Reviewer amount refunded on PayPal',
+  PAYPAL_CAPTURE: 'Payment charged on PayPal', PAYPAL_VOID: 'Payment cancelled on PayPal (nothing was charged)',
+  PAYPAL_REFUND: 'Refund issued on PayPal', PAYPAL_PARTIAL_REFUND: 'Reviewer refund amount issued on PayPal',
 };
 const RULE_ACTION: Record<string, string> = {
-  RELEASE: 'Pay the seller', REFUND: 'Refund the buyer', VOID: 'Cancel the payment', ESCALATE_HUMAN: 'A person decides', FREEZE: 'Put on hold', WAIT: 'Wait',
+  RELEASE: 'Pay the seller', REFUND: 'Refund the buyer', VOID: 'Cancel the payment', ESCALATE_HUMAN: 'Needs a reviewer', FREEZE: 'Put on hold', WAIT: 'Wait',
 };
 
 // One page both parties can read after a dispute: what was decided, by whom, on which rule
@@ -47,7 +47,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
   const moneyEvent = [...events].reverse().find((e) => ['DECISION', 'RETURN_DELIVERED', 'RETURN_DEADLINE_PASSED', 'PARTIAL_REFUND_CAPTURED', 'PARTIAL_REFUND_COMPLETED'].includes(e.type) && e.payload.effect && e.payload.effect !== 'NONE');
   const moneyStep = moneyEvent ? MONEY_STEP[String(moneyEvent.payload.effect ?? '')] : undefined;
   const outcomeText = decision?.outcome === 'PARTIAL_REFUND'
-    ? tx.partialRefundState === 'completed' ? `Partially refunded ${money(decision.amount ?? tx.partialRefundAmount ?? '0.00')}`
+    ? tx.partialRefundState === 'completed' ? `Partial refund issued: ${money(decision.amount ?? tx.partialRefundAmount ?? '0.00')}`
     : tx.partialRefundState === 'cancelled' ? 'Partial refund not executed: item not returned in time'
     : tx.status === 'RETURN_REQUESTED' ? 'Partial refund after the item is returned' : 'Partial refund pending'
     : !decision ? '' : decision.outcome !== 'REFUND' ? OUTCOME[decision.outcome] ?? decision.outcome
@@ -55,7 +55,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
     : moneyEvent?.type === 'RETURN_DEADLINE_PASSED' ? 'Payment completed: item not returned in time'
     // A refund decided before capture voids the authorization: nothing was charged, so "refunded" would be wrong.
     : tx.status === 'VOIDED' ? moneyEvent?.type === 'RETURN_DELIVERED' ? 'Payment cancelled after return' : 'Payment cancelled'
-    : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refunded to the buyer after the return'
+    : moneyEvent?.type === 'RETURN_DELIVERED' ? 'Refund issued to the buyer after the return'
     : OUTCOME.REFUND;
 
   return (
@@ -81,7 +81,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
               <p className="text-xs text-muted">Outcome</p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-heading">{outcomeText}</p>
               {moneyStep && <p className="mt-1 text-sm text-muted">{moneyStep}{isSimulatedDeal(tx) ? ' (demo)' : ''}</p>}
-              {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">{tx.captured ? 'The earlier payment was captured. The refund waits for the required return.' : 'No money has moved yet. The refund runs when the return reaches the seller.'}</p>}
+              {tx.status === 'RETURN_REQUESTED' && <p className="mt-1 text-sm text-muted">{tx.captured ? 'The payment was already charged. The refund waits for the required return.' : 'No money has moved yet. The refund runs when the return reaches the seller.'}</p>}
               {decision.amount && <p className="mt-3 text-sm font-semibold text-heading">Reviewer refund amount: {money(decision.amount)} USD · fee borne by Platform</p>}
               <p className="mt-4 text-xs text-muted">Reviewer's reason</p>
               <p className="mt-1 text-sm text-text">{decision.reason}</p>

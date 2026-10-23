@@ -48,7 +48,7 @@ describe('partial refund review API and receipt', () => {
     for (const event of repo.readEvents(tx.id).filter(e => ['DECISION', 'PARTIAL_REFUND_CAPTURED', 'PARTIAL_REFUND_COMPLETED'].includes(e.type))) {
       expect(event.payload).toMatchObject({ amount: '12.00', simulated: true, aiDraft: { accepted: 'unchanged', feature: 'copilot' }, termsHash: expect.any(String), evidenceDigest: expect.any(String) });
     }
-    const html = renderToStaticMarkup(await Receipt(param())); expect(html).toContain('Partially refunded $12.00'); expect(html).toContain('Reviewer refund amount:');
+    const html = renderToStaticMarkup(await Receipt(param())); expect(html).toContain('Partial refund issued: $12.00'); expect(html).toContain('Reviewer refund amount:');
     expect(verifyChain(repo.readEvents(tx.id)).ok).toBe(true);
     expect((await review(req(body({ reason: draft.draft.reason, copilotDraftId: draft.draftId })), param())).status).toBe(200); expect(refund).toHaveBeenCalledTimes(1);
   });

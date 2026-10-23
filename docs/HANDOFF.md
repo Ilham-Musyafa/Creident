@@ -173,6 +173,49 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Compact mobile Home identity
+
+- Owner requested reducing crowding around “Hi, Demo Buyer”. Mobile Home now pairs
+  the logo with a compact avatar/role link on the right; tapping it opens Menu's
+  existing role controls. Removed the separate mobile greeting/instruction row.
+  Desktop greeting stays unchanged; mobile retains a screen-reader Home heading.
+- Verification: typecheck, production build and diff check passed. Chromium checked
+  buyer/seller/reviewer at 360/390/1440px in light/dark (18 combinations): no overflow
+  or console/page errors, mobile greeting hidden, role control ≥44px with visible
+  keyboard focus, role link reaches Menu, desktop greeting unchanged.
+- Review screenshots: docs/ui/screens/mobile-header/. Continued pending
+  `ui/icon-only-menu` UI polish branch; no dependencies or business logic changes.
+
+
+### 2026-10-23 — Plain payment and review wording
+
+- Owner approved replacing confusing payment terms: status badges/timelines now use
+  “Payment approved · not charged yet”, “Refund issued”, “Partial refund issued”,
+  “On hold · PayPal dispute”; VOIDED retains “Cancelled · not charged”. Recommendations
+  use “Needs a reviewer”. Charge/approval/receipt/about/styleguide copy is aligned.
+- Retained pending-return/refund wording and the distinction between cancelling an
+  uncharged approval and refunding a charged payment. Removed misleading guaranteed
+  charge wording from the payment-approval window. Stored codes, API values, audit
+  chain data, rule/state transitions and PayPal calls are unchanged.
+- Updated UI.md label tables and existing assertions for the changed frozen timeline
+  and partial refund receipt wording. No new dependencies.
+- Verification: 489 tests (47 files), typecheck, production build passed. Chromium
+  checked 15 pages at 390/1440px in light/dark (60 checks): no horizontal overflow or
+  unexpected console/page errors; existing AG Studio missing-license notices only.
+- Continued pending `ui/icon-only-menu` branch, including the prior icon-only trigger.
+  Pushed successfully; PR creation returned GitHub `Forbidden`. Open
+  `/pull/new/ui/icon-only-menu` manually; body: `/tmp/plain-payment-pr.md`.
+
+
+### 2026-10-23 — Icon-only desktop menu button
+
+- Owner requested removing the visible “Menu” label. Desktop trigger now shows only
+  the hamburger icon in a 44px circular button; aria-label/title preserve its name.
+  Drawer behavior and mobile navigation unchanged.
+- Verification: inspected the JSX diff, `npm run typecheck` and `git diff --check` passed.
+- Branch `ui/icon-only-menu` from merged PR #78. No new dependencies.
+
+
 ### 2026-10-23 — Modern New deal form
 
 - Branch `ui/new-deal-layout` from merged PR #77 (`50d64e3`). Owner approved grouped
