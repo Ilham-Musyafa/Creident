@@ -273,3 +273,8 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 Payment wording update (owner-approved 2026-10-23): cancelling an uncharged approval
 must never be described as a refund. Pending refunds/returns stay labelled pending.
 Technical state/event codes remain intact in APIs, stored data and audit details.
+
+Mobile Home header refinement (owner-approved 2026-10-23): keep the full brand
+signature on the left and a compact, labelled avatar/role link to Menu on the right.
+The separate greeting and role-switch instruction remain desktop-only; mobile keeps
+an accessible Home heading. Use a 44px minimum target and the existing focus tokens.

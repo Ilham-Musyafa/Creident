@@ -173,6 +173,20 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Compact mobile Home identity
+
+- Owner requested reducing crowding around “Hi, Demo Buyer”. Mobile Home now pairs
+  the logo with a compact avatar/role link on the right; tapping it opens Menu's
+  existing role controls. Removed the separate mobile greeting/instruction row.
+  Desktop greeting stays unchanged; mobile retains a screen-reader Home heading.
+- Verification: typecheck, production build and diff check passed. Chromium checked
+  buyer/seller/reviewer at 360/390/1440px in light/dark (18 combinations): no overflow
+  or console/page errors, mobile greeting hidden, role control ≥44px with visible
+  keyboard focus, role link reaches Menu, desktop greeting unchanged.
+- Review screenshots: docs/ui/screens/mobile-header/. Continued pending
+  `ui/icon-only-menu` UI polish branch; no dependencies or business logic changes.
+
+
 ### 2026-10-23 — Plain payment and review wording
 
 - Owner approved replacing confusing payment terms: status badges/timelines now use
