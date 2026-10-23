@@ -275,6 +275,9 @@ must never be described as a refund. Pending refunds/returns stay labelled pendi
 Technical state/event codes remain intact in APIs, stored data and audit details.
 
 Mobile Home header refinement (owner-approved 2026-10-23): keep the full brand
-signature on the left and a compact, labelled avatar/role link to Menu on the right.
+signature on the left and a compact, labelled avatar/role toggle on the right.
 The separate greeting and role-switch instruction remain desktop-only; mobile keeps
 an accessible Home heading. Use a 44px minimum target and the existing focus tokens.
+The avatar switches Buyer ↔ Seller in place using the existing demo role cookie;
+its accessible name/title describes the next role. Reviewer selection stays in Menu;
+a reviewer can use the shortcut to return to Buyer. Refresh Home without changing URL.

@@ -173,6 +173,22 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — In-place mobile demo role toggle
+
+- Branch `ui/quick-role-switch` from merged PR #79 (`9c6c372`). Owner requested that
+  tapping the Home avatar switches roles without opening settings. New small client
+  component toggles Buyer ↔ Seller via the existing `hv-role` cookie and refreshes
+  the current page. Pending disables repeat taps; title/accessibility label identifies
+  the next role, with a small swap icon. Reviewer selection/gate stays in Menu;
+  a reviewer can use the shortcut to return to Buyer. No real authentication added.
+- Verification: 489 tests (47 files), typecheck, production build and diff check passed.
+  Chromium at 360/390px light/dark verified click/keyboard toggle both ways, unchanged
+  Home URL, persisted role after reload, updated role summary, 44px target, no overflow
+  or console errors. Reviewer-to-buyer and unchanged desktop greeting also checked.
+- Updated docs/UI.md; review captures in docs/ui/screens/quick-role/. No dependencies
+  or business logic changes.
+
+
 ### 2026-10-23 — Compact mobile Home identity
 
 - Owner requested reducing crowding around “Hi, Demo Buyer”. Mobile Home now pairs
