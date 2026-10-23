@@ -187,6 +187,8 @@ Still open:
   seller acceptance through the local API. No page overflow or console errors.
 - Four synthetic-data review captures in docs/ui/screens/new-deal/. Environment
   briefly disconnected before commit; recovered workspace and verified files intact.
+- Pushed successfully. GitHub PR creation returned `Forbidden`; open
+  `/pull/new/ui/new-deal-layout` manually. PR body saved at `/tmp/new-deal-pr.md`.
 
 
 ### 2026-10-23 — Transactions navigation label
