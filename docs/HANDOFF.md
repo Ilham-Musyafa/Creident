@@ -173,6 +173,17 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Transactions navigation label
+
+- Owner requested “Transactions” instead of “Deals” on the navigation tab; changed
+  the displayed label in mobile/desktop navigation and the list page heading.
+  Internal active keys and `/deals` URLs remain compatible.
+- Verification: typecheck and production build passed. Chromium checked the heading,
+  navigation label/current state/link target, overflow and console at 360/390/1440px
+  in light/dark (six combinations); all passed.
+- Pushed as a follow-up on `ui/remove-limitations-arrow` (PR #77); no dependencies.
+
+
 ### 2026-10-23 — Home demo guide and task priorities
 
 - Owner approved the Home recommendations: added a four-step dismissible/reopenable

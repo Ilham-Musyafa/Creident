@@ -21,7 +21,7 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
 
   return (
     <AppShell active="Deals">
-      <PageHeader title="Deals" subtitle={`Viewing as demo ${role}`}/>
+      <PageHeader title="Transactions" subtitle={`Viewing as demo ${role}`}/>
       <nav aria-label="Filter deals" className="mb-4 flex flex-wrap gap-2">
         {(Object.keys(FILTERS) as Filter[]).map((f) => (
           <Link key={f} href={f === 'all' ? '/deals' : `/deals?filter=${f}`} aria-current={f === filter ? 'page' : undefined}
