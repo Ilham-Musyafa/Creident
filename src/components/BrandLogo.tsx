@@ -5,7 +5,7 @@ export function BrandLogo({ symbolOnly = false }: { symbolOnly?: boolean }) {
       <img className="brand-symbol-light" src="/brand/symbol-light.png" width="48" height="48" alt=""/>
       <img className="brand-symbol-dark" src="/brand/symbol-dark.png" width="48" height="48" alt=""/>
     </span>
-    {!symbolOnly && <span className="text-heading"><span className="brand-wordmark block text-[30px] leading-9">Creident</span><span className="block whitespace-nowrap text-xs leading-5">Every deal, on record.</span></span>}
+    {!symbolOnly && <span className="text-heading"><span className="brand-wordmark block text-[30px] leading-9">Creident</span><span className="brand-tagline block whitespace-nowrap text-xs leading-5">Every deal, on record.</span></span>}
     {symbolOnly && <span className="sr-only">Creident</span>}
   </span>;
 }

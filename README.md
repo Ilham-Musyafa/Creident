@@ -534,8 +534,8 @@ SPLIT and does not implement a split payout or seller payout.
     `AgStudioProvider`. The [PayPal/AG Studio boilerplate](https://github.com/paypaldev/hackathon-paypal-ag-grid-boilerplate)
     was used only as an API reference. Creident supplies its own data, widgets,
     responsive layout and token-based light/dark theme.
-- Sapphire Flow identity: Georgia for the signature/major headings and Arial for the
-  interface (system fonts, no font download). Original source-derived logo variants,
+- Sapphire Flow identity: Georgia/Arial for the signature; Plus Jakarta Sans headings and DM Sans
+  interface (local variable fonts, no external font service). Original source-derived logo variants,
   favicon and app icons: [`docs/brand/README.md`](docs/brand/README.md).
 - Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).
   Agent rules are in [`AGENTS.md`](AGENTS.md); working notes in

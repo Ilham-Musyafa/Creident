@@ -173,6 +173,20 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Owner-approved application font pairing
+
+- Branch `ui/creident-font-pair`: Plus Jakarta Sans for headings, DM Sans for body,
+  navigation, forms, buttons and amounts. Georgia/Arial brand signature unchanged.
+- Reused the existing Jakarta asset; added only a local DM Sans variable WOFF2 and its
+  OFL license from Fontsource 5.3.0. No package dependencies or business logic changed.
+- Updated UI/brand/README typography guidance and added four Home review captures in
+  `docs/ui/screens/fonts/` (390/1440px, light/dark).
+- Verification: 489 tests (47 files), typecheck and production build passed. Chromium
+  checked 15 pages at both widths/themes (60 checks): no horizontal overflow or
+  unexpected console/page errors; only existing AG Studio missing-license notices.
+  Fonts load locally; theme switching and brand assets passed. Live deployment awaits merge.
+
+
 - 2026-10-23 (Codex, owner-requested brand-kit application): branch
   `ui/creident-brand-kit` from latest main 1b9bc1e. Applied the uploaded nine-page
   Creident Brand Guidelines PDF (Sapphire Flow), which supersedes the older

@@ -14,7 +14,7 @@ Goal: **clean, modern, simple, fast, and still attractive.**
 2. Money and status first: the amount and the current status are readable at a glance.
 3. Status always has a **text label** (and ideally an icon). Never colour alone.
 4. Explain, do not hide: show what happens to the money next and what the AI did and did not do.
-5. Fast: no UI component library, no heavy animation, inline SVG UI icons, system fonts and small source-derived brand PNGs.
+5. Fast: no UI component library, no heavy animation, inline SVG UI icons, locally hosted variable fonts and small source-derived brand PNGs.
 
 ## 2. Design tokens
 
@@ -91,11 +91,12 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 
 ## 4. Typography
 
-- **Georgia Regular** for the signature and major page headings, with Times New Roman/serif fallback.
-- **Arial** for body, labels, buttons, tables and captions, with Helvetica/sans-serif fallback.
-  These are installed system fonts; no font download is required. Do not redistribute
-  commercial font files. The older Jakarta font files remain historical, unused assets.
-- Page titles: 28px on mobile / 32px from the small breakpoint; subheads 15px Arial bold.
+- Owner-approved application typography update (2026-10-23): **Plus Jakarta Sans** for
+  page and card headings; **DM Sans** for body, labels, navigation, buttons, tables and numbers.
+- Both use local Latin variable WOFF2 files through `next/font/local`, preloaded with
+  `display: swap` and Arial/sans-serif fallbacks. No runtime Google Fonts requests.
+- The brand signature remains **Georgia Regular** with its **Arial** tagline, as supplied.
+- Page titles: 28px on mobile / 32px from the small breakpoint; subheads 15px/700.
 - Monospace (hashes, codes): system `ui-monospace`.
 - Scale: amount 32/800 (tight letter-spacing), section 15/700,
   body 14/400–600, caption 12/400, micro 11/700 (pills).
@@ -162,7 +163,7 @@ Follow the claim rules in `AGENTS.md`. In the UI specifically:
 - Every status, error and success has text, not only colour.
 - Keyboard focus visible; buttons are `<button>`, links are `<a>`.
 - Respect `prefers-reduced-motion`; transitions under 200ms.
-- No layout shift from fonts; images sized and lazy-loaded.
+- Use preloaded fonts with adjusted fallbacks to limit font layout shift; images sized and lazy-loaded.
 - No console errors or warnings.
 
 ## Motion (owner-approved 2026-10-22)
