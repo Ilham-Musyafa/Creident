@@ -21,7 +21,7 @@ describe('view helpers', () => {
     }
     expect(timelineFor('COMPLETED').every((s) => s.state === 'done')).toBe(true);
     expect(timelineFor('VOIDED').at(-1)?.title).toBe('Payment cancelled');
-    expect(timelineFor('FROZEN_EXTERNAL', 'IN_INSPECTION').some((s) => s.title === 'On hold by PayPal')).toBe(true);
+    expect(timelineFor('FROZEN_EXTERNAL', 'IN_INSPECTION').some((s) => s.title === 'On hold · PayPal dispute')).toBe(true);
   });
 
   it('offers money-moving decisions only to the right role', () => {

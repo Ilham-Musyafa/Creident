@@ -63,7 +63,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <div className="mb-4 space-y-2"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></div>
           )}
           
-          {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal refused to capture this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The authorization may be past PayPal's 3-day honor period. Nothing was charged and the deal has not moved; the seller is not paid until this is resolved. This prototype does not reauthorize automatically.</Notice></div>}
+          {captureFailed && <div className="mb-4"><Notice tone="warning">PayPal could not charge this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.</Notice></div>}
           <PartialRefundNotice tx={tx} events={allEvents}/>
           {(() => {
             // The main action first; the timeline below is supporting context (owner request).
@@ -126,7 +126,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
 
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (demo)' : tx.captured ? 'See PayPal' : 'Shown after payment' },
-            ...(authWindow ? [{ label: 'Payment approval', value: authWindow.phase === 'honor' ? `Guaranteed until ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the 3-day guarantee; charging may fail (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be charged' }] : []),
+            ...(authWindow ? [{ label: 'Payment approval', value: authWindow.phase === 'honor' ? `Initial 3-day window ends ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the initial 3-day window; charging may fail (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be charged' }] : []),
             { label: 'Refund fees paid by', value: 'The platform (buyer gets the full refund amount)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>

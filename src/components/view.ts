@@ -52,10 +52,10 @@ export interface Step { title: string; detail?: string; state: StepState }
 export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
   const base: Array<Omit<Step, 'state'>> = [
     { title: 'Agreed', detail: 'Both sides accepted the same terms' },
-    { title: 'Payment approved', detail: 'Not charged until the buyer confirms' },
+    { title: 'Payment approved · not charged yet', detail: 'Charged after confirmation, the inspection deadline, or a reviewer decision' },
     { title: 'Shipped', detail: 'Seller added tracking (demo courier)' },
     { title: 'Buyer checks the item', detail: 'Confirm it arrived as agreed, or report a problem' },
-    { title: 'Payment completed', detail: 'Charged via PayPal; payout to the seller is not part of this demo' },
+    { title: 'Payment charged', detail: 'Charged via PayPal; payout to the seller is not part of this demo' },
   ];
   const effective = status === 'FROZEN_EXTERNAL' && frozenFrom ? frozenFrom : status;
   const doneUntil: Record<TxStatus, number> = {
@@ -77,12 +77,12 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
     steps[4] = { title: 'Return to seller', detail: 'Buyer ships it back; the refund is sent when it arrives', state: 'current' };
   }
   if (status === 'FROZEN_EXTERNAL' && steps[Math.min(done, 4)]) {
-    steps[Math.min(done, 4)] = { title: 'On hold by PayPal', detail: 'PayPal is reviewing a case; nothing moves meanwhile', state: 'current' };
+    steps[Math.min(done, 4)] = { title: 'On hold · PayPal dispute', detail: 'PayPal is reviewing a case; nothing moves meanwhile', state: 'current' };
   }
   if (effective === 'VOIDED') steps.splice(2, 3, { title: 'Payment cancelled', detail: 'Nothing was charged', state: 'done' });
   if (effective === 'CANCELLED') steps.splice(0, 5, { title: 'Cancelled', detail: 'Cancelled before payment', state: 'done' });
-  if (effective === 'PARTIALLY_REFUNDED' && steps[4]) steps[4] = { title: 'Partly refunded', detail: 'Charged, then part was refunded to the buyer', state: 'done' };
-  if (effective === 'REFUNDED' && steps[4]) steps[4] = { title: 'Refunded', detail: 'Charged, then refunded to the buyer', state: 'done' };
+  if (effective === 'PARTIALLY_REFUNDED' && steps[4]) steps[4] = { title: 'Partial refund issued', detail: 'Charged, then part was refunded to the buyer', state: 'done' };
+  if (effective === 'REFUNDED' && steps[4]) steps[4] = { title: 'Refund issued', detail: 'Charged, then refunded to the buyer', state: 'done' };
   return steps;
 }
 
@@ -105,7 +105,7 @@ const EVENT_TITLES: Record<string, string> = {
   RECOMMENDATION_RECORDED: 'Rules recommendation saved',
   DECISION: 'Reviewer decision',
   PARTIAL_REFUND_CAPTURED: 'Payment completed before partial refund',
-  PARTIAL_REFUND_COMPLETED: 'Partial refund sent',
+  PARTIAL_REFUND_COMPLETED: 'Partial refund issued',
   HUMAN_SPLIT_PENDING: 'Split decision (pending)',
   SHIP_DEADLINE_PASSED: 'Not shipped in time · payment cancelled',
   EXTERNAL_DISPUTE: 'PayPal case opened · deal on hold',
@@ -174,8 +174,8 @@ export function authorizationWindow(authorizedAt: string, now: string): { honorE
 export function recentSuccess(status: TxStatus, lastEventTs: string | undefined, now: string): string | null {
   if (!lastEventTs || Date.parse(now) - Date.parse(lastEventTs) > 120_000) return null;
   const labels: Partial<Record<TxStatus, string>> = {
-    AUTHORIZED: 'Payment approved', COMPLETED: 'Deal completed', REFUNDED: 'Refund sent',
-    PARTIALLY_REFUNDED: 'Partial refund sent', RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Payment cancelled',
+    AUTHORIZED: 'Payment approved', COMPLETED: 'Deal completed', REFUNDED: 'Refund issued',
+    PARTIALLY_REFUNDED: 'Partial refund issued', RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Payment cancelled',
   };
   return labels[status] ?? null;
 }

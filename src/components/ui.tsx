@@ -5,15 +5,15 @@ import type { TxStatus } from '../lib/domain/types';
 
 type Tone = 'awaiting' | 'authorized' | 'inspection' | 'disputed' | 'completed' | 'frozen' | 'void';
 const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
-  PARTIALLY_REFUNDED: { label: 'Partly refunded', tone: 'void' },
+  PARTIALLY_REFUNDED: { label: 'Partial refund issued', tone: 'void' },
   DRAFT: { label: 'Waiting for agreement', tone: 'void' }, TERMS_LOCKED: { label: 'Agreed · ready to pay', tone: 'completed' },
   AWAITING_APPROVAL: { label: 'Waiting for payment', tone: 'awaiting' },
-  AUTHORIZED: { label: 'Payment approved', tone: 'authorized' },
+  AUTHORIZED: { label: 'Payment approved · not charged yet', tone: 'authorized' },
   SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: 'Delivered · checking', tone: 'inspection' },
   DISPUTED: { label: 'Problem reported', tone: 'disputed' }, UNDER_REVIEW: { label: 'Being reviewed', tone: 'disputed' },
   RETURN_REQUESTED: { label: 'Return in progress', tone: 'awaiting' },
-  FROZEN_EXTERNAL: { label: 'On hold by PayPal', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
-  REFUNDED: { label: 'Refunded', tone: 'void' }, VOIDED: { label: 'Cancelled · not charged', tone: 'void' },
+  FROZEN_EXTERNAL: { label: 'On hold · PayPal dispute', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
+  REFUNDED: { label: 'Refund issued', tone: 'void' }, VOIDED: { label: 'Cancelled · not charged', tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },
 };
 const toneStyle = (tone: Tone) => ({ backgroundColor: `var(--${tone}-bg)`, color: `var(--${tone}-text)` });
@@ -26,7 +26,7 @@ export function StatusPill({ status, suffix, className = '' }: { status: TxStatu
   const { label, tone } = statusMap[status];
   return <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
-export function AmountCard({ amount, label = 'Authorized via PayPal, not yet captured', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
+export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
     <section className="rounded-[26px] bg-hero p-5 text-hero-text" aria-label="Amount overview">
       <p className="text-xs text-hero-sub">{label}</p>

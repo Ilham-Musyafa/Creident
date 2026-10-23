@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 
 const ACTION_TEXT: Record<string, string> = {
   RELEASE: 'Pay the seller', REFUND: 'Refund the buyer', VOID: 'Cancel the payment',
-  ESCALATE_HUMAN: 'A person decides', FREEZE: 'Put on hold', WAIT: 'Wait',
+  ESCALATE_HUMAN: 'Needs a reviewer', FREEZE: 'Put on hold', WAIT: 'Wait',
 };
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {

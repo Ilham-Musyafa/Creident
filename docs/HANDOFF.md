@@ -173,6 +173,24 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Plain payment and review wording
+
+- Owner approved replacing confusing payment terms: status badges/timelines now use
+  “Payment approved · not charged yet”, “Refund issued”, “Partial refund issued”,
+  “On hold · PayPal dispute”; VOIDED retains “Cancelled · not charged”. Recommendations
+  use “Needs a reviewer”. Charge/approval/receipt/about/styleguide copy is aligned.
+- Retained pending-return/refund wording and the distinction between cancelling an
+  uncharged approval and refunding a charged payment. Removed misleading guaranteed
+  charge wording from the payment-approval window. Stored codes, API values, audit
+  chain data, rule/state transitions and PayPal calls are unchanged.
+- Updated UI.md label tables and existing assertions for the changed frozen timeline
+  and partial refund receipt wording. No new dependencies.
+- Verification: 489 tests (47 files), typecheck, production build passed. Chromium
+  checked 15 pages at 390/1440px in light/dark (60 checks): no horizontal overflow or
+  unexpected console/page errors; existing AG Studio missing-license notices only.
+- Continued pending `ui/icon-only-menu` branch, including the prior icon-only trigger.
+
+
 ### 2026-10-23 — Icon-only desktop menu button
 
 - Owner requested removing the visible “Menu” label. Desktop trigger now shows only
