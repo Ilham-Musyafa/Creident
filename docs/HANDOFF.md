@@ -173,6 +173,66 @@ Still open:
 
 ## Log
 
+### 2026-10-23 — Transactions navigation label
+
+- Owner requested “Transactions” instead of “Deals” on the navigation tab; changed
+  the displayed label in mobile/desktop navigation and the list page heading.
+  Internal active keys and `/deals` URLs remain compatible.
+- Verification: typecheck and production build passed. Chromium checked the heading,
+  navigation label/current state/link target, overflow and console at 360/390/1440px
+  in light/dark (six combinations); all passed.
+- Pushed as a follow-up on `ui/remove-limitations-arrow` (PR #77); no dependencies.
+
+
+### 2026-10-23 — Home demo guide and task priorities
+
+- Owner approved the Home recommendations: added a four-step dismissible/reopenable
+  demo guide, role-specific task summaries and deadline-first action ordering.
+  Remaining times use full words; overdue items say “Deadline passed”. Mobile actions
+  appear before recent deals. No transaction rules, permissions or deadlines changed.
+- `DemoGuide` stores only a viewer dismissal preference (try/catch); links use existing
+  deal/review/audit pages and clearly explain switching demo roles in Menu.
+- Verification: 489 tests, typecheck and build passed; 12 Chromium Home combinations
+  (buyer/seller/reviewer × 390/1440 × light/dark) passed. Checked guide links,
+  dismissal/reload/reopen, no overflow/errors and mobile content order. Independently
+  verified action order against the temporary demo database's stored deadlines.
+- Updated docs/UI.md; review screenshots in docs/ui/screens/home-guide/. Continued
+  pending UI branch `ui/remove-limitations-arrow`, no dependencies added. Await review/merge.
+
+
+### 2026-10-23 — Desktop slide-out navigation
+
+- Owner requested a desktop Menu button instead of the always-visible sidebar.
+  Added `DesktopNavigation` with a left-edge modal drawer sliding to the right;
+  main content uses the available width. Existing bottom navigation stays on mobile.
+- Supports close button, outside click, Escape, focus containment/restoration,
+  scroll lock, close on navigation/mobile resize and reduced-motion preference.
+  Updated docs/UI.md; screenshots in docs/ui/screens/navigation/.
+- Verification: 489 tests, typecheck and build passed. Chromium light/dark at 1440px
+  exercised keyboard loops, dismissal, links and reduced motion; resizing to 390px
+  restored scrolling and showed only the mobile navigation. No overflow/console errors.
+- Continued the pending `ui/remove-limitations-arrow` UI polish branch; includes prior
+  arrow removal and action badge alignment. No new dependencies. Not merged.
+
+
+### 2026-10-23 — Align Home action status badges
+
+- Follow-up Home polish on `ui/remove-limitations-arrow`: action status badges now
+  share a 128px width, centered text/content and balanced line wrapping. Other uses
+  of StatusPill keep their existing layout through an optional className prop.
+- Verification: typecheck and production build passed; Chromium buyer Home at
+  360/390/1440px in light/dark passed (five centered badges, no overflow or console errors).
+- Included with the pending Home arrow change to avoid stacking an unmerged branch.
+
+
+### 2026-10-23 — Remove Home limitations link arrow
+
+- Owner requested removing the trailing arrow from “View limitations”. Updated only
+  that link label; destination and accessible tap target are unchanged.
+- Verification: inspected the one-line JSX change; `npm run typecheck` passed.
+- Branch `ui/remove-limitations-arrow`; no dependencies or business logic changes.
+
+
 ### 2026-10-23 — Owner-approved application font pairing
 
 - Branch `ui/creident-font-pair`: Plus Jakarta Sans for headings, DM Sans for body,
