@@ -186,7 +186,8 @@ Still open:
   Home URL, persisted role after reload, updated role summary, 44px target, no overflow
   or console errors. Reviewer-to-buyer and unchanged desktop greeting also checked.
 - Updated docs/UI.md; review captures in docs/ui/screens/quick-role/. No dependencies
-  or business logic changes.
+  or business logic changes. Pushed successfully; PR creation returned GitHub `Forbidden`.
+  Open `/pull/new/ui/quick-role-switch` manually; body: `/tmp/quick-role-pr.md`.
 
 
 ### 2026-10-23 — Compact mobile Home identity
