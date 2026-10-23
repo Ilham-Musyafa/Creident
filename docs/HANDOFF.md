@@ -189,6 +189,8 @@ Still open:
   checked 15 pages at 390/1440px in light/dark (60 checks): no horizontal overflow or
   unexpected console/page errors; existing AG Studio missing-license notices only.
 - Continued pending `ui/icon-only-menu` branch, including the prior icon-only trigger.
+  Pushed successfully; PR creation returned GitHub `Forbidden`. Open
+  `/pull/new/ui/icon-only-menu` manually; body: `/tmp/plain-payment-pr.md`.
 
 
 ### 2026-10-23 — Icon-only desktop menu button
