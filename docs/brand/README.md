@@ -2,14 +2,16 @@
 
 Owner-provided identity, approved for application to the project on 2026-10-23.
 Source: [Creident Brand Guidelines](Creident_Brand_Guidelines.pdf), nine pages.
-The previous mint/diamond identity and Jakarta web font are superseded.
+The previous mint/diamond identity is superseded. The owner approved Plus Jakarta Sans
+headings and DM Sans interface typography on 2026-10-23; the signature is unchanged.
 
 ## Identity
 
 - Exact line: **Every deal, on record.**
 - Midnight Navy `#0B1F4B`, Sapphire Blue `#3B82F6`, Sky Blue `#93C5FD`, Ice Blue `#DBEAFE`.
-- Georgia Regular for the signature/major headings, Arial for the working interface.
-  System fallbacks are declared; no commercial fonts are redistributed.
+- Georgia Regular for the signature and Arial for its tagline. Application typography
+  uses locally hosted Plus Jakarta Sans and DM Sans, with OFL notices in `src/fonts/`.
+  No commercial fonts are redistributed.
 - The logo's two terminal nodes and separate arcs must remain intact. Do not rotate,
   stretch, recolour, add shadows/outlines or pair it with shields/locks/company logos.
 
@@ -44,7 +46,7 @@ All application colours stay in `src/app/globals.css`. Light/dark backgrounds an
 muted text are supporting derivatives; semantic status/notice colours retain their
 meanings. Sapphire Blue with white or exact brand navy text falls below 4.5:1, so
 normal button/chart-label text uses darker navy `#07142F`. This does not recolour
-the logo. The AG Studio theme reads the same CSS tokens and system font stack.
+the logo. The AG Studio theme reads the same CSS tokens and application body font stack.
 
 Business rules, payments, role gates and record formats are unchanged. Prototype,
 simulation and AI limitations stay visible. Historic screenshot galleries remain

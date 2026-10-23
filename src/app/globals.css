@@ -3,7 +3,7 @@
 :root {
   --brand-navy: #0B1F4B; --brand-sapphire: #3B82F6;
   --brand-sky: #93C5FD; --brand-ice: #DBEAFE;
-  --font-display: Georgia, "Times New Roman", serif;
+  --font-display: var(--font-heading-loaded), Arial, sans-serif;
 }
 
 :root, [data-theme="light"] {
@@ -65,14 +65,15 @@
   --color-heading: var(--heading); --color-hero: var(--hero); --color-hero-text: var(--hero-text);
   --color-hero-sub: var(--hero-sub); --color-accent: var(--accent); --color-on-accent: var(--on-accent);
   --color-strong: var(--strong); --color-on-strong: var(--on-strong);
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-body-loaded), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-heading-loaded), Arial, sans-serif;
 }
 
-body { background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
-/* Sapphire Flow: serif identity/major headings; system sans for working UI. */
-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.025em; }
-.brand-wordmark { font-family: var(--font-display); font-weight: 400; letter-spacing: -.025em; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body-loaded), Arial, Helvetica, sans-serif; }
+/* Owner-approved application typography; the brand signature retains its original fonts. */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.025em; }
+.brand-wordmark { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -.025em; }
+.brand-tagline { font-family: Arial, Helvetica, sans-serif; }
 .brand-symbol-dark { display: none; }
 [data-theme="dark"] .brand-symbol-light { display: none; }
 [data-theme="dark"] .brand-symbol-dark { display: block; }
