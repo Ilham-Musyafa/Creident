@@ -390,3 +390,25 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   Home and Transactions retain their current appearance at 1024px and above.
 - Review captures: `docs/ui/screens/mobile-reference/`, 390px light/dark, expanded
   capture height to keep the fixed bottom bar from obscuring full-page content.
+
+### NexoBank-inspired mobile Home (owner reference, 2026-10-24)
+
+- Supersedes the earlier gradient-card mobile Home composition. Reference is the
+  owner's screenshot from NexoBank, Figma Community file `1536346965435909007`.
+  Borrow hierarchy and spacing; use Creident's logo/fonts and original CSS Sapphire
+  waves. No reference artwork, banking labels, contact photos or banking functionality.
+- Full-width branded header, compact existing role toggle, rounded surface panel,
+  approved-but-uncharged USD amount with a local show/hide toggle, four shortcuts
+  (Actions, Browse, Records, About), and one role-appropriate primary action.
+- Buyer with pending actions opens the existing action list; Seller creates a deal;
+  Reviewer opens the existing review queue. Actions and About replace the panel
+  content on demand. View focus uses preventScroll to avoid jumping the header.
+- Compact actual Active/In dispute/Completed counts replace the reference's contact
+  transfer row. Show up to three recent transactions, or reviewer queue rows, with
+  real status/amount and Demo badges. Keep pending-refund verification text even in
+  compact rows. Audit checks, failures and payment-mode limitations remain visible.
+- Mobile navigation is a navy floating pill with all four existing labels and active
+  state, minimum 64px link height and device safe-area spacing. No central New button.
+  Applies consistently to mobile routes; desktop drawer styles remain unchanged.
+- No new dependency, rule/state/payment/auth/API change. Review captures:
+  `docs/ui/screens/nexo-home/` (390px, light/dark viewport and full page).

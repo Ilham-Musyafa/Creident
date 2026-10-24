@@ -15,7 +15,6 @@
   --text: #0B1F4B; --muted: #465A78; --heading: #0B1F4B; --hero: #0B1F4B;
   --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
   --strong: #0B1F4B; --on-strong: #FFFFFF;
-  --mobile-card-start: #DBEAFE; --mobile-card-end: #93C5FD; --mobile-card-text: #0B1F4B;
   --awaiting-bg: #FEF3C7; --awaiting-text: #B45309;
   --authorized-bg: #E0E7FF; --authorized-text: #4338CA;
   --inspection-bg: #DBEAFE; --inspection-text: #1D4ED8;
@@ -34,7 +33,6 @@
     --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
     --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
     --strong: #93C5FD; --on-strong: #0B1F4B;
-  --mobile-card-start: #143465; --mobile-card-end: #1E4D8C; --mobile-card-text: #FFFFFF;
     --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
     --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
     --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -53,7 +51,6 @@
   --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
   --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
   --strong: #93C5FD; --on-strong: #0B1F4B;
-  --mobile-card-start: #143465; --mobile-card-end: #1E4D8C; --mobile-card-text: #FFFFFF;
   --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
   --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
   --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -132,4 +129,33 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .desktop-navigation[open] { animation: none; }
 }
 
-.mobile-approval-card { background: linear-gradient(120deg, var(--mobile-card-start), var(--mobile-card-end)); color: var(--mobile-card-text); }
+
+/* Owner's NexoBank reference: original CSS waves in Creident's Sapphire palette. */
+.mobile-home-banner { background: var(--brand-navy); }
+.mobile-home-banner::before, .mobile-home-banner::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  width: 150%; height: 160px; left: -25%; border-radius: 50%;
+}
+.mobile-home-banner::before {
+  top: -85px; transform: rotate(-13deg);
+  background: linear-gradient(145deg, var(--brand-sky), var(--brand-sapphire) 48%, var(--brand-navy) 80%);
+  opacity: .55;
+}
+.mobile-home-banner::after {
+  bottom: -150px; transform: rotate(-12deg);
+  background: linear-gradient(125deg, var(--brand-navy), var(--brand-sapphire) 55%, var(--brand-sky));
+}
+@media (width < 1024px) {
+  .mobile-dock {
+    width: calc(100% - 24px); max-width: 420px; margin: 0 auto;
+    margin-bottom: max(12px, env(safe-area-inset-bottom)); padding: 3px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--brand-navy); color: var(--hero-text);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--brand-navy) 24%, transparent);
+  }
+  .mobile-dock a { min-height: 64px; border-radius: 999px; color: var(--brand-ice); font-weight: 500; }
+  .mobile-dock a[aria-current="page"] { color: var(--hero-text); background: color-mix(in srgb, var(--brand-sapphire) 30%, var(--brand-navy)); }
+  .mobile-dock a:hover { background: color-mix(in srgb, var(--brand-sapphire) 20%, var(--brand-navy)); }
+  .mobile-dock a > span:first-child { background: transparent; }
+  .mobile-dock a:focus-visible { outline-color: var(--brand-sky); outline-offset: -3px; }
+}

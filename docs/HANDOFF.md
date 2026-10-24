@@ -173,6 +173,29 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — NexoBank-inspired mobile Home
+
+- PR #84 is merged on `origin/main` at `9144b8c`. Created `ui/nexobank-home` from
+  that commit for the owner's supplied NexoBank Home screenshot.
+- Replaced mobile Home composition with original CSS Sapphire waves, inverse brand
+  header and role toggle, rounded content panel, approved-payment amount show/hide,
+  four functional shortcuts, role-specific primary action, compact actual counts,
+  three recent/reviewer rows and the existing audit/demo footer. No banking metrics,
+  deposit/transfer/contact actions or borrowed reference assets. Kept current-role
+  actions/About on demand with focus handling and empty/seed support.
+- Floating mobile nav retains Home/Transactions/Records/Settings labels and safe-area
+  padding. Desktop Home remains pixel-identical in light/dark at 1440px. Other mobile
+  pages receive the same navigation; their content layout is unchanged.
+- No dependencies, domain/rules/payment/auth/API changes. Existing 497 tests, typecheck
+  and production build pass. Browser checks covered 18 width/theme/role combinations
+  at 320/390/768, amount hiding, actions/About, focus, actual rows, no horizontal
+  overflow, no runtime errors or write requests; quick role toggle; final typography
+  captures at 320/390 and empty/seed flows. Text/contrast probe checked 510 visible
+  strings across Home/Transactions/Records/Settings, light/dark, no failures.
+- Screenshots: `docs/ui/screens/nexo-home/` (viewport and full page, light/dark).
+  This is mobile web styling; no native app or Render deployment was performed.
+
+
 ### 2026-10-24 — Main mobile reference foundation
 
 - Owner requested adapting the supplied mobile finance reference to Creident and
