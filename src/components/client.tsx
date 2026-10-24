@@ -15,9 +15,9 @@ export class ApiError extends Error {
 }
 
 const FRIENDLY: Record<string, string> = {
-  REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Menu.',
+  REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Settings.',
   SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, add PP_ID and PP_SECRET to .env, or set PAYPAL_MODE=simulated for a labelled simulation.',
-  ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Menu.',
+  ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Settings.',
   EVIDENCE_CLOSED: 'The evidence window is closed.',
   ORDER_NOT_APPROVED: 'The payment has not been approved on PayPal yet.',
   ACTION_PENDING: 'A PayPal action for this deal is still pending. Try again later.',

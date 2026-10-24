@@ -41,7 +41,7 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
               <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">{tips.map((t) => <li key={t}>{t}</li>)}</ul>
             </Card>
           )}
-          {role === 'reviewer' ? <Notice>Reviewers do not add evidence. Switch to Buyer or Seller in Menu.</Notice>
+          {role === 'reviewer' ? <Notice>Reviewers do not add evidence. Switch to Buyer or Seller in Settings.</Notice>
             : open ? <Card><EvidenceForm txId={id} role={role}/></Card>
             : <Notice>The evidence window is closed for this deal.</Notice>}
           {open && role !== 'reviewer' && <EvidenceCompleteness key={`${role}:${evidence.filter(e => e.submittedBy === role).length}`} txId={id} side={role}/>}

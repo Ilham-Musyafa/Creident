@@ -1,5 +1,5 @@
 'use client';
-// Appearance picker: icon tiles (sun, moon, auto) with a label under each, like phone settings.
+// Appearance picker: optional visual previews reuse the same theme state and persistence.
 import { useEffect, useState, type ReactNode } from 'react';
 
 const options = ['Light', 'Dark', 'System'] as const;
@@ -12,7 +12,20 @@ const icons: Record<Choice, ReactNode> = {
   System: <><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></>,
 };
 
-export function ThemeSelector() {
+function ThemePreview({ option }: { option: Choice }) {
+  const modes = option === 'System' ? ['light', 'dark'] as const : [option === 'Light' ? 'light' : 'dark'] as const;
+  return <span aria-hidden="true" className="flex h-20 w-full overflow-hidden rounded-lg border border-line sm:h-24">
+    {modes.map(mode => <span key={mode} className="flex min-w-0 flex-1 flex-col" style={{ backgroundColor: `var(--preview-${mode}-bg)` }}>
+      <span className="flex h-4 shrink-0 items-center gap-1 border-b px-2" style={{ backgroundColor: `var(--preview-${mode}-surface)`, borderColor: `var(--preview-${mode}-line)` }}><span className="size-1 rounded-full bg-accent"/><span className="size-1 rounded-full" style={{ backgroundColor: 'var(--brand-sky)' }}/></span>
+      <span className="flex min-h-0 flex-1 gap-2 p-2">
+        <span className="w-3 shrink-0 rounded-sm" style={{ backgroundColor: `var(--preview-${mode}-line)` }}/>
+        <span className="min-w-0 flex-1 space-y-1.5"><span className="block h-1 w-3/4 rounded bg-accent"/><span className="block h-1 w-full rounded" style={{ backgroundColor: `var(--preview-${mode}-line)` }}/><span className="block h-5 rounded border" style={{ backgroundColor: `var(--preview-${mode}-surface)`, borderColor: `var(--preview-${mode}-line)` }}/></span>
+      </span>
+    </span>)}
+  </span>;
+}
+
+export function ThemeSelector({ preview = false }: { preview?: boolean }) {
   const [choice, setChoice] = useState<Choice>('System');
   useEffect(() => { const theme = document.documentElement.dataset.theme; setChoice(theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'); }, []);
   function change(next: Choice) {
@@ -20,13 +33,14 @@ export function ThemeSelector() {
     document.documentElement.dataset.theme = next.toLowerCase();
     try { localStorage.setItem('creident-theme', next.toLowerCase()); } catch { /* Private browsing can block storage. */ }
   }
-  return <div role="group" aria-label="Appearance" className="grid max-w-xs grid-cols-3 gap-2">
+  return <div role="group" aria-label="Appearance" className={`grid grid-cols-3 gap-2 ${preview ? 'w-full sm:gap-3' : 'max-w-xs'}`}>
     {options.map((option) => {
       const active = option === choice;
       return <button key={option} type="button" aria-pressed={active} onClick={() => change(option)}
-        className={`hv-press flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-[16px] border text-sm font-semibold transition-colors ${active ? 'border-heading bg-surface-2 text-heading' : 'border-line text-muted hover:text-heading'}`}>
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icons[option]}</svg>
-        {option}
+        className={`hv-press relative flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-2 rounded-[16px] border text-sm font-semibold transition-colors ${preview ? 'p-2 sm:p-3' : ''} ${active ? 'border-heading bg-surface-2 text-heading' : 'border-line text-muted hover:text-heading'}`}>
+        {preview ? <ThemePreview option={option}/> : <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icons[option]}</svg>}
+        <span>{option}</span>
+        {preview && active && <span aria-hidden="true" className="absolute right-1 top-1 grid size-5 place-items-center rounded-full bg-strong text-on-strong"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="size-3"><path d="m5 12 4 4L19 6"/></svg></span>}
       </button>;
     })}
   </div>;

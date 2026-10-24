@@ -173,6 +173,49 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Four-item navigation and Settings cog
+
+- Owner requested removing + New and renaming Menu with a settings gear. Shared
+  desktop/mobile navigation now has Home, Transactions, Records, Settings. Added an
+  original inline SVG cog; removed the unused New/FAB icon and styling.
+- Settings page title and visible role/access instructions now use Settings. Kept
+  `/menu` and internal Menu active keys compatible. New deal highlights Transactions;
+  Seller Home's + New deal link still opens the existing form.
+- Verification: 489 tests, typecheck, production build and diff check passed.
+  Chromium at 360/390/1024/1440px light/dark (eight flows) verified four links, no New
+  nav entry, cog/current Settings state, Transactions current on the form, Home's
+  create link, no overflow or console errors. Review captures in
+  docs/ui/screens/settings-navigation/.
+- Continued pending `ui/menu-settings` branch, including the approved settings
+  layout/theme previews. No dependencies, route renames or business-rule changes.
+
+
+### 2026-10-24 — Menu & settings inspired by shadcn
+
+- Branch `ui/menu-settings` from merged PR #80 (`cbe6188`). Owner requested a more
+  attractive settings/menu layout inspired by shadcn. Added grouped panels, contextual
+  desktop section navigation, demo workspace summary, inline SVG icons and clearer
+  link hierarchy. Mobile remains stacked with the existing bottom navigation.
+- ThemeSelector has an optional visual-preview variant on Menu; original icon variant
+  remains on styleguide. Previews use stable named palette tokens; actual theme,
+  storage/System behavior, role cookie, reviewer code form and seed API are reused.
+- Kept demo/no-real-sign-in labels; code requirements match configuration. Reworded
+  records/evaluation link summaries to avoid claims beyond chain/replay checks.
+- Verification: 489 tests (47 files), typecheck and production build passed. Chromium
+  covered three roles at 320/360/390/1024/1440px in light/dark (30 combinations): no
+  horizontal page overflow or console errors; theme persistence, keyboard selection,
+  System OS following, stable previews, role refresh and section anchors passed.
+  Wrong reviewer code returned 403 and correct code 200; no-code configuration hides
+  the code form. Seed control, blocked-storage fallback and default styleguide picker
+  also checked. Contrast/minimum-size spot audit: 562 Menu/styleguide text samples in
+  light/dark passed AA thresholds and 12px minimum (not a full WCAG certification).
+- UI.md updated; four review captures in docs/ui/screens/menu-settings/ (~512KB total).
+  No new dependencies, authentication, payment/state changes or new endpoints.
+- Pushed successfully. GitHub PR creation returned `Forbidden`; open
+  `/pull/new/ui/menu-settings` manually. PR body: `/tmp/menu-settings-pr.md`.
+  No merge or deployment performed.
+
+
 ### 2026-10-23 — Readability, product introduction and About
 
 - Owner approved these three priorities. Raised explanatory/help/subtitle copy to

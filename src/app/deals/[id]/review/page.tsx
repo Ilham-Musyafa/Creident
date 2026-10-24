@@ -59,8 +59,8 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             { label: 'Human required', value: rec ? (rec.requiresHuman ? 'Yes' : 'No') : '—' },
             ...(dtype ? [{ label: 'Dispute type', value: dtype.label }] : []),
           ]}/>
-          {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Menu.</Notice>
-            : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Menu.</Notice>
+          {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Settings.</Notice>
+            : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Settings.</Notice>
             : tx.partialRefundAmount ? <Notice>A partial refund decision is already recorded. Check the decision receipt and payment status.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
             : <Card><ReviewDecision dealAmount={tx.amount} txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}

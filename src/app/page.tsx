@@ -50,7 +50,7 @@ export default async function HomePage() {
       <h1 className="sr-only lg:hidden">Home</h1>
       <header className="mb-5 hidden items-center gap-3 lg:flex">
         <span aria-hidden="true" className="grid size-11 place-items-center rounded-full bg-surface-2 font-extrabold text-heading">{role[0]!.toUpperCase()}</span>
-        <div><p className="text-sm text-muted">Demo account · switch role in Menu</p><h1 className="text-2xl font-bold capitalize text-heading">Hi, demo {role}</h1></div>
+        <div><p className="text-sm text-muted">Demo account · switch role in Settings</p><h1 className="text-2xl font-bold capitalize text-heading">Hi, demo {role}</h1></div>
       </header>
 
       <DemoGuide simulated={simulatedPayPal()}/>

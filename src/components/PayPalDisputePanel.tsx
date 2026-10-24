@@ -24,7 +24,7 @@ export function PayPalDisputePanel({ tx, cases, role, simulatedMode, reviewerAll
       <p className="mb-3 text-sm text-muted">Demo only. Open a case for this completed example deal without contacting PayPal or moving money.</p>
       {role === 'buyer' || (role === 'reviewer' && reviewerAllowed)
         ? <ActionButton path={`/api/transactions/${tx.id}/paypal-dispute/simulate`} role={role} label="Open demo PayPal case" variant="ghost" fullWidth/>
-        : <Notice>Switch to Buyer in Menu to open a demo PayPal case.</Notice>}
+        : <Notice>Switch to Buyer in Settings to open a demo PayPal case.</Notice>}
     </Card>}
     {cases.map(c => <div key={c.disputeId} className="min-w-0 space-y-3">
       {c.disputeId.startsWith('SIM-') && <Notice tone="warning">Demo PayPal case. Nothing is sent to PayPal.</Notice>}
