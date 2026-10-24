@@ -173,6 +173,28 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Searchable, action-aware Transactions list
+
+- Branch `ui/transactions-list` from merged PR #81 (`46e619a`). Owner approved a
+  desktop column list/mobile cards, item search, per-role action filter/counts,
+  deadline-first priorities, category icons and separate Demo badges.
+- Added a pure presentation helper and small client browser. Reuse existing
+  `nextAction`, acceptance facts, statuses/deadlines and routes; clicking a row opens
+  the next step or detail without sending an action. Pending refunds remain pending,
+  with no retry offered. Search/filter URLs retain `filter=review`; validate own filter
+  keys and bounded queries. Titles remain plain React text.
+- Badge replaces only the displayed leading `[Demo]` on Transactions. Stored names,
+  demo terms and simulated audit flags are untouched. Item icons are decorative
+  category/title hints with a package fallback. No new dependencies or API/rule changes.
+- Verification: 497 tests (48 files; 8 new presentation tests), typecheck and production
+  build passed. Browser checked all 3 roles at 360/390/1024/1440px light/dark (24 flows):
+  live search, filter counts, priority order, demo badges, URL/reload, invalid filter
+  fallback, keyboard navigation and no overflow/console errors. Filter/search/open-row
+  flows sent no POST requests. Empty/load-demo and literal injection-like item/query
+  text plus 200-character query bounds passed against a temporary simulated database.
+- Four review captures in docs/ui/screens/transactions/. UI.md updated. Await review/merge.
+
+
 ### 2026-10-24 — Four-item navigation and Settings cog
 
 - Owner requested removing + New and renaming Menu with a settings gear. Shared
