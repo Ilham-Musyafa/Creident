@@ -300,3 +300,20 @@ a reviewer can use the shortcut to return to Buyer. Refresh Home without changin
   repeating hard-coded case counts that can become stale.
 - Retain the selected font pairing, palette, logo, desktop drawer and demo labels.
   No new libraries or decorative animations are needed for this pass.
+
+### Menu & settings refinement (owner-approved 2026-10-24)
+
+- Use settings patterns inspired by shadcn: grouped bordered panels, contextual
+  desktop section navigation, consistent inline SVG icons and icon-led link rows.
+  Keep Creident's existing palette/fonts/radii; no shadcn or icon package is installed.
+- Desktop uses a 224px contextual column for the demo workspace and page anchors;
+  mobile stacks the workspace and four panels: Demo role, Appearance, Demo data,
+  Learn & verify. This does not replace the selected global navigation drawer.
+- Menu uses the optional ThemeSelector preview variant. Miniatures use stable palette
+  tokens (`--preview-light-*`, `--preview-dark-*`) so both light/dark examples remain
+  visible in either current theme. System is split; selection has a check and
+  aria-pressed. The compact styleguide variant and theme persistence stay intact.
+- Reuse existing role picker, code gate and seed controls. Clearly label demo roles
+  as not real sign-in; show code requirements only when configured. Keep reviewer
+  oversight conditional on the reviewer view and enforce access on existing endpoints.
+- Review captures: docs/ui/screens/menu-settings/ (390/1440px, light/dark, full page).

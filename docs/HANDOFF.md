@@ -173,6 +173,29 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Menu & settings inspired by shadcn
+
+- Branch `ui/menu-settings` from merged PR #80 (`cbe6188`). Owner requested a more
+  attractive settings/menu layout inspired by shadcn. Added grouped panels, contextual
+  desktop section navigation, demo workspace summary, inline SVG icons and clearer
+  link hierarchy. Mobile remains stacked with the existing bottom navigation.
+- ThemeSelector has an optional visual-preview variant on Menu; original icon variant
+  remains on styleguide. Previews use stable named palette tokens; actual theme,
+  storage/System behavior, role cookie, reviewer code form and seed API are reused.
+- Kept demo/no-real-sign-in labels; code requirements match configuration. Reworded
+  records/evaluation link summaries to avoid claims beyond chain/replay checks.
+- Verification: 489 tests (47 files), typecheck and production build passed. Chromium
+  covered three roles at 320/360/390/1024/1440px in light/dark (30 combinations): no
+  horizontal page overflow or console errors; theme persistence, keyboard selection,
+  System OS following, stable previews, role refresh and section anchors passed.
+  Wrong reviewer code returned 403 and correct code 200; no-code configuration hides
+  the code form. Seed control, blocked-storage fallback and default styleguide picker
+  also checked. Contrast/minimum-size spot audit: 562 Menu/styleguide text samples in
+  light/dark passed AA thresholds and 12px minimum (not a full WCAG certification).
+- UI.md updated; four review captures in docs/ui/screens/menu-settings/ (~512KB total).
+  No new dependencies, authentication, payment/state changes or new endpoints.
+
+
 ### 2026-10-23 — Readability, product introduction and About
 
 - Owner approved these three priorities. Raised explanatory/help/subtitle copy to

@@ -4,6 +4,9 @@
   --brand-navy: #0B1F4B; --brand-sapphire: #3B82F6;
   --brand-sky: #93C5FD; --brand-ice: #DBEAFE;
   --font-display: var(--font-heading-loaded), Arial, sans-serif;
+  /* Stable palette samples for decorative theme previews in either current theme. */
+  --preview-light-bg: #F7FAFF; --preview-light-surface: #FFFFFF; --preview-light-line: #D4DFEF;
+  --preview-dark-bg: #07142F; --preview-dark-surface: var(--brand-navy); --preview-dark-line: #284674;
 }
 
 :root, [data-theme="light"] {
