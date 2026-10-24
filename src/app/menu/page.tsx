@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MobileSettings } from '../../components/MobileSettings';
 import { AppShell, Card, PageHeader } from '../../components/layout';
 import { ReviewerCodeForm, RoleSwitch, SeedButton } from '../../components/client';
 import { ThemeSelector } from '../../components/ThemeSelector';
@@ -40,6 +41,8 @@ export default async function MenuPage() {
   const unlocked = await reviewerUnlocked();
   return (
     <AppShell active="Menu">
+      <MobileSettings role={role} codeRequired={codeRequired} unlocked={unlocked}/>
+      <div className="hidden lg:block">
       <PageHeader title="Settings" subtitle="Your demo workspace, appearance and useful links."/>
       <div className="grid items-start gap-6 lg:grid-cols-[224px_minmax(0,1fr)]">
         <aside aria-label="Demo workspace" className="min-w-0 space-y-5 lg:sticky lg:top-6">
@@ -94,6 +97,7 @@ export default async function MenuPage() {
             </Card>
           </section>
         </div>
+      </div>
       </div>
     </AppShell>
   );

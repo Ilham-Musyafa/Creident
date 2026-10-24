@@ -173,6 +173,29 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Matching mobile Settings reference
+
+- Continued `ui/nexobank-home` with the owner's Settings screenshot. `origin/main`
+  remains `9144b8c` (PR #84); the Home design branch is not merged. Keep both designs
+  in the same branch/review rather than stacking another branch on unmerged work.
+- Added MobileSettings: shared wave/brand/quick-role header, rounded panel and seven
+  outline rows. Demo role/Appearance/Demo data expand on demand using native details;
+  reviewer oversight appears only for Reviewer. Remaining rows use existing decision,
+  fairness, limitations and About routes. Records stays in the bottom navigation.
+  Desktop Settings markup/layout retained. No fake account or notification controls.
+- Extracted MobileBrandHeader from Home without visual changes. Mobile reviewer form
+  gets a unique input ID; default desktop form ID remains unchanged. Theme pickers
+  observe document theme changes so mobile/desktop selections stay synced on resize.
+- Typecheck, production build and all 497 tests passed. Production browser checks:
+  320/390/1024px x light/dark x all roles; native keyboard disclosures, one open group,
+  theme persistence and resize sync, role switches, duplicate IDs, password input,
+  wrong/correct local reviewer code (403/200), demo seed, links, no overflow/errors.
+  Default Settings text/contrast probe checked 68 visible strings with no failures.
+- Captures: `docs/ui/screens/nexo-settings/`. Updated branch will include these changes;
+  no merge or Render deployment. Existing PR API restriction remains (Forbidden);
+  review/create via `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
 ### 2026-10-24 — NexoBank-inspired mobile Home
 
 - PR #84 is merged on `origin/main` at `9144b8c`. Created `ui/nexobank-home` from

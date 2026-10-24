@@ -27,7 +27,14 @@ function ThemePreview({ option }: { option: Choice }) {
 
 export function ThemeSelector({ preview = false }: { preview?: boolean }) {
   const [choice, setChoice] = useState<Choice>('System');
-  useEffect(() => { const theme = document.documentElement.dataset.theme; setChoice(theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'); }, []);
+  useEffect(() => {
+    const sync = () => { const theme = document.documentElement.dataset.theme; setChoice(theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'); };
+    sync();
+    // Mobile and desktop pickers share the same document theme, including after resize.
+    const observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
   function change(next: Choice) {
     setChoice(next);
     document.documentElement.dataset.theme = next.toLowerCase();

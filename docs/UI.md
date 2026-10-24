@@ -412,3 +412,21 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   Applies consistently to mobile routes; desktop drawer styles remain unchanged.
 - No new dependency, rule/state/payment/auth/API change. Review captures:
   `docs/ui/screens/nexo-home/` (390px, light/dark viewport and full page).
+
+### NexoBank-inspired mobile Settings (owner reference, 2026-10-24)
+
+- Settings shares Home's original Sapphire wave header and compact role control via
+  `MobileBrandHeader`. Use a full-width rounded panel, 28px Settings title and seven
+  outlined rows with readable labels, blue icons and chevrons. The existing floating
+  navigation highlights Settings. Desktop Settings keeps its current layout.
+- Demo role, Appearance and Demo data are native disclosures, initially closed;
+  browsers supporting named details open one at a time. Reuse the actual role picker,
+  reviewer code form, theme picker and seed action. Reviewer oversight is an additional
+  row in Reviewer view. Other rows open the existing decisions/fairness/limits/About
+  pages. Deal records remain accessible from the bottom navigation.
+- Do not add fictional personal details, security, notifications, language, account
+  deletion or log-out actions. This prototype has demo-role selection, not real sign-in.
+- Give the mobile reviewer form a distinct input ID. Both theme pickers observe the
+  shared document theme so selection stays correct across viewport changes. No new
+  dependencies, authentication, rule or payment behaviour.
+- Review captures: `docs/ui/screens/nexo-settings/` (390px viewport/full page, light/dark).

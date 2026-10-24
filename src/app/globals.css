@@ -131,17 +131,17 @@ button, a, input, textarea, select { outline-offset: 3px; }
 
 
 /* Owner's NexoBank reference: original CSS waves in Creident's Sapphire palette. */
-.mobile-home-banner { background: var(--brand-navy); }
-.mobile-home-banner::before, .mobile-home-banner::after {
+.mobile-brand-banner { background: var(--brand-navy); }
+.mobile-brand-banner::before, .mobile-brand-banner::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
   width: 150%; height: 160px; left: -25%; border-radius: 50%;
 }
-.mobile-home-banner::before {
+.mobile-brand-banner::before {
   top: -85px; transform: rotate(-13deg);
   background: linear-gradient(145deg, var(--brand-sky), var(--brand-sapphire) 48%, var(--brand-navy) 80%);
   opacity: .55;
 }
-.mobile-home-banner::after {
+.mobile-brand-banner::after {
   bottom: -150px; transform: rotate(-12deg);
   background: linear-gradient(125deg, var(--brand-navy), var(--brand-sapphire) 55%, var(--brand-sky));
 }
