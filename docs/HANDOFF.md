@@ -173,6 +173,31 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Desktop Home with progressive disclosure
+
+- Branch `ui/desktop-home` from merged PR #82 (`bfd6c1a`). Owner requested Web first,
+  with a clean Home and details shown only after selection, inspired by paired-card
+  finance references. Desktop now defaults to two summary cards and a compact view
+  selector. Actions, recent/review-queue rows, audit and About are opened explicitly.
+- Kept actual approved-but-uncharged amount/counts and existing routes/actions. No
+  wallet, earnings, APY, rewards or KYC features/claims were added. Audit mismatch
+  warnings and a demo/payment-mode/no-real-money footer remain visible.
+- Added DesktopHome; server passes existing fact-based view rows/counts. Cached Draft
+  acceptance reads for consistent mobile/desktop prompts. DemoGuide supports optional
+  unique IDs/dismiss callback for the desktop About panel; default mobile behavior and
+  preference are retained. No dependencies, state/rule/payment/API changes.
+- Verification: 497 tests (48 files), typecheck and production build passed. Browser
+  checked all roles at 1024/1440px light/dark (12 flows): Overview-only default, selected
+  action/recent/audit/About panels, role switching, unique IDs, focus, reload reset and
+  no overflow/console errors; these interactions sent no POST requests. Empty panels
+  checked for all roles; explicit load-demo refresh and existing action route passed.
+- Saved mobile baselines before edits. All 12 360/390px × light/dark × role captures
+  were pixel-identical afterward (full PNG comparison, no masks). Mobile first-visit
+  introduction/dismissal also passed. No mobile redesign in this task.
+- UI.md updated; six review screenshots in docs/ui/screens/desktop-home/ (~452KB).
+  Await commit/push and review; no merge or deployment performed.
+
+
 ### 2026-10-24 — Searchable, action-aware Transactions list
 
 - Branch `ui/transactions-list` from merged PR #81 (`46e619a`). Owner approved a

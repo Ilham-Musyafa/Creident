@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { DesktopHome } from '../components/DesktopHome';
+import { sortTransactionRows, transactionRow } from '../components/transactionsView';
 import { QuickRoleSwitch } from '../components/QuickRoleSwitch';
 import { DemoGuide } from '../components/DemoGuide';
 import { BrandLogo } from '../components/BrandLogo';
@@ -29,9 +31,10 @@ export default async function HomePage() {
   const active = deals.filter((d) => isActive(d.status)).length;
   const reviewQueue = deals.filter((d) => d.status === 'UNDER_REVIEW');
   const shown = role === 'reviewer' && reviewQueue.length ? reviewQueue : deals.slice(0, 5);
+  const accepted = new Map(deals.filter(tx => tx.status === 'DRAFT').map(tx => [tx.id, ctx.repo.listAcceptances(tx.id)]));
   const todo = deals
     .map((d) => ({ d, action: nextAction(d.status, role) }))
-    .filter((x) => x.action !== 'none' && !(x.action === 'accept-terms' && role !== 'reviewer' && ctx.repo.listAcceptances(x.d.id).includes(role as 'buyer' | 'seller')))
+    .filter((x) => x.action !== 'none' && !(x.action === 'accept-terms' && role !== 'reviewer' && accepted.get(x.d.id)?.includes(role as 'buyer' | 'seller')))
     .map((entry) => ({ ...entry, deadline: entry.d.status === 'AUTHORIZED' ? entry.d.shipBy : entry.d.status === 'IN_INSPECTION' ? entry.d.inspectionUntil : entry.d.status === 'DISPUTED' ? entry.d.evidenceUntil : entry.d.status === 'RETURN_REQUESTED' ? entry.d.returnBy : null }))
     .sort((a, b) => (a.deadline ? Date.parse(a.deadline) : Infinity) - (b.deadline ? Date.parse(b.deadline) : Infinity));
   const actionCount = todo.length;
@@ -41,8 +44,19 @@ export default async function HomePage() {
   const chains = deals.map((d) => verifyChain(ctx.repo.readEvents(d.id)));
   const verified = chains.filter((c) => c.ok).length;
 
+  const desktopRows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? []));
+  const desktopActions = sortTransactionRows(desktopRows.filter(row => row.needsAction)).slice(0, 6);
+  const desktopRecent = shown.map(tx => desktopRows.find(row => row.id === tx.id)!);
+
   return (
     <AppShell active="Home">
+      <DesktopHome key={role} role={role} approvedAmount={money(reserved)} approvedCount={reservedDeals}
+        active={active} inDispute={inDispute} completed={completed} actionCount={actionCount}
+        actionTitle={actionTitle} actions={desktopActions} recent={desktopRecent}
+        recentTitle={role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent transactions'}
+        verified={verified} total={chains.length} simulated={simulatedPayPal()}/>
+      {/* Keep the current mobile Home until its own design pass. */}
+      <div className="lg:hidden">
       <header className="mb-4 flex items-center justify-between gap-3 lg:hidden">
         <div className="-ml-3"><BrandLogo/></div>
         <QuickRoleSwitch current={role}/>
@@ -135,6 +149,7 @@ export default async function HomePage() {
         </div>
       </div>
       </section>
+      </div>
     </AppShell>
   );
 }

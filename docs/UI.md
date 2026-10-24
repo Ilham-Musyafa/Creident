@@ -254,7 +254,7 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 
 ### Home demo guidance (owner-approved 2026-10-23)
 
-- First-time visitors see a dismissible product introduction before the dashboard:
+- Mobile first-time visitors see a dismissible product introduction before the dashboard:
   agree on terms → approve with PayPal → rules R1–R7 and human dispute review.
 - Seller/Buyer/Reviewer buttons reuse the existing demo role cookie, refresh Home and
   focus the dashboard. This does not unlock reviewer actions or create transactions.
@@ -343,3 +343,25 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
 - Display a separate Demo badge instead of a leading `[Demo]` on this list only. Stored
   names, `demo: true`, simulated events and other audit data stay unchanged.
 - Review captures: docs/ui/screens/transactions/ (390/1440px, light/dark, full page).
+
+### Desktop Home progressive disclosure (owner-approved 2026-10-24)
+
+- Scope is desktop (≥1024px); retain the existing mobile Home until its separate pass.
+  Take whitespace and paired-card hierarchy from the owner's finance UI references,
+  using Creident's palette/type. Do not introduce wallet, APY, earnings, rewards, KYC
+  or other metrics/capabilities the prototype does not implement.
+- Default Overview shows two cards: approved-but-uncharged payments with the existing
+  Active/In dispute/Completed counts, and the current-role action count. Keep the
+  primary existing transaction/create/review-queue link and an outlined Review actions
+  control. Do not show transaction lists, audit details or product intro automatically.
+- A compact Home views group selects Overview / Actions / Recent transactions (or
+  Review queue) / Audit. Inactive desktop panels are not rendered. Actions use existing
+  role/acceptance facts and stored deadlines; recent rows open details. Preserve
+  visible Demo badges and existing routes. Audit failures remain a visible warning.
+- About this demo explicitly opens the existing introduction within Home; dismissal
+  returns to Overview with focus. It has separate IDs and does not change the mobile
+  introduction preference. Demo role choices reuse the existing cookie/code gates.
+- Keep a quiet payment-mode/no-real-money footer and Limitations link visible in all
+  desktop views. Reload starts on Overview. No new dependency or payment action.
+- Review captures: docs/ui/screens/desktop-home/ (1024/1440, light/dark; Overview and
+  example Actions views). Mobile regression was checked against pre-change captures.
