@@ -194,6 +194,9 @@ Still open:
   light/dark passed AA thresholds and 12px minimum (not a full WCAG certification).
 - UI.md updated; four review captures in docs/ui/screens/menu-settings/ (~512KB total).
   No new dependencies, authentication, payment/state changes or new endpoints.
+- Pushed successfully. GitHub PR creation returned `Forbidden`; open
+  `/pull/new/ui/menu-settings` manually. PR body: `/tmp/menu-settings-pr.md`.
+  No merge or deployment performed.
 
 
 ### 2026-10-23 — Readability, product introduction and About
