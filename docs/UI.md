@@ -324,3 +324,22 @@ with a hand-drawn inline SVG cog; title the page Settings. Keep `/menu` and its
 internal active key for existing links. New deal remains reachable from Seller Home
 and highlights Transactions. Update role/access instructions to say Settings. The
 hamburger opens the global navigation drawer; the Settings row uses the cog.
+
+### Transactions list refinement (owner-approved 2026-10-24)
+
+- Desktop (≥1024px): one aligned list with Item, Status, Next step and Amount columns.
+  Mobile uses cards: item/amount, status, then next step and its stored deadline.
+  Each row is one keyboard-focusable link to the existing next-action route or details;
+  no row click sends a payment or other write request.
+- Live item-name search is bounded to 200 characters. Filters All / Needs your action /
+  Active / Under review / Closed show counts within the search results. Mobile shortens
+  the visible action filter to “Your actions” but retains the full accessible name.
+  Query/filter stay in `/deals` URL; old `filter=review` links remain supported.
+- Sort own actions first, active before closed, nearest relevant stored deadline next;
+  preserve existing order for ties. Reuse `nextAction()` and suppress acceptance prompts
+  for a role that already accepted, as Home does. Do not invent money retries.
+- Use neutral inline SVG item icons based on the known category or recognizable title;
+  unknown items use a package. These are decorative, not verified product attributes.
+- Display a separate Demo badge instead of a leading `[Demo]` on this list only. Stored
+  names, `demo: true`, simulated events and other audit data stay unchanged.
+- Review captures: docs/ui/screens/transactions/ (390/1440px, light/dark, full page).
