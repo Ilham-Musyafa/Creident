@@ -173,6 +173,29 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Approved compact role dropdown
+
+- Continued `ui/nexobank-home` (main still `9144b8c`, PR #84). Owner approved replacing
+  the avatar/direct Buyer-Seller toggle with a compact role pill and dropdown.
+- QuickRoleSwitch now offers Buyer/Seller/Reviewer with descriptions, an active check,
+  native auto-popover top-layer rendering, viewport positioning, keyboard navigation,
+  light dismissal and focus restoration across role-keyed refreshes. The shared header
+  applies it to Home, Transactions and Settings; current-page/filter state is retained.
+- Preserved demo-role cookie, server refresh and reviewer gates. No real auth/account
+  changes, API/payment/rule changes or dependencies. Selecting the same role closes
+  without refresh. Header becomes shorter with the single-row pill.
+- Typecheck, production build and 497 existing tests pass. Browser verification: 12
+  width/theme/page combinations (320/390, light/dark, Home/Transactions/Settings), all
+  three roles in each; active checks, arrow/Home/End/Tab/Escape focus, outside/resize
+  dismissal, no clipping/overflow/errors/write requests; reviewer gate remains 403
+  without code. Also checked Transactions query retention and scroll dismissal.
+  Open-menu text/contrast probe checked 108 strings with no failures.
+- Latest screenshots: `docs/ui/screens/role-dropdown/` (390px, open/closed, light/dark).
+  Prior captures retain the older avatar header. Changes stay in the same review
+  branch; no merge or Render deployment. PR API creation remains blocked (Forbidden).
+  Review/create: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
 ### 2026-10-24 — Matching mobile Transactions reference
 
 - Continued `ui/nexobank-home` for the owner's NexoBank Analytics screenshot, adapted

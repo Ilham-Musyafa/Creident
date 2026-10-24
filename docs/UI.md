@@ -451,3 +451,19 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   layout, filters and search. No new dependencies or domain/payment/auth changes.
 - Review captures: `docs/ui/screens/nexo-transactions/`, 390px viewport/full page,
   light/dark, alongside the matching Home and Settings captures in this branch.
+
+### Compact demo-role dropdown (owner-approved 2026-10-24)
+
+- Replace the mobile header's avatar/direct toggle with a compact `Buyer`, `Seller`
+  or `Reviewer` pill and chevron. Open a three-option menu with short descriptions
+  and a check on the current role. Selecting the current role only closes the menu.
+- Reuse the existing demo-role cookie and refresh the current page. Preserve the
+  Transactions URL query/filter and all reviewer code checks. Selecting Reviewer is
+  demo navigation, not authentication or an access-code bypass.
+- Native auto popover renders above the clipped decorative header. Keep it inside
+  viewport bounds with available-height scrolling; dismiss outside, on Escape, page
+  scroll, resize or desktop breakpoint. Support arrows/Home/End and Tab, with focus
+  returned to the pill after selection even when the role-keyed view is replaced.
+- Minimum 44px pill and 64px options, readable descriptions, theme tokens and visible
+  keyboard focus. No dependency or new API. Latest header/menu captures supersede the
+  avatar shown in earlier screenshots: `docs/ui/screens/role-dropdown/`.
