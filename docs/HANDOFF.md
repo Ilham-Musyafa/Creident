@@ -192,7 +192,9 @@ Still open:
   fallback, keyboard navigation and no overflow/console errors. Filter/search/open-row
   flows sent no POST requests. Empty/load-demo and literal injection-like item/query
   text plus 200-character query bounds passed against a temporary simulated database.
-- Four review captures in docs/ui/screens/transactions/. UI.md updated. Await review/merge.
+- Four review captures in docs/ui/screens/transactions/. UI.md updated. Pushed successfully.
+  GitHub PR creation returned `Forbidden`; open `/pull/new/ui/transactions-list` manually.
+  PR body: `/tmp/transactions-list-pr.md`. Await review/merge; no deployment performed.
 
 
 ### 2026-10-24 — Four-item navigation and Settings cog
