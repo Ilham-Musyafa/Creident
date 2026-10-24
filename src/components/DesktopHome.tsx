@@ -7,14 +7,10 @@ import { SeedButton } from './client';
 import { StatusPill } from './ui';
 import { TransactionIcon } from './TransactionIcon';
 import type { TransactionRow } from './transactionsView';
-import type { Role } from './view';
+import type { HomeData } from './homeTypes';
 
 type View = 'overview' | 'actions' | 'recent' | 'audit' | 'about';
-interface Props {
-  role: Role; approvedAmount: string; approvedCount: number; active: number; inDispute: number; completed: number;
-  actionCount: number; actionTitle: string; actions: TransactionRow[]; recent: TransactionRow[];
-  recentTitle: string; verified: number; total: number; simulated: boolean;
-}
+
 const button = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold';
 function Arrow() { return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>; }
 function Rows({ rows, title, actions = false }: { rows: TransactionRow[]; title: string; actions?: boolean }) {
@@ -28,7 +24,7 @@ function Rows({ rows, title, actions = false }: { rows: TransactionRow[]; title:
 }
 
 /** Desktop-only progressive disclosure. Counts and actions come from existing stored facts. */
-export function DesktopHome(props: Props) {
+export function DesktopHome(props: HomeData) {
   const [view, setView] = useState<View>('overview');
   const titles: Record<View, string> = { overview: 'Overview', actions: props.actionTitle, recent: props.recentTitle, audit: 'Audit & verification', about: 'About this demo' };
   const openActions = () => { setView('actions'); requestAnimationFrame(() => document.getElementById('desktop-home-content')?.focus()); };

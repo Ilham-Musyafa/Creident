@@ -173,6 +173,32 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Main mobile reference foundation
+
+- Owner requested adapting the supplied mobile finance reference to Creident and
+  iterating afterward. Branch `ui/mobile-reference` starts from `origin/main` at
+  `4730df4` (merged PR #83); no merge or live deployment performed.
+- Added mobile Home with a soft blue approval card, two pending-action previews,
+  on-demand actions/About, existing quick role switch, count tiles and chain checks.
+  Shared `HomeData` keeps desktop and mobile sourced from the same server facts.
+- Added grouped mobile Transactions, three quick tabs, native expandable full filters,
+  bounded search and existing URL persistence. Shared mobile rows retain actual
+  status/amount/action/deadline and separate Demo badges. Refined four-item bottom
+  navigation; no central New button, banking metrics or new dependencies.
+- Verified typecheck, production build and all 497 existing tests. Browser checks:
+  18 width/theme/role combinations (320/390/768, light/dark, all roles), actions/About,
+  search/filter counts and reload, overflow, runtime errors; direct Buyer/Seller toggle;
+  empty states and loading demo deals. Text/contrast probe checked 296 visible strings
+  with no failures; gradient endpoints separately checked. Desktop Home/Transactions
+  light/dark screenshots at 1440px remain pixel-identical to the baseline.
+- Implementation commit `d891771` pushed to `origin/ui/mobile-reference`. GitHub PR
+  creation was attempted once and failed with `Post https://api.github.com/graphql:
+  Forbidden`. No PR was created by the agent. Body: `/tmp/creident-mobile-reference-pr.md`.
+  Open: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/mobile-reference`.
+- Final screenshots: `docs/ui/screens/mobile-reference/`. The web app remains a
+  Sandbox/simulated prototype; these are mobile web styles, not a native app.
+
+
 ### 2026-10-24 — Desktop Home with progressive disclosure
 
 - Branch `ui/desktop-home` from merged PR #82 (`bfd6c1a`). Owner requested Web first,

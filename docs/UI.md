@@ -365,3 +365,28 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   desktop views. Reload starts on Overview. No new dependency or payment action.
 - Review captures: docs/ui/screens/desktop-home/ (1024/1440, light/dark; Overview and
   example Actions views). Mobile regression was checked against pre-change captures.
+
+### Mobile reference foundation (owner-approved 2026-10-24)
+
+- Below 1024px, use the owner's main mobile finance reference for soft gradient cards,
+  rounded grouped lists, segmented filters and a quiet bottom bar. Retain Creident's
+  logo, Sapphire Flow palette, local type and actual transaction facts. Banking balances,
+  spending charts, income/expense, budgets and notification counters are not implemented.
+- Home starts with Overview, a gradient approved-but-uncharged payment card and the
+  first two current-role actions. See all opens more actions; About opens the existing
+  product guide on request. Keep the direct Buyer/Seller role switch, real creation/
+  review links, count tiles and server chain-check summary. Failed checks remain visible.
+- Mobile Transactions groups actual rows by Needs your action / In progress / Closed;
+  do not invent event dates. Quick tabs are All / Your actions / Closed. The native
+  expandable Filters control includes all five existing filters and search-aware counts.
+  Search/filter URL behaviour and the existing next-action routes remain unchanged.
+- Rows use category icons, actual amounts, readable status labels and separate Demo
+  badges. Stored demo flags/names/events remain intact. Pending refund verification
+  remains visible; no UI action triggers money movement by opening a row.
+- Keep four bottom destinations: Home / Transactions / Records / Settings. Do not
+  restore the central New button removed earlier by the owner. The active icon gets
+  a soft pill, with safe-area padding for device navigation.
+- Components share presentation data and mobile rows; no new dependencies. Desktop
+  Home and Transactions retain their current appearance at 1024px and above.
+- Review captures: `docs/ui/screens/mobile-reference/`, 390px light/dark, expanded
+  capture height to keep the fixed bottom bar from obscuring full-page content.

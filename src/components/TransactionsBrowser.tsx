@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { MobileTransactions } from './MobileTransactions';
 import { useEffect, useState } from 'react';
 import { EmptyState } from './layout';
 import { StatusPill } from './ui';
@@ -25,7 +26,7 @@ export function TransactionsBrowser({ rows, initialFilter, initialQuery }: { row
   };
   const searched = searchTransactionRows(rows, query);
   const visible = sortTransactionRows(searched.filter(row => matchesTransactionFilter(row, filter)));
-  return <div className="min-w-0">
+  return <><MobileTransactions rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
     <div className="mb-4 flex flex-wrap items-end gap-3">
       <div className="min-w-0 flex-1"><label htmlFor="transaction-search" className="mb-2 block text-sm font-semibold text-heading">Find a transaction</label><div className="relative">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-3 top-3 size-5 text-muted"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg>
@@ -51,5 +52,5 @@ export function TransactionsBrowser({ rows, initialFilter, initialQuery }: { row
         </Link>
       </li>)}</ul>
     </div>}
-  </div>;
+  </div></>;
 }
