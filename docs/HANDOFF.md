@@ -173,6 +173,31 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Matching mobile Transactions reference
+
+- Continued `ui/nexobank-home` for the owner's NexoBank Analytics screenshot, adapted
+  to Transactions. `origin/main` remains `9144b8c` (PR #84), so the Home/Settings/
+  Transactions design pass stays in one unmerged branch for review.
+- Reused shared mobile brand/role header and rounded panel. Added an actual visible-row
+  count card, search-aware action/Active/Closed shortcuts, native five-option view
+  selector and existing quick tabs/grouped rows. Search opens on demand with focus;
+  URL queries open it automatically. No made-up expenses, dates, cards or percentages.
+- Passed the current role through TransactionsBrowser; reused filters/search/URL logic
+  and actual next-action links. Unified mobile/desktop empty-list seed handling. Added
+  optional AppShell mobileFullBleed only for `/deals`; new/detail pages retain padding.
+  Desktop table/filter/search structure remains unchanged. No dependencies or
+  domain/rules/payment/auth/API changes.
+- Typecheck, build and all 497 tests passed. Production browser checks covered 18
+  width/theme/role combinations (320/390/1024, light/dark, all roles): summaries,
+  search/filter/counts, URL reload and invalid-filter fallback, actual next-step routes,
+  role toggle, no writes/runtime errors/overflow. Empty-list checks for all roles at
+  mobile/desktop, demo seed and unchanged new/detail page padding also passed.
+  Default Transactions text/contrast probe checked 196 visible strings, no failures.
+- Captures: `docs/ui/screens/nexo-transactions/`. Same review branch as Home/Settings;
+  no merge or Render deployment. Prior PR API creation was blocked with Forbidden.
+  Review/create: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
 ### 2026-10-24 — Matching mobile Settings reference
 
 - Continued `ui/nexobank-home` with the owner's Settings screenshot. `origin/main`

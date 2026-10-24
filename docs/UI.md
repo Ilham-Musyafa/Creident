@@ -430,3 +430,24 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   shared document theme so selection stays correct across viewport changes. No new
   dependencies, authentication, rule or payment behaviour.
 - Review captures: `docs/ui/screens/nexo-settings/` (390px viewport/full page, light/dark).
+
+### NexoBank-inspired mobile Transactions (owner reference, 2026-10-24)
+
+- Adapt the owner's Analytics screenshot to transaction management: shared Sapphire
+  header, rounded full-width panel, view selector, summary card, segmented quick filters
+  and grouped rows. Retain the actual title Transactions. No invented expenses, signed
+  cash flows, dates, bank cards, categories/tags or percentage breakdowns.
+- Summary shows the visible row count with its filter label. The action notice and
+  Active/Closed shortcuts count all searched rows, so selecting a status does not hide
+  other useful workspace counts. Every shortcut uses the existing filter semantics.
+- Search opens with the header search icon; existing URL queries open it automatically.
+  Keep the 200-character bound, case-insensitive item search, query-aware counts,
+  URL persistence and keyboard-accessible native view selector (all five filters).
+- Keep grouped Needs your action / In progress / Closed lists, existing next-action
+  links, real amounts/status/deadlines, Demo badges and pending-refund notices. Both
+  mobile and desktop retain the empty-list seed action. No row-opening money writes.
+- `/deals` explicitly opts into full-width mobile composition. New/detail/checkout and
+  other deal pages keep normal page padding. Desktop Transactions keeps its table
+  layout, filters and search. No new dependencies or domain/payment/auth changes.
+- Review captures: `docs/ui/screens/nexo-transactions/`, 390px viewport/full page,
+  light/dark, alongside the matching Home and Settings captures in this branch.
