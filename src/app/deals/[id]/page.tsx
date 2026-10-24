@@ -122,7 +122,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the payment goes to the seller.</Notice>}
           {action === 'review' && <ButtonLink href={`/deals/${id}/review`} fullWidth>Review dispute</ButtonLink>}
           {tx.status === 'DRAFT' && <Notice>Accepted so far: {accepted.length ? accepted.join(' and ') : 'nobody'}. Terms lock when both buyer and seller accept.</Notice>}
-          {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'PayPal is reviewing a case on this payment. Nothing moves until PayPal closes it.' : 'Nothing to do for your role right now. Switch role in Menu to act as another party.'}</Notice>}
+          {action === 'none' && <Notice>{tx.status === 'FROZEN_EXTERNAL' ? 'PayPal is reviewing a case on this payment. Nothing moves until PayPal closes it.' : 'Nothing to do for your role right now. Switch role in Settings to act as another party.'}</Notice>}
 
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (demo)' : tx.captured ? 'See PayPal' : 'Shown after payment' },

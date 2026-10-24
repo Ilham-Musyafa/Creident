@@ -173,6 +173,23 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Four-item navigation and Settings cog
+
+- Owner requested removing + New and renaming Menu with a settings gear. Shared
+  desktop/mobile navigation now has Home, Transactions, Records, Settings. Added an
+  original inline SVG cog; removed the unused New/FAB icon and styling.
+- Settings page title and visible role/access instructions now use Settings. Kept
+  `/menu` and internal Menu active keys compatible. New deal highlights Transactions;
+  Seller Home's + New deal link still opens the existing form.
+- Verification: 489 tests, typecheck, production build and diff check passed.
+  Chromium at 360/390/1024/1440px light/dark (eight flows) verified four links, no New
+  nav entry, cog/current Settings state, Transactions current on the form, Home's
+  create link, no overflow or console errors. Review captures in
+  docs/ui/screens/settings-navigation/.
+- Continued pending `ui/menu-settings` branch, including the approved settings
+  layout/theme previews. No dependencies, route renames or business-rule changes.
+
+
 ### 2026-10-24 — Menu & settings inspired by shadcn
 
 - Branch `ui/menu-settings` from merged PR #80 (`cbe6188`). Owner requested a more

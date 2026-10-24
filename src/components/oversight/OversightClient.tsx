@@ -16,7 +16,7 @@ export function OversightClient({ licenseKey }: { licenseKey?: string }) {
     setLoading(true); setError('');
     try {
       const response = await fetch('/api/reviewer/oversight', { headers: { 'x-demo-role': 'reviewer' }, cache: 'no-store', signal });
-      if (!response.ok) throw new Error(response.status === 403 ? 'Reviewer access is required. Check your role and code in Menu.' : 'Dashboard unavailable. Try again.');
+      if (!response.ok) throw new Error(response.status === 403 ? 'Reviewer access is required. Check your role and code in Settings.' : 'Dashboard unavailable. Try again.');
       const value: OversightSnapshot = await response.json(); if (!signal?.aborted) setSnapshot(value);
     } catch (e) { if (!signal?.aborted) setError(e instanceof Error ? e.message : 'Dashboard unavailable. Try again.'); }
     finally { if (!signal?.aborted) setLoading(false); }
@@ -30,7 +30,7 @@ export function OversightClient({ licenseKey }: { licenseKey?: string }) {
     {!licenseKey && <Notice>AG Studio evaluation mode (no licence key yet).</Notice>}
     {error && <Notice tone="warning">{error}</Notice>}
     {loading && !snapshot && <p role="status" className="p-4 text-sm text-muted">Loading oversight data…</p>}
-    {snapshot && !error && (snapshot.totalDeals === 0 ? <Notice>No deals yet. Load labelled demo deals in Menu to explore the dashboard.</Notice>
+    {snapshot && !error && (snapshot.totalDeals === 0 ? <Notice>No deals yet. Load labelled demo deals in Settings to explore the dashboard.</Notice>
       : <StudioDashboard snapshot={snapshot} licenseKey={licenseKey}/>)}
     <div className="space-y-2 text-sm text-muted">
       <p>Dispute charts include deals with a recorded local dispute or external case/freeze, including finished disputes. Escalation is ESCALATE_HUMAN recommendations / all stored recommendations; it is not an accuracy measure. No recommendations means no rate.</p>

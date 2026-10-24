@@ -8,10 +8,10 @@ export default async function NewDealPage() {
   const role = await getRole();
   const time = data().time;
   return (
-    <AppShell active="New">
+    <AppShell active="Deals">
       <PageHeader title="New deal" back="/" subtitle="Terms are set before payment and locked when both parties accept."/>
       {role !== 'seller' ? (
-        <Notice>Only the seller creates a deal. Switch to Seller in Menu.</Notice>
+        <Notice>Only the seller creates a deal. Switch to Seller in Settings.</Notice>
       ) : (
         <NewDealForm time={time}/>
       )}

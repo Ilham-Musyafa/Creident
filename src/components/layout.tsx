@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { BottomNav } from './ui';
 import { DesktopNavigation } from './DesktopNavigation';
 
-type Active = 'Home' | 'Deals' | 'New' | 'Audit' | 'Menu';
+type Active = 'Home' | 'Deals' | 'Audit' | 'Menu';
 
 /** Bottom navigation on mobile, slide-out menu from 1024px, content max width 1100px. */
 export function AppShell({ active, children }: { active?: Active; children: ReactNode }) {

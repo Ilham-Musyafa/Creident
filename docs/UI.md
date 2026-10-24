@@ -129,7 +129,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | `ChainStatus` | Success notice "Chain verified · N events" + head hash; error state when broken. |
 | `Field` / `Input` | Label above, 44px input, placeholder in muted. |
 | `SegmentedControl` | Used for role switch (demo) and appearance. |
-| `BottomNav` | Mobile: Home, Deals, (+) Sapphire Blue FAB, Audit, Menu, with text labels. Desktop (≥1024px): Menu button opens a modal sidebar sliding right from the left edge (owner-approved 2026-10-23), with the same items; close button, outside click and Escape dismiss it. Focus is contained and restored; reduced motion disables entry animation. Content max-width 1100px. |
+| `BottomNav` | Mobile: Home, Transactions, Records, Settings, with text labels; no New/FAB tab. Desktop (≥1024px): Menu button opens a modal sidebar sliding right from the left edge (owner-approved 2026-10-23), with the same items; close button, outside click and Escape dismiss it. Focus is contained and restored; reduced motion disables entry animation. Content max-width 1100px. |
 | `CodeBadge` | One-time evidence code in mono, e.g. `HV-1042 · 7K2Q`. |
 
 ## 7. Screens (see mockups)
@@ -317,3 +317,10 @@ a reviewer can use the shortcut to return to Buyer. Refresh Home without changin
   as not real sign-in; show code requirements only when configured. Keep reviewer
   oversight conditional on the reviewer view and enforce access on existing endpoints.
 - Review captures: docs/ui/screens/menu-settings/ (390/1440px, light/dark, full page).
+
+Navigation cleanup (owner-approved 2026-10-24): remove the New shortcut from the
+shared mobile/desktop navigation. Rename the displayed Menu destination to Settings
+with a hand-drawn inline SVG cog; title the page Settings. Keep `/menu` and its
+internal active key for existing links. New deal remains reachable from Seller Home
+and highlights Transactions. Update role/access instructions to say Settings. The
+hamburger opens the global navigation drawer; the Settings row uses the cog.

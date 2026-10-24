@@ -40,7 +40,7 @@ export default async function MenuPage() {
   const unlocked = await reviewerUnlocked();
   return (
     <AppShell active="Menu">
-      <PageHeader title="Menu & settings" subtitle="Your demo workspace, appearance and useful links."/>
+      <PageHeader title="Settings" subtitle="Your demo workspace, appearance and useful links."/>
       <div className="grid items-start gap-6 lg:grid-cols-[224px_minmax(0,1fr)]">
         <aside aria-label="Demo workspace" className="min-w-0 space-y-5 lg:sticky lg:top-6">
           <Card className="p-5">
