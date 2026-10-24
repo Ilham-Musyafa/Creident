@@ -195,7 +195,9 @@ Still open:
   were pixel-identical afterward (full PNG comparison, no masks). Mobile first-visit
   introduction/dismissal also passed. No mobile redesign in this task.
 - UI.md updated; six review screenshots in docs/ui/screens/desktop-home/ (~452KB).
-  Await commit/push and review; no merge or deployment performed.
+  Committed and pushed. PR creation returned GitHub `Forbidden`; open
+  `/pull/new/ui/desktop-home` manually. PR body: `/tmp/desktop-home-pr.md`.
+  Await review/merge; no merge or deployment performed.
 
 
 ### 2026-10-24 — Searchable, action-aware Transactions list
