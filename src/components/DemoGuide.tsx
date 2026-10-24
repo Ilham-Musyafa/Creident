@@ -11,15 +11,20 @@ const steps = [
 ];
 const preference = 'creident-product-intro-dismissed';
 
-export function DemoGuide({ simulated }: { simulated: boolean }) {
+export function DemoGuide({ simulated, idPrefix = '', dashboardId = 'demo-dashboard', onDismiss }: {
+  simulated: boolean; idPrefix?: string; dashboardId?: string; onDismiss?: () => void;
+}) {
+  const introId = `${idPrefix ? `${idPrefix}-` : ''}product-intro-title`;
   const router = useRouter();
   const [visible, setVisible] = useState(true);
   const [pending, startTransition] = useTransition();
   useEffect(() => {
+    if (onDismiss) return;
     try { setVisible(localStorage.getItem(preference) !== '1'); } catch { /* Optional viewer preference. */ }
-  }, []);
+  }, [onDismiss]);
   const toggle = (show: boolean) => {
     setVisible(show);
+    if (onDismiss) return;
     try { if (show) localStorage.removeItem(preference); else localStorage.setItem(preference, '1'); } catch { /* Optional viewer preference. */ }
   };
   const openDashboard = (role?: Role) => {
@@ -28,14 +33,15 @@ export function DemoGuide({ simulated }: { simulated: boolean }) {
       startTransition(() => router.refresh());
     }
     toggle(false);
-    requestAnimationFrame(() => document.getElementById('demo-dashboard')?.focus());
+    onDismiss?.();
+    requestAnimationFrame(() => document.getElementById(dashboardId)?.focus());
   };
-  if (!visible) return <button type="button" onClick={() => { toggle(true); requestAnimationFrame(() => document.getElementById('product-intro-title')?.focus()); }} className="mb-4 inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-heading hover:bg-surface-2">About this demo</button>;
-  return <section aria-labelledby="product-intro-title" className="mb-6 rounded-[22px] border border-line bg-surface p-5 sm:p-6">
+  if (!visible) return <button type="button" onClick={() => { toggle(true); requestAnimationFrame(() => document.getElementById(introId)?.focus()); }} className="mb-4 inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-heading hover:bg-surface-2">About this demo</button>;
+  return <section aria-labelledby={introId} className="mb-6 rounded-[22px] border border-line bg-surface p-5 sm:p-6">
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0 max-w-2xl">
         <p className="mb-2 text-sm font-semibold text-muted">Creident · a dispute-mediation prototype</p>
-        <h2 id="product-intro-title" tabIndex={-1} className="text-2xl font-bold leading-tight text-heading sm:text-[32px]">Clear terms. Evidence. Human review.</h2>
+        <h2 id={introId} tabIndex={-1} className="text-2xl font-bold leading-tight text-heading sm:text-[32px]">Clear terms. Evidence. Human review.</h2>
         <p className="mt-3 text-sm leading-relaxed text-text">Agree on the terms. Approve payment with PayPal. Resolve problems with evidence and human review.</p>
       </div>
       <button type="button" aria-label="Dismiss product introduction" onClick={() => openDashboard()} className="grid size-11 shrink-0 place-items-center rounded-full text-heading hover:bg-surface-2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="size-5"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
