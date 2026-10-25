@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { verifyChain } from '../../../lib/audit/chain';
 import { latestCheckpoint } from '../../../lib/audit/checkpointFiles';
 import { AuditEvent, ChainStatus } from '../../../components/ui';
-import { AppShell, Card, PageHeader } from '../../../components/layout';
+import { Card } from '../../../components/layout';
+import { RecordsShell } from '../../../components/RecordsShell';
 import { eventTitle, shortDate, shortHash } from '../../../components/view';
 import { data, getRole, isUuid } from '../../_server';
 
@@ -31,13 +32,12 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
     : 'Verified on this server';
 
   return (
-    <AppShell active="Audit">
-      <PageHeader title="Deal record" back={`/deals/${id}`} subtitle={tx.item} right={<RecordMenu txId={id} role={role}/>}/>
+    <RecordsShell role={role} title="Deal record" back="/audit" desktopBack={`/deals/${id}`} subtitle={tx.item} right={<RecordMenu txId={id} role={role}/>}>
       <div className="mx-auto max-w-2xl space-y-4">
         <ChainStatus revealAfterMs={Math.min(events.length, 24) * 70 + 300} verifiedSteps={verifiedSteps} count={events.length} where={where}/>
         {sealedState === 'rewritten' && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ This record differs from the sealed copy.</p>}
-        <Card className="px-4 py-1">
-          <ol>
+        <Card className="records-timeline px-4 py-1">
+          <ol aria-label="Record steps">
             {[...events].reverse().map((e, index) => (
               <AuditEvent index={index} key={e.seq} seq={e.seq} title={eventTitle(e.type)} rawType={e.type} actor={e.actor} time={shortDate(e.ts)} prevHash={shortHash(e.prevHash)} fullPrevHash={e.prevHash} hash={e.hash} check={check.ok || e.seq < check.brokenAtSeq ? 'ok' : e.seq === check.brokenAtSeq ? 'failed' : 'after'} simulated={e.payload.simulated === true}/>
             ))}
@@ -45,6 +45,6 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
         </Card>
         <p className="text-center text-sm text-muted">Tap a step to see who did it and its fingerprints.</p>
       </div>
-    </AppShell>
+    </RecordsShell>
   );
 }

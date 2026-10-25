@@ -1,11 +1,13 @@
-import { AppShell, Card, PageHeader, SectionTitle } from '../../../components/layout';
+import { Card, SectionTitle } from '../../../components/layout';
 import { latestCheckpoint } from '../../../lib/audit/checkpointFiles';
 import { shortDate } from '../../../components/view';
-import { data } from '../../_server';
+import { data, getRole } from '../../_server';
+import { RecordsShell } from '../../../components/RecordsShell';
 
 export const dynamic = 'force-dynamic';
 
-export default function HowVerificationWorksPage() {
+export default async function HowVerificationWorksPage() {
+  const role = await getRole();
   const ctx = data();
   const chains = new Map(ctx.db.prepare('SELECT id FROM transactions ORDER BY id').all()
     .map(row => [String(row.id), ctx.repo.readEvents(String(row.id))] as const));
@@ -13,9 +15,8 @@ export default function HowVerificationWorksPage() {
   const sealed = published.available && published.result.valid ? published.result : null;
 
   return (
-    <AppShell active="Audit">
-      <PageHeader title="How verification works" back="/audit"/>
-      <div className="mx-auto max-w-2xl space-y-2 text-sm leading-relaxed text-text">
+    <RecordsShell role={role} title="How verification works" back="/audit">
+      <div className="records-explainer mx-auto max-w-2xl space-y-2 text-sm leading-relaxed text-text">
         <SectionTitle>What is checked</SectionTitle>
         <Card>
           <p>Every step of a deal (terms, payment, shipping, evidence, decisions) is saved with a fingerprint. Each fingerprint also covers the step before it, so the steps form a chain.</p>
@@ -43,6 +44,6 @@ export default function HowVerificationWorksPage() {
           <p>Open a deal record, tap <strong className="text-heading">⋯</strong> and choose <strong className="text-heading">Download as CSV</strong>. The file lists every step with its fingerprint and the fingerprint of the step before it.</p>
         </Card>
       </div>
-    </AppShell>
+    </RecordsShell>
   );
 }

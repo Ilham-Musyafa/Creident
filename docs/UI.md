@@ -467,3 +467,24 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
 - Minimum 44px pill and 64px options, readable descriptions, theme tokens and visible
   keyboard focus. No dependency or new API. Latest header/menu captures supersede the
   avatar shown in earlier screenshots: `docs/ui/screens/role-dropdown/`.
+
+### NexoBank-style mobile Records (owner-approved 2026-10-25)
+
+- `/audit`, `/audit/[id]` and `/audit/how-it-works` use `RecordsShell`: the shared
+  MobileBrandHeader/role dropdown and a 32px rounded panel below 1024px. Reuse existing
+  typography, colours, floating navigation and safe-area handling. Desktop retains
+  its original PageHeader, layout and record rows.
+- Mobile list title is Records. The summary shows existing verified/failed record
+  counts and verification scope/checkpoint caveats. Failures use an icon, text and the
+  existing affected-record action. How verification works is a full-size icon row,
+  including when the list is empty. Preserve the existing EmptyState within the panel.
+- Mobile record links use item icons, actual status chips, Demo badges and actual step
+  counts/failure points. Failed records still sort first. Whole rows are focusable
+  links; desktop retains its previous labels and structure.
+- Mobile detail returns to `/audit`, keeps RecordMenu/CSV and uses the existing
+  ChainStatus. AuditEvent elements retain their order, IDs, failure states and native
+  expandable technical details. Mobile-only CSS adds a timeline spine, 44px summary
+  targets, visible focus and readable later-step text. Hashes remain secondary.
+- Explainer copy, audit verification/signing, API/domain/payment/rules/deadline behaviour
+  are unchanged. No dependencies. See `docs/ui/screens/nexo-records/` for list/detail/
+  explainer, failed-state captures and the desktop pixel-comparison evidence.
