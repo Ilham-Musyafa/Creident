@@ -195,7 +195,10 @@ Still open:
 - Real auth/ownership, global quotas/proxy trust, strict CSP and reconciliation
   remain production limits. Render request blocked by execution proxy CONNECT 403,
   so no current hosted-runtime/security-header claim. Keep demo simulated/replay.
-- Branch push/PR status will be recorded after publishing the review branch.
+- Implementation commit `8645b2f` pushed to `origin/security/demo-audit`.
+  PR creation failed: GitHub GraphQL API Forbidden. No PR created by this agent.
+  Manual PR: https://github.com/Ilham-Musyafa/Creident/pull/new/security/demo-audit
+  No merge/deployment. Final follow-up docs commit records this status.
 
 ### 2026-10-25 — Mobile Records matches the NexoBank design
 
