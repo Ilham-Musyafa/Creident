@@ -195,6 +195,11 @@ Still open:
 - Seed data had 13 valid chains. Failure coverage used a separate temporary database
   copy with two invalid appended fingerprints, failing at step 9; neither verifier
   nor append-only triggers nor the verified fixture were altered. No test DB committed.
+- Implementation `87aa2dd` pushed to `origin/ui/nexobank-records`. PR creation was
+  attempted once and failed with `Post https://api.github.com/graphql: Forbidden`.
+  No PR created by the agent. PR body: `/tmp/creident-nexobank-records-pr.md`.
+  Manual link: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-records`.
+  No merge or Render deployment performed.
 - Screenshots: `docs/ui/screens/nexo-records/`, including six mobile page/theme views,
   full-page versions, failed cases and one desktop shot. All six desktop comparisons
   (three pages x light/dark) are pixel-identical to baseline `5f191f4`, with digest
