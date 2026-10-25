@@ -1,0 +1,59 @@
+{
+  "baselineCommit": "5f191f4",
+  "comparisons": [
+    {
+      "page": "list",
+      "theme": "light",
+      "width": 1440,
+      "height": 1439,
+      "pixelIdentical": true,
+      "beforeSHA256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c",
+      "afterSHA256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c"
+    },
+    {
+      "page": "detail",
+      "theme": "light",
+      "width": 1440,
+      "height": 1000,
+      "pixelIdentical": true,
+      "beforeSHA256": "ca2bc87953fbebbe4db70db6de3ea479f026e87e0e05bb850d6219863e1f2e80",
+      "afterSHA256": "ca2bc87953fbebbe4db70db6de3ea479f026e87e0e05bb850d6219863e1f2e80"
+    },
+    {
+      "page": "how",
+      "theme": "light",
+      "width": 1440,
+      "height": 1000,
+      "pixelIdentical": true,
+      "beforeSHA256": "48b8f8ab32b787dda225e4fb0192524c33b5eb6cbb6317b22b7b780d54ec6415",
+      "afterSHA256": "48b8f8ab32b787dda225e4fb0192524c33b5eb6cbb6317b22b7b780d54ec6415"
+    },
+    {
+      "page": "list",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1439,
+      "pixelIdentical": true,
+      "beforeSHA256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403",
+      "afterSHA256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403"
+    },
+    {
+      "page": "detail",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1000,
+      "pixelIdentical": true,
+      "beforeSHA256": "2a728bd9667cb59dd3b8ae0256dcc15eb479003721e9c4480916ae216c80b1cd",
+      "afterSHA256": "2a728bd9667cb59dd3b8ae0256dcc15eb479003721e9c4480916ae216c80b1cd"
+    },
+    {
+      "page": "how",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1000,
+      "pixelIdentical": true,
+      "beforeSHA256": "ee05d359daf958a0b8736a4efa794cfce470b880291d443611aec184093a167e",
+      "afterSHA256": "ee05d359daf958a0b8736a4efa794cfce470b880291d443611aec184093a167e"
+    }
+  ]
+}

@@ -173,6 +173,34 @@ Still open:
 
 ## Log
 
+### 2026-10-25 — Mobile Records matches the NexoBank design
+
+- Fetched main: PR #85 is merged at `5f191f4`. Took the requested merged-branch path:
+  created `ui/nexobank-records` from latest `origin/main`; no main push or merge.
+- Added RecordsShell with shared mobile brand/role header, rounded panel, mobile Back
+  to Records and retained RecordMenu; desktop keeps its original header/geometry.
+  `/audit` gets a verified/failed summary, icon explainer link and item/status/step
+  rows with actual source data. Detail keeps ChainStatus/AuditEvent and expandable
+  hashes; mobile-only timeline styles improve focus, touch targets and failed-step
+  readability. Explainer body copy unchanged. EmptyState stays within the panel.
+- Only audit page presentation, the new shell and scoped CSS changed. No audit hash,
+  checkpoint/signing, API/model/state/payment/rules/deadline changes or dependencies.
+- `npm test`: 497 tests/48 files passed; explicit typecheck and production build passed.
+  Browser checks: all three pages at 390/1440, light/dark, Buyer/Seller/Reviewer;
+  keyboard record links/details, hash expansion, CSV (Reviewer with existing code),
+  role switching preserving URLs, no overflow/errors/write requests. Failed list/
+  detail covered all width/theme/role combinations, actual failure links/anchors and
+  later-step warnings. Empty list checked for all roles. Contrast/text probe: 952
+  visible strings, no failures. Existing Reviewer export access checks remain intact.
+- Seed data had 13 valid chains. Failure coverage used a separate temporary database
+  copy with two invalid appended fingerprints, failing at step 9; neither verifier
+  nor append-only triggers nor the verified fixture were altered. No test DB committed.
+- Screenshots: `docs/ui/screens/nexo-records/`, including six mobile page/theme views,
+  full-page versions, failed cases and one desktop shot. All six desktop comparisons
+  (three pages x light/dark) are pixel-identical to baseline `5f191f4`, with digest
+  evidence in `desktop-comparison.json`. No owner product decision remains pending.
+
+
 ### 2026-10-24 — Approved compact role dropdown
 
 - Continued `ui/nexobank-home` (main still `9144b8c`, PR #84). Owner approved replacing
