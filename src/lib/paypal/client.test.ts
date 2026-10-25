@@ -176,3 +176,17 @@ it('derives stable idempotency keys', () => {
   expect(requestIdFor('tx9', 'capture')).toBe('hv-tx9-capture-1');
   expect(requestIdFor('tx9', 'refund', 2)).toBe('hv-tx9-refund-2');
 });
+
+
+describe('Sandbox host boundary', () => {
+  it.each([
+    'https://api-m.paypal.com', 'http://api-m.sandbox.paypal.com',
+    'https://api-m.sandbox.paypal.com.attacker.test',
+    'https://api-m.sandbox.paypal.com@attacker.test',
+    'https://api-m.sandbox.paypal.com/path',
+  ])('rejects %s before sending credentials', (baseUrl) => {
+    const f = fakeFetch([]);
+    expect(() => new PayPalClient({ baseUrl, clientId: 'fake', clientSecret: 'fake', fetchImpl: f.impl })).toThrow(/exact PayPal Sandbox/);
+    expect(f.calls).toHaveLength(0);
+  });
+});

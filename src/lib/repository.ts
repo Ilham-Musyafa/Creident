@@ -469,6 +469,12 @@ export class TransactionRepository {
     return transaction(this.db, () => {
       const existing = this.getAction(requestId);
       if (existing) return { claimed: false, record: existing };
+      // Different payment effects must not race each other (for example capture vs void).
+      // Keep the check and reservation in this same BEGIN IMMEDIATE transaction.
+      const moneyActions = ['PAYPAL_CREATE_ORDER', 'PAYPAL_AUTHORIZE', 'PAYPAL_CAPTURE', 'PAYPAL_VOID', 'PAYPAL_REFUND', 'PAYPAL_PARTIAL_REFUND'];
+      if (moneyActions.includes(action) && this.db.prepare(
+        "SELECT 1 FROM idempotency WHERE tx_id = ? AND action IN ('PAYPAL_CREATE_ORDER','PAYPAL_AUTHORIZE','PAYPAL_CAPTURE','PAYPAL_VOID','PAYPAL_REFUND','PAYPAL_PARTIAL_REFUND') AND json_extract(result, '$.state') = 'pending' LIMIT 1",
+      ).get(txId)) return { claimed: false, record: { state: 'pending' } };
       this.db.prepare('INSERT INTO idempotency (key, tx_id, action, result) VALUES (?, ?, ?, ?)')
         .run(requestId, txId, action, JSON.stringify({ state: 'pending' }));
       return { claimed: true, record: { state: 'pending' } };

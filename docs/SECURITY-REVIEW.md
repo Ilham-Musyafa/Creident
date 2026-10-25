@@ -1,4 +1,16 @@
-# Security review — updated 2026-10-22 (WIB)
+# Security review — updated 2026-10-25 (WIB)
+
+## Current audit (2026-10-25)
+
+See [the dated audit](SECURITY-AUDIT-2026-10-25.md) for scope, findings, fixes,
+515 passing tests, local production probes, runtime sources and deployment limits.
+Node 22.23.4 is now pinned; updating a PC does not update an existing Render service.
+Ordinary payment effects now require confirmed statuses and cannot reserve a competing
+money effect while another is pending. PayPalClient rejects every non-exact Sandbox
+base URL, and malformed reviewer-code cookies fail the gate without throwing.
+Demo roles/shared data, proxy-dependent rate limits, unbounded dataset growth, partial
+CSP and manual payment reconciliation remain limits. The public service was not reached
+from this environment, so this report does not certify its current configuration.
 
 ## Public demo on Render (2026-10-22)
 

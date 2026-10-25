@@ -228,7 +228,7 @@ a "Simulated payment" notice.
 
 ## 4. Run it yourself
 
-Requirements: **Node.js 22.13 or newer** (uses the built-in `node:sqlite`).
+Requirements: **Node.js 22.23.4+ (22 LTS) or 24.22.1+ (24 LTS)** (uses the built-in `node:sqlite`).
 
 ```bash
 git clone https://github.com/Ilham-Musyafa/Creident.git

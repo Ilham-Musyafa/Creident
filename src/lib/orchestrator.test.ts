@@ -127,3 +127,65 @@ describe('applyTrigger with SQLite', () => {
     expect(repo.readEvents('tx-1')).toHaveLength(0);
   });
 });
+
+
+describe('unconfirmed provider outcomes', () => {
+  it.each(['PENDING', 'DENIED', 'DECLINED', undefined])('keeps capture %s pending without claiming completion or resending', async (status) => {
+    const { repo, paypal, deps } = fixture('IN_INSPECTION', { paypalAuthId: 'auth-1' });
+    paypal.captureAuthorization.mockResolvedValue({ captureId: 'capture-1', status: status as string });
+    const trigger = { type: 'BUYER_CONFIRM', externalDisputeOpen: false } as const;
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'CAPTURE_UNCONFIRMED' } });
+    expect(repo.loadTransaction('tx-1')).toMatchObject({ status: 'IN_INSPECTION', captured: false });
+    expect(repo.readEvents('tx-1')).toHaveLength(0);
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'ACTION_PENDING' } });
+    expect(paypal.captureAuthorization).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['PENDING', 'FAILED', undefined])('does not mark a full refund %s as completed', async (status) => {
+    const { repo, paypal, deps } = fixture('UNDER_REVIEW', { captured: true, paypalCaptureId: 'capture-1' });
+    paypal.refundCapture.mockResolvedValue({ refundId: 'refund-1', status: status as string });
+    const trigger = { type: 'DECISION', outcome: 'REFUND' } as const;
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'REFUND_UNCONFIRMED' } });
+    expect(repo.loadTransaction('tx-1')?.status).toBe('UNDER_REVIEW');
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'ACTION_PENDING' } });
+    expect(paypal.refundCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not record a denied authorization as authorized', async () => {
+    const { repo, paypal, deps } = fixture('AWAITING_APPROVAL', { paypalOrderId: 'order-1' });
+    paypal.authorizeOrder.mockResolvedValue({ orderStatus: 'COMPLETED', authorizationId: 'auth-1', authorizationStatus: 'DENIED' });
+    const trigger = { type: 'BUYER_APPROVED', orderApproved: true } as const;
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'AUTHORIZATION_UNCONFIRMED' } });
+    expect(repo.loadTransaction('tx-1')?.status).toBe('AWAITING_APPROVAL');
+    expect(await applyTrigger('tx-1', trigger, deps)).toMatchObject({ ok: false, error: { code: 'ACTION_PENDING' } });
+    expect(paypal.authorizeOrder).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['capture', 'refund', 'authorize'] as const)('rejects a missing %s provider ID', async (kind) => {
+    const { repo, paypal, deps } = fixture(kind === 'authorize' ? 'AWAITING_APPROVAL' : kind === 'refund' ? 'UNDER_REVIEW' : 'IN_INSPECTION', {
+      paypalOrderId: 'order-1', paypalAuthId: 'auth-1', ...(kind === 'refund' ? { captured: true, paypalCaptureId: 'capture-1' } : {}),
+    });
+    paypal.captureAuthorization.mockResolvedValue({ captureId: 'undefined', status: 'COMPLETED' });
+    paypal.refundCapture.mockResolvedValue({ refundId: '', status: 'COMPLETED' });
+    paypal.authorizeOrder.mockResolvedValue({ orderStatus: 'COMPLETED', authorizationId: '', authorizationStatus: 'CREATED' });
+    const trigger = kind === 'authorize' ? { type: 'BUYER_APPROVED', orderApproved: true } as const
+      : kind === 'refund' ? { type: 'DECISION', outcome: 'REFUND' } as const
+      : { type: 'BUYER_CONFIRM', externalDisputeOpen: false } as const;
+    expect((await applyTrigger('tx-1', trigger, deps)).ok).toBe(false);
+    expect(repo.readEvents('tx-1')).toHaveLength(0);
+  });
+});
+
+
+it('blocks a competing void while capture is in flight', async () => {
+  const { repo, paypal, deps } = fixture('UNDER_REVIEW', { paypalAuthId: 'auth-1' });
+  let release!: (value: { captureId: string; status: string }) => void;
+  paypal.captureAuthorization.mockImplementation(() => new Promise(resolve => { release = resolve; }));
+  const first = applyTrigger('tx-1', { type: 'DECISION', outcome: 'RELEASE' }, deps);
+  expect(await applyTrigger('tx-1', { type: 'DECISION', outcome: 'REFUND' }, deps))
+    .toMatchObject({ ok: false, error: { code: 'ACTION_PENDING' } });
+  expect(paypal.voidAuthorization).not.toHaveBeenCalled();
+  release({ captureId: 'capture-1', status: 'COMPLETED' });
+  expect((await first).ok).toBe(true);
+  expect(repo.loadTransaction('tx-1')?.status).toBe('COMPLETED');
+});

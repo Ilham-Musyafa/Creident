@@ -20,3 +20,10 @@ describe('reviewer access code', () => {
     expect(suppliedReviewerCode(viaHeader)).toBe('h');
   });
 });
+
+
+it('rejects malformed encoded reviewer cookies without throwing', () => {
+  const req = new Request('http://x/', { headers: { cookie: 'hv-reviewer-code=%E0%A4%A' } });
+  expect(suppliedReviewerCode(req)).toBeNull();
+  expect(reviewerCodeMatches(suppliedReviewerCode(req), { REVIEWER_ACCESS_CODE: 'configured' })).toBe(false);
+});

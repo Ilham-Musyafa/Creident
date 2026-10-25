@@ -73,12 +73,17 @@ async function performEffect(
     case 'PAYPAL_AUTHORIZE': {
       if (!tx.paypalOrderId) throw new DomainError('MISSING_ORDER_ID', 'Transaction has no PayPal order');
       const result = await paypal.authorizeOrder(tx.paypalOrderId, requestId);
+      if (!result.authorizationId || result.authorizationId === 'undefined' || result.authorizationStatus !== 'CREATED') {
+        throw new DomainError('AUTHORIZATION_UNCONFIRMED', 'Authorization outcome needs manual verification before retry');
+      }
       return { ids: { paypalAuthId: result.authorizationId } };
     }
     case 'PAYPAL_CAPTURE': {
       if (!tx.paypalAuthId) throw new DomainError('MISSING_AUTH_ID', 'Transaction has no PayPal authorization');
       const result = await paypal.captureAuthorization(tx.paypalAuthId, requestId);
-      if (!result.captureId || result.captureId === 'undefined') throw new Error('PayPal capture response has no capture id');
+      if (!result.captureId || result.captureId === 'undefined' || result.status !== 'COMPLETED') {
+        throw new DomainError('CAPTURE_UNCONFIRMED', 'Capture outcome needs manual verification before retry');
+      }
       return { ids: { paypalCaptureId: result.captureId } };
     }
     case 'PAYPAL_VOID': {
@@ -88,7 +93,10 @@ async function performEffect(
     }
     case 'PAYPAL_REFUND': {
       if (!tx.paypalCaptureId) throw new DomainError('MISSING_CAPTURE_ID', 'Transaction has no PayPal capture');
-      await paypal.refundCapture(tx.paypalCaptureId, requestId);
+      const result = await paypal.refundCapture(tx.paypalCaptureId, requestId);
+      if (!result.refundId || result.refundId === 'undefined' || result.status !== 'COMPLETED') {
+        throw new DomainError('REFUND_UNCONFIRMED', 'Refund outcome needs manual verification before retry');
+      }
       return { ids: {} };
     }
   }
@@ -148,6 +156,7 @@ export async function applyTrigger(txId: string, trigger: Trigger, deps: Orchest
     }, requestId, payment.approvalUrl, deps.extras);
     return { ok: true, tx: saved, approvalUrl: payment.approvalUrl };
   } catch (error) {
+    if (error instanceof DomainError) return { ok: false, error };
     if (!(error instanceof PayPalError) || !requestId) throw error;
     deps.repo.savePayPalFailure(requestId, {
       state: 'error', status: error.status, code: error.code, issue: error.issue,

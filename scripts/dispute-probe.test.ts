@@ -59,8 +59,8 @@ describe('dispute probe', () => {
   });
 
   it('refuses Sandbox-only simulations against any other host', async () => {
-    const client = new PayPalClient({ baseUrl: 'https://api-m.paypal.com', clientId: 'id', clientSecret: 's', fetchImpl: (async () => new Response('{}')) as typeof fetch });
-    await expect(client.sandboxAdjudicate('X', 'BUYER_FAVOR')).rejects.toThrow(/only in the PayPal Sandbox/);
+    expect(() => new PayPalClient({ baseUrl: 'https://api-m.paypal.com', clientId: 'id', clientSecret: 's', fetchImpl: (async () => new Response('{}')) as typeof fetch }))
+      .toThrow(/exact PayPal Sandbox/);
   });
 });
 

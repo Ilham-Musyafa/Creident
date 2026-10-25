@@ -28,7 +28,7 @@ The public demo runs the labelled PayPal simulation and recorded AI replays only
 
 | Variable | Value | Why |
 |---|---|---|
-| `NODE_VERSION` | `22` | `node:sqlite` needs Node 22.13 or newer |
+| `NODE_VERSION` | `22.23.4` | Patched Node 22 LTS; recheck security releases before deploying |
 | `PUBLIC_DEMO` | `1` | Environment lock, demo seed on start, API rate limit |
 | `PAYPAL_MODE` | `simulated` | Labelled simulation, no PayPal calls |
 | `AI_MODE` | `replay` | Recorded AI outputs, no model calls |
@@ -40,3 +40,12 @@ Health check: `/about`. Region: Oregon (closest to the judges' time zone).
 
 - Render Workflows for the deadline tick and PayPal dispute polling (planned, separate PR).
 - A scheduled reset of the shared demo data on a paid (always-on) instance.
+
+## Runtime security updates (2026-10-25)
+
+The repository pins Node 22.23.4 in `.node-version` and the Blueprint. An existing
+Render service may have its own `NODE_VERSION` override: check Environment, set
+`22.23.4`, redeploy, and confirm the exact version in the build log. Updating Node
+on a PC does not update Render or an already-running process. Keep the public
+demo in simulated/replay mode without provider secrets. Recheck official Node
+security releases regularly; this pin is not a permanent security guarantee.

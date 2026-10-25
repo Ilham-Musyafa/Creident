@@ -66,6 +66,7 @@ export class PayPalClient {
 
   constructor(private readonly config: PayPalConfig) {
     if (!config.clientId || !config.clientSecret) throw new Error('PayPal client id and secret are required');
+    if (config.baseUrl !== 'https://api-m.sandbox.paypal.com') throw new Error('Only the exact PayPal Sandbox API URL is allowed');
     this.fetchImpl = config.fetchImpl ?? fetch;
     this.now = config.now ?? Date.now;
   }
@@ -266,7 +267,7 @@ export class PayPalClient {
   }
 
   private assertSandbox(): void {
-    if (!this.config.baseUrl.startsWith('https://api-m.sandbox.paypal.com')) throw new Error('This simulation exists only in the PayPal Sandbox');
+    if (this.config.baseUrl !== 'https://api-m.sandbox.paypal.com') throw new Error('This simulation exists only in the PayPal Sandbox');
   }
 
   /** Capture details including the fee breakdown (seen in the Sandbox: 10.00 gross, 0.64 fee, 9.36 net). */

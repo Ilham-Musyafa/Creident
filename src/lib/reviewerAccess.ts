@@ -25,5 +25,7 @@ export function suppliedReviewerCode(request: Request): string | null {
   if (header) return header;
   const cookie = request.headers.get('cookie') ?? '';
   const match = cookie.split(/;\s*/).find((part) => part.startsWith(`${REVIEWER_CODE_COOKIE}=`));
-  return match ? decodeURIComponent(match.slice(REVIEWER_CODE_COOKIE.length + 1)) : null;
+  if (!match) return null;
+  try { return decodeURIComponent(match.slice(REVIEWER_CODE_COOKIE.length + 1)); }
+  catch { return null; } // A malformed cookie must fail the gate, not crash the request.
 }

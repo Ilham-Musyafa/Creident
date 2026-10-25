@@ -173,6 +173,30 @@ Still open:
 
 ## Log
 
+### 2026-10-25 — Node/runtime and application security audit
+
+- Owner requested a broad audit after PHP/Node concerns, before demo recording.
+  Records PR #86 is merged; created `security/demo-audit` from latest `origin/main`
+  `9a1acd1`. No main push, merge or deployment.
+- Full scope/results/remaining risks: `docs/SECURITY-AUDIT-2026-10-25.md`; updated
+  SECURITY-REVIEW and DEPLOY. No PHP runtime in this app. npm audit reports zero
+  known advisories; no dependency version/addition needed. Common-pattern history
+  scan: 1,233 blobs, three test-regex false positives, no confirmed secret.
+- Pin Node 22.23.4 in `.node-version`/Blueprint, accept patched 22/24 LTS engines;
+  lockfile root engine and README updated. Actual Render dashboard override/version
+  remains owner verification; PC Node update does not update Render.
+- Fix ordinary authorization/capture/full-refund status validation, preserve pending
+  reservations on unconfirmed results; atomically block competing pending payment
+  effects. Exact Sandbox host guard in PayPalClient; malformed reviewer cookie
+  rejected without URIError. State machine/rules/deadlines/schema/UI unchanged.
+- Node 22.23.4 final checks: clean install, 515 tests/48 files, typecheck, build,
+  diff-check passed. Local production: 13 valid chains, headers/gate/rate limit,
+  unsafe public-demo startup rejection passed. No provider credentials/live calls.
+- Real auth/ownership, global quotas/proxy trust, strict CSP and reconciliation
+  remain production limits. Render request blocked by execution proxy CONNECT 403,
+  so no current hosted-runtime/security-header claim. Keep demo simulated/replay.
+- Branch push/PR status will be recorded after publishing the review branch.
+
 ### 2026-10-25 — Mobile Records matches the NexoBank design
 
 - Fetched main: PR #85 is merged at `5f191f4`. Took the requested merged-branch path:
