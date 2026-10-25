@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { MobileTransactions } from './MobileTransactions';
 import { useEffect, useState } from 'react';
 import { EmptyState } from './layout';
+import { SeedButton } from './client';
+import type { Role } from './view';
 import { StatusPill } from './ui';
 import { TransactionIcon } from './TransactionIcon';
 import { TRANSACTION_FILTERS, readTransactionFilter, transactionQuery, searchTransactionRows, matchesTransactionFilter, sortTransactionRows, type TransactionFilter, type TransactionRow } from './transactionsView';
 
-export function TransactionsBrowser({ rows, initialFilter, initialQuery }: { rows: TransactionRow[]; initialFilter: TransactionFilter; initialQuery: string }) {
+export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }: { role: Role; rows: TransactionRow[]; initialFilter: TransactionFilter; initialQuery: string }) {
   const [filter, setFilter] = useState(initialFilter);
   const [query, setQuery] = useState(initialQuery);
   useEffect(() => {
@@ -26,7 +28,7 @@ export function TransactionsBrowser({ rows, initialFilter, initialQuery }: { row
   };
   const searched = searchTransactionRows(rows, query);
   const visible = sortTransactionRows(searched.filter(row => matchesTransactionFilter(row, filter)));
-  return <><MobileTransactions rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
+  return <><MobileTransactions role={role} rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
     <div className="mb-4 flex flex-wrap items-end gap-3">
       <div className="min-w-0 flex-1"><label htmlFor="transaction-search" className="mb-2 block text-sm font-semibold text-heading">Find a transaction</label><div className="relative">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-3 top-3 size-5 text-muted"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg>
@@ -41,7 +43,7 @@ export function TransactionsBrowser({ rows, initialFilter, initialQuery }: { row
       })}
     </div>
     <p role="status" aria-live="polite" className="mb-4 text-sm text-muted">Showing {visible.length} of {rows.length} transactions · Needs action first, then nearest deadline</p>
-    {visible.length === 0 ? <EmptyState title="No matching transactions">Try another item name or clear the filters.</EmptyState> : <div className="lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-line lg:bg-surface">
+    {rows.length === 0 ? <EmptyState title="No transactions yet"><p className="mb-4">Load labelled demo deals to explore every status.</p><SeedButton role={role}/></EmptyState> : visible.length === 0 ? <EmptyState title="No matching transactions">Try another item name or clear the filters.</EmptyState> : <div className="lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-line lg:bg-surface">
       <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 border-b border-line bg-surface-2 px-5 py-3 text-sm font-semibold text-heading lg:grid"><span>Item</span><span>Status</span><span>Next step</span><span className="text-right">Amount</span></div>
       <ul aria-label="Transactions" className="space-y-3 lg:space-y-0">{visible.map(row => <li key={row.id} className="lg:border-b lg:border-line lg:last:border-0">
         <Link href={row.href} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 rounded-[18px] border border-line bg-surface p-4 hover:bg-surface-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] lg:gap-4 lg:rounded-none lg:border-0 lg:px-5">

@@ -173,6 +173,104 @@ Still open:
 
 ## Log
 
+### 2026-10-24 — Approved compact role dropdown
+
+- Continued `ui/nexobank-home` (main still `9144b8c`, PR #84). Owner approved replacing
+  the avatar/direct Buyer-Seller toggle with a compact role pill and dropdown.
+- QuickRoleSwitch now offers Buyer/Seller/Reviewer with descriptions, an active check,
+  native auto-popover top-layer rendering, viewport positioning, keyboard navigation,
+  light dismissal and focus restoration across role-keyed refreshes. The shared header
+  applies it to Home, Transactions and Settings; current-page/filter state is retained.
+- Preserved demo-role cookie, server refresh and reviewer gates. No real auth/account
+  changes, API/payment/rule changes or dependencies. Selecting the same role closes
+  without refresh. Header becomes shorter with the single-row pill.
+- Typecheck, production build and 497 existing tests pass. Browser verification: 12
+  width/theme/page combinations (320/390, light/dark, Home/Transactions/Settings), all
+  three roles in each; active checks, arrow/Home/End/Tab/Escape focus, outside/resize
+  dismissal, no clipping/overflow/errors/write requests; reviewer gate remains 403
+  without code. Also checked Transactions query retention and scroll dismissal.
+  Open-menu text/contrast probe checked 108 strings with no failures.
+- Latest screenshots: `docs/ui/screens/role-dropdown/` (390px, open/closed, light/dark).
+  Prior captures retain the older avatar header. Changes stay in the same review
+  branch; no merge or Render deployment. PR API creation remains blocked (Forbidden).
+  Review/create: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
+### 2026-10-24 — Matching mobile Transactions reference
+
+- Continued `ui/nexobank-home` for the owner's NexoBank Analytics screenshot, adapted
+  to Transactions. `origin/main` remains `9144b8c` (PR #84), so the Home/Settings/
+  Transactions design pass stays in one unmerged branch for review.
+- Reused shared mobile brand/role header and rounded panel. Added an actual visible-row
+  count card, search-aware action/Active/Closed shortcuts, native five-option view
+  selector and existing quick tabs/grouped rows. Search opens on demand with focus;
+  URL queries open it automatically. No made-up expenses, dates, cards or percentages.
+- Passed the current role through TransactionsBrowser; reused filters/search/URL logic
+  and actual next-action links. Unified mobile/desktop empty-list seed handling. Added
+  optional AppShell mobileFullBleed only for `/deals`; new/detail pages retain padding.
+  Desktop table/filter/search structure remains unchanged. No dependencies or
+  domain/rules/payment/auth/API changes.
+- Typecheck, build and all 497 tests passed. Production browser checks covered 18
+  width/theme/role combinations (320/390/1024, light/dark, all roles): summaries,
+  search/filter/counts, URL reload and invalid-filter fallback, actual next-step routes,
+  role toggle, no writes/runtime errors/overflow. Empty-list checks for all roles at
+  mobile/desktop, demo seed and unchanged new/detail page padding also passed.
+  Default Transactions text/contrast probe checked 196 visible strings, no failures.
+- Captures: `docs/ui/screens/nexo-transactions/`. Same review branch as Home/Settings;
+  no merge or Render deployment. Prior PR API creation was blocked with Forbidden.
+  Review/create: `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
+### 2026-10-24 — Matching mobile Settings reference
+
+- Continued `ui/nexobank-home` with the owner's Settings screenshot. `origin/main`
+  remains `9144b8c` (PR #84); the Home design branch is not merged. Keep both designs
+  in the same branch/review rather than stacking another branch on unmerged work.
+- Added MobileSettings: shared wave/brand/quick-role header, rounded panel and seven
+  outline rows. Demo role/Appearance/Demo data expand on demand using native details;
+  reviewer oversight appears only for Reviewer. Remaining rows use existing decision,
+  fairness, limitations and About routes. Records stays in the bottom navigation.
+  Desktop Settings markup/layout retained. No fake account or notification controls.
+- Extracted MobileBrandHeader from Home without visual changes. Mobile reviewer form
+  gets a unique input ID; default desktop form ID remains unchanged. Theme pickers
+  observe document theme changes so mobile/desktop selections stay synced on resize.
+- Typecheck, production build and all 497 tests passed. Production browser checks:
+  320/390/1024px x light/dark x all roles; native keyboard disclosures, one open group,
+  theme persistence and resize sync, role switches, duplicate IDs, password input,
+  wrong/correct local reviewer code (403/200), demo seed, links, no overflow/errors.
+  Default Settings text/contrast probe checked 68 visible strings with no failures.
+- Captures: `docs/ui/screens/nexo-settings/`. Updated branch will include these changes;
+  no merge or Render deployment. Existing PR API restriction remains (Forbidden);
+  review/create via `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+
+
+### 2026-10-24 — NexoBank-inspired mobile Home
+
+- PR #84 is merged on `origin/main` at `9144b8c`. Created `ui/nexobank-home` from
+  that commit for the owner's supplied NexoBank Home screenshot.
+- Replaced mobile Home composition with original CSS Sapphire waves, inverse brand
+  header and role toggle, rounded content panel, approved-payment amount show/hide,
+  four functional shortcuts, role-specific primary action, compact actual counts,
+  three recent/reviewer rows and the existing audit/demo footer. No banking metrics,
+  deposit/transfer/contact actions or borrowed reference assets. Kept current-role
+  actions/About on demand with focus handling and empty/seed support.
+- Floating mobile nav retains Home/Transactions/Records/Settings labels and safe-area
+  padding. Desktop Home remains pixel-identical in light/dark at 1440px. Other mobile
+  pages receive the same navigation; their content layout is unchanged.
+- No dependencies, domain/rules/payment/auth/API changes. Existing 497 tests, typecheck
+  and production build pass. Browser checks covered 18 width/theme/role combinations
+  at 320/390/768, amount hiding, actions/About, focus, actual rows, no horizontal
+  overflow, no runtime errors or write requests; quick role toggle; final typography
+  captures at 320/390 and empty/seed flows. Text/contrast probe checked 510 visible
+  strings across Home/Transactions/Records/Settings, light/dark, no failures.
+- Implementation commit `ea71b76` pushed to `origin/ui/nexobank-home`. One PR
+  creation attempt failed: `Post https://api.github.com/graphql: Forbidden`.
+  No PR created by the agent. Body: `/tmp/creident-nexo-home-pr.md`.
+  Open `https://github.com/Ilham-Musyafa/Creident/pull/new/ui/nexobank-home`.
+- Screenshots: `docs/ui/screens/nexo-home/` (viewport and full page, light/dark).
+  This is mobile web styling; no native app or Render deployment was performed.
+
+
 ### 2026-10-24 — Main mobile reference foundation
 
 - Owner requested adapting the supplied mobile finance reference to Creident and

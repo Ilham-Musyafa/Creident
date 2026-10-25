@@ -95,7 +95,7 @@ export function RoleSwitch({ current }: { current: Role }) {
   }}/>;
 }
 
-export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
+export function ReviewerCodeForm({ unlocked, id = 'reviewer-code' }: { unlocked: boolean; id?: string }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   return (
@@ -105,8 +105,8 @@ export function ReviewerCodeForm({ unlocked }: { unlocked: boolean }) {
       setCode('');
       router.refresh();
     }}>
-      <Label htmlFor="reviewer-code">Reviewer access code</Label>
-      <input id="reviewer-code" type="password" autoComplete="off" className={fieldClass} value={code} onChange={(e) => setCode(e.target.value)} placeholder={unlocked ? 'Saved on this device' : 'Ask the demo owner'}/>
+      <Label htmlFor={id}>Reviewer access code</Label>
+      <input id={id} type="password" autoComplete="off" className={fieldClass} value={code} onChange={(e) => setCode(e.target.value)} placeholder={unlocked ? 'Saved on this device' : 'Ask the demo owner'}/>
       <Button type="submit" variant="ghost" fullWidth disabled={!code.trim()}>Save code</Button>
       <p className="text-sm text-muted">{unlocked ? 'Reviewer actions are unlocked on this device.' : 'This demo needs a code before anyone can act as the reviewer.'}</p>
     </form>

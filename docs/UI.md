@@ -390,3 +390,80 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   Home and Transactions retain their current appearance at 1024px and above.
 - Review captures: `docs/ui/screens/mobile-reference/`, 390px light/dark, expanded
   capture height to keep the fixed bottom bar from obscuring full-page content.
+
+### NexoBank-inspired mobile Home (owner reference, 2026-10-24)
+
+- Supersedes the earlier gradient-card mobile Home composition. Reference is the
+  owner's screenshot from NexoBank, Figma Community file `1536346965435909007`.
+  Borrow hierarchy and spacing; use Creident's logo/fonts and original CSS Sapphire
+  waves. No reference artwork, banking labels, contact photos or banking functionality.
+- Full-width branded header, compact existing role toggle, rounded surface panel,
+  approved-but-uncharged USD amount with a local show/hide toggle, four shortcuts
+  (Actions, Browse, Records, About), and one role-appropriate primary action.
+- Buyer with pending actions opens the existing action list; Seller creates a deal;
+  Reviewer opens the existing review queue. Actions and About replace the panel
+  content on demand. View focus uses preventScroll to avoid jumping the header.
+- Compact actual Active/In dispute/Completed counts replace the reference's contact
+  transfer row. Show up to three recent transactions, or reviewer queue rows, with
+  real status/amount and Demo badges. Keep pending-refund verification text even in
+  compact rows. Audit checks, failures and payment-mode limitations remain visible.
+- Mobile navigation is a navy floating pill with all four existing labels and active
+  state, minimum 64px link height and device safe-area spacing. No central New button.
+  Applies consistently to mobile routes; desktop drawer styles remain unchanged.
+- No new dependency, rule/state/payment/auth/API change. Review captures:
+  `docs/ui/screens/nexo-home/` (390px, light/dark viewport and full page).
+
+### NexoBank-inspired mobile Settings (owner reference, 2026-10-24)
+
+- Settings shares Home's original Sapphire wave header and compact role control via
+  `MobileBrandHeader`. Use a full-width rounded panel, 28px Settings title and seven
+  outlined rows with readable labels, blue icons and chevrons. The existing floating
+  navigation highlights Settings. Desktop Settings keeps its current layout.
+- Demo role, Appearance and Demo data are native disclosures, initially closed;
+  browsers supporting named details open one at a time. Reuse the actual role picker,
+  reviewer code form, theme picker and seed action. Reviewer oversight is an additional
+  row in Reviewer view. Other rows open the existing decisions/fairness/limits/About
+  pages. Deal records remain accessible from the bottom navigation.
+- Do not add fictional personal details, security, notifications, language, account
+  deletion or log-out actions. This prototype has demo-role selection, not real sign-in.
+- Give the mobile reviewer form a distinct input ID. Both theme pickers observe the
+  shared document theme so selection stays correct across viewport changes. No new
+  dependencies, authentication, rule or payment behaviour.
+- Review captures: `docs/ui/screens/nexo-settings/` (390px viewport/full page, light/dark).
+
+### NexoBank-inspired mobile Transactions (owner reference, 2026-10-24)
+
+- Adapt the owner's Analytics screenshot to transaction management: shared Sapphire
+  header, rounded full-width panel, view selector, summary card, segmented quick filters
+  and grouped rows. Retain the actual title Transactions. No invented expenses, signed
+  cash flows, dates, bank cards, categories/tags or percentage breakdowns.
+- Summary shows the visible row count with its filter label. The action notice and
+  Active/Closed shortcuts count all searched rows, so selecting a status does not hide
+  other useful workspace counts. Every shortcut uses the existing filter semantics.
+- Search opens with the header search icon; existing URL queries open it automatically.
+  Keep the 200-character bound, case-insensitive item search, query-aware counts,
+  URL persistence and keyboard-accessible native view selector (all five filters).
+- Keep grouped Needs your action / In progress / Closed lists, existing next-action
+  links, real amounts/status/deadlines, Demo badges and pending-refund notices. Both
+  mobile and desktop retain the empty-list seed action. No row-opening money writes.
+- `/deals` explicitly opts into full-width mobile composition. New/detail/checkout and
+  other deal pages keep normal page padding. Desktop Transactions keeps its table
+  layout, filters and search. No new dependencies or domain/payment/auth changes.
+- Review captures: `docs/ui/screens/nexo-transactions/`, 390px viewport/full page,
+  light/dark, alongside the matching Home and Settings captures in this branch.
+
+### Compact demo-role dropdown (owner-approved 2026-10-24)
+
+- Replace the mobile header's avatar/direct toggle with a compact `Buyer`, `Seller`
+  or `Reviewer` pill and chevron. Open a three-option menu with short descriptions
+  and a check on the current role. Selecting the current role only closes the menu.
+- Reuse the existing demo-role cookie and refresh the current page. Preserve the
+  Transactions URL query/filter and all reviewer code checks. Selecting Reviewer is
+  demo navigation, not authentication or an access-code bypass.
+- Native auto popover renders above the clipped decorative header. Keep it inside
+  viewport bounds with available-height scrolling; dismiss outside, on Escape, page
+  scroll, resize or desktop breakpoint. Support arrows/Home/End and Tab, with focus
+  returned to the pill after selection even when the role-keyed view is replaced.
+- Minimum 44px pill and 64px options, readable descriptions, theme tokens and visible
+  keyboard focus. No dependency or new API. Latest header/menu captures supersede the
+  avatar shown in earlier screenshots: `docs/ui/screens/role-dropdown/`.

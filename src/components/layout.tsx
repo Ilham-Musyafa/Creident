@@ -6,14 +6,14 @@ import { DesktopNavigation } from './DesktopNavigation';
 type Active = 'Home' | 'Deals' | 'Audit' | 'Menu';
 
 /** Bottom navigation on mobile, slide-out menu from 1024px, content max width 1100px. */
-export function AppShell({ active, children }: { active?: Active; children: ReactNode }) {
+export function AppShell({ active, children, mobileFullBleed = false }: { active?: Active; children: ReactNode; mobileFullBleed?: boolean }) {
   return (
     <div className="min-h-screen bg-bg">
       <DesktopNavigation><BottomNav active={active}/></DesktopNavigation>
       <div className="fixed inset-x-0 bottom-0 z-20 print:hidden lg:hidden">
         <BottomNav active={active}/>
       </div>
-      <main className="hv-page mx-auto min-w-0 w-full max-w-[1100px] px-5 pb-32 pt-6 lg:px-10 lg:pb-12 lg:pt-10">{children}</main>
+      <main className={`hv-page mx-auto min-w-0 w-full max-w-[1100px] pb-32 lg:px-10 lg:pb-12 lg:pt-10 ${(mobileFullBleed || active === 'Home' || active === 'Menu') ? 'px-0 pt-0' : 'px-5 pt-6'}`}>{children}</main>
     </div>
   );
 }
