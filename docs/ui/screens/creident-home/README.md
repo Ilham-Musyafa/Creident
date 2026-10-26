@@ -50,3 +50,24 @@ readable 14px body/12px meta and 44px targets even when long real labels extend
 below the fold; no fake Export/search/photo or banking features;
 no fake dates for rows whose existing Home presentation data has no date/deadline;
 no fabricated reviewer tasks; dark mode follows Creident's established tokens.
+
+## Follow-up: visible Demo markers and role-relevant deals
+
+The Home screenshots were refreshed after `0d05032` on 2026-10-26. Every compact
+simulated/demo row shows a visible 12px Demo badge in light and dark. Buyer and
+Seller lists use their stored demo party IDs; Reviewer uses UNDER_REVIEW only.
+Needs-action precedes active, then repository recency. Main actions are unchanged.
+These are demo identities, not authenticated account ownership.
+
+- home-fixes-after.json: 12 production browser views (390/1440, three roles, two
+  themes), actual rows/actions, no overflow or runtime exceptions.
+- home-fixes-selection.json: six role/theme checks against the actual QA fixture,
+  including DRAFT acceptances; unchanged Buyer Inspect now, Seller Add evidence,
+  Reviewer Review now. Lists contain three / three / one rows respectively.
+- home-fixes-desktop-comparison.json: all six Home desktop pairs pixel-identical
+  to `0d05032`. The 1440px screenshots now show the existing persistent sidebar.
+  Earlier desktop-comparison.json remains historical evidence for the initial
+  mobile refinement, before that sidebar task.
+
+Required gates: 497 tests in 48 files, typecheck and production build passed.
+QA used the same local 13-deal fixture and fixed clock as the shell checks.

@@ -173,6 +173,32 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Mobile Home Demo markers and role-relevant rows
+
+- Continued unmerged `ui/creident-mockup` from `0d05032` as requested.
+- MobileTransactionRow compact mode now shows a visible 12px Demo badge beside
+  the status, with wrapping metadata; all compact consumers inherit it.
+- Home mobile selection uses the existing seed/create demo party IDs (`buyerId`
+  buyer / `sellerId` seller). Reviewer gets only the actual UNDER_REVIEW queue.
+  Existing transactionRow action logic (including accepted DRAFT terms) determines
+  needs-action priority, then active; stable sorting retains repository updated /
+  created recency within each priority. Maximum three rows, See all still /deals.
+  This is demo role relevance, not user authentication or production ownership.
+- Desktop receives its original recent data. Main-action selection is untouched.
+  No lib/domain, API, payment, rule, audit, dependency or data changes.
+- Node 22.23.4: npm test 497/497 (48 files), typecheck and build passed.
+  Production Chromium: 390px light/dark for all three roles, visible Demo markers,
+  expected fixture selection, correct unchanged main actions, no overflow/runtime
+  exceptions. Buyer/Seller show 3 rows; Reviewer has 1 actual queue record.
+  1440px Home before/after is pixel-identical in all six role/theme combinations.
+- Updated captures and home-fixes-*.json evidence under docs/ui/screens/creident-home/;
+  README distinguishes current screenshots from historical comparison evidence.
+  Updated UI.md to require the per-row visible marker and describe selection.
+- Push/PR status will be recorded after publication. No merge/deployment or pending
+  owner decision. Baseline captures /tmp/creident-home-fixes-before; QA scripts
+  /tmp/creident-home-fixes-check.mjs and /tmp/creident-home-fixes-selection.py;
+  local simulated server 3227, synthetic fixed-clock fixture only.
+
 ### 2026-10-26 — Persistent desktop sidebar shell
 
 - Confirmed previous mobile Home task finished at 94b24d9. ui/creident-mockup remains

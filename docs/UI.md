@@ -511,11 +511,13 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   inline next-task card uses the first existing sorted role task, item/deadline,
   icon and one primary link on the right. Seller creation remains in the header.
   Buyer “Inspect now” opens the existing confirm/dispute details; no money moves.
-- Your deals groups up to three existing recent rows (Reviewer uses actual queue
-  data; never pad it). Reuse MobileTransactionRow in compact mode with square icons,
+- Your deals groups up to three demo-party-linked rows (buyerId `buyer`, sellerId
+  `seller`; Reviewer uses the actual UNDER_REVIEW queue; never pad it). Prioritize
+  needs-action, then active, preserving repository recency within each priority.
+  Desktop keeps its existing list. Reuse MobileTransactionRow in compact mode with square icons,
   local heading-font amounts, text chips and short real deadlines. Full deadlines
   remain in title text; absent dates/deadlines are omitted. Demo labeling remains
-  visible in the header/footer and available per row to assistive technology.
+  visible in the header/footer and as a separate 12px Demo badge on every demo row.
   The compact authorized chip reads “Approved · not charged”, with the existing
   full label in its title. Internal statuses and ordinary/desktop labels are intact.
 - Shared StatusPill semantic mobile tones: completed → success; awaiting/frozen →

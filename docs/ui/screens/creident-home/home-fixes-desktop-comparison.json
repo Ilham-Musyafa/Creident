@@ -1,0 +1,32 @@
+[
+  {
+    "role": "buyer",
+    "theme": "light",
+    "identical": true
+  },
+  {
+    "role": "buyer",
+    "theme": "dark",
+    "identical": true
+  },
+  {
+    "role": "seller",
+    "theme": "light",
+    "identical": true
+  },
+  {
+    "role": "seller",
+    "theme": "dark",
+    "identical": true
+  },
+  {
+    "role": "reviewer",
+    "theme": "light",
+    "identical": true
+  },
+  {
+    "role": "reviewer",
+    "theme": "dark",
+    "identical": true
+  }
+]

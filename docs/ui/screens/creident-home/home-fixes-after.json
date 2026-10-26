@@ -1,0 +1,258 @@
+[
+  {
+    "width": 390,
+    "role": "buyer",
+    "theme": "light",
+    "rows": [
+      {
+        "text": "Vintage film camera\n$85.00\nWaiting for agreement\nDemo",
+        "href": "/deals/95c68987-43c6-44e2-81d6-d5695cc9d95c/checkout",
+        "demo": true
+      },
+      {
+        "text": "Wireless earbuds\n$35.00\nWaiting for payment\nDemo",
+        "href": "/deals/d61b1feb-f9c5-402e-a417-7c03d2445bb4",
+        "demo": true
+      },
+      {
+        "text": "Used phone, 128 GB\n$120.00\nDelivered · checking\nDemo\n1 day left",
+        "href": "/deals/fac43dc1-0991-4320-889c-167c0953fb24",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Browse",
+      "Browse",
+      "Records",
+      "Inspect now",
+      "See all›",
+      "Vintage film camera$85.00Waiting for agreementDemo",
+      "Wireless earbuds$35.00Waiting for paymentDemo",
+      "Used phone, 128 GB$120.00Delivered · checkingDemo1 day left",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "role": "buyer",
+    "theme": "dark",
+    "rows": [
+      {
+        "text": "Vintage film camera\n$85.00\nWaiting for agreement\nDemo",
+        "href": "/deals/95c68987-43c6-44e2-81d6-d5695cc9d95c/checkout",
+        "demo": true
+      },
+      {
+        "text": "Wireless earbuds\n$35.00\nWaiting for payment\nDemo",
+        "href": "/deals/d61b1feb-f9c5-402e-a417-7c03d2445bb4",
+        "demo": true
+      },
+      {
+        "text": "Used phone, 128 GB\n$120.00\nDelivered · checking\nDemo\n1 day left",
+        "href": "/deals/fac43dc1-0991-4320-889c-167c0953fb24",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Browse",
+      "Browse",
+      "Records",
+      "Inspect now",
+      "See all›",
+      "Vintage film camera$85.00Waiting for agreementDemo",
+      "Wireless earbuds$35.00Waiting for paymentDemo",
+      "Used phone, 128 GB$120.00Delivered · checkingDemo1 day left",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "role": "seller",
+    "theme": "light",
+    "rows": [
+      {
+        "text": "Mechanical keyboard\n$40.00\nApproved · not charged\nDemo\n2 days left",
+        "href": "/deals/8f425a92-51b9-46f8-8d31-5a63ecf805d6",
+        "demo": true
+      },
+      {
+        "text": "Road bike helmet\n$28.00\nProblem reported\nDemo\n1 day left",
+        "href": "/deals/2dd4d474-4346-4857-ada4-d5993df58ad6/evidence",
+        "demo": true
+      },
+      {
+        "text": "Vintage film camera\n$85.00\nWaiting for agreement\nDemo",
+        "href": "/deals/95c68987-43c6-44e2-81d6-d5695cc9d95c",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Create a deal",
+      "Browse",
+      "Browse",
+      "Records",
+      "Add evidence",
+      "See all›",
+      "Mechanical keyboard$40.00Approved · not chargedDemo2 days left",
+      "Road bike helmet$28.00Problem reportedDemo1 day left",
+      "Vintage film camera$85.00Waiting for agreementDemo",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "role": "seller",
+    "theme": "dark",
+    "rows": [
+      {
+        "text": "Mechanical keyboard\n$40.00\nApproved · not charged\nDemo\n2 days left",
+        "href": "/deals/8f425a92-51b9-46f8-8d31-5a63ecf805d6",
+        "demo": true
+      },
+      {
+        "text": "Road bike helmet\n$28.00\nProblem reported\nDemo\n1 day left",
+        "href": "/deals/2dd4d474-4346-4857-ada4-d5993df58ad6/evidence",
+        "demo": true
+      },
+      {
+        "text": "Vintage film camera\n$85.00\nWaiting for agreement\nDemo",
+        "href": "/deals/95c68987-43c6-44e2-81d6-d5695cc9d95c",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Create a deal",
+      "Browse",
+      "Browse",
+      "Records",
+      "Add evidence",
+      "See all›",
+      "Mechanical keyboard$40.00Approved · not chargedDemo2 days left",
+      "Road bike helmet$28.00Problem reportedDemo1 day left",
+      "Vintage film camera$85.00Waiting for agreementDemo",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "role": "reviewer",
+    "theme": "light",
+    "rows": [
+      {
+        "text": "Smartwatch\n$64.00\nBeing reviewed\nDemo",
+        "href": "/deals/a43e1162-54b2-4a6a-9a08-7a928e0b09f6/review",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Review queue",
+      "Browse",
+      "Browse",
+      "Records",
+      "Review now",
+      "See all›",
+      "Smartwatch$64.00Being reviewedDemo",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "role": "reviewer",
+    "theme": "dark",
+    "rows": [
+      {
+        "text": "Smartwatch\n$64.00\nBeing reviewed\nDemo",
+        "href": "/deals/a43e1162-54b2-4a6a-9a08-7a928e0b09f6/review",
+        "demo": true
+      }
+    ],
+    "mainAction": [
+      "Creident",
+      "Review queue",
+      "Browse",
+      "Browse",
+      "Records",
+      "Review now",
+      "See all›",
+      "Smartwatch$64.00Being reviewedDemo",
+      "Records verified ✓ 13 of 13. Checked on this server.",
+      "View limitations"
+    ],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "buyer",
+    "theme": "light",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "buyer",
+    "theme": "dark",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "seller",
+    "theme": "light",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "seller",
+    "theme": "dark",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "reviewer",
+    "theme": "light",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "role": "reviewer",
+    "theme": "dark",
+    "rows": [],
+    "mainAction": [],
+    "overflow": false,
+    "errors": []
+  }
+]
