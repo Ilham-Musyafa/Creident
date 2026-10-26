@@ -210,8 +210,13 @@ Still open:
   Before/after desktop captures under /tmp/creident-mockup-baseline and
   /tmp/creident-mockup-after. Scripts /tmp/creident-home-check.mjs and
   /tmp/creident-home-extra.mjs. UI.md and screenshot README updated.
-- Commit/push/PR details will be recorded after final verification and publication.
-  No owner decision pending; do not claim a PR/deployment before it exists.
+- Implementation commit `6ffae06` pushed to origin/ui/creident-mockup. Final browser:
+  59 page checks and 416 text/contrast checks pass; 24/24 desktop captures identical.
+  PR create attempted once and failed: GitHub GraphQL API Forbidden. No PR exists
+  from this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR body ready in /tmp/creident-mockup-pr.md. Final docs commit records push status.
+  No owner decision pending. No main push, merge or deployment.
 
 ### 2026-10-25 — Mobile Records matches the NexoBank design
 
