@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Card } from '../../components/layout';
 import { InfoPageShell } from '../../components/InfoPageShell';
-import { BrandLogo } from '../../components/BrandLogo';
 
 const RULES = [
   ['R1', 'Not shipped in time', 'No tracking before the ship-by deadline: the payment is cancelled before charging. No money moves.'],
@@ -29,7 +28,6 @@ function Chevron() {
 export default function AboutPage() {
   return (
     <InfoPageShell title="About Creident" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
-      <div className="info-card mb-4 rounded-[22px] border border-line bg-surface p-3"><BrandLogo/></div>
       <div className="info-content mx-auto max-w-3xl space-y-6 text-sm leading-relaxed">
         <section id="decisions" aria-labelledby="decisions-title">
           <h2 id="decisions-title" className="mb-3 text-xl font-bold text-heading">How decisions are made</h2>

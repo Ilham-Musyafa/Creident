@@ -1,0 +1,46 @@
+[
+  {
+    "role": "seller",
+    "theme": "light",
+    "part": "top",
+    "width": 1440,
+    "identical": true,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "beforeSha256": "0c421d1a906437b3d5bb7f7e9cd8884ee5fe5d221acdeb91795c637e6cd24262",
+    "afterSha256": "0c421d1a906437b3d5bb7f7e9cd8884ee5fe5d221acdeb91795c637e6cd24262"
+  },
+  {
+    "role": "seller",
+    "theme": "light",
+    "part": "bottom",
+    "width": 1440,
+    "identical": true,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "beforeSha256": "5bd969effca527cad662e4728f6b1dd1203903f48f9f0180d34417d8c7bad219",
+    "afterSha256": "5bd969effca527cad662e4728f6b1dd1203903f48f9f0180d34417d8c7bad219"
+  },
+  {
+    "role": "seller",
+    "theme": "dark",
+    "part": "top",
+    "width": 1440,
+    "identical": true,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "beforeSha256": "5b5882a8d0c3ed51efa582cc047e210e85c6ae535b37e41e3c21478d1a0ab70a",
+    "afterSha256": "5b5882a8d0c3ed51efa582cc047e210e85c6ae535b37e41e3c21478d1a0ab70a"
+  },
+  {
+    "role": "seller",
+    "theme": "dark",
+    "part": "bottom",
+    "width": 1440,
+    "identical": true,
+    "changedPixels": 0,
+    "maxChannelDelta": 0,
+    "beforeSha256": "3dae88f6241748dd056ee8c7cc26332d02e54077861bf7cffa97c91fbb816ed2",
+    "afterSha256": "3dae88f6241748dd056ee8c7cc26332d02e54077861bf7cffa97c91fbb816ed2"
+  }
+]

@@ -1,0 +1,506 @@
+[
+  {
+    "width": 360,
+    "theme": "light",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "theme": "light",
+    "role": "seller",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "theme": "light",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "theme": "dark",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "theme": "dark",
+    "role": "seller",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "theme": "dark",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 696.21875,
+      "navTop": 760,
+      "gap": 63.78125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 695.8125,
+      "navTop": 760,
+      "gap": 64.1875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 498.875
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 695.71875,
+      "navTop": 760,
+      "gap": 64.28125
+    },
+    "expandedLastBullet": {
+      "elementBottom": 674.96875,
+      "navTop": 760,
+      "gap": 85.03125
+    },
+    "fairness": {
+      "elementBottom": 696.3125,
+      "navTop": 760,
+      "gap": 63.6875
+    },
+    "anchors": [
+      {
+        "anchor": "decisions",
+        "top": 24
+      },
+      {
+        "anchor": "limitations",
+        "top": 521.125
+      }
+    ],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "about": {
+      "elementBottom": 796.25,
+      "navTop": null,
+      "gap": null
+    },
+    "expandedLastBullet": {
+      "elementBottom": 774.75,
+      "navTop": null,
+      "gap": null
+    },
+    "fairness": {
+      "elementBottom": 795.5,
+      "navTop": null,
+      "gap": null
+    },
+    "anchors": [],
+    "errors": []
+  }
+]

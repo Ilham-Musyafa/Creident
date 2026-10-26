@@ -173,6 +173,27 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — About logo removal and info-page bottom clearance
+
+- Continued ui/creident-mockup from a53d51a. Removed only the duplicate About
+  BrandLogo card/import; title, intro, copy, anchors, header/sidebar brand,
+  brand assets and 24px card scale remain unchanged.
+- Mobile-only .info-panel bottom padding now explicitly adds device safe area to
+  its 20px inset. AppShell already reserves 128px below content, shared with
+  Home/Records; that reservation is retained. No desktop padding change.
+- Node 22.23.4 gates: 517 tests/49 files, typecheck, build and diff check pass.
+  Browser: 18 scenarios at 360/390/1440, both themes, all roles. Last About card/
+  Fairness notice clear the dock by >=63px; expanded final limitations bullet
+  by >=85px. All 24 mobile Settings anchor navigations pass, no overflow/errors.
+  Header/sidebar wordmarks remain; no About content logo. Four 1440px Fairness
+  top/bottom light/dark Seller pairs are pixel-identical; About desktop shifts up
+  solely because its logo card was removed. No src/lib/API/rule/data/copy changes.
+- Screenshots/evidence: docs/ui/screens/info-pages-mobile/followup/ (11 images).
+  Scripts /tmp/creident-info-bottom-*; final local production server 3232.
+  Headless safe-area value is 0; actual inset is included by the CSS env formula.
+  No new dependencies or tests needed for these reversible layout changes.
+- Publication status recorded after commit/push. No merge or deployment.
+
 ### 2026-10-26 — Deal story follow-up: payment truthfulness and first paint
 
 - Continued ui/creident-mockup from e478337 as requested, no main push.
