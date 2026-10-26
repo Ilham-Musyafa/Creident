@@ -1,0 +1,129 @@
+{
+  "pages": 408,
+  "errors": [],
+  "overflow": [],
+  "expectedCallbackErrors": [
+    {
+      "role": "buyer",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "role": "buyer",
+      "theme": "light",
+      "width": 1280
+    },
+    {
+      "role": "buyer",
+      "theme": "light",
+      "width": 1024
+    },
+    {
+      "role": "buyer",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "role": "buyer",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "role": "buyer",
+      "theme": "dark",
+      "width": 1280
+    },
+    {
+      "role": "buyer",
+      "theme": "dark",
+      "width": 1024
+    },
+    {
+      "role": "buyer",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "role": "seller",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "role": "seller",
+      "theme": "light",
+      "width": 1280
+    },
+    {
+      "role": "seller",
+      "theme": "light",
+      "width": 1024
+    },
+    {
+      "role": "seller",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "role": "seller",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "role": "seller",
+      "theme": "dark",
+      "width": 1280
+    },
+    {
+      "role": "seller",
+      "theme": "dark",
+      "width": 1024
+    },
+    {
+      "role": "seller",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "role": "reviewer",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "role": "reviewer",
+      "theme": "light",
+      "width": 1280
+    },
+    {
+      "role": "reviewer",
+      "theme": "light",
+      "width": 1024
+    },
+    {
+      "role": "reviewer",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "role": "reviewer",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "role": "reviewer",
+      "theme": "dark",
+      "width": 1280
+    },
+    {
+      "role": "reviewer",
+      "theme": "dark",
+      "width": 1024
+    },
+    {
+      "role": "reviewer",
+      "theme": "dark",
+      "width": 390
+    }
+  ],
+  "clock": "2026-10-26T13:00:00.000Z",
+  "baseline": "94b24d9"
+}

@@ -4,6 +4,23 @@
   --brand-navy: #0B1F4B; --brand-sapphire: #3B82F6;
   --brand-sky: #93C5FD; --brand-ice: #DBEAFE;
   --font-display: var(--font-heading-loaded), Arial, sans-serif;
+  --mobile-header-start: var(--brand-navy);
+  --mobile-header-end: color-mix(in srgb, var(--brand-sapphire) 70%, var(--brand-navy));
+  --mobile-header-muted: var(--brand-ice);
+  --mobile-header-control: color-mix(in srgb, var(--hero-text) 10%, transparent);
+  --mobile-header-border: color-mix(in srgb, var(--hero-text) 24%, transparent);
+  --mobile-panel-radius: 28px;
+  --mobile-panel-overlap: -28px;
+  --mobile-tile-bg: var(--surface-2);
+  --mobile-tile-text: var(--heading);
+  --desktop-sidebar-width: 248px;
+  --desktop-content-width: 1200px;
+  --desktop-sidebar-bg: var(--brand-navy);
+  --desktop-sidebar-text: var(--brand-ice);
+  --desktop-sidebar-muted: var(--brand-sky);
+  --desktop-sidebar-line: color-mix(in srgb, var(--brand-sky) 25%, var(--brand-navy));
+  --desktop-sidebar-hover: color-mix(in srgb, var(--brand-sapphire) 18%, var(--brand-navy));
+  --desktop-role-bg: color-mix(in srgb, var(--brand-ice) 10%, var(--brand-navy));
   /* Stable palette samples for decorative theme previews in either current theme. */
   --preview-light-bg: #F7FAFF; --preview-light-surface: #FFFFFF; --preview-light-line: #D4DFEF;
   --preview-dark-bg: #07142F; --preview-dark-surface: var(--brand-navy); --preview-dark-line: #284674;
@@ -15,6 +32,7 @@
   --text: #0B1F4B; --muted: #465A78; --heading: #0B1F4B; --hero: #0B1F4B;
   --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
   --strong: #0B1F4B; --on-strong: #FFFFFF;
+  --mobile-page: #F5F8FF;
   --awaiting-bg: #FEF3C7; --awaiting-text: #B45309;
   --authorized-bg: #E0E7FF; --authorized-text: #4338CA;
   --inspection-bg: #DBEAFE; --inspection-text: #1D4ED8;
@@ -33,6 +51,7 @@
     --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
     --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
     --strong: #93C5FD; --on-strong: #0B1F4B;
+    --mobile-page: var(--bg);
     --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
     --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
     --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -51,6 +70,7 @@
   --text: #DBEAFE; --muted: #A9BCD6; --heading: #F1F6FF; --hero: #102C60;
   --hero-text: #FFFFFF; --hero-sub: #93C5FD; --accent: #3B82F6; --on-accent: #07142F;
   --strong: #93C5FD; --on-strong: #0B1F4B;
+  --mobile-page: var(--bg);
   --awaiting-bg: rgba(245,158,11,.16); --awaiting-text: #FCD34D;
   --authorized-bg: rgba(99,102,241,.20); --authorized-text: #A5B4FC;
   --inspection-bg: rgba(59,130,246,.18); --inspection-text: #93C5FD;
@@ -121,17 +141,40 @@ button, a, input, textarea, select { outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; } }
 @media print { body { background: #fff; } main { padding-bottom: 0 !important; } a[aria-label='Back'] { display: none; } }
 
-/* Desktop navigation enters from the left; native dialog handles modal focus. */
-@keyframes navigation-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-.desktop-navigation[open] { animation: navigation-enter 180ms ease-out; }
-.desktop-navigation nav { width: 100%; border-right: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .desktop-navigation[open] { animation: none; }
+/* The new shell wrapper contributes no box to the unchanged mobile layout. */
+@media (width < 1024px) { .desktop-main-area { display: contents; } }
+/* Desktop shell only: mobile keeps its existing AppShell/nav geometry. */
+@media (width >= 1024px) {
+  .desktop-sidebar {
+    width: var(--desktop-sidebar-width); border-color: var(--desktop-sidebar-line);
+    background: var(--desktop-sidebar-bg); color: var(--desktop-sidebar-text);
+  }
+  .desktop-sidebar-link:hover { background: var(--desktop-sidebar-hover); }
+  .desktop-sidebar-link[aria-current="page"] { background: var(--brand-sapphire); color: var(--on-accent); font-weight: 600; }
+  .desktop-demo-badge { border-color: var(--desktop-sidebar-line); color: var(--desktop-sidebar-muted); }
+  .desktop-sidebar .desktop-role-card {
+    min-height: 72px; justify-content: flex-start; padding: 12px; border-radius: 20px;
+    border-color: var(--desktop-sidebar-line); background: var(--desktop-role-bg); color: var(--hero-text);
+  }
+  .desktop-role-avatar { background: var(--brand-sapphire); color: var(--on-accent); }
+  .desktop-sidebar :is(a,button):focus-visible { outline: 3px solid var(--brand-sky); outline-offset: 3px; }
+  .desktop-main-area, .desktop-topbar { margin-left: var(--desktop-sidebar-width); }
+  .desktop-topbar-inner { min-height: 100px; max-width: var(--desktop-content-width); padding: 20px 28px; }
+  .desktop-main-area .desktop-content { max-width: var(--desktop-content-width); padding: 28px 28px 48px; }
+  .desktop-skip { position: fixed; top: 8px; left: calc(var(--desktop-sidebar-width) + 16px); z-index: 60; transform: translateY(-160%); }
+  .desktop-skip:focus { transform: none; }
+  .desktop-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+  .desktop-theme-panel { position: fixed; inset: 76px 24px auto auto; width: 288px; max-width: calc(100vw - 32px); }
+  .desktop-transaction-search { width: clamp(220px, 24vw, 340px); }
+  .desktop-transaction-search > div { margin-bottom: 0; align-items: center; flex-wrap: nowrap; }
+  .desktop-transaction-search label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+@media print {
+  .desktop-main-area { margin-left: 0; }
 }
 
-
 /* Owner's NexoBank reference: original CSS waves in Creident's Sapphire palette. */
-.mobile-brand-banner { background: var(--brand-navy); }
+.mobile-brand-banner { background: linear-gradient(135deg, var(--mobile-header-start), var(--mobile-header-end)); }
 .mobile-brand-banner::before, .mobile-brand-banner::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
   width: 150%; height: 160px; left: -25%; border-radius: 50%;
@@ -139,13 +182,37 @@ button, a, input, textarea, select { outline-offset: 3px; }
 .mobile-brand-banner::before {
   top: -85px; transform: rotate(-13deg);
   background: linear-gradient(145deg, var(--brand-sky), var(--brand-sapphire) 48%, var(--brand-navy) 80%);
-  opacity: .55;
+  opacity: .12;
 }
 .mobile-brand-banner::after {
-  bottom: -150px; transform: rotate(-12deg);
+  bottom: -150px; transform: rotate(-12deg); opacity: .18;
   background: linear-gradient(125deg, var(--brand-navy), var(--brand-sapphire) 55%, var(--brand-sky));
 }
 @media (width < 1024px) {
+  .mobile-panel {
+    margin-top: var(--mobile-panel-overlap);
+    border-radius: var(--mobile-panel-radius) var(--mobile-panel-radius) 0 0;
+    background: var(--mobile-page);
+  }
+  .mobile-demo-badge { border-color: var(--mobile-header-border); background: var(--mobile-header-control); }
+  .mobile-header-control { background: var(--mobile-header-control); }
+  .mobile-header-control:hover { background: var(--mobile-header-border); }
+  .mobile-header-pill {
+    display: inline-flex; min-height: 44px; align-items: center; justify-content: center;
+    gap: 8px; border: 1px solid var(--mobile-header-border); border-radius: 999px;
+    background: var(--mobile-header-control); color: var(--hero-text); font-size: 14px; font-weight: 600;
+  }
+  .mobile-header-pill:first-child { background: var(--brand-ice); border-color: transparent; color: var(--brand-navy); }
+  [data-theme="light"] .mobile-header-pill:first-child { background: var(--surface); }
+  .mobile-header-pill:hover { background: var(--mobile-header-border); }
+  .mobile-quick-icon { background: var(--mobile-tile-bg); color: var(--mobile-tile-text); }
+  .mobile-home :is(a, button):focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }
+  .mobile-brand-banner :is(a, button):focus-visible { outline: 3px solid var(--brand-sky); outline-offset: 3px; }
+  .mobile-status[data-mobile-tone="success"] { background-color: var(--completed-bg) !important; color: var(--completed-text) !important; }
+  .mobile-status[data-mobile-tone="warning"] { background-color: var(--awaiting-bg) !important; color: var(--awaiting-text) !important; }
+  .mobile-status[data-mobile-tone="danger"] { background-color: var(--disputed-bg) !important; color: var(--disputed-text) !important; }
+  .mobile-status[data-mobile-tone="info"] { background-color: var(--inspection-bg) !important; color: var(--inspection-text) !important; }
+  .mobile-status[data-mobile-tone="neutral"] { background-color: var(--void-bg) !important; color: var(--void-text) !important; }
   .mobile-dock {
     width: calc(100% - 24px); max-width: 420px; margin: 0 auto;
     margin-bottom: max(12px, env(safe-area-inset-bottom)); padding: 3px;
@@ -154,10 +221,47 @@ button, a, input, textarea, select { outline-offset: 3px; }
     box-shadow: 0 8px 24px color-mix(in srgb, var(--brand-navy) 24%, transparent);
   }
   .mobile-dock a { min-height: 64px; border-radius: 999px; color: var(--brand-ice); font-weight: 500; }
-  .mobile-dock a[aria-current="page"] { color: var(--hero-text); background: color-mix(in srgb, var(--brand-sapphire) 30%, var(--brand-navy)); }
+  .mobile-dock a[aria-current="page"], .mobile-dock a[aria-current="page"]:hover { color: var(--on-accent); background: var(--brand-sapphire); }
   .mobile-dock a:hover { background: color-mix(in srgb, var(--brand-sapphire) 20%, var(--brand-navy)); }
   .mobile-dock a > span:first-child { background: transparent; }
   .mobile-dock a:focus-visible { outline-color: var(--brand-sky); outline-offset: -3px; }
+}
+
+/* Deal detail story: the same 24px / 16px card scale at both viewport sizes. */
+.deal-story { overflow-wrap: anywhere; }
+.deal-story :is([data-ui="card"], [data-ui="notice"], [data-ui="key-value"], .deal-card, .deal-paypal > section) {
+  border-radius: 24px; padding: 16px;
+}
+.deal-story :is(.deal-card, .deal-paypal > section) { border: 1px solid var(--line); background: var(--surface); }
+.deal-story .deal-disclosure [data-ui="key-value"] { border: 0; border-radius: 0; padding: 0; background: transparent; }
+.deal-story .deal-disclosure [data-ui="key-value"] > div { display: block; }
+.deal-story [data-ui="key-value"] dd { min-width: 0; }
+.deal-story .deal-disclosure dd { margin-top: 4px; text-align: left; }
+.deal-story summary:focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }
+.deal-story .deal-disclosure[open] > summary svg { transform: rotate(180deg); }
+.deal-story .deal-paypal > section > div:first-child { margin-top: 0; }
+.deal-story .deal-paypal:empty { display: none; }
+@media (width >= 1024px) {
+  .deal-secondary[data-fits="true"] { position: sticky; top: 24px; }
+}
+
+/* Info pages use the Records explainer's 24px cards and 16px content inset. */
+@media (width < 1024px) {
+  .info-panel :is(.info-card, .info-notice, .info-rule) { border-radius: 24px; }
+  .info-panel :is(.info-card, .info-notice) { padding: 16px; }
+  .info-panel :is(.info-card, .info-rule) { background: var(--bg); }
+  .info-panel .info-content { overflow-wrap: anywhere; }
+  .info-panel .info-content h2 { font-size: 18px; line-height: 1.45; }
+  .info-panel .info-content > section { scroll-margin-top: 24px; }
+  .info-panel .info-content summary { min-height: 44px; }
+  .info-panel summary:focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }
+  .info-panel .info-rules { display: grid; gap: 12px; }
+  .info-panel .info-rules > details { margin: 0; }
+  .info-panel .info-rule > summary { padding: 16px; }
+  .info-panel .info-rule > p { padding: 16px; }
+  .info-panel #limitations li { padding-left: 4px; }
+  .info-panel .info-metric-group > div:first-child { margin-top: 0; }
+  .info-panel .info-metric-value { font-size: 28px; line-height: 1.25; }
 }
 
 /* Records presentation only. Desktop and the underlying audit components stay intact. */

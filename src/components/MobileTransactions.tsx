@@ -1,5 +1,7 @@
 'use client';
 
+import { MobilePanel } from './MobilePanel';
+
 import { useEffect, useState } from 'react';
 import { MobileBrandHeader } from './MobileBrandHeader';
 import { MobileTransactionRow } from './MobileTransactionRow';
@@ -26,7 +28,7 @@ export function MobileTransactions({ role, rows, searched, visible, query, filte
   const actionCount = count('action');
   return <div className="lg:hidden">
     <MobileBrandHeader role={role}/>
-    <div className="relative -mt-8 min-h-[70dvh] rounded-t-[32px] bg-surface px-5 pb-5 pt-6">
+    <MobilePanel>
       <header className="mb-5 flex items-center justify-between gap-3"><div><h1 className="text-[28px] leading-tight text-heading">Transactions</h1><p className="mt-1 text-sm text-muted">Your deals and next steps.</p></div><button type="button" aria-label="Search transactions" aria-expanded={searchOpen} aria-controls="mobile-search-panel" onClick={toggleSearch} className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-bg text-heading hover:bg-surface-2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg></button></header>
       <div id="mobile-search-panel" hidden={!searchOpen}>
       <label htmlFor="mobile-transaction-search" className="sr-only">Find a transaction</label>
@@ -50,6 +52,6 @@ export function MobileTransactions({ role, rows, searched, visible, query, filte
       {rows.length === 0 ? <section className="rounded-[22px] border border-dashed border-line bg-bg p-5"><h2 className="text-base text-heading">No transactions yet</h2><p className="mb-4 mt-2 text-sm text-muted">Load labelled demo deals to explore every status.</p><SeedButton role={role}/></section> : visible.length === 0 ? <section className="rounded-[22px] border border-dashed border-line bg-bg p-5"><h2 className="text-base text-heading">No matching transactions</h2><p className="mt-2 text-sm text-muted">Try another item name or clear the filters.</p></section> : null}
       <div className="space-y-6">{groups.filter(group => group.rows.length).map(group => <section key={group.title}><h2 className="mb-3 text-sm text-heading">{group.title} <span className="font-normal text-muted">({group.rows.length})</span></h2><ul aria-label={group.title} className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-bg">{group.rows.map(row => <li key={row.id}><MobileTransactionRow row={row}/></li>)}</ul></section>)}</div>
       <p className="mt-6 border-t border-line pt-4 text-xs leading-relaxed text-muted">Demo transactions · No real money moves.</p>
-    </div>
+    </MobilePanel>
   </div>;
 }

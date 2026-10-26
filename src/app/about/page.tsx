@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { AppShell, Card, PageHeader } from '../../components/layout';
+import { Card } from '../../components/layout';
+import { InfoPageShell } from '../../components/InfoPageShell';
 import { BrandLogo } from '../../components/BrandLogo';
 
 const RULES = [
@@ -27,14 +28,13 @@ function Chevron() {
 
 export default function AboutPage() {
   return (
-    <AppShell active="Menu">
-      <PageHeader title="About Creident" back="/menu" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026."/>
-      <div className="mb-4 rounded-[22px] border border-line bg-surface p-3"><BrandLogo/></div>
-      <div className="mx-auto max-w-3xl space-y-6 text-sm leading-relaxed">
+    <InfoPageShell title="About Creident" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
+      <div className="info-card mb-4 rounded-[22px] border border-line bg-surface p-3"><BrandLogo/></div>
+      <div className="info-content mx-auto max-w-3xl space-y-6 text-sm leading-relaxed">
         <section id="decisions" aria-labelledby="decisions-title">
           <h2 id="decisions-title" className="mb-3 text-xl font-bold text-heading">How decisions are made</h2>
           <p className="mb-4">Buyer and seller agree on the terms before payment. PayPal approves first without charging. Rules guide what happens next; a human confirms every dispute outcome. The AI summarises evidence and cannot move money.</p>
-          <div className="space-y-2">{RULES.map(([id, title, text]) => <details key={id} className="group rounded-[18px] border border-line bg-surface">
+          <div className="info-rules space-y-2">{RULES.map(([id, title, text]) => <details key={id} className="info-rule group rounded-[18px] border border-line bg-surface">
             <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-surface-2 font-mono text-xs font-bold text-heading">{id}</span>
               <span className="min-w-0 flex-1 text-base font-bold text-heading">{title}</span><Chevron/>
@@ -45,7 +45,7 @@ export default function AboutPage() {
 
         <section id="audit" aria-labelledby="audit-title">
           <h2 id="audit-title" className="mb-3 text-xl font-bold text-heading">Audit & verification</h2>
-          <Card className="space-y-3">
+          <Card className="info-card space-y-3">
             <p>Every action is recorded in an append-only, hash-chained log per deal. Verification checks event content, sequence and links.</p>
             <p>The operator can still rewrite the database and recompute a chain. Signed checkpoints make later rewriting detectable to someone holding a published checkpoint and its trusted public key. Publishing is manual.</p>
             <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Explore the deal records</Link>
@@ -54,7 +54,7 @@ export default function AboutPage() {
 
         <section aria-labelledby="bridge-title">
           <h2 id="bridge-title" className="mb-3 text-xl font-bold text-heading">PayPal dispute bridge</h2>
-          <Card className="space-y-3">
+          <Card className="info-card space-y-3">
             <p>Matching PayPal disputes put a deal on hold. The seller or reviewer can send the deal’s locked evidence when PayPal permits it.</p>
             <details className="group border-t border-line pt-1">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-semibold text-heading [&::-webkit-details-marker]:hidden">How the bridge works<Chevron/></summary>
@@ -68,7 +68,7 @@ export default function AboutPage() {
 
         <section aria-labelledby="evaluation-title">
           <h2 id="evaluation-title" className="mb-3 text-xl font-bold text-heading">Evaluation status</h2>
-          <Card className="space-y-3">
+          <Card className="info-card space-y-3">
             <p>The synthetic-case report lists its sample sizes, label-review status and measured results. Replay uses recorded AI summaries authored from draft labels: it checks the harness and rules, not a live model.</p>
             <Link href="/fairness" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Read the results and caveats</Link>
           </Card>
@@ -76,7 +76,7 @@ export default function AboutPage() {
 
         <section id="limitations" aria-labelledby="limitations-title">
           <h2 id="limitations-title" className="mb-3 text-xl font-bold text-heading">Limitations</h2>
-          <Card>
+          <Card className="info-card">
             <p className="font-semibold text-heading">Demo only. No real money, real sign-in or seller payout. This is not an escrow service.</p>
             <details className="group mt-3 border-t border-line">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-semibold text-heading [&::-webkit-details-marker]:hidden">Read all limitations<Chevron/></summary>
@@ -85,6 +85,6 @@ export default function AboutPage() {
           </Card>
         </section>
       </div>
-    </AppShell>
+    </InfoPageShell>
   );
 }

@@ -1,0 +1,149 @@
+{
+  "baselineCommit": "9a1acd1",
+  "comparisons": [
+    {
+      "file": "home-buyer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "e0fe27ec68fba6b1deccf4e3b12d85f54c6b65cb6e519cc2e5b4119c81f4c502",
+      "afterSha256": "e0fe27ec68fba6b1deccf4e3b12d85f54c6b65cb6e519cc2e5b4119c81f4c502"
+    },
+    {
+      "file": "home-buyer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "ece58c56662eeec2f10f15d335f207f1c3a515f253d717d3668b1281e05b6eb5",
+      "afterSha256": "ece58c56662eeec2f10f15d335f207f1c3a515f253d717d3668b1281e05b6eb5"
+    },
+    {
+      "file": "home-reviewer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "107565fab8f300d7aa01ec3fa8f05f07939e75014e0ff1ecb2e657de5769bd71",
+      "afterSha256": "107565fab8f300d7aa01ec3fa8f05f07939e75014e0ff1ecb2e657de5769bd71"
+    },
+    {
+      "file": "home-reviewer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "bfac714771728a1257aae794f3b28cec294c8769327ac41260b934998ceb6e2c",
+      "afterSha256": "bfac714771728a1257aae794f3b28cec294c8769327ac41260b934998ceb6e2c"
+    },
+    {
+      "file": "home-seller-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "523340174988e285848035e9db32e178db98b3441d232edfa1eb2b3b936ed38e",
+      "afterSha256": "523340174988e285848035e9db32e178db98b3441d232edfa1eb2b3b936ed38e"
+    },
+    {
+      "file": "home-seller-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "2eec015185e050985ef3232670d0cb62c5de99fe84b21b7cb1bd767183446b8f",
+      "afterSha256": "2eec015185e050985ef3232670d0cb62c5de99fe84b21b7cb1bd767183446b8f"
+    },
+    {
+      "file": "records-buyer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403",
+      "afterSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403"
+    },
+    {
+      "file": "records-buyer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c",
+      "afterSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c"
+    },
+    {
+      "file": "records-reviewer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403",
+      "afterSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403"
+    },
+    {
+      "file": "records-reviewer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c",
+      "afterSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c"
+    },
+    {
+      "file": "records-seller-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403",
+      "afterSha256": "3192f25f251e3b36649a2ffdbe47de7d2a7d8ac7106744342f7caabf3bd5a403"
+    },
+    {
+      "file": "records-seller-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c",
+      "afterSha256": "16ee1401e8155d7e7502ecfd82cd628a84178d646bfb9a4e9aee696ef5a2317c"
+    },
+    {
+      "file": "settings-buyer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "b52554feaf4e378587a2d1ce39bfa965e07a9f5b624c974decbdb8116a8907a1",
+      "afterSha256": "b52554feaf4e378587a2d1ce39bfa965e07a9f5b624c974decbdb8116a8907a1"
+    },
+    {
+      "file": "settings-buyer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "88820ecb909a4dfbac794a6bee0d57e3c037a3c9e3b904ffd8b9cfe85d684425",
+      "afterSha256": "88820ecb909a4dfbac794a6bee0d57e3c037a3c9e3b904ffd8b9cfe85d684425"
+    },
+    {
+      "file": "settings-reviewer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "481e89eaee2188187b779545b8517a20117464075c7b09b1e52bb5429d09e440",
+      "afterSha256": "481e89eaee2188187b779545b8517a20117464075c7b09b1e52bb5429d09e440"
+    },
+    {
+      "file": "settings-reviewer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "a471d674b6c1be6cca5b9531f87d8054d565ac5de2a9ca9fdf23e3371b07bc3d",
+      "afterSha256": "a471d674b6c1be6cca5b9531f87d8054d565ac5de2a9ca9fdf23e3371b07bc3d"
+    },
+    {
+      "file": "settings-seller-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "2b5a92ee44ca59287650141699c4c87812bd69a4bc9ed89f0f00f16be9094ce6",
+      "afterSha256": "2b5a92ee44ca59287650141699c4c87812bd69a4bc9ed89f0f00f16be9094ce6"
+    },
+    {
+      "file": "settings-seller-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "20c599b936a3d4069900950e51f3fc26d9f732d6be25b61399949d2c3d019a74",
+      "afterSha256": "20c599b936a3d4069900950e51f3fc26d9f732d6be25b61399949d2c3d019a74"
+    },
+    {
+      "file": "transactions-buyer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "6925e6506b59b4bad7f4071c6a13bb37440f8401d9556f70af44898330da5db2",
+      "afterSha256": "6925e6506b59b4bad7f4071c6a13bb37440f8401d9556f70af44898330da5db2"
+    },
+    {
+      "file": "transactions-buyer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "81cf2d22b2b7a817d08ab8194a110698edaf3191882f6fc718c8df76dc722171",
+      "afterSha256": "81cf2d22b2b7a817d08ab8194a110698edaf3191882f6fc718c8df76dc722171"
+    },
+    {
+      "file": "transactions-reviewer-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "48836b07b2009b89a47fcb2e16804ccc4f377f617b65584d62cc8574131c93f4",
+      "afterSha256": "48836b07b2009b89a47fcb2e16804ccc4f377f617b65584d62cc8574131c93f4"
+    },
+    {
+      "file": "transactions-reviewer-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "7107735f8130df9002fa6ea717cb01699c6918fd66a3922040bfa9ca1d7f56c4",
+      "afterSha256": "7107735f8130df9002fa6ea717cb01699c6918fd66a3922040bfa9ca1d7f56c4"
+    },
+    {
+      "file": "transactions-seller-dark-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "674da49e027d19deb4a07a814e02c44f785b2efed138fe338780115cd6c2189f",
+      "afterSha256": "674da49e027d19deb4a07a814e02c44f785b2efed138fe338780115cd6c2189f"
+    },
+    {
+      "file": "transactions-seller-light-1440.png",
+      "pixelIdentical": true,
+      "beforeSha256": "8d3ed880d702124a3134b3404115554275aa97295c6cd86f8dbecda65a943f1f",
+      "afterSha256": "8d3ed880d702124a3134b3404115554275aa97295c6cd86f8dbecda65a943f1f"
+    }
+  ]
+}

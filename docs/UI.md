@@ -129,7 +129,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | `ChainStatus` | Success notice "Chain verified · N events" + head hash; error state when broken. |
 | `Field` / `Input` | Label above, 44px input, placeholder in muted. |
 | `SegmentedControl` | Used for role switch (demo) and appearance. |
-| `BottomNav` | Mobile: Home, Transactions, Records, Settings, with text labels; no New/FAB tab. Desktop (≥1024px): Menu button opens a modal sidebar sliding right from the left edge (owner-approved 2026-10-23), with the same items; close button, outside click and Escape dismiss it. Focus is contained and restored; reduced motion disables entry animation. Content max-width 1100px. |
+| `BottomNav` | Mobile: Home, Transactions, Records, Settings, with text labels; no New/FAB tab. Desktop (≥1024px): persistent 248px navy sidebar, route-aware main/Learn links, existing demo-role card and per-page top bar. Main content max-width 1200px. Skip-to-content and visible keyboard focus. Supersedes the 2026-10-23 hamburger drawer; mobile geometry is unchanged. |
 | `CodeBadge` | One-time evidence code in mono, e.g. `HV-1042 · 7K2Q`. |
 
 ## 7. Screens (see mockups)
@@ -488,3 +488,180 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
 - Explainer copy, audit verification/signing, API/domain/payment/rules/deadline behaviour
   are unchanged. No dependencies. See `docs/ui/screens/nexo-records/` for list/detail/
   explainer, failed-state captures and the desktop pixel-comparison evidence.
+
+
+### Mobile Creident concept refinement (owner-approved concept, 2026-10-26)
+
+- Below 1024px, Home puts approved (authorized, not charged) USD payments in the
+  navy-to-Sapphire header. Keep local Plus Jakarta Sans headings/amounts, DM Sans
+  text and original serif wordmark/symbol. Use the Demo badge, existing role
+  dropdown, 44px eye control and two real role/Browse header pills.
+- The original named concept files were absent, then the owner supplied generic
+  finance inspiration followed by the actual Creident light/dark five-screen concept
+  sheet and close-ups. Those Creident images are the primary reference, archived
+  in `ui/reference/creident-mockup/` with Home crops and provenance. Example data
+  and nonexistent features are never part of the application.
+- `MobileBrandHeader` defaults to compact for inner pages and accepts hero content
+  for Home. Original CSS waves are subdued behind readable text. Colours/overlap/
+  radius/tile settings live in globals.css tokens. New `MobilePanel` extracts four
+  previously duplicated wrappers: 28px top corners/overlap, soft mobile background
+  and the same desktop transparent wrapper overrides.
+- Home tiles are Actions (real count badge), Browse, Records and About. The latter
+  two local views retain the existing on-demand behavior and keyboard focus. The
+  inline next-task card uses the first existing sorted role task, item/deadline,
+  icon and one primary link on the right. Seller creation remains in the header.
+  Buyer “Inspect now” opens the existing confirm/dispute details; no money moves.
+- Your deals groups up to three demo-party-linked rows (buyerId `buyer`, sellerId
+  `seller`; Reviewer uses the actual UNDER_REVIEW queue; never pad it). Prioritize
+  needs-action, then active, preserving repository recency within each priority.
+  Desktop keeps its existing list. Reuse MobileTransactionRow in compact mode with square icons,
+  local heading-font amounts, text chips and short real deadlines. Full deadlines
+  remain in title text; absent dates/deadlines are omitted. Demo labeling remains
+  visible in the header/footer and as a separate 12px Demo badge on every demo row.
+  The compact authorized chip reads “Approved · not charged”, with the existing
+  full label in its title. Internal statuses and ordinary/desktop labels are intact.
+- Shared StatusPill semantic mobile tones: completed → success; awaiting/frozen →
+  warning; disputed → danger; authorized/inspection → info; void → neutral. No status
+  is represented by colour alone. Desktop retains its original tones and spacing.
+- The floating safe-area dock keeps four tabs, no center +. Active icon and label
+  share a Sapphire pill with AA dark text (a deliberate contrast adaptation from
+  the concept). Body text is 14px+, small meta/chips 12px+, Home taps 44px+. Long
+  real labels can use more space than the concept; preserve readability over fitting
+  all content into one viewport. No dependency or external font requests are added.
+- Footer uses actual verified/total record checks and labels server scope. Failure
+  remains an alert plus warning/partial count, never a false all-verified summary.
+  Empty state retains the existing labelled-demo seed control and mode limitations.
+- Transactions/Settings/Records inherit shared header/panel/status/nav presentation;
+  their content layouts/filters/controls are unchanged. All four desktop pages at
+  1440px remain pixel-identical across three roles and both themes. Captures and
+  browser/comparison evidence: `ui/screens/creident-home/`.
+
+
+### Persistent desktop shell (owner-approved, 2026-10-26)
+
+- Supersedes previous desktop drawer references above. Scope is only the shell at
+  1024px and up. Keep page bodies and the completed mobile Home composition intact.
+  Reference originals: `ui/reference/creident-mockup/desktop/` from the owner's ZIP.
+  Example balances, names, dates, hashes, global search and content dashboards are
+  not copied. The existing serif wordmark/local fonts and source palette remain.
+- `AppShell` reads the same request demo-role cookie as pages and passes role/mode
+  to `DesktopNavigation`. Navy sidebar is fixed, 248px, with original four primary
+  destinations and active Sapphire icon/label pill using AA dark text. Learn links
+  use existing About/decisions, Fairness, Limitations and About routes/anchors.
+  Primary/secondary selection follows the pathname/hash, including history changes.
+- Bottom role card reuses QuickRoleSwitch (Viewing as + role). Its native menu can
+  open above the card, with keyboard controls and return focus. Hidden mobile/desktop
+  triggers cannot consume each other's focus restoration. Reviewer code requirements
+  remain enforced by the existing pages/APIs; the role card is not authentication.
+  Show the actual simulated/Sandbox notice. No transaction badge is fabricated:
+  AppShell has no existing shared action count, so the optional badge is omitted.
+- Top bar supplies route-specific title/subtitle and existing Light/Dark/System
+  control in a native popover. Only `/deals` has search: TransactionsBrowser portals
+  the existing controlled input into the header, retaining query/filter/history and
+  clear behavior. No global search or new data lookup is introduced.
+- Desktop content caps at 1200px with 28px padding; `.desktop-grid` offers a future
+  12-column/minmax(0,1fr) grid. It is not applied to redesign current page bodies.
+  The shell wrapper contributes no mobile box (`display: contents`); existing mobile
+  spacing/navigation remain. Print hides shell controls and removes the sidebar offset.
+- `layoutPrimitives.tsx` is a presentation-only extraction of existing PageHeader,
+  Card, SectionTitle, Notice and EmptyState, so client consumers do not import the
+  server cookie-based shell. Their markup/styles are unchanged. Existing body titles
+  remain; consolidating page content/headers belongs to a later content pass.
+- Text/tap/focus checks cover all roles and themes. All 17 AppShell routes were checked
+  at 1440/1280/1024/390 (408 page views) with no horizontal overflow/runtime exceptions.
+  Captures, functional checks and detailed mobile raster comparisons are documented
+  in `ui/screens/creident-desktop-shell/README.md`, including dynamic-widget readiness
+  and the tiny callback-border raster difference. Do not claim every raw pixel pair
+  is identical when comparison evidence records a rendering exception.
+
+### Mobile info-page spacing (2026-10-26)
+
+- AppShell uses zero mobile padding only with explicit `mobileFullBleed`; active
+  navigation no longer chooses geometry. Home and Settings explicitly opt in,
+  retaining their own header/panel insets. Transactions and Records already opt in.
+  Ordinary pages retain `px-5 pt-6`, including Reviewer oversight and its access notices.
+- About (including #decisions / #limitations) and Fairness use InfoPageShell:
+  compact MobileBrandHeader, existing role dropdown, overlapping MobilePanel with
+  20px sides, original title/subtitle and Back to `/menu`. Desktop uses the original
+  PageHeader and transparent panel wrapper, with unchanged page geometry.
+- Below 1024px only, `.info-panel` cards, notices, rule rows and logo box use 24px
+  radius and 16px content padding, matching the Records explainer card scale.
+  Rule containers have no extra outer padding: summary and expanded body each use
+  16px. Warning Notice colors retain their meaning; ordinary cards use `--bg`.
+  These hooks do not change Card/Notice defaults on other pages or desktop.
+- Info headings are 18px with shared spacing; body text remains at least 14px,
+  rule chips 12px, and the source brand tagline retains its prescribed 12px scale.
+  Fairness values are 28px on mobile; notices/metrics share the same grid inset.
+  Long text/IDs wrap. No evaluation data, wording, metric formula or claim changes.
+- Native details/summary remains keyboard accessible. All info summaries are at
+  least 44px, with explicit visible focus; existing chevrons and R1–R7 labels stay.
+  Anchor sections use 24px scroll margin; end-of-document anchors may stop lower
+  when there is no further content to scroll, but remain visible above the dock.
+- Evidence: `ui/screens/info-pages-mobile/`. Home/Settings at 360/390px remain
+  pixel-identical. About/Fairness/oversight at 1440px remain pixel-identical;
+  raw comparison data records tiny unrelated Settings desktop border raster noise.
+
+### Deal detail story (2026-10-26)
+
+- Detail heading is the stored item name; the deal ID is secondary. Main-column
+  order: summary, one Your next step card, recorded Decision if present, Progress,
+  Activity. The original duplicated Next banner is removed. Keep #next-step.
+- Summary uses the actual item, amount, text StatusPill and existing deadline data.
+  Demo payment · no real money remains visible for demo/simulated deals, including
+  drafts in simulated mode. No balance, payout or invented financial values.
+- Move the same acceptance/payment/shipping/inspection/evidence/review/return UI
+  into the one next-step branch. Inspection retains its existing confirm/dispute
+  alternatives. Waiting roles get the existing task-helper wording naming the
+  acting party, no next-step button, and relevant switch-role guidance. All error,
+  capture-failure and partial-refund pending notices remain.
+- Decision card uses recorded human outcome/amount/reason and stored payment-success
+  state (see follow-up below), plus the receipt's exact Yes / No, see reason /
+  human escalation agreement logic. Reason is clamped to
+  two lines; View decision receipt opens the complete record. Required-return and
+  pending decisions stay explicitly pending. No new confidence/AI marker.
+- Timeline data is unchanged. This page opts into a visible Current step label
+  and aria-current; the shared styleguide keeps its prior appearance. Empty
+  Activity keeps its heading/record link and says No activity yet.
+- Secondary details come last on phones: Locked terms and Fees & payment details
+  are native disclosures, initially closed, keyboard-focusable 44px summaries.
+  Desktop shows a normal expanded read-only section in a 360px aside, selected
+  by CSS from first paint; mobile uses native closed details. Short asides stick
+  only while their height fits. PayPal case tools, courier claim and Deal record
+  retain their existing components/routes here. Seller sharing belongs immediately
+  under the next-step card in the main column (follow-up below).
+- All deal-detail cards/notices/record panels use the info-page 24px radius / 16px
+  inset scale at both widths, scoped by .deal-story and presentational data-ui
+  hooks. Inner key/value lists in a disclosure are content, not nested cards.
+  Other routes retain their existing styles. Body >=14px, chips >=12px; tokens,
+  focus, wrapping and demo markers remain. No source lib/API/payment/rule/audit
+  changes. Evidence and the complete status/role table: ui/screens/deal-detail-story/.
+
+
+### Deal detail truthfulness and first paint (2026-10-26 follow-up)
+
+- Outcome wording must reflect successful stored financial state, not just the
+  reviewer's choice or an event's requested effect. RELEASE requires captured=true
+  for Payment charged. Full refunds require REFUNDED (including frozenFrom);
+  VOIDED says Payment cancelled. Partial success requires completed metadata or
+  PARTIALLY_REFUNDED/frozenFrom. Otherwise retain neutral decision-recorded/pending
+  or awaiting-return wording. Never imply payout. Exact state/wording table:
+  ui/screens/deal-detail-story/followup/README.md.
+- All Decision amounts use the deal currency. Remove the card's unrecorded fee
+  assertion; policy copy in secondary fees is not a transaction fee receipt.
+  The create API remains USD-only; renderer compatibility is not new currency support.
+- Show Seller's Share with the buyer card immediately after #next-step whenever
+  created=1 or DRAFT. Do not claim the Seller already accepted merely from a URL
+  flag. Preserve the actual CopyLinkButton route and feedback.
+- Call PayPalDisputePanel without a page-level guard. Its original internal rule
+  still hides uncaptured/no-case deals; preserve all existing case/demo notices.
+- DealDisclosure has no effect-driven layout: CSS selects ordinary expanded
+  desktop sections or initially closed mobile details at 1024px. Both are rendered
+  from the same read-only children, but only one is visible/accessibility-exposed.
+  Do not place IDs or interactive controls inside this read-only component.
+  Native mobile summary remains 44px/focusable, also without JavaScript. The
+  24px/16px card scale and short-aside sticking behavior remain unchanged.
+
+- Verification caveat: full-app React streaming still needs its bootstrap JS to
+  reveal the page envelope. No-JS disclosure checks isolate the server HTML with
+  real application CSS; they prove component first-paint behavior, not full-app
+  no-JS support. AppShell streaming is outside this detail-page change.

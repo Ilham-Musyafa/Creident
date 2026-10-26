@@ -1,0 +1,902 @@
+[
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "5df560be07b3bdc6d7d2a9e985f8d5361e2f2124ec6170850c923a58849e1724"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "e378caeaadae35b016c114cb953d0545085689166ce1344e4d35885a2ad9a2f1"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "5df560be07b3bdc6d7d2a9e985f8d5361e2f2124ec6170850c923a58849e1724"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "e378caeaadae35b016c114cb953d0545085689166ce1344e4d35885a2ad9a2f1"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "6a25f30fc05d807d6b53a4fb1edb5f1c015dab1d100ff2184d05ec87f5161ed2"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "9799d7e110ae58c1841ed1140d613d86cf0102d67b18b182f600e0272a129a19"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "ca2984ddd1a512dd70de2cbe8a490663a2ec64c3df8fe4898b12e1a603ec3fc6"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "6a25f30fc05d807d6b53a4fb1edb5f1c015dab1d100ff2184d05ec87f5161ed2"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "9799d7e110ae58c1841ed1140d613d86cf0102d67b18b182f600e0272a129a19"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 360,
+    "geometry": {
+      "left": 0,
+      "right": 360,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 360,
+      "width": 360,
+      "textSha256": "ca2984ddd1a512dd70de2cbe8a490663a2ec64c3df8fe4898b12e1a603ec3fc6"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "5df560be07b3bdc6d7d2a9e985f8d5361e2f2124ec6170850c923a58849e1724"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "e378caeaadae35b016c114cb953d0545085689166ce1344e4d35885a2ad9a2f1"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "5df560be07b3bdc6d7d2a9e985f8d5361e2f2124ec6170850c923a58849e1724"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "e378caeaadae35b016c114cb953d0545085689166ce1344e4d35885a2ad9a2f1"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "6a25f30fc05d807d6b53a4fb1edb5f1c015dab1d100ff2184d05ec87f5161ed2"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "9799d7e110ae58c1841ed1140d613d86cf0102d67b18b182f600e0272a129a19"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "ca2984ddd1a512dd70de2cbe8a490663a2ec64c3df8fe4898b12e1a603ec3fc6"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "6a25f30fc05d807d6b53a4fb1edb5f1c015dab1d100ff2184d05ec87f5161ed2"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "9799d7e110ae58c1841ed1140d613d86cf0102d67b18b182f600e0272a129a19"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 390,
+    "geometry": {
+      "left": 0,
+      "right": 390,
+      "padding": "0px 0px 128px",
+      "scrollWidth": 390,
+      "width": 390,
+      "textSha256": "ca2984ddd1a512dd70de2cbe8a490663a2ec64c3df8fe4898b12e1a603ec3fc6"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "33da4223f90390bf383189be6df518ce32e6581d470b4b95c25806435e9c2f5a"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "4dacae58174cd98779de839075a5b0eff3c86907f19bdedbb874707279dc7ede"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "33da4223f90390bf383189be6df518ce32e6581d470b4b95c25806435e9c2f5a"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "4dacae58174cd98779de839075a5b0eff3c86907f19bdedbb874707279dc7ede"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "buyer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "739635bb3f993dbdb7f569901a63d3fcd2e4601c31599f45b148ed0fe94dea5b"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "ad5c3261e4759dbf04719352819f83d12d55592c25d4894fd364dbf921c9bffa"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "7871cafab7456b50abe4f81e381c112ff6f68f674fcbbee25ebe5164b2480d30"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "light",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "95bd40336b0722c155680807a3d8bcad6ba3bc0f79f622e85390b4ac7a0f357a"
+    },
+    "errors": []
+  },
+  {
+    "name": "home",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "ad5c3261e4759dbf04719352819f83d12d55592c25d4894fd364dbf921c9bffa"
+    },
+    "errors": []
+  },
+  {
+    "name": "settings",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "7871cafab7456b50abe4f81e381c112ff6f68f674fcbbee25ebe5164b2480d30"
+    },
+    "errors": []
+  },
+  {
+    "name": "about",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "93095d93691f969c8574581531df606fef7186a6c367a811e28fa81b707c17e0"
+    },
+    "errors": []
+  },
+  {
+    "name": "fairness",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "1c1b0992378715502d2769db412eea0a44936e4eb61df79b3b604123d9a3addf"
+    },
+    "errors": []
+  },
+  {
+    "name": "oversight",
+    "role": "reviewer",
+    "theme": "dark",
+    "width": 1440,
+    "geometry": {
+      "left": 248,
+      "right": 1440,
+      "padding": "28px 28px 48px",
+      "scrollWidth": 1440,
+      "width": 1440,
+      "textSha256": "95bd40336b0722c155680807a3d8bcad6ba3bc0f79f622e85390b4ac7a0f357a"
+    },
+    "errors": []
+  }
+]

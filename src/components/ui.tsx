@@ -16,15 +16,17 @@ const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
   REFUNDED: { label: 'Refund issued', tone: 'void' }, VOIDED: { label: 'Cancelled · not charged', tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },
 };
+const mobileTone: Record<Tone, string> = { completed: 'success', awaiting: 'warning', disputed: 'danger', authorized: 'info', inspection: 'info', frozen: 'warning', void: 'neutral' };
 const toneStyle = (tone: Tone) => ({ backgroundColor: `var(--${tone}-bg)`, color: `var(--${tone}-text)` });
 
 export function Button({ variant = 'accent', fullWidth = false, className = '', ...props }: ComponentPropsWithRef<'button'> & { variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean }) {
   const colors = { accent: 'bg-accent text-on-accent', ghost: 'border border-line bg-surface text-heading', strong: 'bg-strong text-on-strong' };
   return <button className={`min-h-[46px] rounded-full px-5 text-sm font-bold hv-press hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${colors[variant]} ${fullWidth ? 'w-full' : ''} ${className}`} {...props} />;
 }
-export function StatusPill({ status, suffix, className = '' }: { status: TxStatus; suffix?: string; className?: string }) {
+export function StatusPill({ status, suffix, compact = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; className?: string }) {
   const { label, tone } = statusMap[status];
-  return <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{label}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  const shownLabel = compact && status === 'AUTHORIZED' ? 'Approved · not charged' : label;
+  return <span title={compact ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
 export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
@@ -49,11 +51,11 @@ export function DealListItem({ title, amount, status, href, icon = '◇' }: { ti
   const tone = statusMap[status].tone;
   return <Link href={href} className="flex min-h-[72px] min-w-0 items-center gap-3 rounded-[18px] border border-line bg-surface p-3 hover:bg-surface-2"><span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-[14px] text-xl" style={toneStyle(tone)}>{icon}</span><span className="min-w-0 flex-1"><span className="block break-words text-sm font-bold text-heading">{title}</span><StatusPill status={status}/></span><strong className="shrink-0 text-sm tabular-nums">{amount}</strong></Link>;
 }
-export function Timeline({ steps }: { steps: { title: string; detail?: string; state: 'done' | 'current' | 'upcoming' }[] }) {
-  return <ol className="space-y-0">{steps.map((s, i) => <li key={`${s.title}-${i}`} className="flex gap-3"><div className="flex flex-col items-center"><span style={{ '--i': i } as CSSProperties} className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-sm font-bold ${s.state === 'done' ? 'hv-step-done ' : s.state === 'current' ? 'hv-step-current ' : ''}${s.state === 'done' ? 'border-heading bg-heading text-on-strong' : s.state === 'current' ? 'border-[var(--inspection-text)] bg-[var(--inspection-bg)] text-[var(--inspection-text)]' : 'border-line text-muted'}`}>{s.state === 'done' ? '✓' : i + 1}</span>{i < steps.length - 1 && <span className="h-8 w-px bg-line"/>}</div><div className="pb-4"><p className="text-sm font-semibold text-heading">{s.title}</p>{s.detail && <p className="text-sm text-muted">{s.detail}</p>}</div></li>)}</ol>;
+export function Timeline({ steps, showCurrentLabel = false }: { steps: { title: string; detail?: string; state: 'done' | 'current' | 'upcoming' }[]; showCurrentLabel?: boolean }) {
+  return <ol className="space-y-0">{steps.map((s, i) => <li key={`${s.title}-${i}`} aria-current={showCurrentLabel && s.state === 'current' ? 'step' : undefined} className="flex gap-3"><div className="flex flex-col items-center"><span style={{ '--i': i } as CSSProperties} className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-sm font-bold ${s.state === 'done' ? 'hv-step-done ' : s.state === 'current' ? 'hv-step-current ' : ''}${s.state === 'done' ? 'border-heading bg-heading text-on-strong' : s.state === 'current' ? 'border-[var(--inspection-text)] bg-[var(--inspection-bg)] text-[var(--inspection-text)]' : 'border-line text-muted'}`}>{s.state === 'done' ? '✓' : i + 1}</span>{i < steps.length - 1 && <span className="h-8 w-px bg-line"/>}</div><div className="pb-4"><p className="text-sm font-semibold text-heading">{s.title}{showCurrentLabel && s.state === 'current' && <span className="ml-2 inline-block rounded-full bg-surface-2 px-2 py-1 text-xs font-semibold text-heading">Current step</span>}</p>{s.detail && <p className="text-sm text-muted">{s.detail}</p>}</div></li>)}</ol>;
 }
 export function KeyValue({ items }: { items: { label: string; value: ReactNode }[] }) {
-  return <dl className="rounded-[22px] border border-line bg-surface p-4">{items.map(item => <div key={item.label} className="flex justify-between gap-4 border-b border-dashed border-line py-2 last:border-0"><dt className="text-sm text-muted">{item.label}</dt><dd className="text-right text-sm font-semibold tabular-nums">{item.value}</dd></div>)}</dl>;
+  return <dl data-ui="key-value" className="rounded-[22px] border border-line bg-surface p-4">{items.map(item => <div key={item.label} className="flex justify-between gap-4 border-b border-dashed border-line py-2 last:border-0"><dt className="text-sm text-muted">{item.label}</dt><dd className="text-right text-sm font-semibold tabular-nums">{item.value}</dd></div>)}</dl>;
 }
 export function FindingCard({ criterion, supports, evidenceIds }: { criterion: string; supports: 'buyer' | 'seller' | 'unclear'; evidenceIds: string[] }) {
   // Matches docs/UI.md mockups: buyer = disputed tone, seller = completed tone, unclear = neutral.
@@ -104,7 +106,7 @@ export function CodeBadge({ code }: { code: string }) { return <strong className
 
 type NavItem = { label: 'Home' | 'Deals' | 'Audit' | 'Menu'; href: string };
 const navItems: NavItem[] = [{ label: 'Home', href: '/' }, { label: 'Deals', href: '/deals' }, { label: 'Audit', href: '/audit' }, { label: 'Menu', href: '/menu' }];
-function NavIcon({ name }: { name: NavItem['label'] }) {
+export function NavIcon({ name }: { name: NavItem['label'] }) {
   const path = { Home: <><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></>, Deals: <><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></>, Audit: <><path d="M6 3h9l4 4v14H5V3zM14 3v5h5M8 12h8M8 16h6"/></>, Menu: <><path d="M19.31 9.91L21.88 10.44L21.88 13.56L19.31 14.09L18.65 15.68L20.09 17.88L17.88 20.09L15.68 18.65L14.09 19.31L13.56 21.88L10.44 21.88L9.91 19.31L8.32 18.65L6.12 20.09L3.91 17.88L5.35 15.68L4.69 14.09L2.12 13.56L2.12 10.44L4.69 9.91L5.35 8.32L3.91 6.12L6.12 3.91L8.32 5.35L9.91 4.69L10.44 2.12L13.56 2.12L14.09 4.69L15.68 5.35L17.88 3.91L20.09 6.12L18.65 8.32Z"/><circle cx="12" cy="12" r="3"/></> }[name];
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">{path}</svg>;
 }

@@ -1,0 +1,44 @@
+[
+  {
+    "role": "buyer",
+    "theme": "light",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Inspect now",
+    "visibleDemoMarkers": 3
+  },
+  {
+    "role": "buyer",
+    "theme": "dark",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Inspect now",
+    "visibleDemoMarkers": 3
+  },
+  {
+    "role": "seller",
+    "theme": "light",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Add evidence",
+    "visibleDemoMarkers": 3
+  },
+  {
+    "role": "seller",
+    "theme": "dark",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Add evidence",
+    "visibleDemoMarkers": 3
+  },
+  {
+    "role": "reviewer",
+    "theme": "light",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Review now",
+    "visibleDemoMarkers": 1
+  },
+  {
+    "role": "reviewer",
+    "theme": "dark",
+    "selectionMatchesFixture": true,
+    "mainActionPreserved": "Review now",
+    "visibleDemoMarkers": 1
+  }
+]

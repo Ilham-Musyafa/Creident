@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from './ui';
-import { Notice } from './layout';
+import { Notice } from './layoutPrimitives';
 import { callApi } from './client';
 import type { ChecklistItem, CompletenessCheck, EvidenceSide } from '../lib/ai/evidenceCheck';
 import type { AssistMeta } from '../lib/ai/assist';

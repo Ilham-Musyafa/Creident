@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useState } from 'react';
 import type { OversightSnapshot } from '../../lib/oversight';
 import { Button } from '../ui';
-import { Notice } from '../layout';
+import { Notice } from '../layoutPrimitives';
 import { shortDate } from '../view';
 
 const StudioDashboard = dynamic(() => import('./StudioDashboard'), { ssr: false,

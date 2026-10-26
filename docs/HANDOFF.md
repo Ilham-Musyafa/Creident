@@ -173,6 +173,235 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Deal story follow-up: payment truthfulness and first paint
+
+- Continued ui/creident-mockup from e478337 as requested, no main push.
+- DealDecisionSummary now distinguishes reviewer choice from successful stored
+  payment state: captured flag, REFUNDED/VOIDED or frozenFrom, and completed
+  partial metadata/PARTIALLY_REFUNDED. Pending/failed effects use neutral labels;
+  a requested event effect alone is not evidence of success. All amounts use
+  tx.currency, including stored partial fallback. Removed unrecorded fee claim.
+  Recommendation/reason/link unchanged; never says seller payout occurred.
+- Seller share card moved immediately after #next-step in the main column for
+  created=1 OR DRAFT. Prior pre-b5 condition was created only; DRAFT fallback is
+  requested here. Copy does not falsely assume Seller acceptance. Actual copy
+  button and feedback tested, one card, no share card for other roles.
+- Restored unconditional PayPalDisputePanel invocation. Confirmed b5dc67a's parent
+  already had internal !captured && no cases -> null; that original visibility
+  rule and markers remain. The removed page guard was equivalent/redundant.
+- DealDisclosure no longer has client effects/matchMedia/open state. CSS selects
+  static expanded desktop sections or closed native mobile details from the same
+  read-only children. No repeated IDs/interactive children; only one variant
+  visible/accessibility-exposed. 24px/16px scale retained. Empty PayPal wrapper hidden.
+- Gates Node 22.23.4: npm test 517/49 files, typecheck, build, diff check pass.
+  Eleven added financial wording tests: success/failure/pending, requested-effect
+  non-proof, frozen terminal/partial fallback, currency (EUR renderer-only; API
+  remains USD-only), and split wording. No src/lib/API/payment/rule/audit changes.
+- Browser: 48 application views at 390/1440, light/dark, all three roles, plus 12
+  isolated actual SSR-markup/CSS no-JS checks. Correct share adjacency/copy URL,
+  desktop expanded/mobile initially closed, native keyboard, panel visibility,
+  no overflow/runtime errors. Sixteen actual screenshots in
+  docs/ui/screens/deal-detail-story/followup/; exact wording table/limits in README.
+- No-JS scope caveat: full app React streaming keeps content under hidden S:0 until
+  bootstrap JS reveals it. AppShell/streaming untouched in this task. The 12 no-JS
+  checks isolate returned server deal markup with real stylesheets to prove the
+  disclosure itself needs no JS; do not claim full-app no-JS support.
+- QA /tmp/creident-story-followup.sqlite copied from synthetic story fixture;
+  new screenshot deals use normal simulated APIs, existing actual refund/PayPal
+  case records reused. No payment-state edits for captures; original fixture and
+  seed unchanged. Scripts /tmp/creident-followup-*; final server local port 3231.
+- UI.md updated. Implementation `a97b43f` pushed to origin/ui/creident-mockup.
+  PR creation attempted; GitHub GraphQL returned Forbidden. No PR created by this
+  agent. Manual link: https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text /tmp/creident-deal-followup-pr.md. No merge or deployment.
+
+### 2026-10-26 — Deal detail story and one next-step card
+
+- Confirmed origin/main still 9a1acd1; ui/creident-mockup unmerged. Continued from
+  70f2f67, no main push. Item is the page heading; ID secondary. Main order now
+  summary -> actual next-step UI -> recorded Decision -> Progress -> Activity.
+  Removed duplicate banner/CTA; keep #next-step, role/acceptance suppression and
+  every original action component/API/error/confirmation. Waiting text names the
+  party using existing presentation helpers. Pending refund/capture notices retained.
+- Decision summary reads existing human decisions/recommendations/events, uses
+  receipt outcome/agreement semantics and real amounts/reason/link. Pending return/
+  split decisions also remain visible; no invented outcome, payout or confidence.
+  Activity gets an empty state; Timeline optionally marks Current step as text.
+- Terms/fees/PayPal/courier/share/record info moves to secondary column/last on
+  mobile. DealDisclosure has one native copy, closed mobile/open desktop.
+  DealSecondary sticks only when its measured height fits. All detail cards use
+  24px/16px scale via scoped CSS/data-ui hooks. No other route restyling.
+- No src/lib, API, status/nextAction/timelineFor, payment, deadline, audit/evidence
+  hashing or dependency changes. No new confirmation dialog or AI replay marker.
+- Gates on Node 22.23.4: 506 tests/49 files (nine new focused presentation safety
+  tests), typecheck and production build pass. Browser: four UI walks at 390/1440,
+  light/dark through acceptance, demo approval, shipping, inspection, dispute,
+  both parties' evidence, review and decided receipt. Return, release, partial
+  refund and refund-without-return covered. No runtime exceptions.
+- 184 status/role/theme/width views: all 15 statuses, one next-step branch and no
+  duplicate main CTA, waiting roles no next-step button, expected disclosures,
+  no overflow/errors. Typical next-step top <=431px. REFUNDED/empty-feed use
+  explicitly synthetic view fixtures, not financial-flow claims. Extra UI checks
+  cover confirm receipt and demo PayPal inquiry/escalation/PDF/Reviewer sync.
+  1,172 body/chip/contrast probes pass. Disclosure keyboard/resize tested.
+- Screenshots, walkthroughs, matrix, tests and full role-action table documented
+  in docs/ui/screens/deal-detail-story/. UI.md updated. QA DB /tmp/creident-story.sqlite
+  is isolated; original fixture/seed unchanged. Scripts /tmp/creident-story-*;
+  production browser server 3229. No owner decision, merge or deployment.
+- Implementation `b5dc67a` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-deal-story-pr.md. No merge or deployment.
+
+### 2026-10-26 — Mobile info pages and explicit full-bleed opt-in
+
+- Fetched origin/main (`9a1acd1`); ui/creident-mockup remains unmerged. Continued
+  that branch from `3d98b87` as requested. Planning branch remains separate.
+- Root cause: AppShell inferred zero mobile padding from Home/Menu active state.
+  Now only mobileFullBleed selects zero padding. Home and Settings explicitly opt
+  in, preserving their existing header/panel geometry. Transactions and Records
+  already opted in; all other default pages retain px-5 pt-6.
+- All implicit-rule routes: /, /menu, /about (#decisions/#limitations), /fairness,
+  /reviewer/oversight. No other Menu-active pages. Oversight and its role/code
+  notices regain the ordinary 20px inset; Studio/access logic is unchanged.
+- New InfoPageShell composes compact MobileBrandHeader, existing role dropdown,
+  MobilePanel and original PageHeader/back /menu for About/Fairness. Mobile-only
+  CSS scopes 24px card/rule/notice/logo radius, 16px content insets, 18px headings,
+  28px fairness values, wrapping, 44px/focus-visible summaries and anchor margin.
+  Native rule accordions, chevrons, chips and all copy/data remain intact. Notice
+  gains an optional className hook; its defaults on other pages are unchanged.
+- Node 22.23.4: 497 tests/48 files, typecheck, production build and diff check pass.
+  Browser: 60 before + 60 after views at 360/390/1440, Buyer/Reviewer, both themes;
+  no after overflow/page exceptions. Eight interactive scenarios check Settings
+  anchor links/back, 56 keyboard rule toggles, focus/44px targets, card geometry
+  and unchanged visible copy. Seller/locked-Reviewer smoke, 642 all-role/theme
+  text/contrast probes and 12 other-page regression checks pass.
+- All 16 Home/Settings mobile raster pairs and all 12 desktop About/Fairness/
+  oversight pairs are identical. Desktop Home's four pairs also identical.
+  Desktop Settings has three tiny border raster exceptions (23/2/5 pixels,
+  max 1 RGB level); retained transparently, no geometry/text change.
+- Evidence/screenshots: docs/ui/screens/info-pages-mobile/; UI.md updated.
+  QA scripts /tmp/creident-info-*.mjs, extra raw screenshots under
+  /tmp/creident-info-extra-screens; local after production server 3228. No new
+  dependencies, lib/API/eval/payment/rule/state/audit changes. No owner decision.
+- Implementation `cee06c0` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-info-pages-pr.md. No merge or deployment.
+
+### 2026-10-26 — Mobile Home Demo markers and role-relevant rows
+
+- Continued unmerged `ui/creident-mockup` from `0d05032` as requested.
+- MobileTransactionRow compact mode now shows a visible 12px Demo badge beside
+  the status, with wrapping metadata; all compact consumers inherit it.
+- Home mobile selection uses the existing seed/create demo party IDs (`buyerId`
+  buyer / `sellerId` seller). Reviewer gets only the actual UNDER_REVIEW queue.
+  Existing transactionRow action logic (including accepted DRAFT terms) determines
+  needs-action priority, then active; stable sorting retains repository updated /
+  created recency within each priority. Maximum three rows, See all still /deals.
+  This is demo role relevance, not user authentication or production ownership.
+- Desktop receives its original recent data. Main-action selection is untouched.
+  No lib/domain, API, payment, rule, audit, dependency or data changes.
+- Node 22.23.4: npm test 497/497 (48 files), typecheck and build passed.
+  Production Chromium: 390px light/dark for all three roles, visible Demo markers,
+  expected fixture selection, correct unchanged main actions, no overflow/runtime
+  exceptions. Buyer/Seller show 3 rows; Reviewer has 1 actual queue record.
+  1440px Home before/after is pixel-identical in all six role/theme combinations.
+- Updated captures and home-fixes-*.json evidence under docs/ui/screens/creident-home/;
+  README distinguishes current screenshots from historical comparison evidence.
+  Updated UI.md to require the per-row visible marker and describe selection.
+- Implementation `4f237d5` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  No merge/deployment or pending owner decision. Baseline captures
+  /tmp/creident-home-fixes-before; QA scripts
+  /tmp/creident-home-fixes-check.mjs and /tmp/creident-home-fixes-selection.py;
+  local simulated server 3227, synthetic fixed-clock fixture only.
+
+### 2026-10-26 — Persistent desktop sidebar shell
+
+- Confirmed previous mobile Home task finished at 94b24d9. ui/creident-mockup remains
+  unmerged, so continued that branch from **94b24d9**, as requested. No main push,
+  merge or deployment. Desktop reference ZIP PNGs archived under
+  docs/ui/reference/creident-mockup/desktop/; example data never copied into code.
+- DesktopNavigation replaces its sole hamburger/drawer consumer with fixed 248px
+  navy sidebar, four primary links, existing Learn routes/anchors, server-cookie
+  demo role card and simulated/Sandbox notice. Route/hash current states, keyboard
+  focus, skip-to-content, above-card role popover and existing theme control work.
+- AppShell now reads the existing request role/mode. Presentation-only layout helpers
+  moved unchanged to layoutPrimitives.tsx; nine client import paths updated to keep
+  server cookie APIs out of browser bundles. Body JSX retained. Existing synchronous
+  receipt tests mock only AppShell, preserving all financial/receipt assertions.
+- TransactionsBrowser portals its original controlled search to the top bar on /deals
+  only; filters/URL/history preserved. No global search or invented optional count
+  badge. Existing NavIcon reused. Desktop tokens/container (1200px) and .desktop-grid
+  (12 columns) added. Mobile wrapper has display:contents; print offsets removed.
+- Gates: 497 tests/48 files, typecheck, build and diff check passed on Node 22.23.4.
+  Browser: 408 views (17 routes x 4 widths x 3 roles x 2 themes), no runtime exceptions
+  or overflow; 18 interactive desktop scenarios, 126 shell text/contrast checks pass.
+  Existing reviewer gate rejects missing code. Expected invalid callback API 400s
+  are documented; no valid payment callback/money flow was invoked.
+- Mobile comparison: 102 pairs vs 94b24d9 with fixed QA-only clock. Stable views
+  including Home/Transactions/Records/Settings match exactly. Oversight widgets are
+  allowed to finish at expanded height. 100/102 raw pairs are pixel-identical; About
+  buyer-dark has 182 border pixels and callback seller-light 58 border pixels differing
+  by <=2 RGB levels, no text/layout change. Raw exceptions retained in evidence.
+- Screenshots/evidence: docs/ui/screens/creident-desktop-shell/. Updated UI.md.
+  Baselines/scripts/DB remain /tmp/creident-shell-*; final local app port 3226,
+  isolated baseline source at /tmp/creident-shell-baseline-src (94b24d9), port 3224.
+  No provider credentials, new dependencies or API/domain/payment changes.
+- Implementation commit `03a76c9` pushed to origin/ui/creident-mockup. PR creation
+  attempted once for this iteration; GitHub GraphQL API returned Forbidden. No PR
+  was created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-desktop-shell-pr.md. Follow-up docs commit records status.
+  No owner decision pending. No merge or deployment.
+
+### 2026-10-26 — Mobile Creident Home and shared primitives
+
+- Took requested branch path: ui/nexobank-home (e07eb9d) is merged; created
+  `ui/creident-mockup` from latest origin/main `9a1acd1`. Separate unmerged security
+  audit branch is not stacked here. No main push, merge or deployment.
+- Original reference PNGs were absent. Owner first supplied generic finance JPEGs,
+  then the actual approved Creident concept sheet (Home light/dark) and inner-page
+  close-ups. Archived originals and Home crops with provenance under
+  docs/ui/reference/creident-mockup/. Concept example data never enters the app.
+- MobileBrandHeader has compact/hero variants, Demo badge and original gradient/wave/
+  brand/role control; MobilePanel extracts four duplicate wrappers. Tokens contain
+  new mobile values. StatusPill inherits semantic mobile tones; bottom dock active
+  icon+label uses Sapphire with AA dark text. Desktop styling remains intact.
+- Home: real approved amount/eye in header, two working role/Browse pills, four tiles,
+  inline first sorted role task with existing route/deadline and right-hand button,
+  up to three real rows, verification footer/warning, empty/seed and mode limits.
+  Reviewer has one actual queue row. No fake dates where current row data lacks one.
+- Reused MobileTransactionRow with compact layout, square icons, heading-font money,
+  actual status text and short deadline/full title. Compact approval says Approved ·
+  not charged; full label remains in title. Demo label visible globally and retained
+  per row for assistive technology. Existing noncompact layout remains intact.
+- Transactions/Settings/Records only inherit shared wrapper/header/chip/nav changes.
+  No API/domain/payment/PayPal/rules/deadline/audit/data model/dependency changes.
+- Required checks on Node 22.23.4: npm test (497/48 files), typecheck, build and diff
+  check passed. Browser: 59 page checks plus failed-chain cases; no runtime errors
+  or unintended write requests, all Home taps >=44px, 416 text size/contrast checks
+  pass. Role switching keeps page/filter URLs and keyboard focus. Reviewer API
+  returns 403 without its configured code, 200 with the synthetic local code.
+  Final browser results/captures: docs/ui/screens/creident-home/, including
+  390px light/dark roles, actual action routes, amount toggle, keyboard focus, role
+  URL/filter retention, reviewer gate, empty and failed cases; desktop comparison
+  covers all 24 page/role/theme combinations at 1440 against baseline 9a1acd1.
+- QA fixtures /tmp/creident-mockup-baseline.sqlite (13 deals), creident-home-empty.sqlite,
+  creident-home-failed.sqlite (isolated deliberate corruption); no test DB committed.
+  Before/after desktop captures under /tmp/creident-mockup-baseline and
+  /tmp/creident-mockup-after. Scripts /tmp/creident-home-check.mjs and
+  /tmp/creident-home-extra.mjs. UI.md and screenshot README updated.
+- Implementation commit `6ffae06` pushed to origin/ui/creident-mockup. Final browser:
+  59 page checks and 416 text/contrast checks pass; 24/24 desktop captures identical.
+  PR create attempted once and failed: GitHub GraphQL API Forbidden. No PR exists
+  from this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR body ready in /tmp/creident-mockup-pr.md. Final docs commit records push status.
+  No owner decision pending. No main push, merge or deployment.
+
 ### 2026-10-25 — Mobile Records matches the NexoBank design
 
 - Fetched main: PR #85 is merged at `5f191f4`. Took the requested merged-branch path:

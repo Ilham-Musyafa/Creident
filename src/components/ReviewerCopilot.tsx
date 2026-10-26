@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from './ui';
-import { Notice } from './layout';
+import { Notice } from './layoutPrimitives';
 import { callApi } from './client';
 import { money } from './view';
 import type { CopilotDraft } from '../lib/ai/copilot';

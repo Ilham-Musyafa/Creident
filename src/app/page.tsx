@@ -30,10 +30,18 @@ export default async function HomePage() {
   const actionCount = rows.filter(row => row.needsAction).length;
   const actions = sortTransactionRows(rows.filter(row => row.needsAction)).slice(0, 6);
   const recent = shown.map(tx => rows.find(row => row.id === tx.id)!);
+  // Demo party IDs match the seed/create flow; reviewers use their actual review queue.
+  // Keep repository recency order within each action/active priority, without changing desktop.
+  const mobileDealIds = new Set(deals.filter(tx => role === 'reviewer'
+    ? tx.status === 'UNDER_REVIEW'
+    : role === 'buyer' ? tx.buyerId === 'buyer' : tx.sellerId === 'seller').map(tx => tx.id));
+  const mobileRecent = rows.filter(row => mobileDealIds.has(row.id))
+    .sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active))
+    .slice(0, 3);
 
   const homeData = { role, approvedAmount: money(reserved), approvedCount: reservedDeals,
     active, inDispute, completed, actionCount, actionTitle, actions, recent,
     recentTitle: role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent transactions',
     verified, total: chains.length, simulated: simulatedPayPal() };
-  return <AppShell active="Home"><DesktopHome key={role} {...homeData}/><MobileHome key={role} {...homeData}/></AppShell>;
+  return <AppShell active="Home" mobileFullBleed><DesktopHome key={role} {...homeData}/><MobileHome key={role} {...homeData} recent={mobileRecent}/></AppShell>;
 }

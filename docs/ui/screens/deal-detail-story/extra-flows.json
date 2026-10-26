@@ -1,0 +1,8 @@
+{
+  "simulatedCaseOpened": true,
+  "inquiryEvidenceMessage": true,
+  "claimEvidencePdf": true,
+  "reviewerSync": true,
+  "confirmReceipt": true,
+  "responsiveDisclosureKeyboard": true
+}

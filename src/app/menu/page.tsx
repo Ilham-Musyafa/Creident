@@ -40,7 +40,7 @@ export default async function MenuPage() {
   const codeRequired = reviewerCodeRequired();
   const unlocked = await reviewerUnlocked();
   return (
-    <AppShell active="Menu">
+    <AppShell active="Menu" mobileFullBleed>
       <MobileSettings role={role} codeRequired={codeRequired} unlocked={unlocked}/>
       <div className="hidden lg:block">
       <PageHeader title="Settings" subtitle="Your demo workspace, appearance and useful links."/>

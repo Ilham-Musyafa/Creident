@@ -1,3 +1,4 @@
+import { MobilePanel } from './MobilePanel';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { MobileBrandHeader } from './MobileBrandHeader';
@@ -26,7 +27,7 @@ function SettingsDestination({ href, title, icon }: { href: string; title: strin
 export function MobileSettings({ role, codeRequired, unlocked }: { role: Role; codeRequired: boolean; unlocked: boolean }) {
   return <div className="lg:hidden">
     <MobileBrandHeader role={role}/>
-    <section aria-labelledby="mobile-settings-title" className="relative -mt-8 min-h-[70dvh] rounded-t-[32px] bg-surface px-5 pb-5 pt-6">
+    <MobilePanel role="region" aria-labelledby="mobile-settings-title">
       <h1 id="mobile-settings-title" className="mb-6 text-[28px] leading-tight text-heading">Settings</h1>
       <ul aria-label="Settings options" className="space-y-3">
         <SettingsDisclosure title="Demo role" icon="role">
@@ -50,6 +51,6 @@ export function MobileSettings({ role, codeRequired, unlocked }: { role: Role; c
         <SettingsDestination href="/about" title="About Creident" icon="about"/>
       </ul>
       <footer className="mt-6 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>Sandbox demo · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p></footer>
-    </section>
+    </MobilePanel>
   </div>;
 }

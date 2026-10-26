@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import DecisionReceiptPage from '../deals/[id]/decision/page';
 import { decisionBasis } from '../../lib/decisionBasis';
 import { GET as exportAudit } from './audit/[id]/export/route';
 import { canonicalJson } from '../../lib/audit/chain';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { openDatabase } from '../../lib/db';
@@ -25,6 +26,13 @@ import { GET as audit } from './audit/[id]/route';
 import { GET as verify } from './audit/verify/route';
 import { GET as courier } from './mock-courier/[tracking]/route';
 import { POST as tick } from './jobs/tick/route';
+
+// Receipt assertions use React's synchronous legacy renderer, not the Next RSC pipeline.
+// Keep receipt content/controls intact; the async cookie-based shell is browser-tested separately.
+vi.mock('../../components/layout', async (importOriginal) => ({
+  ...await importOriginal<typeof import('../../components/layout')>(),
+  AppShell: ({ children }: { children: ReactNode }) => children,
+}));
 
 let db: DatabaseSync;
 let repo: TransactionRepository;

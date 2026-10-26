@@ -1,0 +1,75 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "outcome": "REFUND",
+    "requireReturn": true,
+    "id": "1f72b8f6-4f58-436f-94ab-825fc793134a",
+    "states": [
+      "DRAFT",
+      "TERMS_LOCKED",
+      "AWAITING_APPROVAL",
+      "AUTHORIZED",
+      "IN_INSPECTION",
+      "DISPUTED",
+      "UNDER_REVIEW",
+      "RETURN_REQUESTED",
+      "VOIDED"
+    ],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "outcome": "RELEASE",
+    "requireReturn": false,
+    "id": "a1ea64fb-f548-4d11-8ce5-31aef4c3bac7",
+    "states": [
+      "DRAFT",
+      "TERMS_LOCKED",
+      "AWAITING_APPROVAL",
+      "AUTHORIZED",
+      "IN_INSPECTION",
+      "DISPUTED",
+      "UNDER_REVIEW",
+      "COMPLETED"
+    ],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "outcome": "PARTIAL_REFUND",
+    "requireReturn": false,
+    "id": "5292aa68-ccea-4c85-a74c-fdf3d390cfab",
+    "states": [
+      "DRAFT",
+      "TERMS_LOCKED",
+      "AWAITING_APPROVAL",
+      "AUTHORIZED",
+      "IN_INSPECTION",
+      "DISPUTED",
+      "UNDER_REVIEW",
+      "PARTIALLY_REFUNDED"
+    ],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "outcome": "REFUND",
+    "requireReturn": false,
+    "id": "53029654-646a-4075-b54f-4685995cbad6",
+    "states": [
+      "DRAFT",
+      "TERMS_LOCKED",
+      "AWAITING_APPROVAL",
+      "AUTHORIZED",
+      "IN_INSPECTION",
+      "DISPUTED",
+      "UNDER_REVIEW",
+      "VOIDED"
+    ],
+    "errors": []
+  }
+]
