@@ -210,7 +210,10 @@ Still open:
   new screenshot deals use normal simulated APIs, existing actual refund/PayPal
   case records reused. No payment-state edits for captures; original fixture and
   seed unchanged. Scripts /tmp/creident-followup-*; final server local port 3231.
-- UI.md updated. No merge/deployment. Publication status recorded after push.
+- UI.md updated. Implementation `a97b43f` pushed to origin/ui/creident-mockup.
+  PR creation attempted; GitHub GraphQL returned Forbidden. No PR created by this
+  agent. Manual link: https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text /tmp/creident-deal-followup-pr.md. No merge or deployment.
 
 ### 2026-10-26 — Deal detail story and one next-step card
 
