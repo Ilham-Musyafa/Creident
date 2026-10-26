@@ -14,7 +14,7 @@ const roles: { value: Role; label: string; detail: string }[] = [
 let requestedFocus: Role | null = null;
 
 /** Demo-role cookie and existing reviewer gates; no real account or authentication. */
-export function QuickRoleSwitch({ current, appearance = 'default' }: { current: Role; appearance?: 'default' | 'hero' }) {
+export function QuickRoleSwitch({ current, appearance = 'default' }: { current: Role; appearance?: 'default' | 'hero' | 'sidebar' }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ export function QuickRoleSwitch({ current, appearance = 'default' }: { current: 
   const focusIntent = useRef<'current' | 'first' | 'last'>('current');
 
   useEffect(() => {
-    if (requestedFocus === current && !pending) {
+    if (requestedFocus === current && !pending && trigger.current?.getClientRects().length) {
       requestedFocus = null;
       trigger.current?.focus({ preventScroll: true });
     }
@@ -47,10 +47,12 @@ export function QuickRoleSwitch({ current, appearance = 'default' }: { current: 
     if (!trigger.current || !menu.current) return;
     const rect = trigger.current.getBoundingClientRect();
     const width = Math.min(292, window.innerWidth - 24);
-    const top = rect.bottom + 8;
+    const menuHeight = Math.min(menu.current.scrollHeight || 280, window.innerHeight - 24);
+    const above = appearance === 'sidebar' && window.innerHeight - rect.bottom - 20 < menuHeight;
+    const top = above ? Math.max(12, rect.top - menuHeight - 8) : rect.bottom + 8;
     Object.assign(menu.current.style, {
       width: `${width}px`, left: `${Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12))}px`,
-      top: `${top}px`, maxHeight: `${Math.max(0, window.innerHeight - top - 12)}px`,
+      top: `${top}px`, maxHeight: `${Math.max(0, above ? rect.top - top - 8 : window.innerHeight - top - 12)}px`,
     });
   }
   function closeAndFocus() {
@@ -85,13 +87,14 @@ export function QuickRoleSwitch({ current, appearance = 'default' }: { current: 
           positionMenu(); menu.current?.showPopover();
         }
       }}
-      className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border px-4 text-sm! font-medium! disabled:opacity-60 ${appearance === 'hero' ? 'border-hero-text/20 bg-hero-text/10 text-hero-text hover:bg-hero-text/20' : 'border-line bg-surface text-heading hover:bg-surface-2'}`}>
-      <span className="capitalize">{current}</span>
+      className={`${appearance === 'sidebar' ? 'desktop-role-card w-full' : ''} inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border px-4 text-sm! font-medium! disabled:opacity-60 ${appearance === 'hero' || appearance === 'sidebar' ? 'border-hero-text/20 bg-hero-text/10 text-hero-text hover:bg-hero-text/20' : 'border-line bg-surface text-heading hover:bg-surface-2'}`}>
+      {appearance === 'sidebar' ? <><span aria-hidden="true" className="desktop-role-avatar grid size-10 shrink-0 place-items-center rounded-xl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span><span className="min-w-0 flex-1 text-left"><span className="block text-xs font-normal text-[var(--desktop-sidebar-muted)]">Viewing as</span><span className="mt-1 block capitalize">{current}</span></span></> : <span className="capitalize">{current}</span>}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div ref={menu} id={popoverId} popover="auto" role="menu" aria-label="Choose demo role" onKeyDown={menuKeys}
       onToggle={event => {
         const showing = event.newState === 'open'; setOpen(showing);
+        if (showing && appearance === 'sidebar') positionMenu();
         if (showing) requestAnimationFrame(() => {
           const items = menu.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]');
           const index = focusIntent.current === 'first' ? 0 : focusIntent.current === 'last' ? roles.length - 1 : roles.findIndex(role => role.value === current);

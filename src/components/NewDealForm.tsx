@@ -2,7 +2,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui';
-import { Card, Notice } from './layout';
+import { Card, Notice } from './layoutPrimitives';
 import { TermsListEditor } from './TermsListEditor';
 import { callApi, ErrorNote } from './client';
 import { TermsAssistant } from './TermsAssistant';

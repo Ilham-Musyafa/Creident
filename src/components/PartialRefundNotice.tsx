@@ -1,6 +1,6 @@
 import type { StoredTx } from '../lib/repository';
 import type { AuditEvent } from '../lib/audit/chain';
-import { Notice } from './layout';
+import { Notice } from './layoutPrimitives';
 import { money } from './view';
 
 export function PartialRefundNotice({ tx, events }: { tx: StoredTx; events: AuditEvent[] }) {

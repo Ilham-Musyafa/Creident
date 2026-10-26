@@ -13,6 +13,14 @@
   --mobile-panel-overlap: -28px;
   --mobile-tile-bg: var(--surface-2);
   --mobile-tile-text: var(--heading);
+  --desktop-sidebar-width: 248px;
+  --desktop-content-width: 1200px;
+  --desktop-sidebar-bg: var(--brand-navy);
+  --desktop-sidebar-text: var(--brand-ice);
+  --desktop-sidebar-muted: var(--brand-sky);
+  --desktop-sidebar-line: color-mix(in srgb, var(--brand-sky) 25%, var(--brand-navy));
+  --desktop-sidebar-hover: color-mix(in srgb, var(--brand-sapphire) 18%, var(--brand-navy));
+  --desktop-role-bg: color-mix(in srgb, var(--brand-ice) 10%, var(--brand-navy));
   /* Stable palette samples for decorative theme previews in either current theme. */
   --preview-light-bg: #F7FAFF; --preview-light-surface: #FFFFFF; --preview-light-line: #D4DFEF;
   --preview-dark-bg: #07142F; --preview-dark-surface: var(--brand-navy); --preview-dark-line: #284674;
@@ -133,14 +141,37 @@ button, a, input, textarea, select { outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; } }
 @media print { body { background: #fff; } main { padding-bottom: 0 !important; } a[aria-label='Back'] { display: none; } }
 
-/* Desktop navigation enters from the left; native dialog handles modal focus. */
-@keyframes navigation-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-.desktop-navigation[open] { animation: navigation-enter 180ms ease-out; }
-.desktop-navigation nav { width: 100%; border-right: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .desktop-navigation[open] { animation: none; }
+/* The new shell wrapper contributes no box to the unchanged mobile layout. */
+@media (width < 1024px) { .desktop-main-area { display: contents; } }
+/* Desktop shell only: mobile keeps its existing AppShell/nav geometry. */
+@media (width >= 1024px) {
+  .desktop-sidebar {
+    width: var(--desktop-sidebar-width); border-color: var(--desktop-sidebar-line);
+    background: var(--desktop-sidebar-bg); color: var(--desktop-sidebar-text);
+  }
+  .desktop-sidebar-link:hover { background: var(--desktop-sidebar-hover); }
+  .desktop-sidebar-link[aria-current="page"] { background: var(--brand-sapphire); color: var(--on-accent); font-weight: 600; }
+  .desktop-demo-badge { border-color: var(--desktop-sidebar-line); color: var(--desktop-sidebar-muted); }
+  .desktop-sidebar .desktop-role-card {
+    min-height: 72px; justify-content: flex-start; padding: 12px; border-radius: 20px;
+    border-color: var(--desktop-sidebar-line); background: var(--desktop-role-bg); color: var(--hero-text);
+  }
+  .desktop-role-avatar { background: var(--brand-sapphire); color: var(--on-accent); }
+  .desktop-sidebar :is(a,button):focus-visible { outline: 3px solid var(--brand-sky); outline-offset: 3px; }
+  .desktop-main-area, .desktop-topbar { margin-left: var(--desktop-sidebar-width); }
+  .desktop-topbar-inner { min-height: 100px; max-width: var(--desktop-content-width); padding: 20px 28px; }
+  .desktop-main-area .desktop-content { max-width: var(--desktop-content-width); padding: 28px 28px 48px; }
+  .desktop-skip { position: fixed; top: 8px; left: calc(var(--desktop-sidebar-width) + 16px); z-index: 60; transform: translateY(-160%); }
+  .desktop-skip:focus { transform: none; }
+  .desktop-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+  .desktop-theme-panel { position: fixed; inset: 76px 24px auto auto; width: 288px; max-width: calc(100vw - 32px); }
+  .desktop-transaction-search { width: clamp(220px, 24vw, 340px); }
+  .desktop-transaction-search > div { margin-bottom: 0; align-items: center; flex-wrap: nowrap; }
+  .desktop-transaction-search label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
-
+@media print {
+  .desktop-main-area { margin-left: 0; }
+}
 
 /* Owner's NexoBank reference: original CSS waves in Creident's Sapphire palette. */
 .mobile-brand-banner { background: linear-gradient(135deg, var(--mobile-header-start), var(--mobile-header-end)); }

@@ -1,5 +1,5 @@
 import { paypalDisputeLabel, type PayPalDisputeLabelKind } from '../lib/paypalDisputeLabels';
-import { Card, Notice, SectionTitle } from './layout';
+import { Card, Notice, SectionTitle } from './layoutPrimitives';
 import { KeyValue } from './ui';
 import { ActionButton, PayPalDisputeActions } from './client';
 import { PayPalMessageDraft } from './OutboundDrafts';

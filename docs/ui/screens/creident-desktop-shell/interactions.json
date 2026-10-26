@@ -1,0 +1,13 @@
+{
+  "scenarios": 18,
+  "errors": [],
+  "checks": [
+    "Transaction search/filter URL and result behavior",
+    "Role menu above card, focus return and query retention",
+    "Light/dark/system control and persistence",
+    "All Learn destinations and active states",
+    "Fixed sidebar while window scrolls",
+    "Keyboard skip link and all sidebar targets/focus",
+    "Configured reviewer API code gate: 403/200"
+  ]
+}

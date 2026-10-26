@@ -106,7 +106,7 @@ export function CodeBadge({ code }: { code: string }) { return <strong className
 
 type NavItem = { label: 'Home' | 'Deals' | 'Audit' | 'Menu'; href: string };
 const navItems: NavItem[] = [{ label: 'Home', href: '/' }, { label: 'Deals', href: '/deals' }, { label: 'Audit', href: '/audit' }, { label: 'Menu', href: '/menu' }];
-function NavIcon({ name }: { name: NavItem['label'] }) {
+export function NavIcon({ name }: { name: NavItem['label'] }) {
   const path = { Home: <><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></>, Deals: <><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></>, Audit: <><path d="M6 3h9l4 4v14H5V3zM14 3v5h5M8 12h8M8 16h6"/></>, Menu: <><path d="M19.31 9.91L21.88 10.44L21.88 13.56L19.31 14.09L18.65 15.68L20.09 17.88L17.88 20.09L15.68 18.65L14.09 19.31L13.56 21.88L10.44 21.88L9.91 19.31L8.32 18.65L6.12 20.09L3.91 17.88L5.35 15.68L4.69 14.09L2.12 13.56L2.12 10.44L4.69 9.91L5.35 8.32L3.91 6.12L6.12 3.91L8.32 5.35L9.91 4.69L10.44 2.12L13.56 2.12L14.09 4.69L15.68 5.35L17.88 3.91L20.09 6.12L18.65 8.32Z"/><circle cx="12" cy="12" r="3"/></> }[name];
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">{path}</svg>;
 }

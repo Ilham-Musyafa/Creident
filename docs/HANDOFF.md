@@ -173,6 +173,40 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Persistent desktop sidebar shell
+
+- Confirmed previous mobile Home task finished at 94b24d9. ui/creident-mockup remains
+  unmerged, so continued that branch from **94b24d9**, as requested. No main push,
+  merge or deployment. Desktop reference ZIP PNGs archived under
+  docs/ui/reference/creident-mockup/desktop/; example data never copied into code.
+- DesktopNavigation replaces its sole hamburger/drawer consumer with fixed 248px
+  navy sidebar, four primary links, existing Learn routes/anchors, server-cookie
+  demo role card and simulated/Sandbox notice. Route/hash current states, keyboard
+  focus, skip-to-content, above-card role popover and existing theme control work.
+- AppShell now reads the existing request role/mode. Presentation-only layout helpers
+  moved unchanged to layoutPrimitives.tsx; nine client import paths updated to keep
+  server cookie APIs out of browser bundles. Body JSX retained. Existing synchronous
+  receipt tests mock only AppShell, preserving all financial/receipt assertions.
+- TransactionsBrowser portals its original controlled search to the top bar on /deals
+  only; filters/URL/history preserved. No global search or invented optional count
+  badge. Existing NavIcon reused. Desktop tokens/container (1200px) and .desktop-grid
+  (12 columns) added. Mobile wrapper has display:contents; print offsets removed.
+- Gates: 497 tests/48 files, typecheck, build and diff check passed on Node 22.23.4.
+  Browser: 408 views (17 routes x 4 widths x 3 roles x 2 themes), no runtime exceptions
+  or overflow; 18 interactive desktop scenarios, 126 shell text/contrast checks pass.
+  Existing reviewer gate rejects missing code. Expected invalid callback API 400s
+  are documented; no valid payment callback/money flow was invoked.
+- Mobile comparison: 102 pairs vs 94b24d9 with fixed QA-only clock. Stable views
+  including Home/Transactions/Records/Settings match exactly. Oversight widgets are
+  allowed to finish at expanded height. 100/102 raw pairs are pixel-identical; About
+  buyer-dark has 182 border pixels and callback seller-light 58 border pixels differing
+  by <=2 RGB levels, no text/layout change. Raw exceptions retained in evidence.
+- Screenshots/evidence: docs/ui/screens/creident-desktop-shell/. Updated UI.md.
+  Baselines/scripts/DB remain /tmp/creident-shell-*; final local app port 3226,
+  isolated baseline source at /tmp/creident-shell-baseline-src (94b24d9), port 3224.
+  No provider credentials, new dependencies or API/domain/payment changes.
+- Commit/push/PR status will be recorded after publication. No owner decision pending.
+
 ### 2026-10-26 — Mobile Creident Home and shared primitives
 
 - Took requested branch path: ui/nexobank-home (e07eb9d) is merged; created

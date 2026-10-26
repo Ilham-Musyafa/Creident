@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { createPortal } from 'react-dom';
 import { MobileTransactions } from './MobileTransactions';
 import { useEffect, useState } from 'react';
-import { EmptyState } from './layout';
+import { EmptyState } from './layoutPrimitives';
 import { SeedButton } from './client';
 import type { Role } from './view';
 import { StatusPill } from './ui';
@@ -11,6 +12,8 @@ import { TransactionIcon } from './TransactionIcon';
 import { TRANSACTION_FILTERS, readTransactionFilter, transactionQuery, searchTransactionRows, matchesTransactionFilter, sortTransactionRows, type TransactionFilter, type TransactionRow } from './transactionsView';
 
 export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }: { role: Role; rows: TransactionRow[]; initialFilter: TransactionFilter; initialQuery: string }) {
+  const [searchHost, setSearchHost] = useState<HTMLElement | null>(null);
+  useEffect(() => { setSearchHost(document.getElementById('desktop-transaction-search')); }, []);
   const [filter, setFilter] = useState(initialFilter);
   const [query, setQuery] = useState(initialQuery);
   useEffect(() => {
@@ -28,14 +31,15 @@ export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }:
   };
   const searched = searchTransactionRows(rows, query);
   const visible = sortTransactionRows(searched.filter(row => matchesTransactionFilter(row, filter)));
-  return <><MobileTransactions role={role} rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
-    <div className="mb-4 flex flex-wrap items-end gap-3">
+  const desktopSearch = (<div className="mb-4 flex flex-wrap items-end gap-3">
       <div className="min-w-0 flex-1"><label htmlFor="transaction-search" className="mb-2 block text-sm font-semibold text-heading">Find a transaction</label><div className="relative">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-3 top-3 size-5 text-muted"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg>
         <input id="transaction-search" type="search" maxLength={200} value={query} onChange={event => update(filter, event.target.value)} placeholder="Search by item name" className="min-h-11 w-full rounded-[14px] border border-line bg-surface py-2 pl-10 pr-3 text-sm text-text placeholder:text-muted"/>
       </div></div>
       {(query || filter !== 'all') && <button type="button" onClick={() => update('all', '')} className="min-h-11 rounded-full border border-line bg-surface px-4 text-sm font-semibold text-heading hover:bg-surface-2">Clear filters</button>}
-    </div>
+    </div>);
+  return <><MobileTransactions role={role} rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
+    {searchHost ? createPortal(desktopSearch, searchHost) : desktopSearch}
     <div role="group" aria-label="Filter transactions" className="mb-4 flex flex-wrap gap-2">
       {(Object.keys(TRANSACTION_FILTERS) as TransactionFilter[]).map(key => {
         const count = searched.filter(row => matchesTransactionFilter(row, key)).length;

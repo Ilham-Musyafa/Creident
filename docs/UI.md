@@ -129,7 +129,7 @@ Mapping from `TxStatus` (src/lib/domain/types.ts) to labels:
 | `ChainStatus` | Success notice "Chain verified · N events" + head hash; error state when broken. |
 | `Field` / `Input` | Label above, 44px input, placeholder in muted. |
 | `SegmentedControl` | Used for role switch (demo) and appearance. |
-| `BottomNav` | Mobile: Home, Transactions, Records, Settings, with text labels; no New/FAB tab. Desktop (≥1024px): Menu button opens a modal sidebar sliding right from the left edge (owner-approved 2026-10-23), with the same items; close button, outside click and Escape dismiss it. Focus is contained and restored; reduced motion disables entry animation. Content max-width 1100px. |
+| `BottomNav` | Mobile: Home, Transactions, Records, Settings, with text labels; no New/FAB tab. Desktop (≥1024px): persistent 248px navy sidebar, route-aware main/Learn links, existing demo-role card and per-page top bar. Main content max-width 1200px. Skip-to-content and visible keyboard focus. Supersedes the 2026-10-23 hamburger drawer; mobile geometry is unchanged. |
 | `CodeBadge` | One-time evidence code in mono, e.g. `HV-1042 · 7K2Q`. |
 
 ## 7. Screens (see mockups)
@@ -533,3 +533,41 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   their content layouts/filters/controls are unchanged. All four desktop pages at
   1440px remain pixel-identical across three roles and both themes. Captures and
   browser/comparison evidence: `ui/screens/creident-home/`.
+
+
+### Persistent desktop shell (owner-approved, 2026-10-26)
+
+- Supersedes previous desktop drawer references above. Scope is only the shell at
+  1024px and up. Keep page bodies and the completed mobile Home composition intact.
+  Reference originals: `ui/reference/creident-mockup/desktop/` from the owner's ZIP.
+  Example balances, names, dates, hashes, global search and content dashboards are
+  not copied. The existing serif wordmark/local fonts and source palette remain.
+- `AppShell` reads the same request demo-role cookie as pages and passes role/mode
+  to `DesktopNavigation`. Navy sidebar is fixed, 248px, with original four primary
+  destinations and active Sapphire icon/label pill using AA dark text. Learn links
+  use existing About/decisions, Fairness, Limitations and About routes/anchors.
+  Primary/secondary selection follows the pathname/hash, including history changes.
+- Bottom role card reuses QuickRoleSwitch (Viewing as + role). Its native menu can
+  open above the card, with keyboard controls and return focus. Hidden mobile/desktop
+  triggers cannot consume each other's focus restoration. Reviewer code requirements
+  remain enforced by the existing pages/APIs; the role card is not authentication.
+  Show the actual simulated/Sandbox notice. No transaction badge is fabricated:
+  AppShell has no existing shared action count, so the optional badge is omitted.
+- Top bar supplies route-specific title/subtitle and existing Light/Dark/System
+  control in a native popover. Only `/deals` has search: TransactionsBrowser portals
+  the existing controlled input into the header, retaining query/filter/history and
+  clear behavior. No global search or new data lookup is introduced.
+- Desktop content caps at 1200px with 28px padding; `.desktop-grid` offers a future
+  12-column/minmax(0,1fr) grid. It is not applied to redesign current page bodies.
+  The shell wrapper contributes no mobile box (`display: contents`); existing mobile
+  spacing/navigation remain. Print hides shell controls and removes the sidebar offset.
+- `layoutPrimitives.tsx` is a presentation-only extraction of existing PageHeader,
+  Card, SectionTitle, Notice and EmptyState, so client consumers do not import the
+  server cookie-based shell. Their markup/styles are unchanged. Existing body titles
+  remain; consolidating page content/headers belongs to a later content pass.
+- Text/tap/focus checks cover all roles and themes. All 17 AppShell routes were checked
+  at 1440/1280/1024/390 (408 page views) with no horizontal overflow/runtime exceptions.
+  Captures, functional checks and detailed mobile raster comparisons are documented
+  in `ui/screens/creident-desktop-shell/README.md`, including dynamic-widget readiness
+  and the tiny callback-border raster difference. Do not claim every raw pixel pair
+  is identical when comparison evidence records a rendering exception.

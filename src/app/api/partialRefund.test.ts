@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import type { DatabaseSync } from 'node:sqlite';
@@ -14,6 +15,13 @@ import { POST as tick } from './jobs/tick/route';
 import { POST as review } from './transactions/[id]/review/route';
 import { POST as copilot } from './transactions/[id]/ai/copilot/route';
 import { POST as returned } from './transactions/[id]/return/route';
+
+// Receipt assertions use React's synchronous legacy renderer, not the Next RSC pipeline.
+// Keep receipt content/controls intact; the async cookie-based shell is browser-tested separately.
+vi.mock('../../components/layout', async (importOriginal) => ({
+  ...await importOriginal<typeof import('../../components/layout')>(),
+  AppShell: ({ children }: { children: ReactNode }) => children,
+}));
 
 let db: DatabaseSync; let repo: TransactionRepository; let tx: StoredTx;
 const param = () => ({ params: Promise.resolve({ id: tx.id }) });
