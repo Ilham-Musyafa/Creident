@@ -56,7 +56,7 @@ credentials were used. The reviewer code in QA was a disposable local fixture.
   `94b24d9`, using the same synthetic DB and a fixed clock in QA only. Home,
   Transactions, Records, Settings and the other stable views are pixel-identical.
   Reviewer oversight grids are captured only after all widgets are loaded at expanded
-  height; the callback after its error resolves. The raw comparison records one
+  height; the callback after its error resolves.
   **100/102 raw pairs are pixel-identical**. The About buyer-dark rounded border
   differs in 182 pixels and callback seller-light border in 58 pixels, both at a
   maximum of 2 RGB levels with matching dimensions/text/layout. These tiny raster
