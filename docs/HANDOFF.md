@@ -206,7 +206,10 @@ Still open:
   in docs/ui/screens/deal-detail-story/. UI.md updated. QA DB /tmp/creident-story.sqlite
   is isolated; original fixture/seed unchanged. Scripts /tmp/creident-story-*;
   production browser server 3229. No owner decision, merge or deployment.
-- Publication status will be recorded after commit/push.
+- Implementation `b5dc67a` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-deal-story-pr.md. No merge or deployment.
 
 ### 2026-10-26 — Mobile info pages and explicit full-bleed opt-in
 
