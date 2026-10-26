@@ -173,6 +173,39 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Mobile info pages and explicit full-bleed opt-in
+
+- Fetched origin/main (`9a1acd1`); ui/creident-mockup remains unmerged. Continued
+  that branch from `3d98b87` as requested. Planning branch remains separate.
+- Root cause: AppShell inferred zero mobile padding from Home/Menu active state.
+  Now only mobileFullBleed selects zero padding. Home and Settings explicitly opt
+  in, preserving their existing header/panel geometry. Transactions and Records
+  already opted in; all other default pages retain px-5 pt-6.
+- All implicit-rule routes: /, /menu, /about (#decisions/#limitations), /fairness,
+  /reviewer/oversight. No other Menu-active pages. Oversight and its role/code
+  notices regain the ordinary 20px inset; Studio/access logic is unchanged.
+- New InfoPageShell composes compact MobileBrandHeader, existing role dropdown,
+  MobilePanel and original PageHeader/back /menu for About/Fairness. Mobile-only
+  CSS scopes 24px card/rule/notice/logo radius, 16px content insets, 18px headings,
+  28px fairness values, wrapping, 44px/focus-visible summaries and anchor margin.
+  Native rule accordions, chevrons, chips and all copy/data remain intact. Notice
+  gains an optional className hook; its defaults on other pages are unchanged.
+- Node 22.23.4: 497 tests/48 files, typecheck, production build and diff check pass.
+  Browser: 60 before + 60 after views at 360/390/1440, Buyer/Reviewer, both themes;
+  no after overflow/page exceptions. Eight interactive scenarios check Settings
+  anchor links/back, 56 keyboard rule toggles, focus/44px targets, card geometry
+  and unchanged visible copy. Seller/locked-Reviewer smoke, 642 all-role/theme
+  text/contrast probes and 12 other-page regression checks pass.
+- All 16 Home/Settings mobile raster pairs and all 12 desktop About/Fairness/
+  oversight pairs are identical. Desktop Home's four pairs also identical.
+  Desktop Settings has three tiny border raster exceptions (23/2/5 pixels,
+  max 1 RGB level); retained transparently, no geometry/text change.
+- Evidence/screenshots: docs/ui/screens/info-pages-mobile/; UI.md updated.
+  QA scripts /tmp/creident-info-*.mjs, extra raw screenshots under
+  /tmp/creident-info-extra-screens; local after production server 3228. No new
+  dependencies, lib/API/eval/payment/rule/state/audit changes. No owner decision.
+- Publication status recorded after commit/push; no merge or deployment.
+
 ### 2026-10-26 — Mobile Home Demo markers and role-relevant rows
 
 - Continued unmerged `ui/creident-mockup` from `0d05032` as requested.

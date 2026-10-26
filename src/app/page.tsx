@@ -43,5 +43,5 @@ export default async function HomePage() {
     active, inDispute, completed, actionCount, actionTitle, actions, recent,
     recentTitle: role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent transactions',
     verified, total: chains.length, simulated: simulatedPayPal() };
-  return <AppShell active="Home"><DesktopHome key={role} {...homeData}/><MobileHome key={role} {...homeData} recent={mobileRecent}/></AppShell>;
+  return <AppShell active="Home" mobileFullBleed><DesktopHome key={role} {...homeData}/><MobileHome key={role} {...homeData} recent={mobileRecent}/></AppShell>;
 }

@@ -573,3 +573,30 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   in `ui/screens/creident-desktop-shell/README.md`, including dynamic-widget readiness
   and the tiny callback-border raster difference. Do not claim every raw pixel pair
   is identical when comparison evidence records a rendering exception.
+
+### Mobile info-page spacing (2026-10-26)
+
+- AppShell uses zero mobile padding only with explicit `mobileFullBleed`; active
+  navigation no longer chooses geometry. Home and Settings explicitly opt in,
+  retaining their own header/panel insets. Transactions and Records already opt in.
+  Ordinary pages retain `px-5 pt-6`, including Reviewer oversight and its access notices.
+- About (including #decisions / #limitations) and Fairness use InfoPageShell:
+  compact MobileBrandHeader, existing role dropdown, overlapping MobilePanel with
+  20px sides, original title/subtitle and Back to `/menu`. Desktop uses the original
+  PageHeader and transparent panel wrapper, with unchanged page geometry.
+- Below 1024px only, `.info-panel` cards, notices, rule rows and logo box use 24px
+  radius and 16px content padding, matching the Records explainer card scale.
+  Rule containers have no extra outer padding: summary and expanded body each use
+  16px. Warning Notice colors retain their meaning; ordinary cards use `--bg`.
+  These hooks do not change Card/Notice defaults on other pages or desktop.
+- Info headings are 18px with shared spacing; body text remains at least 14px,
+  rule chips 12px, and the source brand tagline retains its prescribed 12px scale.
+  Fairness values are 28px on mobile; notices/metrics share the same grid inset.
+  Long text/IDs wrap. No evaluation data, wording, metric formula or claim changes.
+- Native details/summary remains keyboard accessible. All info summaries are at
+  least 44px, with explicit visible focus; existing chevrons and R1–R7 labels stay.
+  Anchor sections use 24px scroll margin; end-of-document anchors may stop lower
+  when there is no further content to scroll, but remain visible above the dock.
+- Evidence: `ui/screens/info-pages-mobile/`. Home/Settings at 360/390px remain
+  pixel-identical. About/Fairness/oversight at 1440px remain pixel-identical;
+  raw comparison data records tiny unrelated Settings desktop border raster noise.

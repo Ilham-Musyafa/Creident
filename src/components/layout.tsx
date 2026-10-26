@@ -17,7 +17,7 @@ export async function AppShell({ active, children, mobileFullBleed = false }: { 
         <BottomNav active={active}/>
       </div>
       <div className="desktop-main-area">
-        <main id="main-content" tabIndex={-1} className={`desktop-content hv-page mx-auto min-w-0 w-full max-w-[1100px] pb-32 lg:px-10 lg:pb-12 lg:pt-10 ${(mobileFullBleed || active === 'Home' || active === 'Menu') ? 'px-0 pt-0' : 'px-5 pt-6'}`}>{children}</main>
+        <main id="main-content" tabIndex={-1} className={`desktop-content hv-page mx-auto min-w-0 w-full max-w-[1100px] pb-32 lg:px-10 lg:pb-12 lg:pt-10 ${mobileFullBleed ? 'px-0 pt-0' : 'px-5 pt-6'}`}>{children}</main>
       </div>
     </div>
   );

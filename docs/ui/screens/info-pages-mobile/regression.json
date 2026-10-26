@@ -1,0 +1,74 @@
+[
+  {
+    "role": "buyer",
+    "path": "/deals",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "buyer",
+    "path": "/deals/new",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "buyer",
+    "path": "/audit",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "buyer",
+    "path": "/audit/how-it-works",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "seller",
+    "path": "/deals",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "seller",
+    "path": "/deals/new",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "seller",
+    "path": "/audit",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "seller",
+    "path": "/audit/how-it-works",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "reviewer",
+    "path": "/deals",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "reviewer",
+    "path": "/deals/new",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "reviewer",
+    "path": "/audit",
+    "status": 200,
+    "overflow": false
+  },
+  {
+    "role": "reviewer",
+    "path": "/audit/how-it-works",
+    "status": 200,
+    "overflow": false
+  }
+]

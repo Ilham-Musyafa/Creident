@@ -28,12 +28,12 @@ export function SectionTitle({ children, right }: { children: ReactNode; right?:
   return <div className="mb-3 mt-6 flex items-center justify-between"><h2 className="text-[15px] font-bold text-heading">{children}</h2>{right}</div>;
 }
 
-export function Notice({ tone = 'info', children }: { tone?: 'info' | 'warning'; children: ReactNode }) {
+export function Notice({ tone = 'info', children, className = '' }: { tone?: 'info' | 'warning'; children: ReactNode; className?: string }) {
   const style = tone === 'warning'
     ? { background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }
     : { background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--muted)' };
   // A div, not a p: some notices hold block content (details, paragraphs).
-  return <div className="rounded-[16px] border p-3 text-sm leading-relaxed" style={style}>{children}</div>;
+  return <div className={`rounded-[16px] border p-3 text-sm leading-relaxed ${className}`} style={style}>{children}</div>;
 }
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {

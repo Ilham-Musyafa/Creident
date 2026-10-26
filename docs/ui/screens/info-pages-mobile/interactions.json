@@ -1,0 +1,678 @@
+{
+  "scenarios": [
+    {
+      "width": 360,
+      "role": "buyer",
+      "theme": "light",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 554.875
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "role": "buyer",
+      "theme": "dark",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 554.875
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "role": "reviewer",
+      "theme": "light",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 554.875
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "role": "reviewer",
+      "theme": "dark",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 554.875
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 340
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "role": "buyer",
+      "theme": "light",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 577.125
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "role": "buyer",
+      "theme": "dark",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 577.125
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "role": "reviewer",
+      "theme": "light",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 577.125
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "role": "reviewer",
+      "theme": "dark",
+      "anchors": [
+        {
+          "anchor": "decisions",
+          "top": 16
+        },
+        {
+          "anchor": "limitations",
+          "top": 577.125
+        }
+      ],
+      "accordions": 7,
+      "cards": [
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        },
+        {
+          "radius": "24px",
+          "padding": "16px",
+          "left": 20,
+          "right": 370
+        }
+      ]
+    }
+  ],
+  "sellerAndLockedReviewerSmoke": true,
+  "copyUnchanged": true
+}

@@ -227,6 +227,25 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .mobile-dock a:focus-visible { outline-color: var(--brand-sky); outline-offset: -3px; }
 }
 
+/* Info pages use the Records explainer's 24px cards and 16px content inset. */
+@media (width < 1024px) {
+  .info-panel :is(.info-card, .info-notice, .info-rule) { border-radius: 24px; }
+  .info-panel :is(.info-card, .info-notice) { padding: 16px; }
+  .info-panel :is(.info-card, .info-rule) { background: var(--bg); }
+  .info-panel .info-content { overflow-wrap: anywhere; }
+  .info-panel .info-content h2 { font-size: 18px; line-height: 1.45; }
+  .info-panel .info-content > section { scroll-margin-top: 24px; }
+  .info-panel .info-content summary { min-height: 44px; }
+  .info-panel summary:focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }
+  .info-panel .info-rules { display: grid; gap: 12px; }
+  .info-panel .info-rules > details { margin: 0; }
+  .info-panel .info-rule > summary { padding: 16px; }
+  .info-panel .info-rule > p { padding: 16px; }
+  .info-panel #limitations li { padding-left: 4px; }
+  .info-panel .info-metric-group > div:first-child { margin-top: 0; }
+  .info-panel .info-metric-value { font-size: 28px; line-height: 1.25; }
+}
+
 /* Records presentation only. Desktop and the underlying audit components stay intact. */
 @media (width < 1024px) {
   .records-panel .hv-verified { animation: none; }
