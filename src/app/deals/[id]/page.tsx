@@ -100,13 +100,17 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             {captureFailed && <Notice tone="warning">PayPal could not charge this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.</Notice>}
             <PartialRefundNotice tx={tx} events={allEvents}/>
           </section>
+          {role === 'seller' && (created || tx.status === 'DRAFT') && <Card className="deal-share space-y-3">
+            <h2 className="text-lg text-heading">Share with the buyer</h2>
+            <Notice>Share this deal link with the buyer.</Notice>
+            <CopyLinkButton path={`/deals/${id}/checkout`}/>
+          </Card>}
           {decision && <DealDecisionSummary tx={tx} decision={decision} recommendation={recommendation} events={allEvents}/>}
           <Card><h2 className="mb-4 text-lg text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)} showCurrentLabel/></Card>
           <ActivityFeed txId={id} items={activityFeed(allEvents)} now={now}/>
         </div>
 
         <DealSecondary>
-          {created && role === 'seller' && <Card className="space-y-3"><Notice>Deal created and your terms are accepted. Share the link with the buyer; they accept and pay on the checkout screen.</Notice><CopyLinkButton path={`/deals/${id}/checkout`}/></Card>}
           <DealDisclosure title="Locked terms">
           <KeyValue items={[
             ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
@@ -126,9 +130,9 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           </DealDisclosure>
-          {(tx.captured || paypalCases.length > 0) && <div className="deal-paypal">
+          <div className="deal-paypal">
             <PayPalDisputePanel tx={tx} cases={paypalCases} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
-          </div>}
+          </div>
           {role === 'seller' && disputeType === 'damaged' && <Card><h2 className="mb-3 text-lg text-heading">Courier claim</h2><CourierClaimPack txId={id}/></Card>}
           <Card className="space-y-2">
             <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Deal record</ButtonLink>

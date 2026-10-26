@@ -240,6 +240,7 @@ button, a, input, textarea, select { outline-offset: 3px; }
 .deal-story summary:focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }
 .deal-story .deal-disclosure[open] > summary svg { transform: rotate(180deg); }
 .deal-story .deal-paypal > section > div:first-child { margin-top: 0; }
+.deal-story .deal-paypal:empty { display: none; }
 @media (width >= 1024px) {
   .deal-secondary[data-fits="true"] { position: sticky; top: 24px; }
 }

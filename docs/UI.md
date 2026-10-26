@@ -614,8 +614,9 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   alternatives. Waiting roles get the existing task-helper wording naming the
   acting party, no next-step button, and relevant switch-role guidance. All error,
   capture-failure and partial-refund pending notices remain.
-- Decision card uses recorded human outcome/amount/reason and the receipt's exact
-  Yes / No, see reason / human escalation agreement logic. Reason is clamped to
+- Decision card uses recorded human outcome/amount/reason and stored payment-success
+  state (see follow-up below), plus the receipt's exact Yes / No, see reason /
+  human escalation agreement logic. Reason is clamped to
   two lines; View decision receipt opens the complete record. Required-return and
   pending decisions stay explicitly pending. No new confidence/AI marker.
 - Timeline data is unchanged. This page opts into a visible Current step label
@@ -623,12 +624,44 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
   Activity keeps its heading/record link and says No activity yet.
 - Secondary details come last on phones: Locked terms and Fees & payment details
   are native disclosures, initially closed, keyboard-focusable 44px summaries.
-  Desktop has one expanded copy in a 360px aside; short asides stick only while
-  their height fits. PayPal case tools, courier claim, created-deal sharing and
-  Deal record retain their existing components/routes, grouped with these details.
+  Desktop shows a normal expanded read-only section in a 360px aside, selected
+  by CSS from first paint; mobile uses native closed details. Short asides stick
+  only while their height fits. PayPal case tools, courier claim and Deal record
+  retain their existing components/routes here. Seller sharing belongs immediately
+  under the next-step card in the main column (follow-up below).
 - All deal-detail cards/notices/record panels use the info-page 24px radius / 16px
   inset scale at both widths, scoped by .deal-story and presentational data-ui
   hooks. Inner key/value lists in a disclosure are content, not nested cards.
   Other routes retain their existing styles. Body >=14px, chips >=12px; tokens,
   focus, wrapping and demo markers remain. No source lib/API/payment/rule/audit
   changes. Evidence and the complete status/role table: ui/screens/deal-detail-story/.
+
+
+### Deal detail truthfulness and first paint (2026-10-26 follow-up)
+
+- Outcome wording must reflect successful stored financial state, not just the
+  reviewer's choice or an event's requested effect. RELEASE requires captured=true
+  for Payment charged. Full refunds require REFUNDED (including frozenFrom);
+  VOIDED says Payment cancelled. Partial success requires completed metadata or
+  PARTIALLY_REFUNDED/frozenFrom. Otherwise retain neutral decision-recorded/pending
+  or awaiting-return wording. Never imply payout. Exact state/wording table:
+  ui/screens/deal-detail-story/followup/README.md.
+- All Decision amounts use the deal currency. Remove the card's unrecorded fee
+  assertion; policy copy in secondary fees is not a transaction fee receipt.
+  The create API remains USD-only; renderer compatibility is not new currency support.
+- Show Seller's Share with the buyer card immediately after #next-step whenever
+  created=1 or DRAFT. Do not claim the Seller already accepted merely from a URL
+  flag. Preserve the actual CopyLinkButton route and feedback.
+- Call PayPalDisputePanel without a page-level guard. Its original internal rule
+  still hides uncaptured/no-case deals; preserve all existing case/demo notices.
+- DealDisclosure has no effect-driven layout: CSS selects ordinary expanded
+  desktop sections or initially closed mobile details at 1024px. Both are rendered
+  from the same read-only children, but only one is visible/accessibility-exposed.
+  Do not place IDs or interactive controls inside this read-only component.
+  Native mobile summary remains 44px/focusable, also without JavaScript. The
+  24px/16px card scale and short-aside sticking behavior remain unchanged.
+
+- Verification caveat: full-app React streaming still needs its bootstrap JS to
+  reveal the page envelope. No-JS disclosure checks isolate the server HTML with
+  real application CSS; they prove component first-paint behavior, not full-app
+  no-JS support. AppShell streaming is outside this detail-page change.

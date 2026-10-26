@@ -173,6 +173,45 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Deal story follow-up: payment truthfulness and first paint
+
+- Continued ui/creident-mockup from e478337 as requested, no main push.
+- DealDecisionSummary now distinguishes reviewer choice from successful stored
+  payment state: captured flag, REFUNDED/VOIDED or frozenFrom, and completed
+  partial metadata/PARTIALLY_REFUNDED. Pending/failed effects use neutral labels;
+  a requested event effect alone is not evidence of success. All amounts use
+  tx.currency, including stored partial fallback. Removed unrecorded fee claim.
+  Recommendation/reason/link unchanged; never says seller payout occurred.
+- Seller share card moved immediately after #next-step in the main column for
+  created=1 OR DRAFT. Prior pre-b5 condition was created only; DRAFT fallback is
+  requested here. Copy does not falsely assume Seller acceptance. Actual copy
+  button and feedback tested, one card, no share card for other roles.
+- Restored unconditional PayPalDisputePanel invocation. Confirmed b5dc67a's parent
+  already had internal !captured && no cases -> null; that original visibility
+  rule and markers remain. The removed page guard was equivalent/redundant.
+- DealDisclosure no longer has client effects/matchMedia/open state. CSS selects
+  static expanded desktop sections or closed native mobile details from the same
+  read-only children. No repeated IDs/interactive children; only one variant
+  visible/accessibility-exposed. 24px/16px scale retained. Empty PayPal wrapper hidden.
+- Gates Node 22.23.4: npm test 517/49 files, typecheck, build, diff check pass.
+  Eleven added financial wording tests: success/failure/pending, requested-effect
+  non-proof, frozen terminal/partial fallback, currency (EUR renderer-only; API
+  remains USD-only), and split wording. No src/lib/API/payment/rule/audit changes.
+- Browser: 48 application views at 390/1440, light/dark, all three roles, plus 12
+  isolated actual SSR-markup/CSS no-JS checks. Correct share adjacency/copy URL,
+  desktop expanded/mobile initially closed, native keyboard, panel visibility,
+  no overflow/runtime errors. Sixteen actual screenshots in
+  docs/ui/screens/deal-detail-story/followup/; exact wording table/limits in README.
+- No-JS scope caveat: full app React streaming keeps content under hidden S:0 until
+  bootstrap JS reveals it. AppShell/streaming untouched in this task. The 12 no-JS
+  checks isolate returned server deal markup with real stylesheets to prove the
+  disclosure itself needs no JS; do not claim full-app no-JS support.
+- QA /tmp/creident-story-followup.sqlite copied from synthetic story fixture;
+  new screenshot deals use normal simulated APIs, existing actual refund/PayPal
+  case records reused. No payment-state edits for captures; original fixture and
+  seed unchanged. Scripts /tmp/creident-followup-*; final server local port 3231.
+- UI.md updated. No merge/deployment. Publication status recorded after push.
+
 ### 2026-10-26 — Deal detail story and one next-step card
 
 - Confirmed origin/main still 9a1acd1; ui/creident-mockup unmerged. Continued from
