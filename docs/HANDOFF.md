@@ -205,7 +205,12 @@ Still open:
   Baselines/scripts/DB remain /tmp/creident-shell-*; final local app port 3226,
   isolated baseline source at /tmp/creident-shell-baseline-src (94b24d9), port 3224.
   No provider credentials, new dependencies or API/domain/payment changes.
-- Commit/push/PR status will be recorded after publication. No owner decision pending.
+- Implementation commit `03a76c9` pushed to origin/ui/creident-mockup. PR creation
+  attempted once for this iteration; GitHub GraphQL API returned Forbidden. No PR
+  was created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-desktop-shell-pr.md. Follow-up docs commit records status.
+  No owner decision pending. No merge or deployment.
 
 ### 2026-10-26 — Mobile Creident Home and shared primitives
 
