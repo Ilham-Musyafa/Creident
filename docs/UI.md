@@ -600,3 +600,35 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
 - Evidence: `ui/screens/info-pages-mobile/`. Home/Settings at 360/390px remain
   pixel-identical. About/Fairness/oversight at 1440px remain pixel-identical;
   raw comparison data records tiny unrelated Settings desktop border raster noise.
+
+### Deal detail story (2026-10-26)
+
+- Detail heading is the stored item name; the deal ID is secondary. Main-column
+  order: summary, one Your next step card, recorded Decision if present, Progress,
+  Activity. The original duplicated Next banner is removed. Keep #next-step.
+- Summary uses the actual item, amount, text StatusPill and existing deadline data.
+  Demo payment · no real money remains visible for demo/simulated deals, including
+  drafts in simulated mode. No balance, payout or invented financial values.
+- Move the same acceptance/payment/shipping/inspection/evidence/review/return UI
+  into the one next-step branch. Inspection retains its existing confirm/dispute
+  alternatives. Waiting roles get the existing task-helper wording naming the
+  acting party, no next-step button, and relevant switch-role guidance. All error,
+  capture-failure and partial-refund pending notices remain.
+- Decision card uses recorded human outcome/amount/reason and the receipt's exact
+  Yes / No, see reason / human escalation agreement logic. Reason is clamped to
+  two lines; View decision receipt opens the complete record. Required-return and
+  pending decisions stay explicitly pending. No new confidence/AI marker.
+- Timeline data is unchanged. This page opts into a visible Current step label
+  and aria-current; the shared styleguide keeps its prior appearance. Empty
+  Activity keeps its heading/record link and says No activity yet.
+- Secondary details come last on phones: Locked terms and Fees & payment details
+  are native disclosures, initially closed, keyboard-focusable 44px summaries.
+  Desktop has one expanded copy in a 360px aside; short asides stick only while
+  their height fits. PayPal case tools, courier claim, created-deal sharing and
+  Deal record retain their existing components/routes, grouped with these details.
+- All deal-detail cards/notices/record panels use the info-page 24px radius / 16px
+  inset scale at both widths, scoped by .deal-story and presentational data-ui
+  hooks. Inner key/value lists in a disclosure are content, not nested cards.
+  Other routes retain their existing styles. Body >=14px, chips >=12px; tokens,
+  focus, wrapping and demo markers remain. No source lib/API/payment/rule/audit
+  changes. Evidence and the complete status/role table: ui/screens/deal-detail-story/.

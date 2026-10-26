@@ -21,7 +21,7 @@ export function PageHeader({ title, back, subtitle, right }: { title: string; ba
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-[22px] border border-line bg-surface p-4 ${className}`}>{children}</section>;
+  return <section data-ui="card" className={`rounded-[22px] border border-line bg-surface p-4 ${className}`}>{children}</section>;
 }
 
 export function SectionTitle({ children, right }: { children: ReactNode; right?: ReactNode }) {
@@ -33,7 +33,7 @@ export function Notice({ tone = 'info', children, className = '' }: { tone?: 'in
     ? { background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }
     : { background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--muted)' };
   // A div, not a p: some notices hold block content (details, paragraphs).
-  return <div className={`rounded-[16px] border p-3 text-sm leading-relaxed ${className}`} style={style}>{children}</div>;
+  return <div data-ui="notice" className={`rounded-[16px] border p-3 text-sm leading-relaxed ${className}`} style={style}>{children}</div>;
 }
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {

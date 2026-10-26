@@ -12,11 +12,10 @@ const ICON: Record<ActivityKind, { path: string; tone: string }> = {
 
 /** Recent deal activity in plain words, like a payments app feed; details live in the audit log. */
 export function ActivityFeed({ txId, items, now }: { txId: string; items: ActivityItem[]; now: string }) {
-  if (!items.length) return null;
-  return <section aria-label="Activity" className="rounded-[22px] border border-line bg-surface p-4">
+  return <section data-ui="card" aria-label="Activity" className="rounded-[22px] border border-line bg-surface p-4">
     <div className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-bold text-heading">Activity</h2>
       <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-heading hover:underline">Full deal record</Link></div>
-    <ol className="hv-stagger">
+    {!items.length ? <p className="text-sm text-muted">No activity yet</p> : <ol className="hv-stagger">
       {items.map((item) => {
         const icon = ICON[item.kind];
         return <li key={item.seq} className="flex items-center gap-3 py-2">
@@ -27,6 +26,6 @@ export function ActivityFeed({ txId, items, now }: { txId: string; items: Activi
           <time dateTime={item.ts} className="shrink-0 text-sm text-muted">{relativeTime(item.ts, now)}</time>
         </li>;
       })}
-    </ol>
+    </ol>}
   </section>;
 }

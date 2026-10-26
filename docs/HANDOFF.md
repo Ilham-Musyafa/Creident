@@ -173,6 +173,41 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Deal detail story and one next-step card
+
+- Confirmed origin/main still 9a1acd1; ui/creident-mockup unmerged. Continued from
+  70f2f67, no main push. Item is the page heading; ID secondary. Main order now
+  summary -> actual next-step UI -> recorded Decision -> Progress -> Activity.
+  Removed duplicate banner/CTA; keep #next-step, role/acceptance suppression and
+  every original action component/API/error/confirmation. Waiting text names the
+  party using existing presentation helpers. Pending refund/capture notices retained.
+- Decision summary reads existing human decisions/recommendations/events, uses
+  receipt outcome/agreement semantics and real amounts/reason/link. Pending return/
+  split decisions also remain visible; no invented outcome, payout or confidence.
+  Activity gets an empty state; Timeline optionally marks Current step as text.
+- Terms/fees/PayPal/courier/share/record info moves to secondary column/last on
+  mobile. DealDisclosure has one native copy, closed mobile/open desktop.
+  DealSecondary sticks only when its measured height fits. All detail cards use
+  24px/16px scale via scoped CSS/data-ui hooks. No other route restyling.
+- No src/lib, API, status/nextAction/timelineFor, payment, deadline, audit/evidence
+  hashing or dependency changes. No new confirmation dialog or AI replay marker.
+- Gates on Node 22.23.4: 506 tests/49 files (nine new focused presentation safety
+  tests), typecheck and production build pass. Browser: four UI walks at 390/1440,
+  light/dark through acceptance, demo approval, shipping, inspection, dispute,
+  both parties' evidence, review and decided receipt. Return, release, partial
+  refund and refund-without-return covered. No runtime exceptions.
+- 184 status/role/theme/width views: all 15 statuses, one next-step branch and no
+  duplicate main CTA, waiting roles no next-step button, expected disclosures,
+  no overflow/errors. Typical next-step top <=431px. REFUNDED/empty-feed use
+  explicitly synthetic view fixtures, not financial-flow claims. Extra UI checks
+  cover confirm receipt and demo PayPal inquiry/escalation/PDF/Reviewer sync.
+  1,172 body/chip/contrast probes pass. Disclosure keyboard/resize tested.
+- Screenshots, walkthroughs, matrix, tests and full role-action table documented
+  in docs/ui/screens/deal-detail-story/. UI.md updated. QA DB /tmp/creident-story.sqlite
+  is isolated; original fixture/seed unchanged. Scripts /tmp/creident-story-*;
+  production browser server 3229. No owner decision, merge or deployment.
+- Publication status will be recorded after commit/push.
+
 ### 2026-10-26 — Mobile info pages and explicit full-bleed opt-in
 
 - Fetched origin/main (`9a1acd1`); ui/creident-mockup remains unmerged. Continued
