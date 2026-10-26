@@ -1,0 +1,37 @@
+{
+  "pages": 48,
+  "errors": [],
+  "writes": [],
+  "targets": [
+    {
+      "role": "buyer",
+      "href": "/deals/fac43dc1-0991-4320-889c-167c0953fb24",
+      "text": "Inspect your item\n\nUsed phone, 128 GB\n\n1 day left\n\nInspect now"
+    },
+    {
+      "role": "buyer",
+      "href": "/deals/fac43dc1-0991-4320-889c-167c0953fb24",
+      "text": "Inspect your item\n\nUsed phone, 128 GB\n\n1 day left\n\nInspect now"
+    },
+    {
+      "role": "seller",
+      "href": "/deals/2dd4d474-4346-4857-ada4-d5993df58ad6/evidence",
+      "text": "Add evidence\n\nRoad bike helmet\n\n1 day left\n\nAdd evidence"
+    },
+    {
+      "role": "seller",
+      "href": "/deals/2dd4d474-4346-4857-ada4-d5993df58ad6/evidence",
+      "text": "Add evidence\n\nRoad bike helmet\n\n1 day left\n\nAdd evidence"
+    },
+    {
+      "role": "reviewer",
+      "href": "/deals/a43e1162-54b2-4a6a-9a08-7a928e0b09f6/review",
+      "text": "Review dispute\n\nSmartwatch\n\nReview now"
+    },
+    {
+      "role": "reviewer",
+      "href": "/deals/a43e1162-54b2-4a6a-9a08-7a928e0b09f6/review",
+      "text": "Review dispute\n\nSmartwatch\n\nReview now"
+    }
+  ]
+}

@@ -173,6 +173,46 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Mobile Creident Home and shared primitives
+
+- Took requested branch path: ui/nexobank-home (e07eb9d) is merged; created
+  `ui/creident-mockup` from latest origin/main `9a1acd1`. Separate unmerged security
+  audit branch is not stacked here. No main push, merge or deployment.
+- Original reference PNGs were absent. Owner first supplied generic finance JPEGs,
+  then the actual approved Creident concept sheet (Home light/dark) and inner-page
+  close-ups. Archived originals and Home crops with provenance under
+  docs/ui/reference/creident-mockup/. Concept example data never enters the app.
+- MobileBrandHeader has compact/hero variants, Demo badge and original gradient/wave/
+  brand/role control; MobilePanel extracts four duplicate wrappers. Tokens contain
+  new mobile values. StatusPill inherits semantic mobile tones; bottom dock active
+  icon+label uses Sapphire with AA dark text. Desktop styling remains intact.
+- Home: real approved amount/eye in header, two working role/Browse pills, four tiles,
+  inline first sorted role task with existing route/deadline and right-hand button,
+  up to three real rows, verification footer/warning, empty/seed and mode limits.
+  Reviewer has one actual queue row. No fake dates where current row data lacks one.
+- Reused MobileTransactionRow with compact layout, square icons, heading-font money,
+  actual status text and short deadline/full title. Compact approval says Approved ·
+  not charged; full label remains in title. Demo label visible globally and retained
+  per row for assistive technology. Existing noncompact layout remains intact.
+- Transactions/Settings/Records only inherit shared wrapper/header/chip/nav changes.
+  No API/domain/payment/PayPal/rules/deadline/audit/data model/dependency changes.
+- Required checks on Node 22.23.4: npm test (497/48 files), typecheck, build and diff
+  check passed. Browser: 59 page checks plus failed-chain cases; no runtime errors
+  or unintended write requests, all Home taps >=44px, 416 text size/contrast checks
+  pass. Role switching keeps page/filter URLs and keyboard focus. Reviewer API
+  returns 403 without its configured code, 200 with the synthetic local code.
+  Final browser results/captures: docs/ui/screens/creident-home/, including
+  390px light/dark roles, actual action routes, amount toggle, keyboard focus, role
+  URL/filter retention, reviewer gate, empty and failed cases; desktop comparison
+  covers all 24 page/role/theme combinations at 1440 against baseline 9a1acd1.
+- QA fixtures /tmp/creident-mockup-baseline.sqlite (13 deals), creident-home-empty.sqlite,
+  creident-home-failed.sqlite (isolated deliberate corruption); no test DB committed.
+  Before/after desktop captures under /tmp/creident-mockup-baseline and
+  /tmp/creident-mockup-after. Scripts /tmp/creident-home-check.mjs and
+  /tmp/creident-home-extra.mjs. UI.md and screenshot README updated.
+- Commit/push/PR details will be recorded after final verification and publication.
+  No owner decision pending; do not claim a PR/deployment before it exists.
+
 ### 2026-10-25 — Mobile Records matches the NexoBank design
 
 - Fetched main: PR #85 is merged at `5f191f4`. Took the requested merged-branch path:

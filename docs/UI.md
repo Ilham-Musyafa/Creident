@@ -488,3 +488,48 @@ hamburger opens the global navigation drawer; the Settings row uses the cog.
 - Explainer copy, audit verification/signing, API/domain/payment/rules/deadline behaviour
   are unchanged. No dependencies. See `docs/ui/screens/nexo-records/` for list/detail/
   explainer, failed-state captures and the desktop pixel-comparison evidence.
+
+
+### Mobile Creident concept refinement (owner-approved concept, 2026-10-26)
+
+- Below 1024px, Home puts approved (authorized, not charged) USD payments in the
+  navy-to-Sapphire header. Keep local Plus Jakarta Sans headings/amounts, DM Sans
+  text and original serif wordmark/symbol. Use the Demo badge, existing role
+  dropdown, 44px eye control and two real role/Browse header pills.
+- The original named concept files were absent, then the owner supplied generic
+  finance inspiration followed by the actual Creident light/dark five-screen concept
+  sheet and close-ups. Those Creident images are the primary reference, archived
+  in `ui/reference/creident-mockup/` with Home crops and provenance. Example data
+  and nonexistent features are never part of the application.
+- `MobileBrandHeader` defaults to compact for inner pages and accepts hero content
+  for Home. Original CSS waves are subdued behind readable text. Colours/overlap/
+  radius/tile settings live in globals.css tokens. New `MobilePanel` extracts four
+  previously duplicated wrappers: 28px top corners/overlap, soft mobile background
+  and the same desktop transparent wrapper overrides.
+- Home tiles are Actions (real count badge), Browse, Records and About. The latter
+  two local views retain the existing on-demand behavior and keyboard focus. The
+  inline next-task card uses the first existing sorted role task, item/deadline,
+  icon and one primary link on the right. Seller creation remains in the header.
+  Buyer “Inspect now” opens the existing confirm/dispute details; no money moves.
+- Your deals groups up to three existing recent rows (Reviewer uses actual queue
+  data; never pad it). Reuse MobileTransactionRow in compact mode with square icons,
+  local heading-font amounts, text chips and short real deadlines. Full deadlines
+  remain in title text; absent dates/deadlines are omitted. Demo labeling remains
+  visible in the header/footer and available per row to assistive technology.
+  The compact authorized chip reads “Approved · not charged”, with the existing
+  full label in its title. Internal statuses and ordinary/desktop labels are intact.
+- Shared StatusPill semantic mobile tones: completed → success; awaiting/frozen →
+  warning; disputed → danger; authorized/inspection → info; void → neutral. No status
+  is represented by colour alone. Desktop retains its original tones and spacing.
+- The floating safe-area dock keeps four tabs, no center +. Active icon and label
+  share a Sapphire pill with AA dark text (a deliberate contrast adaptation from
+  the concept). Body text is 14px+, small meta/chips 12px+, Home taps 44px+. Long
+  real labels can use more space than the concept; preserve readability over fitting
+  all content into one viewport. No dependency or external font requests are added.
+- Footer uses actual verified/total record checks and labels server scope. Failure
+  remains an alert plus warning/partial count, never a false all-verified summary.
+  Empty state retains the existing labelled-demo seed control and mode limitations.
+- Transactions/Settings/Records inherit shared header/panel/status/nav presentation;
+  their content layouts/filters/controls are unchanged. All four desktop pages at
+  1440px remain pixel-identical across three roles and both themes. Captures and
+  browser/comparison evidence: `ui/screens/creident-home/`.
