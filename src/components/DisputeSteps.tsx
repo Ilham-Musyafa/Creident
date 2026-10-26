@@ -52,7 +52,7 @@ export function DisputeSteps({ txId, evidenceWindow }: { txId: string; evidenceW
     {step === 2 && chosen && <div className="space-y-3">
       <dl className="rounded-[14px] bg-surface-2 p-3 text-sm">
         <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Problem</dt><dd className="text-right font-semibold text-heading">{chosen.label}</dd></div>
-        <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Payment</dt><dd className="text-right font-semibold text-heading">Stays held</dd></div>
+        <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Payment</dt><dd className="text-right font-semibold text-heading">Approved, not charged yet</dd></div>
         <div className="flex justify-between gap-3 py-1"><dt className="text-muted">Next</dt><dd className="text-right font-semibold text-heading">Add your evidence</dd></div>
       </dl>
       <p className="text-sm text-muted">The seller can add evidence too. Rules recommend an outcome; a person decides unclear cases.</p>

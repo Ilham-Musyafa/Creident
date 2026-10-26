@@ -32,7 +32,7 @@ export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }:
   const searched = searchTransactionRows(rows, query);
   const visible = sortTransactionRows(searched.filter(row => matchesTransactionFilter(row, filter)));
   const desktopSearch = (<div className="mb-4 flex flex-wrap items-end gap-3">
-      <div className="min-w-0 flex-1"><label htmlFor="transaction-search" className="mb-2 block text-sm font-semibold text-heading">Find a transaction</label><div className="relative">
+      <div className="min-w-0 flex-1"><label htmlFor="transaction-search" className="mb-2 block text-sm font-semibold text-heading">Find a deal</label><div className="relative">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-3 top-3 size-5 text-muted"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg>
         <input id="transaction-search" type="search" maxLength={200} value={query} onChange={event => update(filter, event.target.value)} placeholder="Search by item name" className="min-h-11 w-full rounded-[14px] border border-line bg-surface py-2 pl-10 pr-3 text-sm text-text placeholder:text-muted"/>
       </div></div>
@@ -40,14 +40,14 @@ export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }:
     </div>);
   return <><MobileTransactions role={role} rows={rows} searched={searched} visible={visible} query={query} filter={filter} update={update}/><div className="hidden min-w-0 lg:block">
     {searchHost ? createPortal(desktopSearch, searchHost) : desktopSearch}
-    <div role="group" aria-label="Filter transactions" className="mb-4 flex flex-wrap gap-2">
+    <div role="group" aria-label="Filter deals" className="mb-4 flex flex-wrap gap-2">
       {(Object.keys(TRANSACTION_FILTERS) as TransactionFilter[]).map(key => {
         const count = searched.filter(row => matchesTransactionFilter(row, key)).length;
         return <button key={key} type="button" aria-label={`${TRANSACTION_FILTERS[key]} (${count})`} aria-pressed={key === filter} onClick={() => update(key, query)} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold ${key === filter ? 'bg-strong text-on-strong' : 'border border-line bg-surface text-heading hover:bg-surface-2'}`}><span className="text-sm">{key === 'action' ? <><span className="sm:hidden">Your actions</span><span className="hidden sm:inline">{TRANSACTION_FILTERS[key]}</span></> : TRANSACTION_FILTERS[key]}</span><span className="text-xs tabular-nums">({count})</span></button>;
       })}
     </div>
-    <p role="status" aria-live="polite" className="mb-4 text-sm text-muted">Showing {visible.length} of {rows.length} transactions · Needs action first, then nearest deadline</p>
-    {rows.length === 0 ? <EmptyState title="No transactions yet"><p className="mb-4">Load labelled demo deals to explore every status.</p><SeedButton role={role}/></EmptyState> : visible.length === 0 ? <EmptyState title="No matching transactions">Try another item name or clear the filters.</EmptyState> : <div className="lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-line lg:bg-surface">
+    <p role="status" aria-live="polite" className="mb-4 text-sm text-muted">Showing {visible.length} of {rows.length} deals · Needs action first, then nearest deadline</p>
+    {rows.length === 0 ? <EmptyState title="No deals yet"><p className="mb-4">Load labelled demo deals to explore every status.</p><SeedButton role={role}/></EmptyState> : visible.length === 0 ? <EmptyState title="No matching deals">Try another item name or clear the filters.</EmptyState> : <div className="lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-line lg:bg-surface">
       <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 border-b border-line bg-surface-2 px-5 py-3 text-sm font-semibold text-heading lg:grid"><span>Item</span><span>Status</span><span>Next step</span><span className="text-right">Amount</span></div>
       <ul aria-label="Transactions" className="space-y-3 lg:space-y-0">{visible.map(row => <li key={row.id} className="lg:border-b lg:border-line lg:last:border-0">
         <Link href={row.href} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 rounded-[18px] border border-line bg-surface p-4 hover:bg-surface-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] lg:gap-4 lg:rounded-none lg:border-0 lg:px-5">

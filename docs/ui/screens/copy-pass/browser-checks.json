@@ -1,0 +1,1802 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "home",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "transactions",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "new",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "deal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "checkout",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "evidence",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "review",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "receipt",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "records",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "record",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "settings",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "about",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "fairness",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "verification",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "page": "paypal",
+    "technicalDataInitiallyHidden": true,
+    "payoutClaims": false,
+    "overflow": false,
+    "errors": []
+  }
+]

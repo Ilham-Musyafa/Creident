@@ -24,7 +24,7 @@ function SettingsDestination({ href, title, icon }: { href: string; title: strin
   return <li><Link href={href} className={`${row} border border-line bg-bg`}><RowContent title={title} icon={icon}/></Link></li>;
 }
 
-export function MobileSettings({ role, codeRequired, unlocked }: { role: Role; codeRequired: boolean; unlocked: boolean }) {
+export function MobileSettings({ role, codeRequired, unlocked, simulated }: { simulated: boolean; role: Role; codeRequired: boolean; unlocked: boolean }) {
   return <div className="lg:hidden">
     <MobileBrandHeader role={role}/>
     <MobilePanel role="region" aria-labelledby="mobile-settings-title">
@@ -50,7 +50,7 @@ export function MobileSettings({ role, codeRequired, unlocked }: { role: Role; c
         <SettingsDestination href="/about#limitations" title="Limitations" icon="limits"/>
         <SettingsDestination href="/about" title="About Creident" icon="about"/>
       </ul>
-      <footer className="mt-6 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>Sandbox demo · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p></footer>
+      <footer className="mt-6 border-t border-line pt-4 text-sm leading-relaxed text-muted"><p>{simulated ? 'Simulated payments' : 'PayPal Sandbox'} · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p></footer>
     </MobilePanel>
   </div>;
 }

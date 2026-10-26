@@ -173,6 +173,37 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Plain English copy and truthful payment labels
+
+- Continued unmerged ui/creident-mockup from 527d3e7 (newer than the requested
+  a53d51a), as authorized. No dependency, domain/API/data/rule/payment changes.
+- Replaced seller-payment wording with Charge the buyer (capture), leaving RELEASE
+  and every action payload unchanged. Receipt now reuses the existing deal-summary
+  success-state renderer; no decision choice is treated as proof of charge/refund.
+  Deal confirmation distinguishes actual capture from approval. Removed unrecorded
+  USD/fee assertion from the receipt; fee policy uses the approved glossary.
+- Shared presentation helpers: presentationCopy (greeting, action/evidence labels),
+  ruleCopy + RuleLabel (About titles first, secondary code), decisionCopy (extracted
+  existing formatter), TechnicalDetails (closed native disclosure, 44px summary).
+  Errors show plain copy first, keeping original codes/debug IDs inside details.
+  IDs/hashes/fingerprints/event names/provenance stay available there. Plain record
+  check results and warnings remain visible. User-authored evidence/reasons and
+  original metadata are not rewritten. Review/receipt use Buyer/Seller evidence N.
+- Home/Transactions/create/Settings/Records use one glossary, including Hi, Demo
+  Buyer/Seller/Reviewer and New deal / Create deal. New-deal and Settings mode labels
+  use the existing simulated flag. Plain-language About/Records/Fairness guidance
+  preserves operator trust, external-copy, test-scope and integration limitations.
+- Node 22.23.4: 522 tests/50 files, typecheck, build and diff check pass. Browser
+  matrix: 180 views at 390/1440, both themes, all three roles. No raw-data default
+  exposure, horizontal overflow or page errors. Keyboard disclosures pass. Buyer
+  receipt confirmation cancelled safely; Reviewer action still posts RELEASE and
+  shows Payment charged only after successful capture in disposable simulation.
+  Five full-page 390px screenshots saved; evidence screenshot uses populated data.
+  No live provider call. Existing money-state tests are preserved.
+- Verification and publication status are recorded in ui/screens/copy-pass/README.md.
+  Full before/after table: copy-changes.md in that directory. docs/UI.md contains
+  the glossary and disclosure policy. No merge or deployment authorized.
+
 ### 2026-10-26 — About logo removal and info-page bottom clearance
 
 - Continued ui/creident-mockup from a53d51a. Removed only the duplicate About

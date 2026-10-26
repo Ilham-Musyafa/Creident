@@ -15,7 +15,7 @@ function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNo
   return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
-export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
+export function NewDealForm({ time, simulated }: { simulated: boolean; time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -89,13 +89,13 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
       </fieldset>
       </Card>
 
-      <aside aria-label="Transaction summary" className="min-w-0 space-y-3 lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2">
+      <aside aria-label="Deal summary" className="min-w-0 space-y-3 lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2">
         <Card className="min-w-0 space-y-4 p-5">
-          <h2 className="text-base font-bold text-heading">Transaction summary</h2>
+          <h2 className="text-base font-bold text-heading">Deal summary</h2>
           <div className="border-b border-line pb-4">
             <p className="break-words text-sm font-semibold text-heading">{form.item.trim() || 'Your item'}</p>
             <p className="mt-2 break-words text-3xl font-bold tabular-nums text-heading">{amountPreview}</p>
-            <p className="mt-1 text-sm text-muted">USD · Sandbox demo</p>
+            <p className="mt-1 text-sm text-muted">USD · {simulated ? 'Simulated payments' : 'PayPal Sandbox'}</p>
           </div>
           <dl className="space-y-3 text-sm">
             {[
@@ -108,14 +108,14 @@ export function NewDealForm({ time }: { time: { shipByDays: number; inspectionDa
           </dl>
           <details className="border-t border-line pt-3">
             <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-heading">Fees & refunds</summary>
-            <p className="pb-2 text-sm leading-relaxed text-muted">PayPal fees are shown after payment and are not returned on a refund. The platform bears those fees, so the buyer receives the full refund amount.</p>
+            <p className="pb-2 text-sm leading-relaxed text-muted">PayPal fees are shown after payment and are not returned on a refund. The fee is covered by the platform, so the buyer receives the full refund amount.</p>
           </details>
         </Card>
         <Notice>Demo payments only. No real money moves.</Notice>
       </aside>
 
       <div className="min-w-0 space-y-3 lg:col-start-1 lg:row-start-2">
-        <Button type="submit" fullWidth disabled={busy}>{busy ? 'Creating…' : 'Create deal link'}</Button>
+        <Button type="submit" fullWidth disabled={busy}>{busy ? 'Creating…' : 'Create deal'}</Button>
         <p className="text-center text-sm leading-relaxed text-muted">Creates a draft to share with the buyer. Terms lock after both parties accept.</p>
         <ErrorNote error={error}/>
       </div>

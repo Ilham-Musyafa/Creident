@@ -33,7 +33,7 @@ function pageInfo(path: string): { title: string; subtitle: string; selected: Ac
       review: ['Dispute review', 'Recorded evidence and a human decision.'],
       decision: ['Decision record', 'Read the outcome and its recorded reasons.'],
     };
-    const [title, subtitle] = pages[tail] ?? ['Transaction', 'Terms, progress and the next step.'];
+    const [title, subtitle] = pages[tail] ?? ['Deal', 'Terms, progress and the next step.'];
     return { title, subtitle, selected: 'Deals' };
   }
   if (path === '/audit') return { title: 'Records', subtitle: 'Check the recorded steps for each deal.', selected: 'Audit' };

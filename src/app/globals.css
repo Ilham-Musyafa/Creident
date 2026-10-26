@@ -286,3 +286,5 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .records-timeline summary > span { width: 100%; }
   .records-explainer > section { border-radius: 24px; background: var(--bg); }
 }
+
+.technical-details > summary:focus-visible { outline: 3px solid var(--inspection-text); outline-offset: 3px; }

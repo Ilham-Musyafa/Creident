@@ -215,8 +215,8 @@ Patterns borrowed from banking and payment apps, never their branding:
 ## Plain language (owner request, 2026-10-22)
 
 Screens for buyers and sellers use everyday words, like common payment apps. Technical terms
-stay available behind "Details", on the record (audit) pages and in receipts, never as the
-main label. One word per idea across the app. Plain must still be honest: PayPal approves
+stay available inside initially closed "Technical details" disclosures, including on Records
+and receipts, never as the main label. One word per idea across the app. Plain must still be honest: PayPal approves
 (authorizes) a payment; it does not "hold your money" (AGENTS.md claim rules).
 
 | Technical | Shown to users |
@@ -227,15 +227,53 @@ main label. One word per idea across the app. Plain must still be honest: PayPal
 | Refund / partial refund | Refund issued / Partial refund issued |
 | Inspection | Checking the item |
 | Dispute opened | Problem reported |
-| Under review / escalate to a human / R5 | Being reviewed / Needs a reviewer (rule ID only in details) |
+| Under review / escalate to a human | Being reviewed / Needs a reviewer |
 | Frozen by PayPal | On hold · PayPal dispute |
 | Simulated | Demo (no real money) |
-| Audit log / hash chain | Deal record / record intact |
-| Hash, head hash, digest | Fingerprint |
-| prev hash | Linked to |
+| Audit log / hash chain | Record / verified (only when the existing checks pass) |
+| Hash, head hash, digest | Check values inside Technical details |
+| prev hash | Previous step, inside Technical details |
 | Checkpoint | Sealed copy |
 | Event | Step |
 | Replay mode | Recorded test run |
+
+
+### Shared glossary and truthful copy (2026-10-26)
+
+| Concept | User-facing wording |
+|---|---|
+| One buyer–seller agreement | deal |
+| List page and navigation tab | Transactions; the objects within it are deals |
+| Verified history of one deal | record (failed checks must remain explicit) |
+| Verification area | Records |
+| Start a deal / submit its form | New deal / Create deal |
+| Greeting | Hi, {name}; demo names are Demo Buyer, Demo Seller, Demo Reviewer |
+| Refund fee policy | fee covered by the platform |
+| Reviewer RELEASE action | Charge the buyer (capture) |
+| Evidence references | Buyer evidence 1 / Seller evidence 1, numbered separately per side |
+
+- A decision is a choice, not proof a payment succeeded. Both deal summary and
+  receipt use `components/decisionCopy.ts`: Payment charged requires stored capture
+  success; Refund issued requires stored refund success; cancellation and pending
+  states retain their own labels. Never imply seller payout. Policy copy is not a
+  fee receipt; amounts use the deal currency. Internal outcome enums stay unchanged.
+- `components/ruleCopy.ts` is the shared presentation source for About rule titles
+  and descriptions. `RuleLabel` shows the title first, followed by a secondary
+  code chip (12px minimum). It does not implement rules. Unknown rules say No rule
+  recorded. Show “AI only summarises evidence; a human decides.” once per screen.
+- `TechnicalDetails` is a native, initially closed disclosure: exact summary
+  Technical details, >=44px target, visible focus, >=14px body, wrapping raw values.
+  IDs, hashes, fingerprints, event names, raw PayPal codes and debug IDs belong
+  inside it, including within expanded record steps. Plain verification results
+  and failure warnings remain outside. Plain error messages come first; preserve
+  the original error inside the disclosure for diagnosis.
+- Do not rewrite stored evidence, reviewer reasons, AI output or signed/audited
+  payloads to change terminology. Evidence labels are view aliases; original
+  citation references and provenance remain available in Technical details.
+- Mode labels must use the existing simulated/Sandbox flag, not infer mode from
+  the presence of a demo item. Keep every simulation marker and every limitation.
+- This copy pass changes no navigation or page hierarchy. Screens and the full
+  before/after source-copy table: `ui/screens/copy-pass/`.
 
 
 ## Sapphire Flow signature (2026-10-23)

@@ -1,0 +1,13 @@
+{
+  "approvalConfirmationTruthful": true,
+  "confirmationCancelledWithoutCapture": true,
+  "evidenceHashPreservedInClosedDisclosure": true,
+  "keyboardDisclosure": true,
+  "technicalBodyAtLeast14": true,
+  "summaryAtLeast44": true,
+  "reviewerActionLabel": "Charge the buyer (capture)",
+  "unchangedPostedOutcome": "RELEASE",
+  "simulatedResponseStatus": 200,
+  "receiptAfterActualSimulatedCapture": "Payment charged",
+  "realProviderCalls": false
+}

@@ -4,6 +4,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Button } from './ui';
+import { TechnicalDetails } from './TechnicalDetails';
 import { SegmentedControl } from './SegmentedControl';
 import type { Role } from './view';
 import { ConfirmSheet, type ConfirmDetails } from './ConfirmSheet';
@@ -16,7 +17,7 @@ export class ApiError extends Error {
 
 const FRIENDLY: Record<string, string> = {
   REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Settings.',
-  SANDBOX_CONFIG_MISSING: 'PayPal Sandbox keys are not set on this server. Explore with the demo deals, add PP_ID and PP_SECRET to .env, or set PAYPAL_MODE=simulated for a labelled simulation.',
+  SANDBOX_CONFIG_MISSING: 'Payments are not configured on this server. Ask the demo owner to check the setup, or explore the labelled demo deals.',
   ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Settings.',
   EVIDENCE_CLOSED: 'The evidence window is closed.',
   ORDER_NOT_APPROVED: 'The payment has not been approved on PayPal yet.',
@@ -44,10 +45,10 @@ export function ErrorNote({ error }: { error: ApiError | Error | null }) {
   if (!error) return null;
   const debugId = error instanceof ApiError ? error.debugId : undefined;
   return (
-    <p role="alert" className="mt-3 rounded-[14px] border p-3 text-sm" style={{ background: 'var(--disputed-bg)', borderColor: 'var(--line)', color: 'var(--disputed-text)' }}>
-      {error.message}
-      {debugId && <span className="mt-1 block font-mono text-sm">PayPal debug id: {debugId}</span>}
-    </p>
+    <div role="alert" className="mt-3 rounded-[14px] border p-3 text-sm" style={{ background: 'var(--disputed-bg)', borderColor: 'var(--line)', color: 'var(--disputed-text)' }}>
+      <p>{error instanceof ApiError && FRIENDLY[error.code] ? FRIENDLY[error.code] : error instanceof ApiError && /PAYPAL|ORDER|SANDBOX/.test(error.code) ? "PayPal couldn't complete this step. Try again later." : "This step couldn't be completed. Check the details and try again."}</p>
+      <TechnicalDetails><p>{error.message}</p>{error instanceof ApiError && <p>Code: {error.code}</p>}{debugId && <p className="break-all font-mono">PayPal debug id: {debugId}</p>}</TechnicalDetails>
+    </div>
   );
 }
 
@@ -126,7 +127,7 @@ export function PayButton({ txId, simulated = false, amount, item }: { txId: str
       <Button fullWidth disabled={busy} onClick={() => amount ? setAsking(true) : pay()}>{busy ? 'Opening PayPal…' : label}</Button>
       {amount && <ConfirmSheet open={asking} busy={busy} onConfirm={pay} onCancel={() => setAsking(false)} details={{
         title: 'Approve payment', amount, amountCaption: item,
-        rows: [{ label: 'Charged now', value: 'Nothing yet' }, { label: 'Charged when', value: 'You confirm the item, or a problem is decided' }, { label: 'Paid with', value: simulated ? 'Demo PayPal' : 'PayPal Sandbox' }],
+        rows: [{ label: 'Charged now', value: 'Nothing yet' }, { label: 'Charged when', value: 'You confirm the item, or a problem is decided' }, { label: 'Payment method', value: simulated ? 'Demo PayPal' : 'PayPal Sandbox' }],
         note: 'If the seller does not ship in time, the payment is cancelled and nothing is charged.', confirmLabel: 'Continue to PayPal',
       }}/>}
       <ErrorNote error={error}/>

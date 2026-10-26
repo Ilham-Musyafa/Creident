@@ -1,9 +1,11 @@
+import { TechnicalDetails } from '../../../../components/TechnicalDetails';
+import { evidenceLabel } from '../../../../components/presentationCopy';
 import { notFound } from 'next/navigation';
 import { CodeBadge, StatusPill } from '../../../../components/ui';
 import { AppShell, Card, EmptyState, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { EvidenceCompleteness } from '../../../../components/EvidenceCompleteness';
 import { EvidenceForm } from '../../../../components/client';
-import { evidenceCode, shortHash, timeLeft } from '../../../../components/view';
+import { evidenceCode, timeLeft } from '../../../../components/view';
 import { data, getRole, isUuid, sha256 } from '../../../_server';
 import { disputeType } from '../../../../lib/disputeTypes';
 
@@ -29,8 +31,8 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="space-y-3">
           <Card>
-            <p className="text-sm text-muted">Write this code on paper and keep it visible in every photo</p>
-            <div className="mt-2"><CodeBadge code={evidenceCode(id)}/></div>
+            <p className="text-sm text-muted">Include the deal's evidence code in your photo description. Open Technical details to find it.</p>
+            <TechnicalDetails><p>Evidence code</p><CodeBadge code={evidenceCode(id)}/><p>Write this code on paper and keep it visible in every photo.</p></TechnicalDetails>
             <p className="mt-3 text-sm text-muted">This demo accepts text descriptions. Photo upload is not available yet.</p>
           </Card>
           {type && (
@@ -52,13 +54,14 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
             <ul className="space-y-2">
               {evidence.map((e, i) => (
                 <li key={e.id} className="rounded-[18px] border border-line bg-surface p-3">
-                  <div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold capitalize text-heading">{e.submittedBy === 'buyer' ? 'B' : 'S'}{evidence.slice(0, i + 1).filter(item => item.submittedBy === e.submittedBy).length} · {e.kind} · {e.submittedBy}</p><span className="font-mono text-xs text-muted">sha256 {shortHash(sha256(e.content))}</span></div>
+                  <div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold capitalize text-heading">{evidenceLabel(e.submittedBy, evidence.slice(0, i + 1).filter(item => item.submittedBy === e.submittedBy).length)} · {e.kind} · {e.submittedBy}</p></div>
                   <p className="mt-1 text-sm text-text [overflow-wrap:anywhere]">{e.content}</p>
+                  <TechnicalDetails><p>SHA-256: <span className="break-all font-mono">{sha256(e.content)}</span></p><p>Evidence ID: <span className="break-all font-mono">{e.id}</span></p></TechnicalDetails>
                 </li>
               ))}
             </ul>
           )}
-          <p className="mt-3 text-sm text-muted">Only in-platform chat counts as chat evidence. Evidence text is treated as data, never as instructions to the AI.</p>
+          <p className="mt-3 text-sm text-muted">Only in-platform chat counts as chat evidence. Evidence is shared with the AI as quoted text, not as commands. Suspected attempts to change its instructions need human review.</p>
         </div>
       </div>
     </AppShell>

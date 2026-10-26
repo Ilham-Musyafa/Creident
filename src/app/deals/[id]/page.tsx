@@ -1,3 +1,4 @@
+import { TechnicalDetails } from '../../../components/TechnicalDetails';
 import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
 import { SuccessBurst } from '../../../components/motion';
 import { recentSuccess, activityFeed } from '../../../components/view';
@@ -9,7 +10,7 @@ import { ButtonLink, KeyValue, StatusPill, Timeline } from '../../../components/
 import { AppShell, Card, Notice, PageHeader } from '../../../components/layout';
 import { ActionButton, CopyLinkButton, ReturnForm, ShipForm } from '../../../components/client';
 import { DisputeSteps } from '../../../components/DisputeSteps';
-import { authorizationWindow, isSimulatedDeal, money, shortDate, nextAction, shortHash, timelineFor } from '../../../components/view';
+import { authorizationWindow, isSimulatedDeal, money, shortDate, nextAction, timelineFor } from '../../../components/view';
 import { data, getRole, isUuid, simulatedPayPal, reviewerUnlocked } from '../../_server';
 import { DealDisclosure } from '../../../components/DealDisclosure';
 import { DealSecondary } from '../../../components/DealSecondary';
@@ -48,6 +49,8 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   const criteria = Array.isArray(terms.criteria) ? terms.criteria as string[] : [];
   const accepted = tx.status === 'DRAFT' ? ctx.repo.listAcceptances(id) : [];
   const action = nextAction(tx.status, role) === 'accept-terms' && accepted.includes(role as 'buyer' | 'seller') ? 'none' : nextAction(tx.status, role);
+  const createdAt = allEvents.find(event => event.type === 'TRANSACTION_CREATED')?.ts;
+  const subtitle = createdAt ? `Created ${new Date(createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })} · Deal ID in technical details` : 'Deal ID in technical details';
   const view = transactionRow(tx, role, now, accepted);
   const waiting = (['buyer', 'seller', 'reviewer'] as const).filter(other => other !== role)
     .map(other => ({ other, row: transactionRow(tx, other, now, accepted) }))
@@ -58,7 +61,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
     <AppShell active="Deals">
       <div className="deal-story">
       {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
-      <PageHeader title={tx.item} subtitle={`Deal #${id.slice(0, 8).toUpperCase()}`} back="/deals"/>
+      <PageHeader title={tx.item} subtitle={subtitle} back="/deals"/>
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-4">
           <Card className="deal-summary space-y-2">
@@ -67,6 +70,10 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <StatusPill status={tx.status}/>
             {view.deadlineLabel && <p className="text-sm text-muted">Time left: {view.deadlineLabel}</p>}
             {(simulated || view.demo || simulatedPayPal()) && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
+            <TechnicalDetails><KeyValue items={[
+              { label: 'Deal ID', value: <span className="break-all font-mono">{id}</span> },
+              { label: 'Terms fingerprint', value: <span className="break-all font-mono">{tx.termsHash ?? 'Not recorded'}</span> },
+            ]}/></TechnicalDetails>
           </Card>
           <section id="next-step" aria-labelledby="next-step-title" data-next-action={action} className="deal-card scroll-mt-6 space-y-3">
             <h2 id="next-step-title" className="text-lg text-heading">Your next step</h2>
@@ -80,7 +87,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <div className="space-y-3">
               <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth confirm={{
                 title: 'Confirm you received the item', amount: money(tx.amount, tx.currency), amountCaption: tx.item,
-                rows: [{ label: 'Payment', value: 'Completed via PayPal' }, { label: 'Problems', value: 'Can no longer be reported here' }],
+                rows: [{ label: 'Payment', value: tx.captured ? 'Charged via PayPal' : 'Approved via PayPal · not charged yet' }, { label: 'Problems', value: 'Can no longer be reported here' }],
                 note: 'Only confirm after you checked the item against the locked terms.', confirmLabel: 'Confirm receipt',
               }}/>
               <div className="border-t border-line pt-4"><DisputeSteps txId={id} evidenceWindow={`${ctx.time.evidenceDays} day${ctx.time.evidenceDays === 1 ? '' : 's'}`}/></div>
@@ -88,7 +95,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           )}
           {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}
           {action === 'ship-return' && <ReturnForm txId={id}/>}
-          {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the payment goes to the seller.</Notice>}
+          {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the approved payment is charged. Seller payout is not part of this demo.</Notice>}
           {action === 'review' && <ButtonLink href={`/deals/${id}/review`} fullWidth>Review dispute</ButtonLink>}
           {tx.status === 'DRAFT' && <Notice>Accepted so far: {accepted.length ? accepted.join(' and ') : 'nobody'}. Terms lock when both buyer and seller accept.</Notice>}
           {action === 'none' && <div className="space-y-2">
@@ -97,7 +104,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             {waiting.length > 0 && <p className="text-sm text-muted">Nothing to do for your role right now. Switch role in Settings to act as another party.</p>}
           </div>}
 
-            {captureFailed && <Notice tone="warning">PayPal could not charge this payment ({String(lastEvent!.payload.code ?? 'error')}{lastEvent!.payload.issue ? `: ${String(lastEvent!.payload.issue)}` : ''}). The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.</Notice>}
+            {captureFailed && <Notice tone="warning">PayPal couldn't charge the approved payment. The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.<TechnicalDetails><p>PayPal code: {String(lastEvent!.payload.code ?? 'error')}</p>{lastEvent!.payload.issue ? <p>PayPal issue: {String(lastEvent!.payload.issue)}</p> : null}</TechnicalDetails></Notice>}
             <PartialRefundNotice tx={tx} events={allEvents}/>
           </section>
           {role === 'seller' && (created || tx.status === 'DRAFT') && <Card className="deal-share space-y-3">
@@ -118,7 +125,6 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             ...(Array.isArray(terms.includedItems) ? [{ label: 'Included items', value: terms.includedItems.filter((item): item is string => typeof item === 'string').join(', ') }] : []),
             ...(terms.description ? [{ label: 'Description', value: String(terms.description) }] : []),
             ...criteria.map((c, i) => ({ label: `Check ${i + 1}`, value: c })),
-            { label: 'Terms fingerprint', value: <span className="font-mono text-sm">{shortHash(tx.termsHash, 6)}</span> },
             ...(tx.trackingNumber ? [{ label: 'Tracking (demo courier)', value: tx.trackingNumber }] : []),
           ]}/>
           </DealDisclosure>
@@ -126,7 +132,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
           <KeyValue items={[
             { label: 'PayPal fee', value: simulated ? 'None (demo)' : tx.captured ? 'See PayPal' : 'Shown after payment' },
             ...(authWindow ? [{ label: 'Payment approval', value: authWindow.phase === 'honor' ? `Initial 3-day window ends ${shortDate(authWindow.honorEndsAt)}` : authWindow.phase === 'after-honor' ? `Past the initial 3-day window; charging may fail (expires ${shortDate(authWindow.expiresAt)})` : 'Expired: can no longer be charged' }] : []),
-            { label: 'Refund fees paid by', value: 'The platform (buyer gets the full refund amount)' },
+            { label: 'Refund fee', value: 'fee covered by the platform (buyer gets the full refund amount)' },
             ...(trackingOnPayPal ? [{ label: 'Tracking on PayPal', value: trackingOnPayPal }] : []),
           ]}/>
           </DealDisclosure>

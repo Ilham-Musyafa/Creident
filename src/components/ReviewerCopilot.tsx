@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from './ui';
 import { Notice } from './layoutPrimitives';
 import { callApi } from './client';
+import { evidenceAlias } from './presentationCopy';
 import { money } from './view';
 import type { CopilotDraft } from '../lib/ai/copilot';
 import type { AssistMeta } from '../lib/ai/assist';
@@ -28,7 +29,7 @@ export function ReviewerCopilot({ txId, onApply, appliedId }: { txId: string; ap
       <p className="text-sm font-semibold text-muted">{result.meta.mode === 'replay' ? 'Recorded replay draft' : 'Live AI draft'} · not a decision</p>
       <ul className="space-y-3">{result.draft.notes.map(note => <li key={note.criterionId}>
         <h3 className="font-semibold text-heading">{result.criteria.find(c => c.id === note.criterionId)?.text ?? note.criterionId}</h3>
-        <p className="mt-1">{note.text}</p><p className="mt-1 text-sm text-muted">Evidence: {note.citedAliases.join(', ')}</p>
+        <p className="mt-1">{note.text}</p><p className="mt-1 text-sm text-muted">Evidence: {note.citedAliases.map(evidenceAlias).join(', ')}</p>
       </li>)}</ul>
       <div><h3 className="font-semibold text-heading">Draft reason</h3><p className="mt-1 whitespace-pre-wrap">{result.draft.reason}</p></div>
       {result.draft.range && <Notice tone="warning"><strong>Suggested refund range: {money(result.draft.range.min)}–{money(result.draft.range.max)}</strong><p className="mt-1">{result.draft.range.basis}</p><p className="mt-2">Display only. It does not set a refund amount or change the payment. The reviewer must establish the value and choose the decision.</p></Notice>}

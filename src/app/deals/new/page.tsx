@@ -1,6 +1,6 @@
 import { AppShell, Notice, PageHeader } from '../../../components/layout';
 import { NewDealForm } from '../../../components/NewDealForm';
-import { data, getRole } from '../../_server';
+import { data, getRole, simulatedPayPal } from '../../_server';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +13,7 @@ export default async function NewDealPage() {
       {role !== 'seller' ? (
         <Notice>Only the seller creates a deal. Switch to Seller in Settings.</Notice>
       ) : (
-        <NewDealForm time={time}/>
+        <NewDealForm time={time} simulated={simulatedPayPal()}/>
       )}
     </AppShell>
   );

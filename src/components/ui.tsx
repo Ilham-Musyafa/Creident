@@ -1,3 +1,5 @@
+import { RuleLabel } from './RuleLabel';
+import { TechnicalDetails } from './TechnicalDetails';
 import type { ComponentPropsWithRef, CSSProperties, InputHTMLAttributes, ReactNode } from 'react';
 import { CountUp } from './motion';
 import Link from 'next/link';
@@ -28,7 +30,7 @@ export function StatusPill({ status, suffix, compact = false, className = '' }: 
   const shownLabel = compact && status === 'AUTHORIZED' ? 'Approved · not charged' : label;
   return <span title={compact ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
-export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = '+ New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
+export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = 'New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
     <section className="rounded-[26px] bg-hero p-5 text-hero-text" aria-label="Amount overview">
       <p className="text-sm text-hero-sub">{label}</p>
@@ -60,10 +62,10 @@ export function KeyValue({ items }: { items: { label: string; value: ReactNode }
 export function FindingCard({ criterion, supports, evidenceIds }: { criterion: string; supports: 'buyer' | 'seller' | 'unclear'; evidenceIds: string[] }) {
   // Matches docs/UI.md mockups: buyer = disputed tone, seller = completed tone, unclear = neutral.
   const tone: Tone = supports === 'unclear' ? 'void' : supports === 'buyer' ? 'disputed' : 'completed';
-  return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-xs font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 font-mono text-xs text-muted">{id}</span>)}</div></article>;
+  return <article className="rounded-[18px] border border-line bg-surface p-4"><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="text-sm font-bold text-heading">{criterion}</h3><span className="rounded-full px-2 py-1 text-xs font-bold" style={toneStyle(tone)}>{supports === 'unclear' ? 'Unclear' : `Supports ${supports}`}</span></div><div className="mt-3 flex flex-wrap gap-1">{evidenceIds.map(id => <span key={id} className="rounded-md bg-surface-2 px-2 py-1 text-sm text-muted">{id}</span>)}</div></article>;
 }
 export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason: string }) {
-  return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong>{rule} · {reason}</strong><p className="mt-1">The AI only summarises; it cannot release or refund.</p></aside>;
+  return <aside className="rounded-[18px] border p-4 text-sm" style={{ background: 'var(--warning-bg)', borderColor: 'var(--warning-line)', color: 'var(--warning-text)' }}><strong><RuleLabel rule={rule}/></strong><p className="mt-1">{reason}</p></aside>;
 }
 /** ok: verified. failed: the first step that does not match. after: later steps, which cannot be verified once the chain is broken. */
 export type StepCheck = 'ok' | 'failed' | 'after';
@@ -71,7 +73,7 @@ export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulat
   // A row shows only what happened and when. A normal step gets no badge (the summary above
   // already says how many steps are verified); only a step that failed verification is flagged.
   // Step number, actor, source and fingerprints open on tap.
-  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span title={rawType} className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-sm text-muted">{time}</span>
+  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-sm text-muted">{time}</span>{simulated && <span className="block text-sm text-muted">Demo (not from PayPal)</span>}
     {check === 'failed' && <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-sm font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Verification failed here</span>}
     {check === 'after' && <span className="mt-0.5 block text-sm text-muted">Cannot verify after the failed step</span>}</span>
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>;
@@ -79,12 +81,12 @@ export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulat
     <dt className="text-muted">Step</dt><dd className="font-mono text-heading">#{seq}</dd>
     <dt className="text-muted">By</dt><dd className="capitalize text-heading">{actor}</dd>
     {simulated && <><dt className="text-muted">Source</dt><dd className="text-heading">Demo (not from PayPal)</dd></>}
-    {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-xs text-muted">{hash}</dd></>}
-    <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-xs text-muted">{fullPrevHash ?? prevHash}</dd>
-    {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-xs text-muted">{rawType}</dd></>}
+    {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-sm text-muted">{hash}</dd></>}
+    <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-sm text-muted">{fullPrevHash ?? prevHash}</dd>
+    {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-sm text-muted">{rawType}</dd></>}
   </dl>;
   return <li id={`step-${seq}`} style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`scroll-mt-24 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'} ${check === 'after' ? 'opacity-60' : ''}`}>
-    <details className="group"><summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary>{details}</details>
+    <details className="group"><summary className="min-h-11 cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary><TechnicalDetails>{details}</TechnicalDetails></details>
   </li>;
 }
 /** "15 of 15 steps verified". `where` says what the check covers (this server, or also a sealed copy). */

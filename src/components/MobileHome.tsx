@@ -1,5 +1,6 @@
 'use client';
 
+import { demoName } from './presentationCopy';
 import Link from 'next/link';
 import { useState, type ReactNode } from 'react';
 import { MobileBrandHeader } from './MobileBrandHeader';
@@ -39,14 +40,14 @@ export function MobileHome(props: HomeData) {
     requestAnimationFrame(() => document.getElementById('mobile-home-content')?.focus({ preventScroll: true }));
   };
   const primaryHref = props.role === 'seller' ? '/deals/new' : props.role === 'reviewer' ? '/deals?filter=review' : '/deals';
-  const primaryLabel = props.role === 'seller' ? 'Create a deal' : props.role === 'reviewer' ? 'Review queue' : 'Your actions';
+  const primaryLabel = props.role === 'seller' ? 'New deal' : props.role === 'reviewer' ? 'Review queue' : 'Your actions';
   const allVerified = props.total > 0 && props.verified === props.total;
   const next = props.actions[0];
   const recent = props.recent.slice(0, 3);
 
   return <div className="mobile-home lg:hidden">
     <MobileBrandHeader role={props.role} compact={false}>
-      <h1 className="mt-2 text-sm font-medium! tracking-normal! text-hero-text">Hello, Demo <span className="capitalize">{props.role}</span></h1>
+      <h1 className="mt-2 text-sm font-medium! tracking-normal! text-hero-text">Hi, {demoName(props.role)}</h1>
       <section aria-label="Approved payment summary">
         <div className="relative inline-flex items-center pr-12"><h2 className="text-sm font-medium! tracking-normal! text-[var(--mobile-header-muted)]">Approved payments · USD</h2><button type="button" aria-label={amountHidden ? 'Show approved amount' : 'Hide approved amount'} aria-pressed={amountHidden} onClick={() => setAmountHidden(!amountHidden)} className="mobile-header-control absolute -top-3 right-0 grid size-11 shrink-0 place-items-center rounded-full"><HomeIcon name={amountHidden ? 'hidden' : 'eye'}/></button></div>
         <p aria-live="polite" className="mobile-payment-amount mt-3 break-words font-display text-[40px] font-bold leading-tight tracking-tight tabular-nums">{amountHidden ? <span aria-label="Amount hidden">••••••</span> : props.approvedAmount}</p>
@@ -78,7 +79,7 @@ export function MobileHome(props: HomeData) {
           {props.total === 0 ? <section className="mt-5 rounded-[24px] border border-line bg-surface p-5"><h2 className="text-base text-heading">Explore your first transaction</h2><p className="mb-4 mt-2 text-sm leading-relaxed text-muted">Load labelled examples to try payments, delivery and dispute review.</p><SeedButton role={props.role}/></section> : <section aria-label="Your main action" className={`mt-3 flex items-center gap-2 rounded-[20px] border border-line bg-surface p-3 ${next ? 'border-l-4 border-l-[var(--awaiting-text)]' : ''}`}>
             <span aria-hidden="true" className="mobile-quick-icon grid size-9 shrink-0 place-items-center rounded-xl">{next ? <TransactionIcon name={next.icon}/> : <HomeIcon name="actions"/>}</span>
             <div className="min-w-0 flex-1"><h2 className="text-sm leading-snug text-heading">{next ? next.nextStep === 'Confirm or report a problem' ? 'Inspect your item' : next.nextStep : 'You’re all caught up'}</h2><p className="mt-0.5 break-words text-sm text-muted">{next ? next.title : 'No actions waiting'}</p>{next?.deadlineLabel && <p title={next.deadlineLabel} className="mt-0.5 text-xs text-[var(--awaiting-text)]">{shortDeadline(next.deadlineLabel)}</p>}</div>
-            <Link href={next?.href ?? primaryHref} className={`${primaryAction} min-w-20 max-w-28 shrink-0 px-3! py-2!`}>{next ? next.nextStep === 'Confirm or report a problem' ? 'Inspect now' : next.nextStep === 'Review dispute' ? 'Review now' : next.nextStep : props.role === 'seller' ? 'Create a deal' : 'Browse'}</Link>
+            <Link href={next?.href ?? primaryHref} className={`${primaryAction} min-w-20 max-w-28 shrink-0 px-3! py-2!`}>{next ? next.nextStep === 'Confirm or report a problem' ? 'Inspect now' : next.nextStep === 'Review dispute' ? 'Review now' : next.nextStep : props.role === 'seller' ? 'New deal' : 'Browse'}</Link>
           </section>}
 
 

@@ -55,7 +55,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
     { title: 'Payment approved · not charged yet', detail: 'Charged after confirmation, the inspection deadline, or a reviewer decision' },
     { title: 'Shipped', detail: 'Seller added tracking (demo courier)' },
     { title: 'Buyer checks the item', detail: 'Confirm it arrived as agreed, or report a problem' },
-    { title: 'Payment charged', detail: 'Charged via PayPal; payout to the seller is not part of this demo' },
+    { title: 'Payment charged', detail: 'Charged via PayPal; seller payout is not part of this demo' },
   ];
   const effective = status === 'FROZEN_EXTERNAL' && frozenFrom ? frozenFrom : status;
   const doneUntil: Record<TxStatus, number> = {
@@ -184,7 +184,7 @@ export type ActivityKind = 'money' | 'ship' | 'dispute' | 'done' | 'info';
 export interface ActivityItem { seq: number; text: string; kind: ActivityKind; ts: string }
 
 const actorName = (actor: string) => actor === 'buyer' ? 'Buyer' : actor === 'seller' ? 'Seller' : actor === 'reviewer' ? 'Reviewer' : actor === 'paypal' ? 'PayPal' : 'System';
-const DECISION_TEXT: Record<string, string> = { RELEASE: 'release to the seller', REFUND: 'refund the buyer', PARTIAL_REFUND: 'partial refund', SPLIT: 'split (pending)' };
+const DECISION_TEXT: Record<string, string> = { RELEASE: 'charge the buyer', REFUND: 'refund the buyer', PARTIAL_REFUND: 'partial refund', SPLIT: 'split (pending)' };
 // Technical events stay in the audit log; the feed tells the story in plain words.
 const HIDDEN_IN_FEED = new Set(['PAYPAL_WEBHOOK', 'AI_DRAFT_CREATED', 'EVIDENCE_CHECK_RUN', 'EVIDENCE_TRANSLATED', 'PAYPAL_DISPUTE_ACTION_FAILED', 'PARTIAL_REFUND_CAPTURED']);
 
