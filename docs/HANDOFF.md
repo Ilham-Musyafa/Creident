@@ -192,7 +192,10 @@ Still open:
   Scripts /tmp/creident-info-bottom-*; final local production server 3232.
   Headless safe-area value is 0; actual inset is included by the CSS env formula.
   No new dependencies or tests needed for these reversible layout changes.
-- Publication status recorded after commit/push. No merge or deployment.
+- Implementation c39452c pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text /tmp/creident-info-bottom-pr.md. No merge or deployment.
 
 ### 2026-10-26 — Deal story follow-up: payment truthfulness and first paint
 
