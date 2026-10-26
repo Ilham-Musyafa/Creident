@@ -194,8 +194,11 @@ Still open:
 - Updated captures and home-fixes-*.json evidence under docs/ui/screens/creident-home/;
   README distinguishes current screenshots from historical comparison evidence.
   Updated UI.md to require the per-row visible marker and describe selection.
-- Push/PR status will be recorded after publication. No merge/deployment or pending
-  owner decision. Baseline captures /tmp/creident-home-fixes-before; QA scripts
+- Implementation `4f237d5` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  No merge/deployment or pending owner decision. Baseline captures
+  /tmp/creident-home-fixes-before; QA scripts
   /tmp/creident-home-fixes-check.mjs and /tmp/creident-home-fixes-selection.py;
   local simulated server 3227, synthetic fixed-clock fixture only.
 
