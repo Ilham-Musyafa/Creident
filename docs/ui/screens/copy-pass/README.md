@@ -95,5 +95,7 @@ fixture, payment, rule, deadline or audit-hashing change; no dependency added.
 
 ## Publication
 
-Implementation/push/PR status is recorded in the latest docs/HANDOFF.md entry.
-No merge or deployment is included in this task.
+Implementation `6ca3dfd` was pushed to `origin/ui/creident-mockup`. PR creation
+returned GitHub GraphQL Forbidden; no PR was created by this agent.
+[Create the PR manually](https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup).
+Publication notes also appear in docs/HANDOFF.md. No merge or deployment.

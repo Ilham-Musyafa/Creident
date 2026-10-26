@@ -203,6 +203,10 @@ Still open:
 - Verification and publication status are recorded in ui/screens/copy-pass/README.md.
   Full before/after table: copy-changes.md in that directory. docs/UI.md contains
   the glossary and disclosure policy. No merge or deployment authorized.
+- Implementation 6ca3dfd pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR body: /tmp/creident-copy-pr.md. No merge or deployment.
 
 ### 2026-10-26 — About logo removal and info-page bottom clearance
 
