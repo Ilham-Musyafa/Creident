@@ -204,7 +204,10 @@ Still open:
   QA scripts /tmp/creident-info-*.mjs, extra raw screenshots under
   /tmp/creident-info-extra-screens; local after production server 3228. No new
   dependencies, lib/API/eval/payment/rule/state/audit changes. No owner decision.
-- Publication status recorded after commit/push; no merge or deployment.
+- Implementation `cee06c0` pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text: /tmp/creident-info-pages-pr.md. No merge or deployment.
 
 ### 2026-10-26 — Mobile Home Demo markers and role-relevant rows
 
