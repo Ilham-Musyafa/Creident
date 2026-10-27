@@ -173,6 +173,65 @@ Still open:
 
 ## Log
 
+### 2026-10-26 — Plain English copy and truthful payment labels
+
+- Continued unmerged ui/creident-mockup from 527d3e7 (newer than the requested
+  a53d51a), as authorized. No dependency, domain/API/data/rule/payment changes.
+- Replaced seller-payment wording with Charge the buyer (capture), leaving RELEASE
+  and every action payload unchanged. Receipt now reuses the existing deal-summary
+  success-state renderer; no decision choice is treated as proof of charge/refund.
+  Deal confirmation distinguishes actual capture from approval. Removed unrecorded
+  USD/fee assertion from the receipt; fee policy uses the approved glossary.
+- Shared presentation helpers: presentationCopy (greeting, action/evidence labels),
+  ruleCopy + RuleLabel (About titles first, secondary code), decisionCopy (extracted
+  existing formatter), TechnicalDetails (closed native disclosure, 44px summary).
+  Errors show plain copy first, keeping original codes/debug IDs inside details.
+  IDs/hashes/fingerprints/event names/provenance stay available there. Plain record
+  check results and warnings remain visible. User-authored evidence/reasons and
+  original metadata are not rewritten. Review/receipt use Buyer/Seller evidence N.
+- Home/Transactions/create/Settings/Records use one glossary, including Hi, Demo
+  Buyer/Seller/Reviewer and New deal / Create deal. New-deal and Settings mode labels
+  use the existing simulated flag. Plain-language About/Records/Fairness guidance
+  preserves operator trust, external-copy, test-scope and integration limitations.
+- Node 22.23.4: 522 tests/50 files, typecheck, build and diff check pass. Browser
+  matrix: 180 views at 390/1440, both themes, all three roles. No raw-data default
+  exposure, horizontal overflow or page errors. Keyboard disclosures pass. Buyer
+  receipt confirmation cancelled safely; Reviewer action still posts RELEASE and
+  shows Payment charged only after successful capture in disposable simulation.
+  Five full-page 390px screenshots saved; evidence screenshot uses populated data.
+  No live provider call. Existing money-state tests are preserved.
+- Verification and publication status are recorded in ui/screens/copy-pass/README.md.
+  Full before/after table: copy-changes.md in that directory. docs/UI.md contains
+  the glossary and disclosure policy. No merge or deployment authorized.
+- Implementation 6ca3dfd pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR body: /tmp/creident-copy-pr.md. No merge or deployment.
+
+### 2026-10-26 — About logo removal and info-page bottom clearance
+
+- Continued ui/creident-mockup from a53d51a. Removed only the duplicate About
+  BrandLogo card/import; title, intro, copy, anchors, header/sidebar brand,
+  brand assets and 24px card scale remain unchanged.
+- Mobile-only .info-panel bottom padding now explicitly adds device safe area to
+  its 20px inset. AppShell already reserves 128px below content, shared with
+  Home/Records; that reservation is retained. No desktop padding change.
+- Node 22.23.4 gates: 517 tests/49 files, typecheck, build and diff check pass.
+  Browser: 18 scenarios at 360/390/1440, both themes, all roles. Last About card/
+  Fairness notice clear the dock by >=63px; expanded final limitations bullet
+  by >=85px. All 24 mobile Settings anchor navigations pass, no overflow/errors.
+  Header/sidebar wordmarks remain; no About content logo. Four 1440px Fairness
+  top/bottom light/dark Seller pairs are pixel-identical; About desktop shifts up
+  solely because its logo card was removed. No src/lib/API/rule/data/copy changes.
+- Screenshots/evidence: docs/ui/screens/info-pages-mobile/followup/ (11 images).
+  Scripts /tmp/creident-info-bottom-*; final local production server 3232.
+  Headless safe-area value is 0; actual inset is included by the CSS env formula.
+  No new dependencies or tests needed for these reversible layout changes.
+- Implementation c39452c pushed to origin/ui/creident-mockup. PR creation attempted;
+  GitHub GraphQL returned Forbidden. No PR created by this agent. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/pull/new/ui/creident-mockup
+  PR text /tmp/creident-info-bottom-pr.md. No merge or deployment.
+
 ### 2026-10-26 — Deal story follow-up: payment truthfulness and first paint
 
 - Continued ui/creident-mockup from e478337 as requested, no main push.

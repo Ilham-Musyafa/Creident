@@ -43,7 +43,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
             ))}
           </ol>
         </Card>
-        <p className="text-center text-sm text-muted">Tap a step to see who did it and its fingerprints.</p>
+        <p className="text-center text-sm text-muted">Tap a step to see who did it. Its check values are in Technical details.</p>
       </div>
     </RecordsShell>
   );

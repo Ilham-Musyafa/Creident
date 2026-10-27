@@ -31,7 +31,7 @@ export default async function AuditIndexPage() {
     : 'Verified on this server';
 
   return (
-    <RecordsShell role={role} title="Records" desktopTitle="Deal records" subtitle="Every step of every deal is saved and checked for changes.">
+    <RecordsShell role={role} title="Records" desktopTitle="Records" subtitle="Every step of every deal is saved and checked for changes.">
       {rows.length > 0 && <section aria-label="Record verification" role="status" className="mb-4 rounded-[24px] border bg-bg p-5 lg:hidden" style={{ borderColor: broken ? 'var(--warning-line)' : 'var(--success-line)' }}>
         <div className="flex items-start gap-3"><span className="grid size-11 shrink-0 place-items-center rounded-full" style={{ background: broken ? 'var(--warning-bg)' : 'var(--success-bg)', color: broken ? 'var(--warning-text)' : 'var(--success-text)' }}><RecordsIcon warning={broken > 0}/></span><div className="min-w-0"><h2 className="text-lg text-heading">{broken ? `${broken} of ${rows.length} records failed verification` : `${rows.length} records verified`}</h2><p className="mt-2 text-sm leading-relaxed text-muted">{broken ? 'Checked on this server. Open the flagged deal to see which step.' : where}{missing.length > 0 && `. ${missing.length} deal(s) in the sealed copy are missing here.`}</p></div></div>
         {firstBroken && <Link href={`/audit/${firstBroken.tx.id}`} className="mt-4 flex min-h-11 items-center justify-center rounded-full bg-strong px-4 text-sm font-semibold text-on-strong">{broken > 1 ? `View affected records (${broken})` : 'View affected record'}</Link>}
@@ -50,7 +50,7 @@ export default async function AuditIndexPage() {
       )}
       </div>
       {rows.length === 0 ? <EmptyState title="No deals yet"/> : (
-        <ul aria-label="Deal records" className="space-y-3 lg:space-y-2">
+        <ul aria-label="Records" className="space-y-3 lg:space-y-2">
           {rows.map(({ tx, check }) => {
             const problem = checkpoint ? sealedProblem[checkpoint.transactions.find(entry => entry.txId === tx.id)?.state ?? ''] : undefined;
             const view = transactionRow(tx, role, ctx.now());

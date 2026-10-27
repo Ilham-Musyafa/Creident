@@ -7,7 +7,7 @@ import type { Role } from './view';
 const steps = [
   { title: 'Agree on the terms', detail: 'Both sides accept the item checks before payment.' },
   { title: 'Approve with PayPal', detail: 'Approve first, without a charge yet.' },
-  { title: 'Review with evidence', detail: 'R1–R7 guide the flow. AI summarises; a person confirms disputes.' },
+  { title: 'Review with evidence', detail: 'Rules guide each step. AI summarises evidence; a human decides disputes.' },
 ];
 const preference = 'creident-product-intro-dismissed';
 

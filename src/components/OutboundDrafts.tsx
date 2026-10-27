@@ -3,6 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
+import { TechnicalDetails } from './TechnicalDetails';
 import { Button } from './ui';
 import { callApi, ErrorNote, ApiError } from './client';
 import type { Role } from './view';
@@ -22,7 +23,7 @@ function AiLabel({ mode, injection }: { mode?: string; injection?: boolean }) {
 
 function Cited({ ids }: { ids: string[] }) {
   if (!ids.length) return <p className="text-sm text-muted">Cites no evidence item.</p>;
-  return <p className="text-sm text-muted">Cites evidence: {ids.map((id) => <span key={id} className="mr-1 rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-heading">{id}</span>)}</p>;
+  return <TechnicalDetails><p className="text-sm text-muted">Cites evidence: {ids.map((id) => <span key={id} className="mr-1 rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-heading">{id}</span>)}</p></TechnicalDetails>;
 }
 
 function useBusy() {
@@ -73,7 +74,7 @@ export function PayPalMessageDraft({ txId, disputeId, role, evidenceStage }: { t
     <textarea id={`note-${disputeId}`} rows={7} maxLength={1500} className={fieldClass} value={text} onChange={(e) => setText(e.target.value)}
       placeholder="Stick to what the locked terms and evidence show."/>
     {draft?.draft && <Cited ids={draft.draft.citedEvidence}/>}
-    <p className="text-sm text-muted">The app adds the terms hash and audit head under your text. {text.length}/1500</p>
+    <p className="text-sm text-muted">The app adds check values for the agreed terms and record under your text. {text.length}/1500</p>
     <div className="flex flex-wrap gap-2">
       <Button variant="ghost" disabled={busy} onClick={() => setOpen(false)}>Cancel</Button>
       <Button disabled={busy || text.trim().length < 20} onClick={send}>{busy ? 'Sending…' : evidenceStage ? 'Send evidence with this note' : 'Send message to PayPal'}</Button>
@@ -132,14 +133,14 @@ export function CourierClaimPack({ txId }: { txId: string }) {
       {draft?.draft && <>
         <div>
           <p className="mb-1 text-sm font-medium text-muted">Timeline (each line cites recorded evidence)</p>
-          <ul className="space-y-1 text-sm text-text">{draft.draft.timeline.map((t, i) => <li key={i}><span className="font-semibold text-heading">{t.when}:</span> {t.event} <span className="font-mono text-sm text-muted">[{t.evidence.join(', ')}]</span></li>)}</ul>
+          <ul className="space-y-1 text-sm text-text">{draft.draft.timeline.map((t, i) => <li key={i}><span className="font-semibold text-heading">{t.when}:</span> {t.event} <TechnicalDetails><p className="font-mono text-sm text-muted">Evidence references: {t.evidence.join(', ')}</p></TechnicalDetails></li>)}</ul>
         </div>
         <div>
           <p className="mb-1 text-sm font-medium text-muted">Attach</p>
           <ul className="list-disc pl-5 text-sm text-text">{draft.draft.attachments.map((a) => <li key={a}>{a}</li>)}</ul>
         </div>
       </>}
-      <p className="text-sm text-muted">The PDF adds fingerprints of the evidence, terms and deal record. This demo does not contact couriers.</p>
+      <p className="text-sm text-muted">The PDF includes the agreed terms, evidence and record checks. This demo does not contact couriers.</p>
       <div className="flex flex-wrap gap-2">
         <Button variant="ghost" disabled={busy} onClick={() => { setDraft(null); setManual(false); }}>Cancel</Button>
         <Button disabled={busy || subject.trim().length < 5 || body.trim().length < 20} onClick={download}>{busy ? 'Building…' : 'Download claim pack (PDF)'}</Button>

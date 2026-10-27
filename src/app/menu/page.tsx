@@ -4,13 +4,13 @@ import { AppShell, Card, PageHeader } from '../../components/layout';
 import { ReviewerCodeForm, RoleSwitch, SeedButton } from '../../components/client';
 import { ThemeSelector } from '../../components/ThemeSelector';
 import { SettingsIcon, type SettingsIconName } from '../../components/SettingsIcon';
-import { getRole, reviewerCodeRequired, reviewerUnlocked } from '../_server';
+import { getRole, simulatedPayPal, reviewerCodeRequired, reviewerUnlocked } from '../_server';
 
 export const dynamic = 'force-dynamic';
 
 const LINKS: { href: string; title: string; detail: string; icon: SettingsIconName }[] = [
   { href: '/about#decisions', title: 'How decisions work', detail: 'Rules, evidence and human dispute review', icon: 'rules' },
-  { href: '/audit', title: 'Deal records', detail: 'Inspect events and verify their links', icon: 'records' },
+  { href: '/audit', title: 'Records', detail: 'Inspect events and verify their links', icon: 'records' },
   { href: '/fairness', title: 'Fairness results', detail: 'Replay results, sample sizes and limits', icon: 'fairness' },
   { href: '/about#limitations', title: 'Limitations', detail: 'What this demo does and does not do', icon: 'limits' },
   { href: '/about', title: 'About Creident', detail: 'The prototype and its approach', icon: 'about' },
@@ -37,11 +37,12 @@ function SettingsLink({ href, title, detail, icon }: { href: string; title: stri
 
 export default async function MenuPage() {
   const role = await getRole();
+  const simulated = simulatedPayPal();
   const codeRequired = reviewerCodeRequired();
   const unlocked = await reviewerUnlocked();
   return (
     <AppShell active="Menu" mobileFullBleed>
-      <MobileSettings role={role} codeRequired={codeRequired} unlocked={unlocked}/>
+      <MobileSettings simulated={simulated} role={role} codeRequired={codeRequired} unlocked={unlocked}/>
       <div className="hidden lg:block">
       <PageHeader title="Settings" subtitle="Your demo workspace, appearance and useful links."/>
       <div className="grid items-start gap-6 lg:grid-cols-[224px_minmax(0,1fr)]">
@@ -51,7 +52,7 @@ export default async function MenuPage() {
               <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-[16px] bg-surface-2 text-lg font-bold text-heading">{role[0]!.toUpperCase()}</span>
               <div className="min-w-0"><p className="text-base font-bold text-heading">Demo workspace</p><p className="mt-1 text-sm capitalize text-muted">{role} view</p></div>
             </div>
-            <div className="mt-4 border-t border-line pt-4"><span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">Sandbox demo</span><p className="mt-3 text-sm leading-relaxed text-muted">No real sign-in. Roles are for exploring this demo.</p></div>
+            <div className="mt-4 border-t border-line pt-4"><span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">{simulated ? 'Simulated payments' : 'PayPal Sandbox'}</span><p className="mt-3 text-sm leading-relaxed text-muted">No real sign-in. Roles are for exploring this demo.</p></div>
           </Card>
           <nav aria-label="Settings sections" className="hidden lg:block">
             <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">On this page</p>

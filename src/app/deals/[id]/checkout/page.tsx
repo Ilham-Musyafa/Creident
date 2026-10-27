@@ -1,9 +1,10 @@
+import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { TermsChecklist } from '../../../../components/TermsChecklist';
 import { notFound } from 'next/navigation';
 import { StatusPill } from '../../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ActionButton, PayButton } from '../../../../components/client';
-import { money, shortHash } from '../../../../components/view';
+import { money } from '../../../../components/view';
 import { data, getRole, isUuid, simulatedPayPal } from '../../../_server';
 
 export const dynamic = 'force-dynamic';
@@ -35,9 +36,10 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
             <div><p className="text-sm font-bold text-heading">{tx.item}</p><p className="text-sm text-muted">Condition: {String(terms.condition ?? '—')}</p></div>
             <p className="text-lg font-extrabold tabular-nums text-heading">{money(tx.amount)}</p>
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2"><StatusPill status={tx.status}/>{tx.termsHash && <span className="font-mono text-sm text-muted">terms {shortHash(tx.termsHash)}</span>}</div>
+          <div className="mt-3 flex flex-wrap items-center gap-2"><StatusPill status={tx.status}/></div>
         </Card>
 
+        <TechnicalDetails><p>Deal ID: <span className="break-all font-mono">{id}</span></p>{tx.termsHash && <p>Terms fingerprint: <span className="break-all font-mono">{tx.termsHash}</span></p>}</TechnicalDetails>
         <TermsChecklist terms={terms}/>
 
         <SectionTitle>How it works</SectionTitle>
