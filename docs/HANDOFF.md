@@ -186,7 +186,10 @@ Still open:
 - Node 22.23.4: 522 tests/50 files, typecheck and build pass. Browser: 390/1440,
   light/dark, computed brand font 600 and no horizontal overflow. Eight before/after
   images: docs/ui/screens/wordmark-outfit/. No dependency or remote runtime font.
-- Not deployed. Publication status recorded below after push/PR attempt.
+- Implementation 06c2281 pushed to origin/ui/creident-mockup. GitHub GraphQL
+  returned Forbidden on PR creation; no PR created. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+  Not deployed or merged.
 
 ### 2026-10-26 — Plain English copy and truthful payment labels
 
