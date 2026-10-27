@@ -173,6 +173,21 @@ Still open:
 
 ## Log
 
+### 2026-10-27 — F1 Outfit wordmark
+
+- Continued ui/creident-mockup from clean HEAD 10a7aea. Registered self-hosted
+  Outfit variable latin WOFF2 (32,292 bytes), OFL license, display swap and sans
+  fallback. Brand token now uses weight 600 / tracking -0.015em at existing sizes.
+  Shared brand-wordmark covers BrandLogo, mobile header and desktop sidebar.
+- Body/headings, tagline, symbol assets, accessible brand text and behavior unchanged.
+  Source search found no remaining Georgia/serif brand usage. Other sans-serif
+  fallbacks (including StudioDashboard) left unchanged. Historical design docs
+  describing the old serif are not new runtime styles.
+- Node 22.23.4: 522 tests/50 files, typecheck and build pass. Browser: 390/1440,
+  light/dark, computed brand font 600 and no horizontal overflow. Eight before/after
+  images: docs/ui/screens/wordmark-outfit/. No dependency or remote runtime font.
+- Not deployed. Publication status recorded below after push/PR attempt.
+
 ### 2026-10-26 — Plain English copy and truthful payment labels
 
 - Continued unmerged ui/creident-mockup from 527d3e7 (newer than the requested

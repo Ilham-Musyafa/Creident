@@ -13,6 +13,12 @@ const headingFont = localFont({
   fallback: ["Arial", "Helvetica", "sans-serif"],
 });
 
+const brandFont = localFont({
+  src: "../fonts/outfit-latin-wght-normal.woff2",
+  variable: "--font-brand-loaded", weight: "100 900", display: "swap",
+  fallback: ["Arial", "Helvetica", "sans-serif"],
+});
+
 const themeScript = `try{var t=localStorage.getItem('creident-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else document.documentElement.dataset.theme='system'}catch(e){document.documentElement.dataset.theme='system'}`;
 
 export const metadata: Metadata = {
@@ -22,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} ${brandFont.variable}`} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body>{children}</body>
     </html>
