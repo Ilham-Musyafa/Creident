@@ -10,14 +10,19 @@ f=instantiateVariableFont(TTFont('src/fonts/outfit-latin-wght-normal.woff2'),{'w
 g=f.getGlyphSet();c=f.getBestCmap()
 def glyph(ch):
  p=SVGPathPen(g);g[c[ord(ch)]].draw(p);return p.getCommands()
-def word(color,check,mark=False):
- defs='<defs><mask id="ct"><rect x="-100" y="-100" width="1000" height="1000" fill="white"/><rect x="420" y="-40" width="400" height="225" fill="black"/></mask><mask id="dt"><rect x="-100" y="-100" width="1000" height="1000" fill="white"/><rect x="420" y="-65" width="200" height="160" rx="55" fill="black"/></mask></defs>'
- art=f'<path d="{glyph("C")}" fill="{color}" mask="url(#ct)"/><path d="M400 100 475 25 670 220" fill="none" stroke="{check}" stroke-width="88" stroke-linecap="round" stroke-linejoin="round"/>'
+def word(color,check,mark=False,gap=52):
+ # Small marks keep a raster-safe optical gap floor.
+ if mark: gap=max(gap,85)
+ # Reference letter stroke ~130 font units; check 108 (83%), gap B=52 (40%).
+ check_path='M450 110 525 40 700 225'
+ defs=f'<defs><mask id="ct"><rect x="-100" y="-100" width="1100" height="1100" fill="white"/><rect x="430" y="-60" width="400" height="230" fill="black"/><path d="{check_path}" fill="none" stroke="black" stroke-width="{108+2*gap}" stroke-linecap="round" stroke-linejoin="round"/></mask><mask id="dt"><rect x="-100" y="-100" width="1000" height="1000" fill="white"/><rect x="390" y="-50" width="240" height="220" rx="45" fill="black"/></mask></defs>'
+ art=f'<path d="{glyph("C")}" fill="{color}" mask="url(#ct)"/><path d="{check_path}" fill="none" stroke="{check}" stroke-width="108" stroke-linecap="round" stroke-linejoin="round"/>'
  x=f['hmtx'][c[67]][0]-10
  if not mark:
   for ch in 'reident':
    shape=f'<path d="{glyph(ch)}" fill="{color}"'+(' mask="url(#dt)"' if ch=='d' else '')+'/>'
-   if ch=='d':shape+=f'<path d="M463 200V115Q463 35 400 68L350 100" fill="none" stroke="{color}" stroke-width="105" stroke-linecap="round" stroke-linejoin="round"/>'
+   if ch=='d':shape+=f'<path d="M463 220V130Q465 38 408 58Q380 65 350 100" fill="none" stroke="{color}" stroke-width="105" stroke-linecap="round" stroke-linejoin="round"/>'
+   if ch=='d': shape+=f'<circle cx="450" cy="100" r="26" fill="{color}"/>'
    art+=f'<g transform="translate({x} 0)">{shape}</g>';x+=f['hmtx'][c[ord(ch)]][0]-10
  w=48 if mark else (x+55)*.05
  transform='translate(3 41) scale(.055 -.055)' if mark else 'translate(0 40) scale(.05 -.05)'
@@ -30,3 +35,9 @@ def icon(bg,light=False,sapphire=False,maskable=False):
 for n,b,l,s in [('navy','#0B1F4B',True,False),('white','#FFFFFF',False,False),('sapphire','#3B82F6',True,True)]: (out/f'app-icon-{n}.svg').write_text(icon(b,l,s))
 (out/'favicon.svg').write_text(word('#0B1F4B','#3B82F6',True))
 (out/'maskable-source.svg').write_text(icon('#0B1F4B',True,False,True))
+
+# Diagnostic options use identical artwork, varying only the exclusion gap.
+fix=Path('docs/brand/fix');fix.mkdir(parents=True,exist_ok=True)
+for letter,gap in [('a',39),('b',52),('c',65)]:
+ (fix/f'spacing-{letter}.svg').write_text(word('#0B1F4B','#3B82F6',gap=gap))
+ (fix/f'spacing-{letter}-dark.svg').write_text(word('#FFFFFF','#93C5FD',gap=gap))

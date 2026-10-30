@@ -173,6 +173,23 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK1b C/check spacing and d refinement
+
+- Continued ui/creident-mockup from aefa16e. Trimmed C lower terminal and used an
+  exclusion mask to separate the rounded check. Check stroke 108 units (83% of
+  reference 130-unit letter stroke); wordmark option B gap 52 units (40%).
+  A/B/C spacing studies and light/dark 48/24px comparisons in docs/brand/fix/.
+- d hook now bends visibly inward and meets its bowl; remaining glyphs unchanged.
+  Preserved BK1 baseline SVG and before/after screenshot for owner review.
+- At 16px, 40% vector gap visually closed through antialiasing; standalone mark
+  uses 85-unit optical floor. Raster inspection confirms a background gap between
+  C/check, also in mono vector geometry. This exception is documented in BRAND.md.
+- Regenerated all v2 SVG/PNG/favicon/app/maskable/OG exports and board screenshot.
+  Node 22.23.4: 522 tests/50 files, typecheck/build pass. Only docs/brand,
+  public/brand/v2 and handoff changed. No dependencies or app wiring/deployment.
+- Push target origin/ui/creident-mockup; no PR claimed. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — BK1 Check-C brand kit (no app wiring)
 
 - Continued ui/creident-mockup from clean 600c55b. Rebuilt attached visual direction

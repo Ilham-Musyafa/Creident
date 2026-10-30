@@ -7,7 +7,7 @@ application. Existing brand files remain unchanged. This guide governs the new
 ## Meaning and construction
 
 Creident records the terms, steps and decisions of a buyer–seller deal. The C's
-lower terminal becomes an attached check: agreement goes on record. A soft inward
+lower terminal becomes an separated check: agreement goes on record. A soft inward
 hook at the bottom of the d stem meets its bowl, leaving a small rounded notch at
 the lower right. Other letters are standard Outfit. Spelling: **Creident**.
 
@@ -85,7 +85,7 @@ and use monochrome exports when one ink is required. Use supplied favicon/icon
 exports instead of shrinking the entire wordmark into an app tile.
 
 Do not stretch, rotate, recolor the check outside the supplied variants, add shadows
-or gradients, place on busy photographs, separate the check from the C, edit the d
+or gradients, place on busy photographs, change the specified C/check spacing, edit the d
 hook, change spelling, or imply guaranteed outcomes. Do not replace app wiring in
 this asset-preparation step.
 
@@ -97,3 +97,19 @@ is 1440px wide. Managed Chromium blocks file:// navigation; a temporary local st
 server was used for preview/export. The board has only relative local references,
 no scripts or CDN; direct-file behavior cannot be verified in this managed browser.
 All 37 images load without overflow. Sanity gate results are recorded in HANDOFF.md.
+
+
+## BK1b spacing refinement
+
+Option B uses a 52-unit separation (40% of the 130-unit reference letter stroke).
+Check stroke is 108 units (83%), round caps/joins. A geometric exclusion mask
+keeps letter and check separate even in monochrome exports. C lower terminal is
+trimmed around five o'clock; the check is repositioned inside the opening.
+The d stem bends inward to meet its bowl; the lower-right contour is hooked.
+Other glyph outlines are unchanged.
+
+At 16px, the mathematical 40% gap could close visually through antialiasing.
+Standalone marks therefore use an 85-unit optical exclusion floor, propagated to
+app icons/favicons. This is a small-size exception, not a different wordmark option.
+See fix/compare.html (A 30%, B 40%, C 50%) and fix/before-after.png. The check stays
+part of the fixed composition, but must never touch the C. Use the supplied exports.
