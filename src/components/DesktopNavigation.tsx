@@ -21,7 +21,7 @@ const learnLinks = [
   { title: 'About', href: '/about', icon: 'about' },
 ] as const;
 
-function pageInfo(path: string): { title: string; subtitle: string; selected: Active | null } {
+function pageInfo(path: string): { title: string; subtitle: string; selected: Active | null | undefined } {
   if (path === '/') return { title: 'Home', subtitle: 'Your demo workspace and next steps.', selected: 'Home' };
   if (path === '/deals') return { title: 'Transactions', subtitle: 'Find a deal and see what happens next.', selected: 'Deals' };
   if (path === '/deals/new') return { title: 'New deal', subtitle: 'Agree on the terms before payment.', selected: 'Deals' };
@@ -37,15 +37,15 @@ function pageInfo(path: string): { title: string; subtitle: string; selected: Ac
     return { title, subtitle, selected: 'Deals' };
   }
   if (path === '/audit') return { title: "Deal history", subtitle: 'Check the recorded steps for each deal.', selected: 'Audit' };
-  if (path === '/how-it-works') return { title: 'How it works', subtitle: 'Agree, pay, ship, and check your order.', selected: 'Menu' };
+  if (path === '/how-it-works') return { title: 'How it works', subtitle: 'Agree, pay, ship, and check your order.', selected: null };
   if (path === '/audit/how-it-works') return { title: 'How verification works', subtitle: 'What record checks cover and their limits.', selected: 'Audit' };
   if (path.startsWith('/audit/')) return { title: 'Deal history', subtitle: 'Inspect the steps and their verification.', selected: 'Audit' };
   if (path === '/menu') return { title: 'Settings', subtitle: 'Demo role, appearance and useful links.', selected: 'Menu' };
   if (path === '/fairness') return { title: 'Fairness results', subtitle: 'Recorded evaluation results and their limits.', selected: null };
   if (path === '/about') return { title: 'About Creident', subtitle: 'Clear terms, evidence and human review.', selected: null };
-  if (path === '/reviewer/oversight') return { title: "Review desk", subtitle: 'Inspect the existing demo review workspace.', selected: 'Menu' };
+  if (path === '/reviewer/oversight') return { title: "Review desk", subtitle: 'Inspect the existing demo review workspace.', selected: null };
   if (path.startsWith('/paypal/')) return { title: path.endsWith('/return') ? 'Back from PayPal' : 'Demo payment approval', subtitle: 'Test payments only. No real money moves.', selected: 'Deals' };
-  return { title: 'Creident', subtitle: 'Every deal, on record.', selected: null };
+  return { title: 'Creident', subtitle: 'Every deal, on record.', selected: undefined };
 }
 
 function AppearanceMenu() {
@@ -74,7 +74,7 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
     return () => { window.removeEventListener('hashchange', sync); window.removeEventListener('popstate', sync); };
   }, [pathname]);
   const info = pageInfo(pathname);
-  const selected = info.selected ?? (pathname === '/about' || pathname === '/fairness' ? null : active);
+  const selected = info.selected === undefined ? active : info.selected;
   const learnCurrent = pathname === '/how-it-works' ? '/how-it-works' : pathname === '/fairness' ? '/fairness' : pathname === '/about' ? hash === '#decisions' ? '/how-it-works' : '/about' : null;
   return <div className="desktop-shell hidden print:hidden lg:block">
     <a href="#main-content" className="desktop-skip rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent">Skip to content</a>

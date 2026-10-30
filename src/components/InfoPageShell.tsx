@@ -9,7 +9,7 @@ export async function InfoPageShell({ title, subtitle, children }: {
   title: string; subtitle: string; children: ReactNode;
 }) {
   const role = await getRole();
-  return <AppShell active="Menu" mobileFullBleed>
+  return <AppShell mobileFullBleed>
     <div className="lg:hidden"><MobileBrandHeader role={role}/></div>
     <MobilePanel className="info-panel">
       <PageHeader title={title} back="/menu" subtitle={subtitle}/>
