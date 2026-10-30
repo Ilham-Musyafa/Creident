@@ -173,6 +173,45 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — Lead session: merges, owner decisions and queue
+
+- Merged to main today: #89/#90 brand kit, #91 C26 submission polish, #92 C27 plain
+  language, #93 C28 Home polish, #94 C30 categories, #95 C33 plain-language About and
+  Fairness, #96 C31 New deal follow-up. main d35cc4f: typecheck pass, 549 tests/53 files.
+- C31 (Codex, #96): Condition is now a required select (New / Used - Like New /
+  Used - Good / Used - Good Enough); an AI-draft condition is mapped to an option or
+  shown as "The AI draft said: ...". Deal summary shows Category / Subcategory. Price
+  helper text added (`src/components/newDealPresentation.ts`). No schema/API/rule change.
+- C33 (harness, #95): About restructured into six plain sections (anchors
+  #decisions, #audit, #limitations kept; R1-R7 accordion removed, it lives on
+  /how-it-works; all eight limitation points kept). Fairness wording and labels
+  simplified; every number still read from eval/results.json. Wording only.
+- Owner decisions: license stays MIT; UI language stays English for the hackathon,
+  Indonesian later; Creident name locked; Render hosting; Check-C wordmark is the logo.
+  New deal: 18 categories with subcategories (taxonomy in `src/lib/dealCategories.ts`,
+  incl. Sports & Fitness) and the four condition options above.
+- Eval label decisions (owner + partner, accepted by Lead): keep case 11 label; keep
+  31/32; lock 33/34; reword evidence of cases 5/6 while keeping labels; add evidence
+  conditions to cases 13/14; README R5 definition must match code (disputeType
+  damaged/incomplete, missing/contradictory evidence, no usable summary, unclear
+  criterion). Add per-label and per-group scores plus an always-ESCALATE baseline, and
+  re-run the eval before writing any number. Not done yet (C29).
+- Work split: Codex = UI/design changes; DeepSeek harness = heavy mechanical or
+  token-heavy tasks (local app, one task per session); Claude (Lead) = review, claims,
+  PR review, evaluation work. One agent per branch; merge in sequence.
+- Queue: C29 eval changes; Home/Transactions polish (Completed label wraps, duplicate
+  tile rows and Browse button, three filter controls on Transactions); owner dry run
+  Seller -> Buyer -> Reviewer; UI freeze; C32 final screenshots and README links
+  (Render, YouTube); demo script; video (< 3 min) on YouTube; Devpost.
+- Open items for the owner: confirm the Render deploy is live (the agent proxy cannot
+  reach it); live-model evaluation needs approval of the AI provider and must never run
+  on the public server; Sandbox end-to-end bridge run.
+- Hackathon facts (official page): prizes include Best Overall, five $5,000 special
+  categories (Most Creative, Most Impactful, Best Demo Delivery, Best Use of PayPal + AI,
+  Best Use of Agentic Commerce) and sponsor prizes (Render credits among them). Judging
+  criteria are not published. Creident is not an agentic-commerce entry: AI only
+  summarises evidence and rules decide; do not claim it.
+
 ### 2026-10-30 — C30 existing category field extended
 
 - Verified C28 merged in main 0eeb2f1 (PR #93); created ui/new-deal-categories.
