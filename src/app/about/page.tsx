@@ -12,6 +12,7 @@ const LIMITATIONS = [
   'Evidence is text only. Taking photos and uploading files are not built, and photos are not checked for authenticity.',
   'On a full refund, the platform covers the PayPal fee, so the buyer gets everything back. For a part refund, the reviewer decides the amount.',
   'A refund waits until the item is back with the seller, unless the reviewer decides to skip that (for example when the item never arrived).',
+  'After the buyer confirms receipt, the deal is complete. A problem found later is not reopened in this demo, so a buyer should report a problem before confirming.',
   'The people running the server can still change data. Saved history and saved copies help spot changes, but they cannot stop misuse.',
 ];
 
