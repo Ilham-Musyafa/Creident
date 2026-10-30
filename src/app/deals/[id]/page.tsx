@@ -110,9 +110,9 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             {captureFailed && <Notice tone="warning">PayPal couldn't charge the approved payment. The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.<TechnicalDetails><p>PayPal code: {String(lastEvent!.payload.code ?? 'error')}</p>{lastEvent!.payload.issue ? <p>PayPal issue: {String(lastEvent!.payload.issue)}</p> : null}</TechnicalDetails></Notice>}
             <PartialRefundNotice tx={tx} events={allEvents}/>
           </section>
-          {role === 'seller' && (created || tx.status === 'DRAFT') && <Card className="deal-share space-y-3">
+          {role === 'seller' && (created || tx.status === 'DRAFT' || tx.status === 'TERMS_LOCKED' || tx.status === 'AWAITING_APPROVAL') && <Card className="deal-share space-y-3">
             <h2 className="text-lg text-heading">Share with the buyer</h2>
-            <Notice>Share this deal link with the buyer.</Notice>
+            <Notice>Share this deal link with the buyer. You can copy it again here until the buyer approves the payment.</Notice>
             <CopyLinkButton path={`/deals/${id}/checkout`}/>
           </Card>}
           {decision && <DealDecisionSummary tx={tx} decision={decision} recommendation={recommendation} events={allEvents}/>}
