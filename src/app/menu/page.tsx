@@ -31,7 +31,6 @@ function SettingsLink({ href, title, detail, icon }: { href: string; title: stri
   return <Link href={href} className="group flex min-h-16 items-center gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-surface-2">
     <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line text-heading"><SettingsIcon name={icon}/></span>
     <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading">{title}</span><span className="mt-1 block text-sm leading-relaxed text-muted">{detail}</span></span>
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0 text-muted"><path d="m9 5 7 7-7 7"/></svg>
   </Link>;
 }
 

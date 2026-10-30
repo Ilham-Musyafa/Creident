@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { BottomNav } from './ui';
+import { MobileDock } from './MobileDock';
 import { DesktopNavigation } from './DesktopNavigation';
 import { getRole, simulatedPayPal } from '../app/_server';
 
@@ -14,10 +14,10 @@ export async function AppShell({ active, children, mobileFullBleed = false }: { 
     <div className="min-h-screen bg-bg">
       <DesktopNavigation active={active} role={role} simulated={simulatedPayPal()}/>
       <div className="fixed inset-x-0 bottom-0 z-20 print:hidden lg:hidden">
-        <BottomNav active={active}/>
+        <MobileDock role={role} active={active}/>
       </div>
       <div className="desktop-main-area">
-        <main id="main-content" tabIndex={-1} className={`desktop-content hv-page mx-auto min-w-0 w-full max-w-[1100px] pb-32 lg:px-10 lg:pb-12 lg:pt-10 ${mobileFullBleed ? 'px-0 pt-0' : 'px-5 pt-6'}`}>{children}</main>
+        <main id="main-content" tabIndex={-1} className={`desktop-content hv-page ${role === 'seller' ? 'seller-main' : ''} mx-auto min-w-0 w-full max-w-[1100px] pb-32 lg:px-10 lg:pb-12 lg:pt-10 ${mobileFullBleed ? 'px-0 pt-0' : 'px-5 pt-6'}`}>{children}</main>
       </div>
     </div>
   );

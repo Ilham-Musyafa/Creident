@@ -1,3 +1,4 @@
+import { displayItemName } from '../../components/displayItemName';
 import { latestCheckpoint } from '../../lib/audit/checkpointFiles';
 import Link from 'next/link';
 import { verifyChain } from '../../lib/audit/chain';
@@ -36,7 +37,7 @@ export default async function AuditIndexPage() {
         <div className="flex items-start gap-3"><span className="grid size-11 shrink-0 place-items-center rounded-full" style={{ background: broken ? 'var(--warning-bg)' : 'var(--success-bg)', color: broken ? 'var(--warning-text)' : 'var(--success-text)' }}><RecordsIcon warning={broken > 0}/></span><div className="min-w-0"><h2 className="text-lg text-heading">{broken ? `${broken} of ${rows.length} deal history failed verification` : `${rows.length} deal history verified`}</h2><p className="mt-2 text-sm leading-relaxed text-muted">{broken ? 'Checked on this server. Open the flagged deal to see which step.' : where}{missing.length > 0 && `. ${missing.length} deal(s) in the saved copy are missing here.`}</p></div></div>
         {firstBroken && <Link href={`/audit/${firstBroken.tx.id}`} className="mt-4 flex min-h-11 items-center justify-center rounded-full bg-strong px-4 text-sm font-semibold text-on-strong">{broken > 1 ? `View affected deal history (${broken})` : 'View affected record'}</Link>}
       </section>}
-      <Link href="/audit/how-it-works" className="mb-5 flex min-h-14 items-center gap-3 rounded-[20px] border border-line bg-bg px-4 py-3 text-sm font-medium text-heading hover:bg-surface-2 lg:hidden"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5 shrink-0 text-[var(--inspection-text)]"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><span className="flex-1">How verification works</span><span aria-hidden="true">›</span></Link>
+      <Link href="/audit/how-it-works" className="mb-5 flex min-h-14 items-center gap-3 rounded-[20px] border border-line bg-bg px-4 py-3 text-sm font-medium text-heading hover:bg-surface-2 lg:hidden"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5 shrink-0 text-[var(--inspection-text)]"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><span className="flex-1">How verification works</span></Link>
       <div className="hidden lg:block">
       {rows.length > 0 && (
         <div role="status" className="mb-4 rounded-[18px] border p-4 text-sm" style={broken
@@ -61,10 +62,10 @@ export default async function AuditIndexPage() {
                   <span className="min-w-0 flex-1"><span className="block break-words text-sm font-semibold text-heading">{view.title}</span><span className="mt-2 flex flex-wrap items-center gap-1.5"><StatusPill status={tx.status}/>{view.demo && <span className="rounded-full border border-line px-2 py-0.5 text-xs text-muted">Demo</span>}</span>
                     <span className="mt-2 block text-sm" style={{ color: check.ok ? 'var(--muted)' : 'var(--warning-text)' }}>{check.ok ? `${check.length} steps` : `⚠ Failed at step #${check.brokenAtSeq}`}</span>
                     {problem && <span className="mt-1 block text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ {problem}</span>}
-                  </span><span aria-hidden="true" className="self-center text-heading">›</span>
+                  </span>
                 </Link>
                 <Link href={`/audit/${tx.id}`} className={`hidden min-h-[64px] lg:flex items-center justify-between gap-3 rounded-[18px] border bg-surface p-3 hover:bg-surface-2 ${check.ok ? 'border-line' : 'border-2'}`} style={check.ok ? undefined : { borderColor: 'var(--warning-text)' }}>
-                  <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{tx.item}</span><StatusPill status={tx.status}/>
+                  <span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{displayItemName(tx.item)}</span>{view.demo && <span className="mr-2 inline-block rounded-full border border-line px-2 py-0.5 text-xs text-muted">Demo</span>}<StatusPill status={tx.status}/>
                     {problem && <span className="mt-1 block text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ {problem}</span>}</span>
                   {check.ok
                     ? <span className="shrink-0 text-right text-sm text-muted">{check.length} steps</span>

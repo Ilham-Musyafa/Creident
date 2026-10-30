@@ -1,3 +1,4 @@
+import { displayItemName } from '../../../components/displayItemName';
 import { TechnicalDetails } from '../../../components/TechnicalDetails';
 import { notFound } from 'next/navigation';
 import { ButtonLink, KeyValue } from '../../../components/ui';
@@ -24,7 +25,7 @@ export default async function SimulatedApprovalPage({ searchParams }: { searchPa
       <div className="mx-auto max-w-[520px] space-y-4">
         <Notice tone="warning">Demo only. This is not PayPal and no money moves. It stands in for the PayPal approval step so you can try the whole flow.</Notice>
         <Card>
-          <p className="text-sm text-muted">{tx.item}</p>
+          <p className="text-sm text-muted">{displayItemName(tx.item)}</p>
           <p className="mt-1 text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
           <p className="mt-1 text-sm text-muted">You approve now; you are charged only after you confirm the item or a problem is decided.</p>
         </Card>

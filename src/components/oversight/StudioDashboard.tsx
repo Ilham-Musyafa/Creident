@@ -26,7 +26,7 @@ function AuditHealth() {
     <p className="mt-3 text-sm text-muted [overflow-wrap:anywhere]">{message}</p>
     {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed}  differ from the saved copy</p>}
     <p className="mt-2 text-sm text-muted">A record checked only here cannot reveal a full rewrite; a published saved copy can.</p>
-    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal deal history →</Link>
+    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal history</Link>
   </div>;
 }
 const gridOptions: AgGridWidgetOptions = { createCellRenderer: () => ({ value }: { value: unknown }) =>

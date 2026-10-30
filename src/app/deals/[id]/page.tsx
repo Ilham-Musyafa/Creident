@@ -1,3 +1,4 @@
+import { displayItemName } from '../../../components/displayItemName';
 import { TechnicalDetails } from '../../../components/TechnicalDetails';
 import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
 import { SuccessBurst } from '../../../components/motion';
@@ -61,11 +62,11 @@ export default async function DealPage({ params, searchParams }: { params: Promi
     <AppShell active="Deals">
       <div className="deal-story">
       {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
-      <PageHeader title={tx.item} subtitle={subtitle} back="/deals"/>
+      <PageHeader title={displayItemName(tx.item)} subtitle={subtitle} back="/deals"/>
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-4">
           <Card className="deal-summary space-y-2">
-            <p className="text-sm font-semibold text-heading">{tx.item}</p>
+            <p className="text-sm font-semibold text-heading">{displayItemName(tx.item)}</p>
             <p className="font-display text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <StatusPill status={tx.status}/>
             {view.deadlineLabel && <p className="text-sm text-muted">Time left: {view.deadlineLabel}</p>}

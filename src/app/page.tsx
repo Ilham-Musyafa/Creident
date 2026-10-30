@@ -1,9 +1,9 @@
 import { DesktopHome } from '../components/DesktopHome';
-import { sortTransactionRows, transactionRow } from '../components/transactionsView';
+import { matchesTransactionFilter, sortTransactionRows, transactionRow } from '../components/transactionsView';
 import { MobileHome } from '../components/MobileHome';
 import { verifyChain } from '../lib/audit/chain';
 import { AppShell } from '../components/layout';
-import { isActive, isReserved, money } from '../components/view';
+import { isActive } from '../components/view';
 import { data, getRole, simulatedPayPal } from './_server';
 
 export const dynamic = 'force-dynamic';
@@ -13,9 +13,6 @@ export default async function HomePage() {
   const ctx = data();
   const deals = ctx.repo.listTransactions();
   const now = ctx.now();
-  const reservedList = deals.filter((d) => isReserved(d.status, d.captured));
-  const reserved = reservedList.reduce((sum, d) => sum + Number(d.amount), 0);
-  const reservedDeals = reservedList.length;
   const inDispute = deals.filter((d) => d.status === 'DISPUTED' || d.status === 'UNDER_REVIEW').length;
   const completed = deals.filter((d) => ['COMPLETED', 'PARTIALLY_REFUNDED'].includes(d.status)).length;
   const active = deals.filter((d) => isActive(d.status)).length;
@@ -39,7 +36,9 @@ export default async function HomePage() {
     .sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active))
     .slice(0, 3);
 
-  const homeData = { role, approvedAmount: money(reserved), approvedCount: reservedDeals,
+  const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Completed', 'closed', 'Closed, including cancelled/refunded']] as const)
+    .map(([label, filter, detail]) => ({ label, detail, href: `/deals?filter=${filter}`, count: rows.filter(row => matchesTransactionFilter(row, filter)).length }));
+  const homeData = { role, statusTiles,
     active, inDispute, completed, actionCount, actionTitle, actions, recent,
     recentTitle: role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent deals',
     verified, total: chains.length, simulated: simulatedPayPal() };
