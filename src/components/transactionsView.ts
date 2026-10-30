@@ -10,7 +10,13 @@ export interface TransactionRow {
   category?: unknown; subcategory?: unknown;
   id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
-  href: string; deadline: number | null; deadlineLabel: string | null;
+  href: string; deadline: number | null; deadlineLabel: string | null; createdAt: string | null;
+}
+/** Short fixed-zone date for lists, e.g. "30 Oct 2026". */
+export function shortDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const time = Date.parse(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
+  return Number.isFinite(time) ? new Date(time).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : null;
 }
 export function readTransactionFilter(value: unknown): TransactionFilter {
   return typeof value === 'string' && Object.hasOwn(TRANSACTION_FILTERS, value) ? value as TransactionFilter : 'all';
@@ -37,7 +43,7 @@ const WAITING: Record<TxStatus, string> = {
   FROZEN_EXTERNAL: 'Waiting for PayPal case update', COMPLETED: 'No action needed', REFUNDED: 'No action needed',
   PARTIALLY_REFUNDED: 'No action needed', VOIDED: 'No action needed', CANCELLED: 'No action needed',
 };
-export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: readonly string[] = []): TransactionRow {
+export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: readonly string[] = [], createdAt: string | null = null): TransactionRow {
   const metadata = terms(tx.termsJson);
   const demo = metadata.demo === true || /^\[Demo\]\s*/i.test(tx.item);
   const title = demo ? tx.item.replace(/^\[Demo\]\s*/i, '') || tx.item : tx.item;
@@ -54,7 +60,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
   return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
-    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel };
+    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, createdAt };
 }
 export function sortTransactionRows(rows: readonly TransactionRow[]): TransactionRow[] {
   return [...rows].sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active) || (a.deadline ?? Infinity) - (b.deadline ?? Infinity));

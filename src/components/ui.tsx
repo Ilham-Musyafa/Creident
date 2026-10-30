@@ -6,17 +6,23 @@ import Link from 'next/link';
 import type { TxStatus } from '../lib/domain/types';
 
 type Tone = 'awaiting' | 'authorized' | 'inspection' | 'disputed' | 'completed' | 'frozen' | 'void';
+// Three calm tones: green = done, red = a problem needs a person, grey = everything else.
+// The label says what is happening; colour is only a hint.
 const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
   PARTIALLY_REFUNDED: { label: "Part of the money returned", tone: 'void' },
-  DRAFT: { label: "Order placed", tone: 'void' }, TERMS_LOCKED: { label: "Order placed", tone: 'completed' },
-  AWAITING_APPROVAL: { label: 'Waiting for payment', tone: 'awaiting' },
-  AUTHORIZED: { label: "Payment approved — not charged yet", tone: 'authorized' },
-  SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: "Delivered", tone: 'inspection' },
+  DRAFT: { label: "Order placed", tone: 'void' }, TERMS_LOCKED: { label: "Order placed", tone: 'void' },
+  AWAITING_APPROVAL: { label: 'Waiting for payment', tone: 'void' },
+  AUTHORIZED: { label: "Payment approved — not charged yet", tone: 'void' },
+  SHIPPED: { label: 'Shipped', tone: 'void' }, IN_INSPECTION: { label: "Delivered", tone: 'void' },
   DISPUTED: { label: 'Problem reported', tone: 'disputed' }, UNDER_REVIEW: { label: 'Being reviewed', tone: 'disputed' },
-  RETURN_REQUESTED: { label: 'Return in progress', tone: 'awaiting' },
-  FROZEN_EXTERNAL: { label: 'On hold · PayPal dispute', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
+  RETURN_REQUESTED: { label: 'Return in progress', tone: 'void' },
+  FROZEN_EXTERNAL: { label: 'On hold · PayPal dispute', tone: 'void' }, COMPLETED: { label: 'Completed', tone: 'completed' },
   REFUNDED: { label: 'Refund issued', tone: 'void' }, VOIDED: { label: "Payment cancelled — no money moved", tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },
+};
+// One-line labels for crowded lists; the full label stays in the tooltip and on the deal page.
+const shortLabels: Partial<Record<TxStatus, string>> = {
+  AUTHORIZED: 'Payment approved', VOIDED: 'Payment cancelled', PARTIALLY_REFUNDED: 'Part refunded', FROZEN_EXTERNAL: 'On hold · PayPal',
 };
 const mobileTone: Record<Tone, string> = { completed: 'success', awaiting: 'warning', disputed: 'danger', authorized: 'info', inspection: 'info', frozen: 'warning', void: 'neutral' };
 const toneStyle = (tone: Tone) => ({ backgroundColor: `var(--${tone}-bg)`, color: `var(--${tone}-text)` });
@@ -25,10 +31,10 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
   const colors = { accent: 'bg-accent text-on-accent', ghost: 'border border-line bg-surface text-heading', strong: 'bg-strong text-on-strong' };
   return <button className={`min-h-[46px] rounded-full px-5 text-sm font-bold hv-press hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${colors[variant]} ${fullWidth ? 'w-full' : ''} ${className}`} {...props} />;
 }
-export function StatusPill({ status, suffix, compact = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; className?: string }) {
+export function StatusPill({ status, suffix, compact = false, short = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; short?: boolean; className?: string }) {
   const { label, tone } = statusMap[status];
-  const shownLabel = compact && status === 'AUTHORIZED' ? "Payment approved — not charged yet" : label;
-  return <span title={compact ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  const shownLabel = short ? shortLabels[status] ?? label : compact && status === 'AUTHORIZED' ? "Payment approved — not charged yet" : label;
+  return <span title={compact || short ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
 export function AmountCard({ amount, label = "Payment approved — not charged yet", stats, onAction, actionHref, actionLabel = 'New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
