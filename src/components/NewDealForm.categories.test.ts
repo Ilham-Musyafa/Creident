@@ -12,6 +12,17 @@ describe('New-deal category form contract', () => {
     expect(html).toContain('Choose a category'); expect(html).toContain('Item name');
     expect(html).not.toContain('id="subcategory"'); expect(html).not.toContain('Item type');
     expect(html).toContain('inputMode="decimal"'); expect(html).toContain('pattern="\\d{1,6}(\\.\\d{1,2})?"');
+    expect(html).toMatch(/<select id="condition" required=""/);
+    expect(html).not.toContain('<input id="condition"');
+    expect(html).toContain('Choose a condition');
+    expect(html).toContain('Test price in USD. No real money moves.');
+    expect(html).toContain('Not specified');
+    expect(html).toContain('Not chosen');
+    expect(html).toContain('>Category</dt>');
+  });
+  it('shows the Sandbox price helper', () => {
+    const html = renderToStaticMarkup(createElement(NewDealForm,{simulated:false,time:{shipByDays:3,inspectionDays:2,evidenceDays:2}}));
+    expect(html).toContain('Sandbox test price in USD.');
   });
   it('builds the exact category terms used by submission with editable, preserved checklist lines', () => {
     const merged = categoryChecklist('mobile-phones','mobile-phones-smartphones','My own check');

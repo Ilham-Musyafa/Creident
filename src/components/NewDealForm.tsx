@@ -7,6 +7,7 @@ import { TermsListEditor } from './TermsListEditor';
 import { callApi, ErrorNote } from './client';
 import { TermsAssistant } from './TermsAssistant';
 import { DEAL_CATEGORIES, categoryChecklist, categoryTerms } from '../lib/dealCategories';
+import { CONDITION_OPTIONS, categorySummary, conditionFromDraft, priceHelper } from './newDealPresentation';
 
 import { descriptionForDraft } from '../lib/ai/termsFields';
 
@@ -22,6 +23,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
   const [receipt, setReceipt] = useState<string | null>(null);
   const [form, setForm] = useState({ item: '', amount: '', condition: '', description: '', criteria: '', category: '', subcategory: '', includedItems: '' });
   const [checklistAdded, setChecklistAdded] = useState(false);
+  const [draftConditionText, setDraftConditionText] = useState<string | null>(null);
   const selectedCategory = DEAL_CATEGORIES.find(c => c.id === form.category);
   const [manualFields, setManualFields] = useState<typeof form | null>(null);
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) => setForm({ ...form, [key]: e.target.value });
@@ -52,21 +54,24 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       <Card className="min-w-0 space-y-6 p-5 sm:p-6">
       <TermsAssistant appliedReceipt={receipt} onApply={({ draft, receipt: draftReceipt }) => {
         if (!receipt) setManualFields(form);
-        setForm(current => ({ ...current, item: draft.item, condition: draft.condition,
+        const condition = conditionFromDraft(draft.condition);
+        setDraftConditionText(condition ? null : draft.condition);
+        setForm(current => ({ ...current, item: draft.item, condition,
           description: descriptionForDraft(draft), includedItems: draft.includedItems.join('\n'), criteria: draft.criteria.join('\n'), category: '', subcategory: '' }));
         setChecklistAdded(false);
         setReceipt(draftReceipt);
       }}/>
       {receipt && <div className="space-y-2"><p className="text-sm text-muted">AI draft applied. Check and edit every field before sharing.</p><Button type="button" variant="ghost" onClick={() => {
         if (manualFields) setForm(current => ({ ...manualFields, amount: current.amount }));
+        setDraftConditionText(null);
         setReceipt(null);
       }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
       <div><Label htmlFor="item">Item name</Label><input id="item" required maxLength={200} className={fieldClass} placeholder="e.g. Used phone" value={form.item} onChange={set('item')}/></div>
-      <div className="grid grid-cols-2 gap-3">
-        <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} placeholder="120.00" value={form.amount} onChange={set('amount')}/></div>
-        <div><Label htmlFor="condition">Condition</Label><input id="condition" required maxLength={120} className={fieldClass} placeholder="Good" value={form.condition} onChange={set('condition')}/></div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} placeholder="120.00" value={form.amount} onChange={set('amount')}/><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
+        <div><Label htmlFor="condition">Condition</Label><select id="condition" required className={fieldClass} value={form.condition} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }}><option value="" disabled>Choose a condition</option>{CONDITION_OPTIONS.map(option => <option key={option} value={option}>{option}</option>)}</select>{draftConditionText && <p className="mt-2 break-words text-sm text-muted">The AI draft said: {draftConditionText}</p>}</div>
       </div>
       <div><Label htmlFor="category">Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
         <option value="" disabled>Choose a category</option>{DEAL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
@@ -102,6 +107,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
           <dl className="space-y-3 text-sm">
             {[
               ['Condition', form.condition.trim() || 'Not specified'],
+              ['Category', categorySummary(form.category, form.subcategory)],
               ['Included items', String(includedCount)], ['Buyer checks', String(criteriaCount)],
               ['Seller ships within', `${time.shipByDays} days`],
               ['Buyer inspection', `${time.inspectionDays} days`],
