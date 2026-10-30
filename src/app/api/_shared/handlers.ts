@@ -16,7 +16,7 @@ import { seedDemoData } from '../../../lib/demoSeed';
 import { isDisputeType } from '../../../lib/disputeTypes';
 import { sendTrackingToPayPal, type TrackingOutcome } from '../../../lib/paypalTracking';
 import { getApiContext, getPaymentGateway, isSimulatedPayPal, type ApiContext } from './context';
-import { errorResponse, HttpError, json, jsonBody, noExtraFields, readBodyLimited, requireRole, route, stringField, unwrap, type Role } from './http';
+import { errorResponse, HttpError, json, jsonBody, noExtraFields, readBodyLimited, publicOrigin, requireRole, route, stringField, unwrap, type Role } from './http';
 
 function hash(text: string): string {
   return createHash('sha256').update(text).digest('hex');
@@ -108,7 +108,7 @@ export function pay(request: Request, id: string): Promise<Response> {
     const context = getApiContext();
     requireTx(context, id);
     // The buyer lands on a UI page that calls GET /api/paypal/return and then shows the deal.
-    const returnUrl = new URL('/paypal/return', request.url);
+    const returnUrl = new URL('/paypal/return', publicOrigin(request));
     returnUrl.searchParams.set('txId', id);
     returnUrl.searchParams.set('role', 'buyer');
     const cancelUrl = new URL(returnUrl);

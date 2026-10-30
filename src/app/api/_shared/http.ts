@@ -5,6 +5,24 @@ import { reviewerCodeMatches, suppliedReviewerCode } from '../../../lib/reviewer
 
 export type Role = 'buyer' | 'seller' | 'reviewer';
 
+/**
+ * Public origin used to build absolute links that leave the server (payment return and cancel URLs).
+ * Behind a host proxy such as Render, request.url shows the internal address (http://localhost:10000),
+ * so prefer the platform's external URL, then the forwarded host, then the request itself.
+ */
+export function publicOrigin(request: Request, env: Record<string, string | undefined> = process.env): string {
+  const external = env.RENDER_EXTERNAL_URL;
+  if (external) {
+    try { return new URL(external).origin; } catch { /* fall through to the headers */ }
+  }
+  const host = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim();
+  if (host && /^[A-Za-z0-9.-]+(:\d{1,5})?$/.test(host)) {
+    const proto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() === 'http' ? 'http' : 'https';
+    return `${proto}://${host}`;
+  }
+  return new URL(request.url).origin;
+}
+
 export class HttpError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) {
     super(message);

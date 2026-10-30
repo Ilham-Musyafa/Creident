@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { jsonBody, readBodyLimited } from './http';
+import { jsonBody, publicOrigin, readBodyLimited } from './http';
 
 describe('bounded request bodies', () => {
   it('stops reading an oversized chunked JSON request', async () => {
@@ -34,5 +34,27 @@ describe('bounded request bodies', () => {
     } as RequestInit & { duplex: 'half' });
     await expect(readBodyLimited(request, 16_384, 'Too large')).rejects.toMatchObject({ status: 413 });
     expect(reads).toBeLessThanOrEqual(1);
+  });
+});
+
+describe('public origin for payment links', () => {
+  const internal = 'http://localhost:10000/api/transactions/abc/pay';
+
+  it('prefers the platform external URL over the internal request address', () => {
+    expect(publicOrigin(new Request(internal), { RENDER_EXTERNAL_URL: 'https://creident.onrender.com' })).toBe('https://creident.onrender.com');
+  });
+
+  it('uses the forwarded host and protocol when no external URL is set', () => {
+    const request = new Request(internal, { headers: { 'x-forwarded-host': 'creident.onrender.com', 'x-forwarded-proto': 'https' } });
+    expect(publicOrigin(request, {})).toBe('https://creident.onrender.com');
+  });
+
+  it('ignores a malformed forwarded host and falls back to the request origin', () => {
+    const request = new Request(internal, { headers: { 'x-forwarded-host': 'evil.example/path?x=1' } });
+    expect(publicOrigin(request, {})).toBe('http://localhost:10000');
+  });
+
+  it('keeps the request origin for local development', () => {
+    expect(publicOrigin(new Request('http://localhost:3000/api/x'), {})).toBe('http://localhost:3000');
   });
 });
