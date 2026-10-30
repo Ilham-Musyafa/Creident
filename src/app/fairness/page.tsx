@@ -24,10 +24,10 @@ function Metric({ label, value, detail, good: goodIn }: { label: string; value: 
 }
 
 function labelLine(total: number, reviewed: number, accepted: number): string {
-  if (!reviewed && !accepted) return 'The expected outcomes for these cases are drafts that still need review.';
+  if (!reviewed && !accepted) return 'The answer key for these cases is still a draft that needs review.';
   const draft = total - reviewed - accepted;
-  return `${reviewed} of ${total} expected outcomes were reviewed individually by the owner`
-    + (accepted ? `; ${accepted} drafts were accepted by the owner without individual review` : '')
+  return `${reviewed} of ${total} answers in the key were checked one by one by the owner`
+    + (accepted ? `; ${accepted} drafts were accepted by the owner without checking each one` : '')
     + (draft ? `; ${draft} are still drafts` : '') + '.';
 }
 
@@ -44,51 +44,64 @@ export default function FairnessPage() {
   const replay = results.mode === 'replay';
 
   return (
-    <InfoPageShell title="Fairness results" subtitle={`${m.total} synthetic cases · ${replay ? 'Recorded AI answer' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
+    <InfoPageShell title="Fairness results" subtitle={`${m.total} made-up test cases · ${replay ? 'Recorded AI answer' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
       <div className="info-content info-fairness space-y-5">
+        <div className="space-y-1 text-sm leading-relaxed">
+          <p>We tested Creident on made-up cases, including attempts to trick the AI.</p>
+          <p>{replay ? 'These results use recorded AI answers, so they check our rules and test setup, not a live AI.' : 'These results come from a live AI model, so they check that model on these cases only.'}</p>
+          <p>Every dispute outcome is still decided by a person.</p>
+        </div>
+
         {/* One summary; the replay caveat stays visible, details open on demand. */}
         <Notice className="info-notice" tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>
-          <strong className="block">{replay ? 'Recorded test results: not a measurement of a live AI model.' : 'Live-model results for these synthetic cases only.'}</strong>
+          <strong className="block">{replay ? 'Recorded answers, not a live AI model.' : 'Live-model results for these made-up cases only.'}</strong>
           <span className="mt-1 block">{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</span>
           {replay && <details className="mt-2"><summary className="cursor-pointer font-semibold">What this means</summary>
-            <p className="mt-1">These runs reuse recorded AI summaries authored from the original draft labels, including for counterfactual variants. They check the test harness, the rules and the injection flag, so perfect scores here prove nothing about model fairness.</p></details>}
+            <p className="mt-1">The AI answers were recorded earlier from the first draft of each answer key. These runs check our rules and our test setup, so a perfect score here does not show that an AI is fair.</p></details>}
         </Notice>
 
         <div className="info-metric-group">
-          <SectionTitle>Does one side lose more often?</SectionTitle>
+          <SectionTitle>Is it fair to both buyers and sellers?</SectionTitle>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Metric label="Incorrect charge recommendation" value={formatRate(falseRelease)} good={falseRelease.numerator === 0} detail={`${m.falseRelease} of ${m.buyerRight} buyer-right cases recommended charging the buyer`}/>
-            <Metric label="Incorrect refund recommendation" value={formatRate(falseRefund)} good={falseRefund.numerator === 0} detail={`${m.falseRefund} of ${m.sellerRight} seller-right cases recommended a refund`}/>
-            <Metric label="Gap between the two" value={gap === null ? 'n/a' : `${gap.toFixed(1)} pts`} detail="Difference between the incorrect-charge and incorrect-refund recommendation rates"/>
+            <Metric label="Wrongly sided with the seller" value={formatRate(falseRelease)} good={falseRelease.numerator === 0} detail={`${m.falseRelease} of ${m.buyerRight} cases where the buyer was right got a recommendation to charge the buyer`}/>
+            <Metric label="Wrongly sided with the buyer" value={formatRate(falseRefund)} good={falseRefund.numerator === 0} detail={`${m.falseRefund} of ${m.sellerRight} cases where the seller was right got a recommendation to refund`}/>
+            <Metric label="Difference between the two" value={gap === null ? 'n/a' : `${gap.toFixed(1)} percentage points`} detail="Difference between the two wrong-side results above"/>
           </div>
         </div>
 
         <div className="info-metric-group">
-          <SectionTitle>Does the outcome change for the wrong reasons?</SectionTitle>
+          <SectionTitle>Does it change its answer for the wrong reasons?</SectionTitle>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Metric label="Outcome changed by a variant" value={formatRate(flips)} good={flips.numerator === 0} detail={`${m.variantFlips} of ${m.variantCount} variants changed the recommendation. Variants swap names, reverse evidence order, shorten or lengthen the story, or make it formal or informal.`}/>
-            <Metric label="Same answer on repeat" value={formatRate(consistency)} detail={`${m.repeatMatches} of ${m.repeatComparisons} repeated runs (k = ${results.k}) matched the first run`}/>
+            <Metric label="Changed its answer when only the wording changed" value={formatRate(flips)} good={flips.numerator === 0} detail={`${m.variantFlips} of ${m.variantCount} cases changed their answer when only the wording of the case changed`}/>
+            <Metric label="Gave the same answer every time" value={formatRate(consistency)} detail={`${m.repeatMatches} of ${m.repeatComparisons} repeated runs gave the same answer as the first run`}/>
           </div>
         </div>
 
         <div className="info-metric-group">
           <SectionTitle>Safety</SectionTitle>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Metric label="Injection attacks that got through" value={formatRate(injection)} good={injection.numerator === 0} detail={`${m.injectionSuccess} of ${m.injections} cases with instructions hidden in evidence avoided human review`}/>
-            <Metric label="Sent to a human" value={formatRate(escalation)} detail={`${m.escalation} of ${m.total} cases. Every dispute outcome is still confirmed by a person.`}/>
-            <Metric label="Matches the expected outcome" value={formatRate(accuracy)} detail={`${m.correctNonEscalated} of ${m.nonEscalated} cases not sent to a human`}/>
+            <Metric label="Hidden tricks in the evidence that worked" value={formatRate(injection)} good={injection.numerator === 0} detail={`${m.injectionSuccess} of ${m.injections} cases with hidden tricks in the evidence skipped a person`}/>
+            <Metric label="Passed to a person to decide" value={formatRate(escalation)} detail={`${m.escalation} of ${m.total} cases. Every dispute outcome is still confirmed by a person.`}/>
+            <Metric label="Agrees with our answer key" value={formatRate(accuracy)} detail={`${m.correctNonEscalated} of ${m.nonEscalated} cases not passed to a person`}/>
           </div>
         </div>
 
         {results.differing.length > 0 && (
           <Card className="info-card">
-            <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from the expected outcome</h2>
+            <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from our answer key</h2>
             <TechnicalDetails><ul className="space-y-1 text-sm">{results.differing.map((d) => <li key={d.id} className="font-mono text-sm break-all">{d.id}: expected {d.expected}, got {d.actual}</li>)}</ul></TechnicalDetails>
           </Card>
         )}
 
-        <Notice className="info-notice">Labels were written by the builder. The counts above distinguish individual owner review from drafts accepted without individual review; there are no independent annotators. These dispute cases test tracking problems, evidence-based recommendations, human review and suspicious instructions. Shipping and return checks also have unit tests. Damage and missing-parts disputes always need human review regardless of the AI summary. All cases are synthetic; no real people or personal data. {m.total} cases ({m.buyerRight} buyer right, {m.sellerRight} seller right, {m.unclear} unclear, {m.injections} with injection attempts) is a small sample: treat these numbers as indicative, not proof. Open Technical details for the tested rules and instructions to reproduce the report.</Notice>
-        <TechnicalDetails><p>Dispute rules tested:</p><ul className="space-y-2">{['R3', 'R4', 'R5', 'R7'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Shipping and return rules tested:</p><ul className="space-y-2">{['R1', 'R2', 'R3'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Run <code>npm run eval</code> to reproduce the report; the full table is in eval/report.md.</p></TechnicalDetails>
+        <Notice className="info-notice">The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them. These cases cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests. Damage and missing-parts problems always need a person, whatever the AI says. All cases are made up; no real people or personal data. {m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a rough sign, not proof. Open Technical details for the rules tested and how to reproduce the report.</Notice>
+        <TechnicalDetails>
+          <p>Jargon used above:</p>
+          <ul className="space-y-1">
+            <li>Case variants: each case is re-run with its counterfactual variants, which swap the names, reverse the evidence order, shorten or lengthen the story, or make it formal or informal.</li>
+            <li>Repeated runs: every case is run {results.k} times (k = {results.k}) to check the answer stays the same.</li>
+          </ul>
+          <p>Rules tested:</p><ul className="space-y-2">{['R3', 'R4', 'R5', 'R7'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Shipping and return rules tested:</p><ul className="space-y-2">{['R1', 'R2', 'R3'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Run <code>npm run eval</code> to reproduce the report; the full table is in eval/report.md.</p>
+        </TechnicalDetails>
       </div>
     </InfoPageShell>
   );

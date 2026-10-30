@@ -1,0 +1,462 @@
+{
+  "consoleMsgs": [],
+  "pages": {
+    "about": {
+      "390-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 254
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 940
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1628
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "The seller did not ship in timeR1",
+          "Everything arrived fineR2",
+          "The tracking looks wrongR3",
+          "The proof clearly supports one sideR4",
+          "A person needs to decideR5",
+          "PayPal opened a caseR6",
+          "The proof contains instructions for the AIR7",
+          "Technical details",
+          "How the bridge works",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "How decisions are made",
+          "Deal history & verification",
+          "PayPal dispute bridge",
+          "Evaluation status",
+          "Limitations"
+        ],
+        "title": "Creident",
+        "togglesOpened": 11,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 274
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 1052
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1900
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "The seller did not ship in timeR1",
+          "Everything arrived fineR2",
+          "The tracking looks wrongR3",
+          "The proof clearly supports one sideR4",
+          "A person needs to decideR5",
+          "PayPal opened a caseR6",
+          "The proof contains instructions for the AIR7",
+          "Technical details",
+          "How the bridge works",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "How decisions are made",
+          "Deal history & verification",
+          "PayPal dispute bridge",
+          "Evaluation status",
+          "Limitations"
+        ],
+        "title": "Creident",
+        "togglesOpened": 11,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "390-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 215
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 879
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1573
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "The seller did not ship in timeR1",
+          "Everything arrived fineR2",
+          "The tracking looks wrongR3",
+          "The proof clearly supports one sideR4",
+          "A person needs to decideR5",
+          "PayPal opened a caseR6",
+          "The proof contains instructions for the AIR7",
+          "Technical details",
+          "How the bridge works",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "How decisions are made",
+          "Deal history & verification",
+          "PayPal dispute bridge",
+          "Evaluation status",
+          "Limitations"
+        ],
+        "title": "Creident",
+        "togglesOpened": 11,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 274
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 1052
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1900
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "The seller did not ship in timeR1",
+          "Everything arrived fineR2",
+          "The tracking looks wrongR3",
+          "The proof clearly supports one sideR4",
+          "A person needs to decideR5",
+          "PayPal opened a caseR6",
+          "The proof contains instructions for the AIR7",
+          "Technical details",
+          "How the bridge works",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "How decisions are made",
+          "Deal history & verification",
+          "PayPal dispute bridge",
+          "Evaluation status",
+          "Limitations"
+        ],
+        "title": "Creident",
+        "togglesOpened": 11,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "anchors": {
+        "decisions": {
+          "present": true,
+          "inViewport": true
+        },
+        "audit": {
+          "present": true,
+          "inViewport": true
+        },
+        "limitations": {
+          "present": true,
+          "inViewport": false
+        }
+      }
+    },
+    "fairness": {
+      "390-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Does one side lose more often?",
+          "Does the outcome change for the wrong reasons?",
+          "Safety",
+          "Cases that differ from the expected outcome"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Does one side lose more often?",
+          "Does the outcome change for the wrong reasons?",
+          "Safety",
+          "Cases that differ from the expected outcome"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "390-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Does one side lose more often?",
+          "Does the outcome change for the wrong reasons?",
+          "Safety",
+          "Cases that differ from the expected outcome"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Does one side lose more often?",
+          "Does the outcome change for the wrong reasons?",
+          "Safety",
+          "Cases that differ from the expected outcome"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "anchors": {
+        "decisions": {
+          "present": false
+        },
+        "audit": {
+          "present": false
+        },
+        "limitations": {
+          "present": false
+        }
+      }
+    }
+  }
+}
