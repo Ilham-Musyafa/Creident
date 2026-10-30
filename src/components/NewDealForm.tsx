@@ -68,9 +68,9 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
-      <div><Label htmlFor="item">Item name</Label><input id="item" required maxLength={200} className={fieldClass} placeholder="e.g. Used phone" value={form.item} onChange={set('item')}/></div>
+      <div><Label htmlFor="item">Item name</Label><input id="item" required maxLength={200} className={fieldClass} value={form.item} onChange={set('item')}/></div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} placeholder="120.00" value={form.amount} onChange={set('amount')}/><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
+        <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} value={form.amount} onChange={set('amount')}/><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
         <div><Label htmlFor="condition">Condition</Label><select id="condition" required className={fieldClass} value={form.condition} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }}><option value="" disabled>Choose a condition</option>{CONDITION_OPTIONS.map(option => <option key={option} value={option}>{option}</option>)}</select>{draftConditionText && <p className="mt-2 break-words text-sm text-muted">The AI draft said: {draftConditionText}</p>}</div>
       </div>
       <div><Label htmlFor="category">Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
@@ -82,17 +82,17 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
         setChecklistAdded(categoryChecklist(form.category, subcategory, form.criteria).added);
       }}><option value="">Choose a subcategory</option>{selectedCategory!.subcategories.map(sub => <option key={sub.id} value={sub.id}>{sub.label}</option>)}</select>
       {checklistAdded && <p role="status" className="mt-2 text-sm text-muted">Checklist added. You can edit it.</p>}</div>}
-      <div><Label htmlFor="description">Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} placeholder="What is included, known flaws" value={form.description} onChange={set('description')}/></div>
+      <div><Label htmlFor="description">Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} value={form.description} onChange={set('description')}/></div>
       </fieldset>
       <fieldset className="min-w-0 space-y-3 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">What’s included</legend>
         <p className="text-sm leading-relaxed text-muted">Optional. List the accessories and parts the buyer should receive.</p>
-        <TermsListEditor id="included-items" label="Item" value={form.includedItems} maxLength={1000} placeholder="e.g. Charging cable" onChange={value => setForm(current => ({ ...current, includedItems: value }))}/>
+        <TermsListEditor id="included-items" label="Item" value={form.includedItems} maxLength={1000} onChange={value => setForm(current => ({ ...current, includedItems: value }))}/>
       </fieldset>
       <fieldset className="min-w-0 space-y-4 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">Buyer checks</legend>
         <p className="text-sm leading-relaxed text-muted">Optional. Add specific checks the buyer can support with a photo or short video.</p>
-      <TermsListEditor id="criteria" label="Check" value={form.criteria} maxLength={1500} placeholder="e.g. Screen has no cracks" onChange={value => setForm(current => ({ ...current, criteria: value }))}/>
+      <TermsListEditor id="criteria" label="Check" value={form.criteria} maxLength={1500} onChange={value => setForm(current => ({ ...current, criteria: value }))}/>
       </fieldset>
       </Card>
 
