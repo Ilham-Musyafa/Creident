@@ -1,3 +1,4 @@
+import { BrandWordmark } from './BrandLogo';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { QuickRoleSwitch } from './QuickRoleSwitch';
@@ -9,8 +10,7 @@ export function MobileBrandHeader({ role, children, compact = true }: { role: Ro
     <div className="relative z-10 flex items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-2">
         <Link href="/" aria-label="Creident Home" className="flex min-h-11 items-center gap-2 rounded-lg">
-          <img src="/brand/symbol-dark.png" width="32" height="32" alt=""/>
-          <span className="brand-wordmark text-[26px] leading-none">Creident</span>
+          <BrandWordmark inverse className="h-[26px]"/>
         </Link>
         <span className="mobile-demo-badge rounded-full border px-2 py-1 text-xs font-medium">Demo</span>
       </div>
