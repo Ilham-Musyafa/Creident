@@ -173,6 +173,27 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK1d four logo corrections
+
+- Continued ui/creident-mockup from clean d3d8e3e. Removed diagonal d handle;
+  short rounded rightward curl uses y=60 center with 120-unit stroke, lower edge
+  exactly baseline zero (original bowl overshoot matches other Outfit letters).
+- C terminal clipped with its own diagonal plane, not a check-shaped exclusion
+  mask or white paint. Separate check short-arm clearance ~16 units (12% of
+  reference stroke); same geometry propagated to marks/icons/favicon.
+- Confirmed BK1c was already Outfit 700; retained requested 700, no false reduction
+  claim. Tracking loosened -10 to +5 font units. White app tile gets 0.7/48
+  light-grey border. Other letters, colors and file list unchanged.
+- Regenerated all v2 SVG/PNG exports, board and 3x match-check screenshot.
+  Remaining differences: standard Outfit r/t vs AI artwork, rounded check caps,
+  reference board's raster hues/softness. Full source JPG remains unavailable;
+  comparison uses original reference wordmark panel recovered from supplied ZIP.
+- 522 tests/50 files, typecheck/build/diff check pass. Local browser renders assets;
+  no external requests or source/app changes. Only docs/brand, v2 assets, handoff.
+  No dependency or deployment. Push targets origin/ui/creident-mockup only.
+- Manual compare (no PR claimed):
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — BK1c board-match rebuild
 
 - Continued ui/creident-mockup from clean fe95649. Read attached BRAND.md and ZIP

@@ -24,9 +24,11 @@ All files are pure vector paths (no live text or embedded images) with tight vie
 **Dark wordmark:** white letters and white check, matching the approved board.
 The Navy app tile retains a Sky check as requested; the Sapphire tile uses white.
 
-**Optical tuning:** the wordmark uses a thin 17-unit exclusion gap against an
-approximately 130-unit reference stroke (13%). Mark gap is 24 units to retain
-separation at small sizes. The check is compact and inside the lower-right opening.
+**Optical tuning:** an independent diagonal terminal clip trims only the lower
+C opening. The check is placed separately, not surrounded by a check-shaped mask
+or a painted white outline. Its short-arm edge is about 16 font units from the
+trim plane (12% of a 130-unit reference stroke). The same geometry is used for
+wordmark, marks, icons and favicon.
 
 ### Raster exports (`public/brand/v2/`)
 | File | Notes |
@@ -110,11 +112,11 @@ What this means in practice:
 
 - Outfit 700, outlined from the existing WOFF2 with preinstalled system FontTools
   and Brotli. No dependencies, package changes, font requests or kit glyph reuse.
-- All letters except C and d keep the original Outfit outlines, with tight -0.01em
+- All letters except C and d keep the original Outfit outlines, with slightly looser +0.005em
   inter-letter adjustment. C terminal trimmed, rounded 95-unit compact check and
-  17-unit thin separation. The check vertex is close to the baseline.
-- Custom d: lower stem cut back, rounded tail extends diagonally down-right across
-  the bowl's lower-right edge, leaving a visible notch above the tail.
+  approximately 16-unit thin separation. The check vertex is close to the baseline.
+- Custom d: lower stem cut back, rounded tail bends right at y=60 with a 120-unit stroke, so its lower
+  edge stays exactly at baseline y=0; it never drops below the other letters.
 - Rebuild vectors: `/usr/bin/python3 docs/brand/build-v2.py`. Existing source font
   license remains in src/fonts/Outfit-OFL.txt. SVGs have outlined paths, no live text
   or embedded raster images. PNGs are rasterized from these new vectors.
@@ -139,3 +141,11 @@ needs owner visual approval. These differences are shown openly in match-check.p
 Managed Chromium blocks file://; screenshots use a temporary localhost static
 server. HTML uses local relative files with no CDN/build. Test/typecheck/build
 results and publication status are in docs/HANDOFF.md.
+
+## 10. BK1d corrections
+
+The requested Outfit weight is 700; BK1c was already generated at 700, so no false
+weight reduction is claimed. Slightly looser tracking (+5 vs -10 font units) opens
+the word. The d tail is now horizontal and baseline-bound, not a diagonal handle.
+White app tile has a 0.7/48 light-grey #E5E7EB border. This border is a tile outline,
+not an additional logo color. File list and core palette remain unchanged.

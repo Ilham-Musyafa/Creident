@@ -11,18 +11,17 @@ g=f.getGlyphSet();c=f.getBestCmap()
 def glyph(ch):
  p=SVGPathPen(g);g[c[ord(ch)]].draw(p);return p.getCommands()
 def word(color,check,mark=False,gap=17):
- # Small marks keep a raster-safe optical gap floor.
- if mark: gap=max(gap,24)
- # BK1c: compact inner check, thin 17-unit separation; custom outward d tail.
- check_path='M420 110 490 25 650 195'
- defs=f'<defs><mask id="ct"><rect x="-100" y="-100" width="1100" height="1100" fill="white"/><rect x="430" y="-60" width="400" height="310" fill="black"/><path d="{check_path}" fill="none" stroke="black" stroke-width="{95+2*gap}" stroke-linecap="round" stroke-linejoin="round"/></mask><mask id="dt"><rect x="-100" y="-100" width="1000" height="1000" fill="white"/><path d="M370 -80H650V210L440 280 370 200Z" fill="black"/></mask></defs>'
- art=f'<path d="{glyph("C")}" fill="{color}" mask="url(#ct)"/><path d="{check_path}" fill="none" stroke="{check}" stroke-width="95" stroke-linecap="round" stroke-linejoin="round"/>'
- x=f['hmtx'][c[67]][0]-10
+ # Outfit was already 700 in BK1c; keep requested weight and loosen tracking.
+ # Clip the C terminal independently; never knock out a check-shaped halo.
+ check_path='M470 100 540 30 690 180'
+ defs='<defs><clipPath id="ct"><path d="M-100 -100H580L280 200H1000V1000H-100Z"/></clipPath><clipPath id="dt"><path d="M-100 -100H390V160H650V1000H-100Z"/></clipPath></defs>'
+ art=f'<path d="{glyph("C")}" fill="{color}" clip-path="url(#ct)"/><path d="{check_path}" fill="none" stroke="{check}" stroke-width="95" stroke-linecap="round" stroke-linejoin="round"/>'
+ x=f['hmtx'][c[67]][0]+5
  if not mark:
   for ch in 'reident':
-   shape=f'<path d="{glyph(ch)}" fill="{color}"'+(' mask="url(#dt)"' if ch=='d' else '')+'/>'
-   if ch=='d':shape+=f'<path d="M350 135 490 15" fill="none" stroke="{color}" stroke-width="130" stroke-linecap="round" stroke-linejoin="round"/>'
-   art+=f'<g transform="translate({x} 0)">{shape}</g>';x+=f['hmtx'][c[ord(ch)]][0]-10
+   shape=f'<path d="{glyph(ch)}" fill="{color}"'+(' clip-path="url(#dt)"' if ch=='d' else '')+'/>'
+   if ch=='d':shape+=f'<path d="M440 160V125Q440 60 505 60H520" fill="none" stroke="{color}" stroke-width="120" stroke-linecap="round" stroke-linejoin="round"/>'
+   art+=f'<g transform="translate({x} 0)">{shape}</g>';x+=f['hmtx'][c[ord(ch)]][0]+5
  w=48 if mark else (x+55)*.05
  transform='translate(3 41) scale(.055 -.055)' if mark else 'translate(0 40) scale(.05 -.05)'
  return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:.2f} 48" role="img" aria-label="Creident"><title>Creident</title>{defs}<g transform="{transform}">{art}</g></svg>'
@@ -30,7 +29,8 @@ for name,color,check,mark in [('wordmark-light','#0B1F4B','#3B82F6',False),('wor
 def icon(bg,light=False,sapphire=False,maskable=False):
  mark=word('#FFFFFF' if light else '#0B1F4B','#FFFFFF' if sapphire else '#93C5FD' if light else '#3B82F6',True)
  inner=mark[mark.index('<defs>'):mark.rfind('</svg>')]
- return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><title>Creident app icon</title><rect width="48" height="48" rx="{0 if maskable else 10.56}" fill="{bg}"/><g transform="translate(7.2 7.2) scale(.7)">{inner}</g></svg>'
+ border='<rect x=".35" y=".35" width="47.3" height="47.3" rx="10.21" fill="none" stroke="#E5E7EB" stroke-width=".7"/>' if bg=='#FFFFFF' else ''
+ return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><title>Creident app icon</title><rect width="48" height="48" rx="{0 if maskable else 10.56}" fill="{bg}"/>{border}<g transform="translate(7.2 7.2) scale(.7)">{inner}</g></svg>'
 for n,b,l,s in [('navy','#0B1F4B',True,False),('white','#FFFFFF',False,False),('sapphire','#3B82F6',True,True)]: (out/f'app-icon-{n}.svg').write_text(icon(b,l,s))
 (out/'favicon.svg').write_text(word('#0B1F4B','#3B82F6',True))
 (out/'maskable-source.svg').write_text(icon('#0B1F4B',True,False,True))
