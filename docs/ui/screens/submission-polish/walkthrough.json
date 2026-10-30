@@ -1,0 +1,20 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "outcome": "RELEASE",
+    "requireReturn": false,
+    "id": "35d70853-253d-4f76-80ae-8d8c805783fc",
+    "states": [
+      "DRAFT",
+      "TERMS_LOCKED",
+      "AWAITING_APPROVAL",
+      "AUTHORIZED",
+      "IN_INSPECTION",
+      "DISPUTED",
+      "UNDER_REVIEW",
+      "COMPLETED"
+    ],
+    "errors": []
+  }
+]
