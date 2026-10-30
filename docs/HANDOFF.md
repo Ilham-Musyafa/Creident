@@ -173,6 +173,24 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Lead session: UI fixes after owner testing on Render (all UI/copy only)
+
+- Merged: #103 Deal history out of main nav, #104 public-origin fix (Render "localhost:10000"),
+  #105 docs idea (join a deal by short code, post-hackathon only), #106 seller can copy the
+  buyer link again, #107 dates and calmer status colours in Transactions, #108 step-complete
+  check shown for every finished step, #109 favicon + Confirm warning, #110 newest-first
+  deal lists + new blue check animation (inline SVG/CSS from the owner's Lottie file, no
+  dependency), #111 lighter H1 Home redesign (desktop greeting panel + next-step card + deals
+  table; mobile summary card), #112 wider content area on large screens (cap 1560px, footer at
+  the bottom), #113 seller dock: New deal centred, How it works as fifth item.
+- Skipped from the H1 prompt on purpose: sidebar changes and dark-mode colour changes
+  (deferred until after submission), 1920px screenshots. Empty-state "How it works" list is
+  untested visually (demo mode auto-seeds deals on first load).
+- Still open: C29 (evaluation changes, waits for the owner's command); C32 final
+  screenshots + README links; demo script and video; Devpost; make repo public. Owner to
+  retest the full flow on creident.onrender.com (incl. dispute path with Reviewer).
+- Known: PR #73 (unused logo study) not closed by the owner yet; do not delete its branch.
+
 ### 2026-10-30 — Lead session: merges, owner decisions and queue
 
 - Merged to main today: #89/#90 brand kit, #91 C26 submission polish, #92 C27 plain
