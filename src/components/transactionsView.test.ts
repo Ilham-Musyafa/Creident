@@ -19,14 +19,11 @@ describe('transaction list presentation', () => {
     expect(transactionRow(tx({ status: 'UNDER_REVIEW' }), 'buyer', now).nextStep).toBe('Waiting for reviewer');
     expect(transactionRow(tx({ status: 'DISPUTED' }), 'buyer', now).href).toBe('/deals/test/evidence');
   });
-  it('puts actions and nearest deadlines first without mutating the input order', () => {
-    const late = transactionRow(tx({ id: 'late', status: 'AUTHORIZED', shipBy: '2026-10-26T12:00:00Z' }), 'seller', now);
-    const soon = transactionRow(tx({ id: 'soon', status: 'DISPUTED', evidenceUntil: '2026-10-24T14:00:00Z' }), 'seller', now);
-    const closed = transactionRow(tx({ id: 'closed', status: 'COMPLETED', captured: true }), 'seller', now);
-    const waiting = transactionRow(tx({ id: 'waiting', status: 'SHIPPED' }), 'seller', now);
-    const input = [closed, late, waiting, soon];
-    expect(sortTransactionRows(input).map(row => row.id)).toEqual(['soon', 'late', 'waiting', 'closed']);
-    expect(input.map(row => row.id)).toEqual(['closed', 'late', 'waiting', 'soon']);
+  it('sorts newest deals first without mutating the input order', () => {
+    const mk = (id: string, createdAt: string | null) => transactionRow(tx({ id, status: 'SHIPPED' }), 'seller', now, [], createdAt);
+    const input = [mk('old', '2026-10-20T10:00:00Z'), mk('none', null), mk('new', '2026-10-24T10:00:00Z'), mk('mid', '2026-10-22T10:00:00Z')];
+    expect(sortTransactionRows(input).map(row => row.id)).toEqual(['new', 'mid', 'old', 'none']);
+    expect(input.map(row => row.id)).toEqual(['old', 'none', 'new', 'mid']);
   });
   it('shows overdue or relevant deadlines and ignores old final-state deadlines', () => {
     expect(transactionRow(tx({ status: 'DISPUTED', evidenceUntil: '2026-10-24T11:00:00Z' }), 'buyer', now).deadlineLabel).toBe('Deadline passed');
