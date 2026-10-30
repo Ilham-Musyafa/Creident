@@ -173,6 +173,158 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK1d four logo corrections
+
+- Continued ui/creident-mockup from clean d3d8e3e. Removed diagonal d handle;
+  short rounded rightward curl uses y=60 center with 120-unit stroke, lower edge
+  exactly baseline zero (original bowl overshoot matches other Outfit letters).
+- C terminal clipped with its own diagonal plane, not a check-shaped exclusion
+  mask or white paint. Separate check short-arm clearance ~16 units (12% of
+  reference stroke); same geometry propagated to marks/icons/favicon.
+- Confirmed BK1c was already Outfit 700; retained requested 700, no false reduction
+  claim. Tracking loosened -10 to +5 font units. White app tile gets 0.7/48
+  light-grey border. Other letters, colors and file list unchanged.
+- Regenerated all v2 SVG/PNG exports, board and 3x match-check screenshot.
+  Remaining differences: standard Outfit r/t vs AI artwork, rounded check caps,
+  reference board's raster hues/softness. Full source JPG remains unavailable;
+  comparison uses original reference wordmark panel recovered from supplied ZIP.
+- 522 tests/50 files, typecheck/build/diff check pass. Local browser renders assets;
+  no external requests or source/app changes. Only docs/brand, v2 assets, handoff.
+  No dependency or deployment. Push targets origin/ui/creident-mockup only.
+- Manual compare (no PR claimed):
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — BK1c board-match rebuild
+
+- Continued ui/creident-mockup from clean fe95649. Read attached BRAND.md and ZIP
+  as reference data only. Reused file list/guide structure, not rejected glyphs.
+  Original full-board JPG was inline only, not a local file; ZIP's top reference
+  wordmark panel supports side-by-side match-check.png. No JPG/ZIP committed.
+- Outfit 700 re-outlined; compact inner check with thin 17-unit (13%) separation,
+  mark 24-unit optical gap, visible down-right curled d tail/notch. White dark
+  wordmark check; Navy app tile Sky check, Sapphire tile white check.
+- Regenerated vectors/PNGs, added transparent wordmark @2x exports (1562px wide),
+  recreated five-card 1280x720 board and added 3x C/d comparison. No app wiring.
+- Not claimed identical: standard Outfit r/t differ from AI letters; exact image
+  softness/hues differ; C/check caps and d join need owner review. BRAND.md states
+  these limits instead of claiming exact acceptance. Full JPG comparison is limited
+  by missing original board file. All required assets exist and board images load.
+- 522 tests/50 files, typecheck/build/diff check pass on Node 22.23.4. Browser
+  localhost preview only (managed policy blocks file://). Only docs/brand,
+  public/brand/v2 and handoff changed. No dependency, merge or deployment.
+- Push target origin/ui/creident-mockup. Manual compare (no PR claimed):
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — BK1b C/check spacing and d refinement
+
+- Continued ui/creident-mockup from aefa16e. Trimmed C lower terminal and used an
+  exclusion mask to separate the rounded check. Check stroke 108 units (83% of
+  reference 130-unit letter stroke); wordmark option B gap 52 units (40%).
+  A/B/C spacing studies and light/dark 48/24px comparisons in docs/brand/fix/.
+- d hook now bends visibly inward and meets its bowl; remaining glyphs unchanged.
+  Preserved BK1 baseline SVG and before/after screenshot for owner review.
+- At 16px, 40% vector gap visually closed through antialiasing; standalone mark
+  uses 85-unit optical floor. Raster inspection confirms a background gap between
+  C/check, also in mono vector geometry. This exception is documented in BRAND.md.
+- Regenerated all v2 SVG/PNG/favicon/app/maskable/OG exports and board screenshot.
+  Node 22.23.4: 522 tests/50 files, typecheck/build pass. Only docs/brand,
+  public/brand/v2 and handoff changed. No dependencies or app wiring/deployment.
+- Push target origin/ui/creident-mockup; no PR claimed. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — BK1 Check-C brand kit (no app wiring)
+
+- Continued ui/creident-mockup from clean 600c55b. Rebuilt attached visual direction
+  with outlined Outfit 700, attached Sapphire C-check and inward curled d stem with
+  rounded lower-right notch. Standard remaining glyphs. No attached JPG committed.
+- Added public/brand/v2 exports: wordmarks (light/dark/mono), marks, three rounded
+  app icons, SVG/16/32 favicons, 180 Apple icon, 192/512 icons, full-bleed maskable
+  export, 1200x630 OG image. SVG rebuild script and OG source under docs/brand.
+  Existing source, logo files and favicon wiring untouched. No dependencies.
+- Dark check is Sky (8.88:1 on Navy vs Sapphire 4.35:1); Sapphire app tile uses
+  white mono mark. BRAND.md covers versions, clear space, minima, WCAG ratios,
+  typography and misuse. Board shows all requested assets, fonts and size examples.
+- Preinstalled /usr/bin/python3 FontTools/Brotli outlines original local WOFF2;
+  no SVG text font dependency. Chromium canvas produces PNG sizes; DM Sans OG
+  uses local font. 37 board images loaded with no overflow. Managed browser blocks
+  file://; used temporary localhost static server, no external font/image service.
+- Node 22.23.4: 522 tests/50 files, typecheck/build/diff check pass. Changes limited
+  to docs/brand, public/brand/v2 and this handoff. No BK2 wiring, merge or deployment.
+- Push target origin/ui/creident-mockup. No PR claimed. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — L3 Check-C wordmark study
+
+- Continued ui/creident-mockup from clean c363d67. check-c.png reference absent;
+  followed the written direction and explicitly documented that limitation.
+- Created twelve wordmark variants, twelve dark versions and standalone marks
+  with dark versions (48 SVGs total), static gallery, 1440px preview and comparison
+  table in round-3-check-c only. All Outfit glyphs outlined with preinstalled
+  system FontTools (500/600/700); no dependencies or SVG font loading required.
+  Custom check terminals, echo dot and tracking changes are presentation artwork.
+- Recommendations: 12 Gentle rise, 01 Baseline, 04 Rounded check. 07 lowercase is
+  the explicitly requested exception to initial capitalization, not misspelling.
+  Tiny echo dot is intentionally subtle; no final selection or app integration.
+- Browser: 12 cards, 180 images loaded, no external requests or overflow; inspected
+  light/dark and small sizes. file:// blocked by managed Chromium policy, so preview
+  uses temporary localhost static server; relative-only HTML has no build/CDN.
+  Node 22.23.4: 522 tests/50 files, typecheck, build and diff check pass.
+  Source/public/app untouched; only round-3-check-c and this handoff changed.
+- Push target origin/ui/creident-mockup only. No PR created or deployment.
+  Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — L2 rounded logo exploration
+
+- Continued ui/creident-mockup from clean aaf6dc4. Owner rejected round 1;
+  reviewed its gallery and made six soft curved concepts in round-2 only.
+  Mood sheets were absent. Eighteen SVGs (symbol/dark/app icon), static local
+  Outfit gallery, 1440px full-page preview and strengths/24px weaknesses table.
+- Top directions: 01 Hug check (friendly embracing gesture), 03 Dot C (small-size
+  clarity). No logo selected or installed; source/public assets unchanged.
+- Browser via temporary localhost static server: six cards, sixty images loaded,
+  local Outfit loaded, no external requests or horizontal overflow. Visually
+  inspected both themes and 24px comparison. Managed Chromium blocks file://;
+  direct-file rendering cannot be verified here, but HTML uses relative assets
+  and no scripts/CDN/build step. Node 22.23.4: 522 tests/50 files, typecheck,
+  build and diff check pass. Only round-2 docs and this handoff changed.
+- Push targets origin/ui/creident-mockup only. No PR created or deployment.
+  Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
+### 2026-10-30 — L1 ten logo concepts (docs only)
+
+- Continued ui/creident-mockup from clean edb862b. Reviewed current brand assets,
+  BrandLogo and historical exploration 055d7f6 via git show. Created ten distinct
+  vector concepts, twenty light/dark SVGs, static Outfit gallery, 1440px full-page
+  preview and strengths/24px weaknesses table in docs/ui/logo-concepts/.
+- Recommendations: 10 Aligned corners, 06 Ledger stack, 03 Common ground. No option
+  selected or installed; all app assets/source unchanged. No dependencies.
+- Browser: ten cards, eighty loaded image previews, local Outfit loaded, no external
+  requests or horizontal overflow. Visually inspected 24/48/96px in both themes.
+  Managed Chromium blocks file:// by policy; used temporary localhost static server
+  for screenshot. HTML uses relative local assets and no scripts/build, but direct
+  file rendering cannot be verified here. Node 22.23.4: 522 tests/50 files,
+  typecheck and build pass. Only concept docs and this handoff changed.
+- No deployment. Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+  No PR claimed; owner chooses the next direction.
+
+### 2026-10-27 — F1 Outfit wordmark
+
+- Continued ui/creident-mockup from clean HEAD 10a7aea. Registered self-hosted
+  Outfit variable latin WOFF2 (32,292 bytes), OFL license, display swap and sans
+  fallback. Brand token now uses weight 600 / tracking -0.015em at existing sizes.
+  Shared brand-wordmark covers BrandLogo, mobile header and desktop sidebar.
+- Body/headings, tagline, symbol assets, accessible brand text and behavior unchanged.
+  Source search found no remaining Georgia/serif brand usage. Other sans-serif
+  fallbacks (including StudioDashboard) left unchanged. Historical design docs
+  describing the old serif are not new runtime styles.
+- Node 22.23.4: 522 tests/50 files, typecheck and build pass. Browser: 390/1440,
+  light/dark, computed brand font 600 and no horizontal overflow. Eight before/after
+  images: docs/ui/screens/wordmark-outfit/. No dependency or remote runtime font.
+- Implementation 06c2281 pushed to origin/ui/creident-mockup. GitHub GraphQL
+  returned Forbidden on PR creation; no PR created. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+  Not deployed or merged.
+
 ### 2026-10-26 — Plain English copy and truthful payment labels
 
 - Continued unmerged ui/creident-mockup from 527d3e7 (newer than the requested
