@@ -51,7 +51,7 @@ export function TermsAssistant({ onApply, appliedReceipt }: { appliedReceipt: st
     {result?.inputContainsInjection && <div role="alert"><Notice tone="warning">{result.warning ?? 'Possible instructions found in the pasted text. Check the draft carefully.'}</Notice></div>}
     {result && !result.draft && <p role="status" className="text-sm text-heading">{unavailable}</p>}
     {result?.draft && <div className="min-w-0 space-y-3 text-sm [overflow-wrap:anywhere]">
-      <p className="text-sm font-semibold text-muted">{result.meta.mode === 'replay' ? 'Recorded replay draft' : 'Live AI draft'} · nothing saved yet</p>
+      <p className="text-sm font-semibold text-muted">{result.meta.mode === 'replay' ? "Recorded AI answer" : 'Live AI draft'} · nothing saved yet</p>
       <p className="font-semibold text-heading">{result.draft.item}</p><p>{result.draft.condition}</p>
       <div><h3 className="mb-1 font-semibold text-heading">Included items</h3><ul className="list-disc pl-5">{result.draft.includedItems.map(item => <li key={item}>{item}</li>)}</ul></div>
       <div><h3 className="mb-1 font-semibold text-heading">Photo checks</h3><ul className="list-disc pl-5">{result.draft.criteria.map(item => <li key={item}>{item}</li>)}</ul></div>

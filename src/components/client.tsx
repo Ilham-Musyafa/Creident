@@ -149,7 +149,7 @@ export function ShipForm({ txId }: { txId: string }) {
   return (
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(async () => { await callApi(`/api/transactions/${txId}/ship`, 'seller', { tracking }); router.refresh(); }); }}>
       <div>
-        <Label htmlFor="tracking" hint="simulated courier">Tracking number</Label>
+        <Label htmlFor="tracking" hint="demo tracking">Tracking number</Label>
         <select id="tracking" className={fieldClass} value={tracking} onChange={(e) => setTracking(e.target.value)}>
           <option value="DEMO-DELIVERED">DEMO-DELIVERED · delivered to the agreed address</option>
           <option value="DEMO-IN-TRANSIT">DEMO-IN-TRANSIT · still in transit</option>
@@ -194,7 +194,7 @@ export function ReturnForm({ txId }: { txId: string }) {
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(async () => { await callApi(`/api/transactions/${txId}/return`, 'buyer', { tracking }); router.refresh(); }); }}>
       <p className="text-sm text-text">Ship the item back to the seller, then add the return tracking. The refund runs once it is delivered to the seller.</p>
       <div>
-        <Label htmlFor="return-tracking" hint="simulated courier">Return tracking number</Label>
+        <Label htmlFor="return-tracking" hint="demo tracking">Return tracking number</Label>
         <select id="return-tracking" className={fieldClass} value={tracking} onChange={(e) => setTracking(e.target.value)}>
           <option value="DEMO-DELIVERED">DEMO-DELIVERED · delivered to the seller</option>
           <option value="DEMO-IN-TRANSIT">DEMO-IN-TRANSIT · still in transit</option>

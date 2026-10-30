@@ -7,15 +7,15 @@ import type { TxStatus } from '../lib/domain/types';
 
 type Tone = 'awaiting' | 'authorized' | 'inspection' | 'disputed' | 'completed' | 'frozen' | 'void';
 const statusMap: Record<TxStatus, { label: string; tone: Tone }> = {
-  PARTIALLY_REFUNDED: { label: 'Partial refund issued', tone: 'void' },
-  DRAFT: { label: 'Waiting for agreement', tone: 'void' }, TERMS_LOCKED: { label: 'Agreed · ready to pay', tone: 'completed' },
+  PARTIALLY_REFUNDED: { label: "Part of the money returned", tone: 'void' },
+  DRAFT: { label: "Order placed", tone: 'void' }, TERMS_LOCKED: { label: "Order placed", tone: 'completed' },
   AWAITING_APPROVAL: { label: 'Waiting for payment', tone: 'awaiting' },
-  AUTHORIZED: { label: 'Payment approved · not charged yet', tone: 'authorized' },
-  SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: 'Delivered · checking', tone: 'inspection' },
+  AUTHORIZED: { label: "Payment approved — not charged yet", tone: 'authorized' },
+  SHIPPED: { label: 'Shipped', tone: 'inspection' }, IN_INSPECTION: { label: "Delivered", tone: 'inspection' },
   DISPUTED: { label: 'Problem reported', tone: 'disputed' }, UNDER_REVIEW: { label: 'Being reviewed', tone: 'disputed' },
   RETURN_REQUESTED: { label: 'Return in progress', tone: 'awaiting' },
   FROZEN_EXTERNAL: { label: 'On hold · PayPal dispute', tone: 'frozen' }, COMPLETED: { label: 'Completed', tone: 'completed' },
-  REFUNDED: { label: 'Refund issued', tone: 'void' }, VOIDED: { label: 'Cancelled · not charged', tone: 'void' },
+  REFUNDED: { label: 'Refund issued', tone: 'void' }, VOIDED: { label: "Payment cancelled — no money moved", tone: 'void' },
   CANCELLED: { label: 'Cancelled', tone: 'void' },
 };
 const mobileTone: Record<Tone, string> = { completed: 'success', awaiting: 'warning', disputed: 'danger', authorized: 'info', inspection: 'info', frozen: 'warning', void: 'neutral' };
@@ -27,10 +27,10 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
 }
 export function StatusPill({ status, suffix, compact = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; className?: string }) {
   const { label, tone } = statusMap[status];
-  const shownLabel = compact && status === 'AUTHORIZED' ? 'Approved · not charged' : label;
+  const shownLabel = compact && status === 'AUTHORIZED' ? "Payment approved — not charged yet" : label;
   return <span title={compact ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
 }
-export function AmountCard({ amount, label = 'Payment approved · not charged yet', stats, onAction, actionHref, actionLabel = 'New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
+export function AmountCard({ amount, label = "Payment approved — not charged yet", stats, onAction, actionHref, actionLabel = 'New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
     <section className="rounded-[26px] bg-hero p-5 text-hero-text" aria-label="Amount overview">
       <p className="text-sm text-hero-sub">{label}</p>
@@ -113,5 +113,5 @@ export function NavIcon({ name }: { name: NavItem['label'] }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">{path}</svg>;
 }
 export function BottomNav({ active = 'Home' }: { active?: NavItem['label'] }) {
-  return <nav aria-label="Main navigation" className="mobile-dock rounded-t-[24px] border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:rounded-none lg:pb-0 lg:w-64 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-[72px] min-w-12 flex-1 flex-col items-center justify-center gap-1 text-xs font-semibold lg:min-h-11 lg:flex-none lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm hover:bg-surface-2 ${active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'}`}><span className={`grid h-8 w-11 place-items-center rounded-full lg:size-5 lg:rounded-none ${active === item.label ? 'bg-surface-2 lg:bg-transparent' : ''}`}><NavIcon name={item.label}/></span><span>{item.label === 'Audit' ? 'Records' : item.label === 'Deals' ? 'Transactions' : item.label === 'Menu' ? 'Settings' : item.label}</span></Link>)}</div></nav>;
+  return <nav aria-label="Main navigation" className="mobile-dock rounded-t-[24px] border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:rounded-none lg:pb-0 lg:w-64 lg:shrink-0 lg:border-r lg:border-t-0"><div className="flex items-center justify-around lg:flex-col lg:items-stretch lg:gap-2 lg:p-4">{navItems.map(item => <Link key={item.label} href={item.href} aria-current={active === item.label ? 'page' : undefined} className={`flex min-h-[72px] min-w-12 flex-1 flex-col items-center justify-center gap-1 text-xs font-semibold lg:min-h-11 lg:flex-none lg:flex-row lg:justify-start lg:rounded-xl lg:px-3 lg:text-sm hover:bg-surface-2 ${active === item.label ? 'text-heading lg:bg-surface-2' : 'text-muted'}`}><span className={`grid h-8 w-11 place-items-center rounded-full lg:size-5 lg:rounded-none ${active === item.label ? 'bg-surface-2 lg:bg-transparent' : ''}`}><NavIcon name={item.label}/></span><span>{item.label === 'Audit' ? "Deal history" : item.label === 'Deals' ? 'Transactions' : item.label === 'Menu' ? 'Settings' : item.label}</span></Link>)}</div></nav>;
 }

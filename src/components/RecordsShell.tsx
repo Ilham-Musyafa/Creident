@@ -14,7 +14,7 @@ export function RecordsShell({ role, title, desktopTitle = title, subtitle, back
     <div className="lg:hidden"><MobileBrandHeader role={role}/></div>
     <MobilePanel className="records-panel">
       <header className="mb-5 flex items-start gap-3 lg:hidden">
-        {back && <Link href={back} aria-label="Back to Records" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-bg text-heading hover:bg-surface-2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5"><path d="m15 18-6-6 6-6"/></svg></Link>}
+        {back && <Link href={back} aria-label="Back to Deal history" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-bg text-heading hover:bg-surface-2"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5"><path d="m15 18-6-6 6-6"/></svg></Link>}
         <div className="min-w-0 flex-1"><h1 className={`text-[28px] leading-tight text-heading ${back ? 'flex min-h-11 items-center' : ''}`}>{title}</h1>{subtitle && <p className="mt-1 break-words text-sm text-muted">{subtitle}</p>}</div>
         {right && <div className="shrink-0">{right}</div>}
       </header>

@@ -173,6 +173,26 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — C27 plain language and visual How it works
+
+- C26 merge confirmed in origin/main ac48912 (PR #91); created ui/plain-language
+  from that HEAD. Text/presentation only plus one /how-it-works info page. No lib,
+  production API, states/rules/data/dependency changes. API receipt test changes
+  only asserted copy, preserving all financial/hash/provenance checks.
+- Shared display terms now Deal history, saved copy, Review desk, Demo mode (no real
+  money), Recorded AI answer, Payment approved — not charged yet, Payment charged,
+  Part of the money back. R1–R7 titles/text simplified without changing IDs/logic.
+  Exact term list and ambiguous owner-review choices: docs/reports/C27-plain-language.md.
+- New page: six numbered/icon steps, Who acts chips, demo note, real action links,
+  native All the rules accordion using RULE_COPY. Existing Learn/Settings links
+  point there; /about#decisions remains. /audit/how-it-works intentionally unchanged.
+- Node 22.23.4: 522 tests/50 files, typecheck/build/diff check pass. 28 production
+  browser views (seven pages, 390/1440, light/dark) with simulated payments pass:
+  zero console warnings/errors, no overflow. Keyboard accordion, links and old
+  anchor verified. Screenshots only new route; baseline shows its former 404.
+- Owner decision 2026-10-30: license stays MIT; UI language stays English for the hackathon, Indonesian later.
+- No merge/deployment. PR publication status will follow push.
+
 ### 2026-10-30 — C26 submission polish / feature freeze
 
 - Created chore/submission-polish from latest origin/main 5e597fc. LICENSE unchanged

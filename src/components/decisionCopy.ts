@@ -13,9 +13,9 @@ export function decisionOutcomeLabel(tx: StoredTx, decision: StoredDecision, eve
     || (tx.status === 'FROZEN_EXTERNAL' && tx.frozenFrom === 'PARTIALLY_REFUNDED');
   const partialAmount = decision.amount ?? tx.partialRefundAmount;
   return decision.outcome === 'PARTIAL_REFUND'
-    ? partialRefunded ? `Partial refund issued${partialAmount ? `: ${money(partialAmount, tx.currency)}` : ''}`
-    : tx.partialRefundState === 'cancelled' ? 'Partial refund not executed'
-    : tx.status === 'RETURN_REQUESTED' ? 'Partial refund decision recorded · awaiting return' : 'Partial refund decision recorded · payment step pending'
+    ? partialRefunded ? `Part of the money back${partialAmount ? `: ${money(partialAmount, tx.currency)}` : ''}`
+    : tx.partialRefundState === 'cancelled' ? "No money returned"
+    : tx.status === 'RETURN_REQUESTED' ? "Money return agreed — waiting for the item" : "Money return agreed — payment step pending"
     : decision.outcome === 'RELEASE' ? tx.captured ? 'Payment charged' : 'Decision recorded · payment step pending'
     : decision.outcome === 'SPLIT' ? 'Split decision recorded · payment step pending'
     : refunded ? returned ? 'Refund issued to the buyer after the return' : 'Refund issued to the buyer'

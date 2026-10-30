@@ -9,9 +9,9 @@ import { getRole, simulatedPayPal, reviewerCodeRequired, reviewerUnlocked } from
 export const dynamic = 'force-dynamic';
 
 const LINKS: { href: string; title: string; detail: string; icon: SettingsIconName }[] = [
-  { href: '/about#decisions', title: 'How decisions work', detail: 'Rules, evidence and human dispute review', icon: 'rules' },
-  { href: '/audit', title: 'Records', detail: 'Inspect events and verify their links', icon: 'records' },
-  { href: '/fairness', title: 'Fairness results', detail: 'Replay results, sample sizes and limits', icon: 'fairness' },
+  { href: '/how-it-works', title: 'How it works', detail: 'Rules, evidence and human dispute review', icon: 'rules' },
+  { href: '/audit', title: "Deal history", detail: 'Read each step and check the history', icon: 'records' },
+  { href: '/fairness', title: 'Fairness results', detail: 'Recorded AI answers, sample sizes and limits', icon: 'fairness' },
   { href: '/about#limitations', title: 'Limitations', detail: 'What this demo does and does not do', icon: 'limits' },
   { href: '/about', title: 'About Creident', detail: 'The prototype and its approach', icon: 'about' },
 ];
@@ -52,7 +52,7 @@ export default async function MenuPage() {
               <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-[16px] bg-surface-2 text-lg font-bold text-heading">{role[0]!.toUpperCase()}</span>
               <div className="min-w-0"><p className="text-base font-bold text-heading">Demo workspace</p><p className="mt-1 text-sm capitalize text-muted">{role} view</p></div>
             </div>
-            <div className="mt-4 border-t border-line pt-4"><span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">{simulated ? 'Simulated payments' : 'PayPal Sandbox'}</span><p className="mt-3 text-sm leading-relaxed text-muted">No real sign-in. Roles are for exploring this demo.</p></div>
+            <div className="mt-4 border-t border-line pt-4"><span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'}</span><p className="mt-3 text-sm leading-relaxed text-muted">No real sign-in. Roles are for exploring this demo.</p></div>
           </Card>
           <nav aria-label="Settings sections" className="hidden lg:block">
             <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">On this page</p>
@@ -84,15 +84,15 @@ export default async function MenuPage() {
           <section id="demo-data" tabIndex={-1} aria-labelledby="demo-data-title" className="scroll-mt-6">
             <Card className="p-5 sm:p-6">
               <SectionHeading id="demo-data-title" title="Demo data" detail="Explore labelled examples of delivery, disputes and human decisions." icon="data"/>
-              <div className="rounded-[16px] border border-line bg-bg p-4"><p className="mb-4 text-sm leading-relaxed text-muted">Examples use simulated payments. No real money moves.</p><SeedButton role={role}/></div>
+              <div className="rounded-[16px] border border-line bg-bg p-4"><p className="mb-4 text-sm leading-relaxed text-muted">Examples use Demo mode (no real money). No real money moves.</p><SeedButton role={role}/></div>
             </Card>
           </section>
 
           <section id="transparency" tabIndex={-1} aria-labelledby="transparency-title" className="scroll-mt-6">
             <Card className="p-2 sm:p-3">
-              <div className="px-3 pt-3"><SectionHeading id="transparency-title" title="Learn & verify" detail="Understand the rules, inspect records and read the demo’s limits." icon="records"/></div>
+              <div className="px-3 pt-3"><SectionHeading id="transparency-title" title="Learn & verify" detail="Read the rules, deal history and demo limits." icon="records"/></div>
               <ul className="divide-y divide-line">
-                {role === 'reviewer' && <li><SettingsLink href="/reviewer/oversight" title="Reviewer oversight" detail="Disputes, deadlines and audit health · read-only" icon="oversight"/></li>}
+                {role === 'reviewer' && <li><SettingsLink href="/reviewer/oversight" title="Review desk" detail="Problems, deadlines and history checks · read-only" icon="oversight"/></li>}
                 {LINKS.map(item => <li key={item.href}><SettingsLink {...item}/></li>)}
               </ul>
             </Card>

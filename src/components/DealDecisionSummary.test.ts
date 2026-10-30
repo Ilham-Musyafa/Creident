@@ -26,13 +26,13 @@ describe('Deal story decision wording', () => {
   });
   it('keeps an unexecuted partial refund pending and uses the recorded amount', () => {
     const html = render({ status: 'COMPLETED', captured: true, partialRefundState: 'pending', partialRefundAmount: '12.00' }, { outcome: 'PARTIAL_REFUND', amount: '12.00' });
-    expect(html).toContain('Partial refund decision recorded · payment step pending');
+    expect(html).toContain('Money return agreed — payment step pending');
     expect(html).toContain('$12.00');
-    expect(html).not.toContain('Partial refund issued');
+    expect(html).not.toContain('Part of the money back');
   });
   it('does not invent an amount when a historical decision lacks one', () => {
     const html = render({ status: 'PARTIALLY_REFUNDED', partialRefundState: 'completed' }, { outcome: 'PARTIAL_REFUND' });
-    expect(html).toContain('Partial refund issued');
+    expect(html).toContain('Part of the money back');
     expect(html).not.toContain('$0.00');
   });
   it('shows a later missed-return capture rather than the earlier refund choice', () => {
@@ -63,7 +63,7 @@ describe('Deal story decision wording', () => {
   it('formats a recorded partial amount with the deal currency and omits unsupported fee claims', () => {
     // Presentation compatibility only: the create API still supports USD only.
     const html = render({ status: 'PARTIALLY_REFUNDED', captured: true, partialRefundState: 'completed', currency: 'EUR' }, { outcome: 'PARTIAL_REFUND', amount: '12.00' });
-    expect(html).toContain('Partial refund issued: €12.00');
+    expect(html).toContain('Part of the money back: €12.00');
     expect(html).toContain('Reviewer refund amount: €12.00 EUR');
     expect(html).not.toContain('USD');
     expect(html).not.toContain('fee borne');
@@ -72,13 +72,13 @@ describe('Deal story decision wording', () => {
   it('uses a stored partial amount when the human decision lacks its amount field', () => {
     const html = render({ status: 'COMPLETED', captured: true, partialRefundState: 'pending', partialRefundAmount: '12.00' }, { outcome: 'PARTIAL_REFUND' });
     expect(html).toContain('Reviewer refund amount: $12.00 USD');
-    expect(html).not.toContain('Partial refund issued');
+    expect(html).not.toContain('Part of the money back');
   });
   it.each([
     { status: 'PARTIALLY_REFUNDED' as const, captured: true },
     { status: 'FROZEN_EXTERNAL' as const, captured: true, frozenFrom: 'PARTIALLY_REFUNDED' as const },
   ])('recognizes a completed partial refund without requiring newer optional metadata: $status', tx => {
-    expect(render(tx, { outcome: 'PARTIAL_REFUND', amount: '12.00' })).toContain('Partial refund issued: $12.00');
+    expect(render(tx, { outcome: 'PARTIAL_REFUND', amount: '12.00' })).toContain('Part of the money back: $12.00');
   });
   it('does not claim no money ever moved for a pending split after capture', () => {
     const html = render({ status: 'UNDER_REVIEW', captured: true }, { outcome: 'SPLIT' });

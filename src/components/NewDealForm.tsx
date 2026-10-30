@@ -95,7 +95,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
           <div className="border-b border-line pb-4">
             <p className="break-words text-sm font-semibold text-heading">{form.item.trim() || 'Your item'}</p>
             <p className="mt-2 break-words text-3xl font-bold tabular-nums text-heading">{amountPreview}</p>
-            <p className="mt-1 text-sm text-muted">USD · {simulated ? 'Simulated payments' : 'PayPal Sandbox'}</p>
+            <p className="mt-1 text-sm text-muted">USD · {simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'}</p>
           </div>
           <dl className="space-y-3 text-sm">
             {[

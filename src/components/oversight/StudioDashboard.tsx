@@ -16,22 +16,22 @@ function AuditHealth() {
   const audit = useContext(AuditContext)!;
   const published = audit.checkpoint;
   const message = !published.available ? published.message : published.result.valid
-    ? `Latest sealed copy: ${shortDate(published.result.createdAt)}` : published.result.reason;
+    ? `Latest saved copy: ${shortDate(published.result.createdAt)}` : published.result.reason;
   const changed = published.available && published.result.valid
     ? published.result.transactions.filter(t => t.state === 'rewritten').length : 0;
   return <div className="h-full overflow-y-auto p-2 text-sm text-text">
-    <h2 className="mb-3 text-[15px] font-bold text-heading">Record integrity</h2>
-    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">records verified</span></p>
+    <h2 className="mb-3 text-[15px] font-bold text-heading">History check</h2>
+    <p className="text-3xl font-extrabold tabular-nums text-heading">{audit.verified} <span className="text-sm font-medium">deal history verified</span></p>
     <p className="mt-2">{audit.events} steps · {audit.failed} changed · {audit.empty} empty</p>
     <p className="mt-3 text-sm text-muted [overflow-wrap:anywhere]">{message}</p>
-    {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed} differ from the sealed copy</p>}
-    <p className="mt-2 text-sm text-muted">A record checked only here cannot reveal a full rewrite; a published sealed copy can.</p>
-    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal records →</Link>
+    {changed > 0 && <p className="mt-2 font-semibold text-warning-text">{changed}  differ from the saved copy</p>}
+    <p className="mt-2 text-sm text-muted">A record checked only here cannot reveal a full rewrite; a published saved copy can.</p>
+    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold underline" href="/audit">Open deal deal history →</Link>
   </div>;
 }
 const gridOptions: AgGridWidgetOptions = { createCellRenderer: () => ({ value }: { value: unknown }) =>
   <span className="block whitespace-pre-line py-2 leading-5 [overflow-wrap:anywhere]">{value == null ? '' : String(value)}</span> };
-const configuredWidgets = createWidgets<OversightRegistry>({ additionalTypes: [{ id: 'audit-health', label: 'Audit chain health',
+const configuredWidgets = createWidgets<OversightRegistry>({ additionalTypes: [{ id: 'audit-health', label: "History check",
   comp: AuditHealth, form: () => [], defaultSize: { width: 12, height: 17 }, minSize: { width: 1, height: 15 } }] });
 const widgets = { ...configuredWidgets, widgets: configuredWidgets.widgets.map(definition =>
   definition.id === 'grid' ? { ...definition, options: gridOptions } : definition) };
@@ -67,7 +67,7 @@ function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<Oversi
       summary: `${a.feature}\n${a.created} created · ${a.unchanged} unchanged · ${a.edited} edited\n${a.unavailable} unavailable · ${a.injection} injection flagged` })),
       fields: [field('feature', 'Feature'), field('created', 'Created', true), field('unchanged', 'Unchanged', true), field('edited', 'Edited', true),
         field('unavailable', 'Unavailable', true), field('injection', 'Injection flagged', true), field('summary', 'Feature / recorded counts')] },
-    { id: 'paypal', data: snapshot.paypal.map(c => ({ state: `${c.status}\n${c.stage}${c.simulated ? ' · simulated' : ''}`, count: c.count })),
+    { id: 'paypal', data: snapshot.paypal.map(c => ({ state: `${c.status}\n${c.stage}${c.simulated ? ' · Demo mode (no real money)' : ''}`, count: c.count })),
       fields: [field('state', 'PayPal case state'), field('count', 'Cases', true)] },
   ] };
 }
@@ -82,9 +82,9 @@ function report(snapshot: OversightSnapshot, width: number, labelColor: string):
       type: { type: 'bar-chart-grouped', dataMapping: { categoryKey: [{ id: 'type.name' }], valueKey: [sum('type.count')] }, format: countBars('Disputes by type', labelColor) },
       rate: { type: 'value', dataMapping: { value: [{ id: 'escalation.rate', aggregation: 'max' }] },
         format: { ...title('Escalation rate (%)'), caption: { enabled: true, text: `${snapshot.escalation.escalated} of ${snapshot.escalation.recommendations} stored recommendations` } } },
-      audit: { type: 'audit-health', dataMapping: {}, format: title('Audit chain health') },
+      audit: { type: 'audit-health', dataMapping: {}, format: title('History check') },
       deadlines: grid('Deadline queue', narrow ? ['deadlines.item', 'deadlines.deadline'] : ['deadlines.item', 'deadlines.deadline', 'deadlines.due']),
-      assists: grid('AI assists · recorded audit events', narrow ? ['assists.summary'] : ['assists.feature', 'assists.created', 'assists.unchanged', 'assists.edited', 'assists.unavailable', 'assists.injection']),
+      assists: grid('AI assists · saved steps', narrow ? ['assists.summary'] : ['assists.feature', 'assists.created', 'assists.unchanged', 'assists.edited', 'assists.unavailable', 'assists.injection']),
       paypal: grid('PayPal case states', ['paypal.state', 'paypal.count']),
     }, widgetLayout: {} }] };
   // A fresh layout at each breakpoint: narrow screens use one column of full-width widgets.
@@ -140,7 +140,7 @@ export default function StudioDashboard({ snapshot, licenseKey }: { snapshot: Ov
     chartPaletteFills2Color: tokens['disputed-text'], chartPaletteStrokes2Color: tokens['disputed-text'],
     chartPaletteFills3Color: tokens['completed-text'], chartPaletteStrokes3Color: tokens['completed-text'],
   }), [tokens, layout.narrow]);
-  return <div ref={ref} className="min-w-0 w-full" aria-label="Reviewer oversight dashboard">
+  return <div ref={ref} className="min-w-0 w-full" aria-label="Review desk dashboard">
     {width > 0 && tokens.surface ? <AuditContext.Provider value={snapshot.audit}>
       <AgStudioProvider licenseKey={licenseKey}>
         <AgStudio<OversightRegistry> key={`${layout.narrow}:${snapshot.asOf}`} widgets={widgets} theme={theme}
