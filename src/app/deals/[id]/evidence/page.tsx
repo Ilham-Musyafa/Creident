@@ -63,7 +63,7 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
               ))}
             </ul>
           )}
-          <p className="mt-3 text-sm text-muted">Only in-platform chat counts as chat evidence. Evidence is shared with the AI as quoted text, not as commands. Suspected attempts to change its instructions need human review.</p>
+          <p className="mt-3 text-sm text-muted">Pasted chat excerpts are recorded as your own statement. Evidence is shared with the AI as quoted text, not as commands. Suspected attempts to change its instructions need human review.</p>
         </div>
       </div>
     </AppShell>
