@@ -1,0 +1,438 @@
+{
+  "consoleMsgs": [],
+  "pages": {
+    "about": {
+      "390-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 410
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 587
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1241
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "Technical details",
+          "More details",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "What is Creident?",
+          "How it works",
+          "Can I trust the history?",
+          "Works with PayPal",
+          "How we tested it",
+          "What this demo is not"
+        ],
+        "title": "Creident",
+        "togglesOpened": 4,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 476
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 675
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1466
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "Technical details",
+          "More details",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "What is Creident?",
+          "How it works",
+          "Can I trust the history?",
+          "Works with PayPal",
+          "How we tested it",
+          "What this demo is not"
+        ],
+        "title": "Creident",
+        "togglesOpened": 4,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "390-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 393
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 572
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1209
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "Technical details",
+          "More details",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "What is Creident?",
+          "How it works",
+          "Can I trust the history?",
+          "Works with PayPal",
+          "How we tested it",
+          "What this demo is not"
+        ],
+        "title": "Creident",
+        "togglesOpened": 4,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": true,
+            "rectTop": 476
+          },
+          {
+            "id": "audit",
+            "present": true,
+            "rectTop": 675
+          },
+          {
+            "id": "limitations",
+            "present": true,
+            "rectTop": 1466
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "Technical details",
+          "More details",
+          "Technical details",
+          "Read all limitations"
+        ],
+        "h1": "About Creident",
+        "h2": [
+          "Learn",
+          "About Creident",
+          "What is Creident?",
+          "How it works",
+          "Can I trust the history?",
+          "Works with PayPal",
+          "How we tested it",
+          "What this demo is not"
+        ],
+        "title": "Creident",
+        "togglesOpened": 4,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "anchors": {
+        "decisions": {
+          "present": true,
+          "inViewport": true
+        },
+        "audit": {
+          "present": true,
+          "inViewport": true
+        },
+        "limitations": {
+          "present": true,
+          "inViewport": false
+        }
+      }
+    },
+    "fairness": {
+      "390-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Is it fair to both buyers and sellers?",
+          "Does it change its answer for the wrong reasons?",
+          "Safety",
+          "Cases that differ from our answer key"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-light": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Is it fair to both buyers and sellers?",
+          "Does it change its answer for the wrong reasons?",
+          "Safety",
+          "Cases that differ from our answer key"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "390-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Is it fair to both buyers and sellers?",
+          "Does it change its answer for the wrong reasons?",
+          "Safety",
+          "Cases that differ from our answer key"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "1440-dark": {
+        "overflowX": 0,
+        "ids": [
+          {
+            "id": "decisions",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "audit",
+            "present": false,
+            "rectTop": null
+          },
+          {
+            "id": "limitations",
+            "present": false,
+            "rectTop": null
+          }
+        ],
+        "links": [
+          "/",
+          "/deals",
+          "/audit",
+          "/menu",
+          "/how-it-works",
+          "/fairness",
+          "/about#limitations",
+          "/about",
+          "/deals/new"
+        ],
+        "toggles": [
+          "What this means",
+          "Technical details",
+          "Technical details"
+        ],
+        "h1": "Fairness results",
+        "h2": [
+          "Learn",
+          "Fairness results",
+          "Is it fair to both buyers and sellers?",
+          "Does it change its answer for the wrong reasons?",
+          "Safety",
+          "Cases that differ from our answer key"
+        ],
+        "title": "Creident",
+        "togglesOpened": 3,
+        "overflowAfterOpen": 0,
+        "consoleMsgs": []
+      },
+      "anchors": {
+        "decisions": {
+          "present": false
+        },
+        "audit": {
+          "present": false
+        },
+        "limitations": {
+          "present": false
+        }
+      }
+    }
+  }
+}
