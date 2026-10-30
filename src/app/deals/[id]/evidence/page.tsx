@@ -1,3 +1,4 @@
+import { displayItemName } from '../../../../components/displayItemName';
 import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { evidenceLabel } from '../../../../components/presentationCopy';
 import { notFound } from 'next/navigation';
@@ -27,7 +28,8 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
 
   return (
     <AppShell active="Deals">
-      <PageHeader title="Add evidence" back={`/deals/${id}`} subtitle={tx.item} right={<StatusPill status={tx.status} suffix={open ? left! : undefined}/>}/>
+      <PageHeader title="Add evidence" back={`/deals/${id}`} subtitle={displayItemName(tx.item)} right={<StatusPill status={tx.status} suffix={open ? left! : undefined}/>}/>
+      {/^\[Demo\]/i.test(tx.item) && <p className="mb-3 text-xs font-semibold text-muted">Demo</p>}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="space-y-3">
           <Card>

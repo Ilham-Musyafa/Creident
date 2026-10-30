@@ -1,0 +1,98 @@
+[
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "dark",
+    "role": "seller",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "dark",
+    "role": "buyer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "light",
+    "role": "seller",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "light",
+    "role": "buyer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "dark",
+    "role": "seller",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "errors": [],
+    "overflow": false
+  }
+]

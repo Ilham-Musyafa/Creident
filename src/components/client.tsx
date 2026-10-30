@@ -151,9 +151,9 @@ export function ShipForm({ txId }: { txId: string }) {
       <div>
         <Label htmlFor="tracking" hint="demo tracking">Tracking number</Label>
         <select id="tracking" className={fieldClass} value={tracking} onChange={(e) => setTracking(e.target.value)}>
-          <option value="DEMO-DELIVERED">DEMO-DELIVERED · delivered to the agreed address</option>
-          <option value="DEMO-IN-TRANSIT">DEMO-IN-TRANSIT · still in transit</option>
-          <option value="DEMO-WRONG-DESTINATION">DEMO-WRONG-DESTINATION · delivered elsewhere</option>
+          <option value="DEMO-DELIVERED">Delivered on time</option>
+          <option value="DEMO-IN-TRANSIT">Still in transit</option>
+          <option value="DEMO-WRONG-DESTINATION">Delivered to another address</option>
         </select>
       </div>
       <Button type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add tracking'}</Button>
@@ -196,9 +196,9 @@ export function ReturnForm({ txId }: { txId: string }) {
       <div>
         <Label htmlFor="return-tracking" hint="demo tracking">Return tracking number</Label>
         <select id="return-tracking" className={fieldClass} value={tracking} onChange={(e) => setTracking(e.target.value)}>
-          <option value="DEMO-DELIVERED">DEMO-DELIVERED · delivered to the seller</option>
-          <option value="DEMO-IN-TRANSIT">DEMO-IN-TRANSIT · still in transit</option>
-          <option value="DEMO-WRONG-DESTINATION">DEMO-WRONG-DESTINATION · delivered elsewhere</option>
+          <option value="DEMO-DELIVERED">Returned to the seller</option>
+          <option value="DEMO-IN-TRANSIT">Still in transit</option>
+          <option value="DEMO-WRONG-DESTINATION">Delivered to another address</option>
         </select>
       </div>
       <Button type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add return tracking'}</Button>

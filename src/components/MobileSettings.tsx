@@ -10,8 +10,8 @@ import type { Role } from './view';
 function Chevron() {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0 text-muted transition-transform group-open:rotate-90"><path d="m9 5 7 7-7 7"/></svg>;
 }
-function RowContent({ title, icon }: { title: string; icon: SettingsIconName }) {
-  return <><span className="shrink-0 text-[var(--inspection-text)]"><SettingsIcon name={icon}/></span><span className="min-w-0 flex-1 text-sm font-medium text-heading">{title}</span><Chevron/></>;
+function RowContent({ title, icon, chevron = true }: { title: string; icon: SettingsIconName; chevron?: boolean }) {
+  return <><span className="shrink-0 text-[var(--inspection-text)]"><SettingsIcon name={icon}/></span><span className="min-w-0 flex-1 text-sm font-medium text-heading">{title}</span>{chevron && <Chevron/>}</>;
 }
 const row = 'flex min-h-[60px] items-center gap-3 rounded-[20px] px-4 py-3 hover:bg-surface-2';
 function SettingsDisclosure({ title, icon, children }: { title: string; icon: SettingsIconName; children: ReactNode }) {
@@ -21,7 +21,7 @@ function SettingsDisclosure({ title, icon, children }: { title: string; icon: Se
   </details></li>;
 }
 function SettingsDestination({ href, title, icon }: { href: string; title: string; icon: SettingsIconName }) {
-  return <li><Link href={href} className={`${row} border border-line bg-bg`}><RowContent title={title} icon={icon}/></Link></li>;
+  return <li><Link href={href} className={`${row} border border-line bg-bg`}><RowContent title={title} icon={icon} chevron={false}/></Link></li>;
 }
 
 export function MobileSettings({ role, codeRequired, unlocked, simulated }: { simulated: boolean; role: Role; codeRequired: boolean; unlocked: boolean }) {

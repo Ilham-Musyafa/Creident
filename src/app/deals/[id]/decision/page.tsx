@@ -1,3 +1,4 @@
+import { displayItemName } from '../../../../components/displayItemName';
 import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { RuleLabel } from '../../../../components/RuleLabel';
 import { decisionOutcomeLabel } from '../../../../components/decisionCopy';
@@ -45,7 +46,7 @@ export default async function DecisionReceiptPage({ params }: { params: Promise<
   return (
     <AppShell active="Deals">
       {(() => { const label = recentSuccess(tx.status, events.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
-      <PageHeader title="Decision receipt" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount, tx.currency)}`} right={<StatusPill status={tx.status}/>}/>
+      <PageHeader title="Decision receipt" back={`/deals/${id}`} subtitle={`${displayItemName(tx.item)} · ${money(tx.amount, tx.currency)}`} right={<StatusPill status={tx.status}/>}/>
       {!decision ? (
         <EmptyState title="No dispute decision on this deal">A receipt appears here after a reviewer decides a dispute.</EmptyState>
       ) : (

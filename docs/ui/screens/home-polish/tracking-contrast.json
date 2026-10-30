@@ -1,0 +1,50 @@
+[
+  {
+    "theme": "light",
+    "options": [
+      {
+        "value": "DEMO-DELIVERED",
+        "label": "Delivered on time"
+      },
+      {
+        "value": "DEMO-IN-TRANSIT",
+        "label": "Still in transit"
+      },
+      {
+        "value": "DEMO-WRONG-DESTINATION",
+        "label": "Delivered to another address"
+      }
+    ],
+    "button": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgb(37, 99, 235)"
+    },
+    "normalContrast": 5.17,
+    "hoverContrast": 6.7,
+    "storedTitleUnchanged": true
+  },
+  {
+    "theme": "dark",
+    "options": [
+      {
+        "value": "DEMO-DELIVERED",
+        "label": "Delivered on time"
+      },
+      {
+        "value": "DEMO-IN-TRANSIT",
+        "label": "Still in transit"
+      },
+      {
+        "value": "DEMO-WRONG-DESTINATION",
+        "label": "Delivered to another address"
+      }
+    ],
+    "button": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgb(37, 99, 235)"
+    },
+    "normalContrast": 5.17,
+    "hoverContrast": 6.7,
+    "storedTitleUnchanged": true
+  }
+]

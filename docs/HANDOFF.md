@@ -173,6 +173,29 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — C28 Home polish (UI only)
+
+- Verified C27 merged in main 4db39e3 (PR #92); created ui/home-polish there.
+  No domain/API/state/rule/data-model/dependency changes. Removed approval-money
+  Home summary; shared four-tile row counts existing Transactions filters only.
+  Problem=Under review, Completed=Closed (including cancellations/refunds); scope
+  choices and overlapping filters documented in docs/reports/C28-home-polish.md.
+- Desktop Seller has filled + New deal beside outlined View deals. Buyer/Reviewer
+  retain primary actions. Both layouts show one existing most-urgent action and
+  Your deals. Mobile greeting header shortened. Seller-only raised middle plus
+  dock has 56px target/active New deal state; safe-area bottom padding increased.
+- Decorative trailing arrows removed; back/dropdown/accordion and functional
+  translation-direction arrow retained. New/Browse no longer use swap icon.
+  Tracking labels shortened, original values unchanged. [Demo] titles stripped
+  only for display; markers retained/added, stored names unchanged.
+- Filled blue actions/nav use white on #2563EB (5.17:1), hover #1D4ED8 (6.70:1).
+  Brand Sapphire token unchanged. Node 22.23.4: 522 tests/50 files, typecheck/build,
+  diff check pass. No test logic changes. 12 final Home browser views, all roles,
+  390/1440, both themes: no warnings/errors/overflow; filter counts, dock state,
+  target sizes, bottom clearance pass. Tracking/title/contrast checks also pass.
+- 24 before/after screenshots and JSON evidence: docs/ui/screens/home-polish/.
+  No merge/deployment. Publication result follows push/PR attempt.
+
 ### 2026-10-30 — C27 plain language and visual How it works
 
 - C26 merge confirmed in origin/main ac48912 (PR #91); created ui/plain-language
