@@ -83,4 +83,7 @@ Screenshots: docs/ui/screens/new-deal-categories/ — four baseline New deal cap
 from isolated main build; eight filled new-form captures. JSON records real submission
 checks. Headless native selects use local browser rendering. No new package/tooling.
 
-PR publication status: latest docs/HANDOFF.md entry. No merge/deployment.
+Implementation 5fa2127 pushed to origin/ui/new-deal-categories. GraphQL and REST
+PR creation returned Forbidden; no PR created by this agent. Manual compare:
+https://github.com/Ilham-Musyafa/Creident/compare/main...ui/new-deal-categories
+English PR body: /tmp/c30-pr.md. No merge/deployment.

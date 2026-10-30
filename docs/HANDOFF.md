@@ -195,7 +195,10 @@ Still open:
   errors/warnings/overflow. New-deal before/after screenshots and JSON evidence:
   docs/ui/screens/new-deal-categories/. Full choices/report: docs/reports/C30-new-deal-categories.md.
 - No schema, production API, state/rule, payment, audit or dependency change.
-  No merge/deployment. Publication status follows push/PR attempt.
+  Implementation 5fa2127 pushed to origin/ui/new-deal-categories. PR creation via
+  GraphQL and REST returned Forbidden; no PR created by this agent. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/new-deal-categories
+  English PR body: /tmp/c30-pr.md. No merge/deployment.
 
 ### 2026-10-30 — C28 Home polish (UI only)
 
