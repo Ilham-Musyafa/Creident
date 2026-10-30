@@ -177,11 +177,18 @@ Still open:
 
 - Merged to main today: #89/#90 brand kit, #91 C26 submission polish, #92 C27 plain
   language, #93 C28 Home polish, #94 C30 categories, #95 C33 plain-language About and
-  Fairness, #96 C31 New deal follow-up. main d35cc4f: typecheck pass, 549 tests/53 files.
+  Fairness, #96 C31 New deal follow-up, #98 C34 menu cleanup. main e60078e: typecheck
+  pass, 549 tests/53 files.
 - C31 (Codex, #96): Condition is now a required select (New / Used - Like New /
   Used - Good / Used - Good Enough); an AI-draft condition is mapped to an option or
   shown as "The AI draft said: ...". Deal summary shows Category / Subcategory. Price
   helper text added (`src/components/newDealPresentation.ts`). No schema/API/rule change.
+- C34 (harness, #98): removed the duplicate Limitations entries from Menu, mobile
+  Settings and desktop navigation (unused icon removed). Limitations stays in both Home
+  footers and as the last section of /about (#limitations). Report with screenshots:
+  docs/ui/screens/menu-limitations-cleanup/. Known small bug for C35: desktop sidebar
+  lights Settings on /how-it-works (and /reviewer/oversight) because pageInfo returns
+  selected 'Menu'; should be null.
 - C33 (harness, #95): About restructured into six plain sections (anchors
   #decisions, #audit, #limitations kept; R1-R7 accordion removed, it lives on
   /how-it-works; all eight limitation points kept). Fairness wording and labels
