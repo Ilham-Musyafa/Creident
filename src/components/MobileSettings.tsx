@@ -45,6 +45,7 @@ export function MobileSettings({ role, codeRequired, unlocked, simulated }: { si
           <SeedButton role={role}/>
         </SettingsDisclosure>
         {role === 'reviewer' && <SettingsDestination href="/reviewer/oversight" title="Review desk" icon="oversight"/>}
+        <SettingsDestination href="/audit" title="Deal history" icon="records"/>
         <SettingsDestination href="/how-it-works" title="How it works" icon="rules"/>
         <SettingsDestination href="/fairness" title="Fairness results" icon="fairness"/>
         <SettingsDestination href="/about" title="About Creident" icon="about"/>

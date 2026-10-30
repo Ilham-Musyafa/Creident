@@ -33,7 +33,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
     : 'Verified on this server';
 
   return (
-    <RecordsShell role={role} title="Deal record" back="/audit" desktopBack={`/deals/${id}`} subtitle={displayItemName(tx.item)} right={<RecordMenu txId={id} role={role}/>}>
+    <RecordsShell role={role} title="Deal history" back="/audit" desktopBack={`/deals/${id}`} subtitle={displayItemName(tx.item)} right={<RecordMenu txId={id} role={role}/>}>
       <div className="mx-auto max-w-2xl space-y-4">
         <ChainStatus revealAfterMs={Math.min(events.length, 24) * 70 + 300} verifiedSteps={verifiedSteps} count={events.length} where={where}/>
         {sealedState === 'rewritten' && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ This record differs from the saved copy.</p>}
