@@ -173,11 +173,18 @@ export function authorizationWindow(authorizedAt: string, now: string): { honorE
 /** Label for a one-time success animation when the deal reached this state in the last two minutes. */
 export function recentSuccess(status: TxStatus, lastEventTs: string | undefined, now: string): string | null {
   if (!lastEventTs || Date.parse(now) - Date.parse(lastEventTs) > 120_000) return null;
+  // Every step that finishes gets the same check animation, so progress always feels the same.
   const labels: Partial<Record<TxStatus, string>> = {
-    AUTHORIZED: 'Payment approved', COMPLETED: 'Deal completed', REFUNDED: 'Refund issued',
+    TERMS_LOCKED: 'Terms agreed', AUTHORIZED: 'Payment approved', SHIPPED: 'Item shipped', IN_INSPECTION: 'Item delivered',
+    DISPUTED: 'Problem reported', UNDER_REVIEW: 'Sent for review', COMPLETED: 'Deal completed', REFUNDED: 'Refund issued',
     PARTIALLY_REFUNDED: "Part of the money returned", RETURN_REQUESTED: 'Decision recorded', VOIDED: 'Payment cancelled',
   };
   return labels[status] ?? null;
+}
+
+/** Confetti only for a good ending; a reported problem or a step in progress gets the check without it. */
+export function celebrates(status: TxStatus): boolean {
+  return status === 'COMPLETED' || status === 'REFUNDED' || status === 'PARTIALLY_REFUNDED' || status === 'AUTHORIZED';
 }
 
 export type ActivityKind = 'money' | 'ship' | 'dispute' | 'done' | 'info';

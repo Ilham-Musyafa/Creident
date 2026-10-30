@@ -4,7 +4,7 @@ import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { PAYMENT_ACTION_LABELS, AI_REVIEW_NOTE, evidenceLabel } from '../../../../components/presentationCopy';
 import { EvidenceTranslation } from '../../../../components/EvidenceTranslation';
 import { SuccessBurst } from '../../../../components/motion';
-import { recentSuccess } from '../../../../components/view';
+import { celebrates, recentSuccess } from '../../../../components/view';
 import { PartialRefundNotice } from '../../../../components/PartialRefundNotice';
 import { PayPalDisputePanel } from '../../../../components/PayPalDisputePanel';
 import { notFound } from 'next/navigation';
@@ -37,7 +37,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
 
   return (
     <AppShell active="Deals">
-      {(() => { const label = recentSuccess(tx.status, ctx.repo.readEvents(id).at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
+      {(() => { const label = recentSuccess(tx.status, ctx.repo.readEvents(id).at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label} confetti={celebrates(tx.status)}/> : null; })()}
       <PageHeader title="Problem review" back={`/deals/${id}`} subtitle={`${displayItemName(tx.item)} · ${money(tx.amount, tx.currency)} · Reviewer (a person who decides the problem)`} right={<StatusPill status={tx.status}/>}/>
       {/^\[Demo\]/i.test(tx.item) && <p className="mb-3 text-xs font-semibold text-muted">Demo</p>}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">

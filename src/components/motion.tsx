@@ -41,7 +41,7 @@ const CONFETTI = Array.from({ length: 14 }, (_, i) => {
  * decision recorded). Shown at most once per browser for the given key; a decoration only,
  * the page text already states the outcome.
  */
-export function SuccessBurst({ storageKey, label }: { storageKey: string; label: string }) {
+export function SuccessBurst({ storageKey, label, confetti = true }: { storageKey: string; label: string; confetti?: boolean }) {
   const [show, setShow] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -64,7 +64,7 @@ export function SuccessBurst({ storageKey, label }: { storageKey: string; label:
   return createPortal(
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid place-items-center">
       <div className="relative grid place-items-center">
-        {CONFETTI.map((c, i) => (
+        {confetti && CONFETTI.map((c, i) => (
           <span key={i} className="absolute size-2 rounded-[2px]"
             style={{ left: 'calc(50% - 4px)', top: 36, background: `var(${c.tone})`, ['--dx' as string]: `${c.dx}px`, ['--dy' as string]: `${c.dy}px`, ['--rot' as string]: `${c.rot}deg`,
               animation: `hv-confetti .9s cubic-bezier(.2,.7,.3,1) ${120 + (i % 4) * 30}ms both` }}/>

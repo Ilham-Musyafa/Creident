@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorizationWindow, eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor } from './view';
+import { authorizationWindow, eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor, recentSuccess, celebrates } from './view';
 
 describe('view helpers', () => {
   it('formats money and time left', () => {
@@ -53,5 +53,24 @@ describe('authorizationWindow', () => {
     expect(authorizationWindow(at, '2026-10-03T23:00:00.000Z')).toMatchObject({ phase: 'honor', honorEndsAt: '2026-10-04T00:00:00.000Z' });
     expect(authorizationWindow(at, '2026-10-05T00:00:00.000Z').phase).toBe('after-honor');
     expect(authorizationWindow(at, '2026-10-30T00:00:00.000Z')).toMatchObject({ phase: 'expired', expiresAt: '2026-10-30T00:00:00.000Z' });
+  });
+});
+
+describe('step completion animation', () => {
+  const now = '2026-10-30T12:00:30Z';
+  const justNow = '2026-10-30T12:00:00Z';
+  it('has a label for every step that finishes, not only the final ones', () => {
+    for (const status of ['TERMS_LOCKED', 'AUTHORIZED', 'SHIPPED', 'IN_INSPECTION', 'DISPUTED', 'UNDER_REVIEW', 'COMPLETED'] as const) {
+      expect(recentSuccess(status, justNow, now), status).toBeTruthy();
+    }
+  });
+  it('stays quiet for waiting states and for old events', () => {
+    expect(recentSuccess('AWAITING_APPROVAL', justNow, now)).toBeNull();
+    expect(recentSuccess('SHIPPED', '2026-10-30T11:00:00Z', now)).toBeNull();
+  });
+  it('uses confetti only for good endings', () => {
+    expect(celebrates('COMPLETED')).toBe(true);
+    expect(celebrates('DISPUTED')).toBe(false);
+    expect(celebrates('SHIPPED')).toBe(false);
   });
 });
