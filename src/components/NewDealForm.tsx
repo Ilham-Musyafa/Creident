@@ -6,7 +6,7 @@ import { Card, Notice } from './layoutPrimitives';
 import { TermsListEditor } from './TermsListEditor';
 import { callApi, ErrorNote } from './client';
 import { TermsAssistant } from './TermsAssistant';
-import { mergeCriteria, TERMS_TEMPLATES } from '../lib/termsTemplates';
+import { DEAL_CATEGORIES, categoryChecklist, categoryTerms } from '../lib/dealCategories';
 
 import { descriptionForDraft } from '../lib/ai/termsFields';
 
@@ -20,7 +20,9 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [receipt, setReceipt] = useState<string | null>(null);
-  const [form, setForm] = useState({ item: '', amount: '', condition: '', description: '', criteria: '', category: '', includedItems: '' });
+  const [form, setForm] = useState({ item: '', amount: '', condition: '', description: '', criteria: '', category: '', subcategory: '', includedItems: '' });
+  const [checklistAdded, setChecklistAdded] = useState(false);
+  const selectedCategory = DEAL_CATEGORIES.find(c => c.id === form.category);
   const [manualFields, setManualFields] = useState<typeof form | null>(null);
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) => setForm({ ...form, [key]: e.target.value });
 
@@ -33,7 +35,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       const includedItems = form.includedItems.split('\n').map(item => item.trim()).filter(Boolean);
       const created = await callApi<{ transaction: { id: string } }>('/api/transactions', 'seller', {
         item: form.item, amount, ...(receipt ? { termsDraftReceipt: receipt } : {}),
-        terms: { condition: form.condition, description: form.description, ...(includedItems.length ? { includedItems } : {}), ...(form.category ? { category: form.category } : {}), ...(criteria.length ? { criteria } : {}) },
+        terms: { condition: form.condition, description: form.description, ...(includedItems.length ? { includedItems } : {}), ...categoryTerms(form.category, form.subcategory), ...(criteria.length ? { criteria } : {}) },
       });
       // The seller accepts their own terms right away; the buyer accepts on the checkout screen.
       await callApi(`/api/transactions/${created.transaction.id}/accept`, 'seller', {});
@@ -51,7 +53,8 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       <TermsAssistant appliedReceipt={receipt} onApply={({ draft, receipt: draftReceipt }) => {
         if (!receipt) setManualFields(form);
         setForm(current => ({ ...current, item: draft.item, condition: draft.condition,
-          description: descriptionForDraft(draft), includedItems: draft.includedItems.join('\n'), criteria: draft.criteria.join('\n'), category: '' }));
+          description: descriptionForDraft(draft), includedItems: draft.includedItems.join('\n'), criteria: draft.criteria.join('\n'), category: '', subcategory: '' }));
+        setChecklistAdded(false);
         setReceipt(draftReceipt);
       }}/>
       {receipt && <div className="space-y-2"><p className="text-sm text-muted">AI draft applied. Check and edit every field before sharing.</p><Button type="button" variant="ghost" onClick={() => {
@@ -60,11 +63,20 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
-      <div><Label htmlFor="item">Item</Label><input id="item" required maxLength={200} className={fieldClass} placeholder="Used phone, 128 GB" value={form.item} onChange={set('item')}/></div>
+      <div><Label htmlFor="item">Item name</Label><input id="item" required maxLength={200} className={fieldClass} placeholder="e.g. Used phone" value={form.item} onChange={set('item')}/></div>
       <div className="grid grid-cols-2 gap-3">
         <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} placeholder="120.00" value={form.amount} onChange={set('amount')}/></div>
         <div><Label htmlFor="condition">Condition</Label><input id="condition" required maxLength={120} className={fieldClass} placeholder="Good" value={form.condition} onChange={set('condition')}/></div>
       </div>
+      <div><Label htmlFor="category">Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
+        <option value="" disabled>Choose a category</option>{DEAL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+      </select>{selectedCategory?.hint && <p className="mt-2 text-sm text-muted">{selectedCategory.hint}</p>}</div>
+      {Boolean(selectedCategory?.subcategories.length) && <div><Label htmlFor="subcategory" hint="optional">Subcategory</Label><select id="subcategory" className={fieldClass} value={form.subcategory} onChange={e => {
+        const subcategory = e.target.value;
+        setForm(current => { const result = categoryChecklist(current.category, subcategory, current.criteria); return { ...current, subcategory, criteria: result.criteria }; });
+        setChecklistAdded(categoryChecklist(form.category, subcategory, form.criteria).added);
+      }}><option value="">Choose a subcategory</option>{selectedCategory!.subcategories.map(sub => <option key={sub.id} value={sub.id}>{sub.label}</option>)}</select>
+      {checklistAdded && <p role="status" className="mt-2 text-sm text-muted">Checklist added. You can edit it.</p>}</div>}
       <div><Label htmlFor="description">Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} placeholder="What is included, known flaws" value={form.description} onChange={set('description')}/></div>
       </fieldset>
       <fieldset className="min-w-0 space-y-3 border-t border-line pt-5">
@@ -75,16 +87,6 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       <fieldset className="min-w-0 space-y-4 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">Buyer checks</legend>
         <p className="text-sm leading-relaxed text-muted">Optional. Add specific checks the buyer can support with a photo or short video.</p>
-      <div>
-        <Label htmlFor="category" hint="optional">Item type</Label>
-        <select id="category" className={fieldClass} value={form.category} onChange={(e) => {
-          const template = TERMS_TEMPLATES.find((t) => t.id === e.target.value);
-          setForm({ ...form, category: e.target.value, criteria: template ? mergeCriteria(form.criteria, template) : form.criteria });
-        }}>
-          <option value="">Other (write your own checks)</option>
-          {TERMS_TEMPLATES.map((t) => <option key={t.id} value={t.id}>{t.label}: add its checklist</option>)}
-        </select>
-      </div>
       <TermsListEditor id="criteria" label="Check" value={form.criteria} maxLength={1500} placeholder="e.g. Screen has no cracks" onChange={value => setForm(current => ({ ...current, criteria: value }))}/>
       </fieldset>
       </Card>

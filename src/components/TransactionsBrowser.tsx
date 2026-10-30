@@ -1,4 +1,6 @@
 'use client';
+import { CategoryChip } from './CategoryChip';
+
 
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
@@ -51,7 +53,7 @@ export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }:
       <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 border-b border-line bg-surface-2 px-5 py-3 text-sm font-semibold text-heading lg:grid"><span>Item</span><span>Status</span><span>Next step</span><span className="text-right">Amount</span></div>
       <ul aria-label="Transactions" className="space-y-3 lg:space-y-0">{visible.map(row => <li key={row.id} className="lg:border-b lg:border-line lg:last:border-0">
         <Link href={row.href} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 rounded-[18px] border border-line bg-surface p-4 hover:bg-surface-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_100px] lg:gap-4 lg:rounded-none lg:border-0 lg:px-5">
-          <span className="col-start-1 row-start-1 flex min-w-0 items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span><span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{row.title}</span>{row.demo && <span className="mt-1 inline-flex rounded-full border border-line px-2 py-0.5 text-xs font-medium text-muted">Demo</span>}</span></span>
+          <span className="col-start-1 row-start-1 flex min-w-0 items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span><span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{row.title}</span><CategoryChip category={row.category} subcategory={row.subcategory}/>{row.demo && <span className="mt-1 inline-flex rounded-full border border-line px-2 py-0.5 text-xs font-medium text-muted">Demo</span>}</span></span>
           <strong className="col-start-2 row-start-1 self-start text-right text-sm tabular-nums text-heading lg:col-start-4 lg:self-center">{row.amount}</strong>
           <span className="col-span-2 col-start-1 row-start-2 min-w-0 lg:col-span-1 lg:col-start-2 lg:row-start-1"><span className="sr-only">Status: </span><StatusPill status={row.status}/></span>
           <span className="col-span-2 col-start-1 row-start-3 min-w-0 border-t border-line pt-3 lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:border-0 lg:pt-0"><span className="sr-only">Next step: </span><span className={`block break-words text-sm ${row.needsAction ? 'font-semibold text-heading' : 'text-muted'}`}>{row.nextStep}</span>{row.deadlineLabel && <span className="mt-1 block text-sm text-muted">{row.deadlineLabel}</span>}</span>

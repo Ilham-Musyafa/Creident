@@ -1,0 +1,90 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "which": "phone",
+    "category": "mobile-phones",
+    "subcategory": "mobile-phones-smartphones",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "which": "furniture",
+    "category": "furniture",
+    "subcategory": "furniture-tables-desks",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "which": "phone",
+    "category": "mobile-phones",
+    "subcategory": "mobile-phones-smartphones",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "which": "furniture",
+    "category": "furniture",
+    "subcategory": "furniture-tables-desks",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "which": "phone",
+    "category": "mobile-phones",
+    "subcategory": "mobile-phones-smartphones",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "which": "furniture",
+    "category": "furniture",
+    "subcategory": "furniture-tables-desks",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "which": "phone",
+    "category": "mobile-phones",
+    "subcategory": "mobile-phones-smartphones",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "which": "furniture",
+    "category": "furniture",
+    "subcategory": "furniture-tables-desks",
+    "status": 201,
+    "resetPreservedCustomChecks": true,
+    "chipOnDealListAndHome": true,
+    "errors": []
+  }
+]
