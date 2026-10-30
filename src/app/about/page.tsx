@@ -23,7 +23,7 @@ function Chevron() {
 export default function AboutPage() {
   return (
     <InfoPageShell title="About Creident" subtitle="A demo of the dispute step for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
-      <div className="info-content mx-auto max-w-3xl space-y-6 text-sm leading-relaxed">
+      <div className="info-content mx-auto max-w-5xl space-y-6 text-sm leading-relaxed">
         <section aria-labelledby="intro-title">
           <h2 id="intro-title" className="mb-3 text-xl font-bold text-heading">What is Creident?</h2>
           <Card className="info-card space-y-3">

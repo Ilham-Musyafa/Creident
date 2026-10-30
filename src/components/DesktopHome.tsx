@@ -32,9 +32,9 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
 export function DesktopHome(props: HomeData) {
   const next = props.actions[0];
   const headline = props.role === 'seller' ? { href: '/deals/new', text: '+ New deal' } : props.role === 'reviewer' ? { href: '/deals?filter=review', text: 'Review queue' } : null;
-  return <div className="hidden lg:block">
+  return <div className="hidden flex-1 lg:flex lg:flex-col">
     {props.verified < props.total && <p role="alert" className="mb-4 rounded-xl border border-warning-line bg-warning-bg p-4 text-sm text-warning-text">Some record checks failed. <Link href="/audit" className="font-semibold underline">Open Deal history to inspect them.</Link></p>}
-    <div className="mx-auto grid max-w-[1120px] grid-cols-12 gap-6">
+    <div className="grid grid-cols-12 gap-6">
       <section aria-label="Overview" className="col-span-8 rounded-[24px] border border-line bg-gradient-to-br from-surface-2 to-surface p-6">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div><p className="text-sm text-muted">Demo workspace · {props.role[0]!.toUpperCase() + props.role.slice(1)} view</p><h1 className="mt-1 text-[28px] font-bold text-heading">Hi, {demoName(props.role)}</h1></div>
@@ -61,6 +61,6 @@ export function DesktopHome(props: HomeData) {
         {props.total === 0 && <div className="mt-4"><SeedButton role={props.role}/></div>}
       </section>
     </div>
-    <footer className="mx-auto mt-7 flex max-w-[1120px] items-center justify-between gap-5 border-t border-line pt-4 text-sm text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><span className="flex gap-5"><Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Deal history{props.total > 0 && props.verified === props.total ? ' ✓' : ''}</Link><Link href="/about#limitations" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Limitations</Link></span></footer>
+    <footer className="mt-auto flex items-center justify-between gap-5 border-t border-line pt-4 text-sm text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><span className="flex gap-5"><Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Deal history{props.total > 0 && props.verified === props.total ? ' ✓' : ''}</Link><Link href="/about#limitations" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Limitations</Link></span></footer>
   </div>;
 }
