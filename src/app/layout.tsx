@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   openGraph: { images: [{ url: "/brand/v3/og-image.png", width: 1200, height: 630, alt: "Creident — Every deal, on record." }] },
   twitter: { card: "summary_large_image", images: ["/brand/v3/og-image.png"] },
   title: "Creident",
-  description: "Every deal, on record. A dispute-mediation prototype for peer-to-peer sales.",
+  description: "Every deal, on record. A demo that helps settle problems between a buyer and a seller for peer-to-peer sales.",
   };
 }
 

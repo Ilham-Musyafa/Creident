@@ -51,7 +51,7 @@ export function MobileHome(props: HomeData) {
       <section aria-label="Approved payment summary">
         <div className="relative inline-flex items-center pr-12"><h2 className="text-sm font-medium! tracking-normal! text-[var(--mobile-header-muted)]">Approved payments · USD</h2><button type="button" aria-label={amountHidden ? 'Show approved amount' : 'Hide approved amount'} aria-pressed={amountHidden} onClick={() => setAmountHidden(!amountHidden)} className="mobile-header-control absolute -top-3 right-0 grid size-11 shrink-0 place-items-center rounded-full"><HomeIcon name={amountHidden ? 'hidden' : 'eye'}/></button></div>
         <p aria-live="polite" className="mobile-payment-amount mt-3 break-words font-display text-[40px] font-bold leading-tight tracking-tight tabular-nums">{amountHidden ? <span aria-label="Amount hidden">••••••</span> : props.approvedAmount}</p>
-        <p className="mt-1 text-sm text-[var(--mobile-header-muted)]">Authorized, not yet charged</p>
+        <p className="mt-1 text-sm text-[var(--mobile-header-muted)]">Payment approved — not charged yet</p>
         <p className="sr-only">{props.approvedCount} open approval{props.approvedCount === 1 ? '' : 's'} · Demo data</p>
       </section>
       <div aria-label="Home shortcuts" className="mt-3 grid grid-cols-2 gap-3">
@@ -61,7 +61,7 @@ export function MobileHome(props: HomeData) {
     </MobileBrandHeader>
 
     <MobilePanel className="pt-3!">
-      {props.verified < props.total && <p role="alert" className="mb-5 rounded-xl border border-[var(--warning-line)] bg-[var(--warning-bg)] p-4 text-sm text-[var(--warning-text)]">Some record checks failed. <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold underline">Inspect deal records.</Link></p>}
+      {props.verified < props.total && <p role="alert" className="mb-5 rounded-xl border border-[var(--warning-line)] bg-[var(--warning-bg)] p-4 text-sm text-[var(--warning-text)]">Some record checks failed. <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold underline">Inspect deal deal history.</Link></p>}
       <section id="mobile-home-content" tabIndex={-1} aria-label={view === 'actions' ? props.actionTitle : view === 'about' ? 'About this demo' : 'Mobile overview'}>
         {view !== 'overview' && <div className="mb-5 flex items-center gap-3"><button type="button" aria-label="Back to overview" onClick={() => openView('overview')} className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-heading"><HomeIcon name="back"/></button><h2 className="text-xl text-heading">{view === 'actions' ? 'Your next steps' : 'About Creident'}</h2></div>}
         {view === 'about' ? <DemoGuide simulated={props.simulated} idPrefix="mobile" dashboardId="mobile-home-content" onDismiss={() => openView('overview')}/> : view === 'actions' ? <>
@@ -72,7 +72,7 @@ export function MobileHome(props: HomeData) {
           <nav aria-label="Quick actions" className="grid grid-cols-4 gap-2">
             <button type="button" onClick={() => openView('actions')} className={quickTile}><QuickTileContent icon="actions" label="Actions" count={props.actionCount}/></button>
             <Link href="/deals" aria-label="Browse transactions" className={quickTile}><QuickTileContent icon="transactions" label="Browse"/></Link>
-            <Link href="/audit" className={quickTile}><QuickTileContent icon="records" label="Records"/></Link>
+            <Link href="/audit" className={quickTile}><QuickTileContent icon="records" label="Deal history"/></Link>
             <button type="button" onClick={() => openView('about')} className={quickTile}><QuickTileContent icon="about" label="About"/></button>
           </nav>
 
@@ -89,10 +89,10 @@ export function MobileHome(props: HomeData) {
             <ul aria-label="Your deals" className="divide-y divide-line overflow-hidden rounded-[22px] bg-surface">{recent.map(row => <li key={row.id}><MobileTransactionRow row={row} compact/></li>)}</ul>
           </section>}
 
-          <Link href="/audit" className={`mt-1 flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 py-2 text-center text-xs ${props.total === 0 ? 'text-muted' : allVerified ? 'text-[var(--success-text)]' : 'bg-[var(--warning-bg)] text-[var(--warning-text)]'}`}><HomeIcon name="records"/><span>{props.total === 0 ? 'No records yet' : allVerified ? `Records verified ✓ ${props.verified} of ${props.total}` : `Verification warning · ${props.verified} of ${props.total} records verified`}<span className="sr-only">. Checked on this server.</span></span></Link>
+          <Link href="/audit" className={`mt-1 flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 py-2 text-center text-xs ${props.total === 0 ? 'text-muted' : allVerified ? 'text-[var(--success-text)]' : 'bg-[var(--warning-bg)] text-[var(--warning-text)]'}`}><HomeIcon name="records"/><span>{props.total === 0 ? "No deal history yet" : allVerified ? `Deal history verified ✓ ${props.verified} of ${props.total}` : `Verification warning · ${props.verified} of ${props.total} deal history verified`}<span className="sr-only">. Checked on this server.</span></span></Link>
         </>}
       </section>
-      <footer className="mt-3 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>{props.simulated ? 'Simulated payments' : 'PayPal Sandbox'} · Demo data · No real money moves.</p><Link href="/about#limitations" className="inline-flex min-h-11 items-center text-sm font-semibold text-heading">View limitations</Link></footer>
+      <footer className="mt-3 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><Link href="/about#limitations" className="inline-flex min-h-11 items-center text-sm font-semibold text-heading">View limitations</Link></footer>
     </MobilePanel>
   </div>;
 }

@@ -26,7 +26,7 @@ export function ReviewerCopilot({ txId, onApply, appliedId }: { txId: string; ap
     {unavailable && <p role="status" className="text-sm text-heading">AI draft unavailable. Write your decision reason manually.</p>}
     {result?.inputContainsInjection && <div role="alert"><Notice tone="warning">Possible instructions found in the quoted data. Check the draft carefully; the data cannot authorize an action.</Notice></div>}
     {result?.draft && <div className="space-y-3 text-sm">
-      <p className="text-sm font-semibold text-muted">{result.meta.mode === 'replay' ? 'Recorded replay draft' : 'Live AI draft'} · not a decision</p>
+      <p className="text-sm font-semibold text-muted">{result.meta.mode === 'replay' ? "Recorded AI answer" : 'Live AI draft'} · not a decision</p>
       <ul className="space-y-3">{result.draft.notes.map(note => <li key={note.criterionId}>
         <h3 className="font-semibold text-heading">{result.criteria.find(c => c.id === note.criterionId)?.text ?? note.criterionId}</h3>
         <p className="mt-1">{note.text}</p><p className="mt-1 text-sm text-muted">Evidence: {note.citedAliases.map(evidenceAlias).join(', ')}</p>

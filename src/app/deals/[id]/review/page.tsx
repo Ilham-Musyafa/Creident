@@ -37,7 +37,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   return (
     <AppShell active="Deals">
       {(() => { const label = recentSuccess(tx.status, ctx.repo.readEvents(id).at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
-      <PageHeader title="Dispute review" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount, tx.currency)}`} right={<StatusPill status={tx.status}/>}/>
+      <PageHeader title="Problem review" back={`/deals/${id}`} subtitle={`${tx.item} · ${money(tx.amount, tx.currency)} · Reviewer (a person who decides the problem)`} right={<StatusPill status={tx.status}/>}/>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0">
           <SectionTitle>AI evidence summary</SectionTitle>
@@ -61,11 +61,11 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           ]}/>
           {role !== 'reviewer' ? <Notice>Only the reviewer decides. Switch to Reviewer in Settings.</Notice>
             : !(await reviewerUnlocked()) ? <Notice tone="warning">This demo needs the reviewer access code. Enter it in Settings.</Notice>
-            : tx.partialRefundAmount ? <Notice>A partial refund decision is already recorded. Check the decision receipt and payment status.</Notice>
+            : tx.partialRefundAmount ? <Notice>A part of the money back decision is already recorded. Check the decision receipt and payment status.</Notice>
             : tx.status !== 'UNDER_REVIEW' ? <Notice>This deal is not under review.</Notice>
             : <Card><ReviewDecision dealAmount={tx.amount} txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>{AI_REVIEW_NOTE}</Notice>
-          <p className="text-sm text-muted">The approved payment is charged only when capture succeeds. Seller payout is not part of this demo.</p>
+          <p className="text-sm text-muted">Payment is charged only when PayPal confirms success. Seller payouts are not built in this demo.</p>
           <TechnicalDetails><p>Recorded recommendation: {rec?.action ?? 'None'}</p>{rec?.aiSummary?.findings.map((finding, i) => <p key={i}>Evidence references: {finding.evidenceIds.join(', ')}</p>)}</TechnicalDetails>
         </aside>
       </div>

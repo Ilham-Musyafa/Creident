@@ -87,7 +87,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <div className="space-y-3">
               <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth confirm={{
                 title: 'Confirm you received the item', amount: money(tx.amount, tx.currency), amountCaption: tx.item,
-                rows: [{ label: 'Payment', value: tx.captured ? 'Charged via PayPal' : 'Approved via PayPal · not charged yet' }, { label: 'Problems', value: 'Can no longer be reported here' }],
+                rows: [{ label: 'Payment', value: tx.captured ? 'Payment charged' : 'Payment approved — not charged yet' }, { label: 'Problems', value: 'Can no longer be reported here' }],
                 note: 'Only confirm after you checked the item against the locked terms.', confirmLabel: 'Confirm receipt',
               }}/>
               <div className="border-t border-line pt-4"><DisputeSteps txId={id} evidenceWindow={`${ctx.time.evidenceDays} day${ctx.time.evidenceDays === 1 ? '' : 's'}`}/></div>

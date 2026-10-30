@@ -13,10 +13,10 @@ import type { Role } from './view';
 type Active = 'Home' | 'Deals' | 'Audit' | 'Menu';
 const mainLinks: { key: Active; title: string; href: string }[] = [
   { key: 'Home', title: 'Home', href: '/' }, { key: 'Deals', title: 'Transactions', href: '/deals' },
-  { key: 'Audit', title: 'Records', href: '/audit' }, { key: 'Menu', title: 'Settings', href: '/menu' },
+  { key: 'Audit', title: "Deal history", href: '/audit' }, { key: 'Menu', title: 'Settings', href: '/menu' },
 ];
 const learnLinks = [
-  { title: 'How it works', href: '/about#decisions', icon: 'rules' },
+  { title: 'How it works', href: '/how-it-works', icon: 'rules' },
   { title: 'Fairness', href: '/fairness', icon: 'fairness' },
   { title: 'Limitations', href: '/about#limitations', icon: 'limits' },
   { title: 'About', href: '/about', icon: 'about' },
@@ -37,13 +37,14 @@ function pageInfo(path: string): { title: string; subtitle: string; selected: Ac
     const [title, subtitle] = pages[tail] ?? ['Deal', 'Terms, progress and the next step.'];
     return { title, subtitle, selected: 'Deals' };
   }
-  if (path === '/audit') return { title: 'Records', subtitle: 'Check the recorded steps for each deal.', selected: 'Audit' };
+  if (path === '/audit') return { title: "Deal history", subtitle: 'Check the recorded steps for each deal.', selected: 'Audit' };
+  if (path === '/how-it-works') return { title: 'How it works', subtitle: 'Agree, pay, ship, and check your order.', selected: 'Menu' };
   if (path === '/audit/how-it-works') return { title: 'How verification works', subtitle: 'What record checks cover and their limits.', selected: 'Audit' };
-  if (path.startsWith('/audit/')) return { title: 'Deal record', subtitle: 'Inspect the steps and their verification.', selected: 'Audit' };
+  if (path.startsWith('/audit/')) return { title: 'Deal history', subtitle: 'Inspect the steps and their verification.', selected: 'Audit' };
   if (path === '/menu') return { title: 'Settings', subtitle: 'Demo role, appearance and useful links.', selected: 'Menu' };
   if (path === '/fairness') return { title: 'Fairness results', subtitle: 'Recorded evaluation results and their limits.', selected: null };
   if (path === '/about') return { title: 'About Creident', subtitle: 'Clear terms, evidence and human review.', selected: null };
-  if (path === '/reviewer/oversight') return { title: 'Reviewer oversight', subtitle: 'Inspect the existing demo review workspace.', selected: 'Menu' };
+  if (path === '/reviewer/oversight') return { title: "Review desk", subtitle: 'Inspect the existing demo review workspace.', selected: 'Menu' };
   if (path.startsWith('/paypal/')) return { title: path.endsWith('/return') ? 'Back from PayPal' : 'Demo payment approval', subtitle: 'Test payments only. No real money moves.', selected: 'Deals' };
   return { title: 'Creident', subtitle: 'Every deal, on record.', selected: null };
 }
@@ -75,7 +76,7 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
   }, [pathname]);
   const info = pageInfo(pathname);
   const selected = info.selected ?? (pathname === '/about' || pathname === '/fairness' ? null : active);
-  const learnCurrent = pathname === '/fairness' ? '/fairness' : pathname === '/about' ? hash === '#decisions' ? '/about#decisions' : hash === '#limitations' ? '/about#limitations' : '/about' : null;
+  const learnCurrent = pathname === '/how-it-works' ? '/how-it-works' : pathname === '/fairness' ? '/fairness' : pathname === '/about' ? hash === '#decisions' ? '/how-it-works' : hash === '#limitations' ? '/about#limitations' : '/about' : null;
   return <div className="desktop-shell hidden print:hidden lg:block">
     <a href="#main-content" className="desktop-skip rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent">Skip to content</a>
     <aside className="desktop-sidebar fixed inset-y-0 left-0 z-30 flex flex-col overflow-y-auto border-r p-5" aria-label="Desktop sidebar">
@@ -85,7 +86,7 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
       </Link>
       <nav aria-label="Main navigation" className="mt-6 space-y-2">{mainLinks.map(link => <Link key={link.key} href={link.href} aria-current={selected === link.key ? 'page' : undefined} className="desktop-sidebar-link flex min-h-12 items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold"><NavIcon name={link.key}/><span>{link.title}</span></Link>)}</nav>
       <nav aria-label="Learn" className="mb-6 mt-8 space-y-1"><h2 className="mb-3 px-4 text-xs font-semibold uppercase tracking-widest text-[var(--desktop-sidebar-muted)]">Learn</h2>{learnLinks.map(link => <Link key={link.href} href={link.href} onClick={() => setHash(new URL(link.href, window.location.origin).hash)} aria-current={learnCurrent === link.href ? 'page' : undefined} className="desktop-sidebar-link flex min-h-11 items-center gap-3 rounded-full px-4 py-2 text-sm"><SettingsIcon name={link.icon}/><span>{link.title}</span></Link>)}</nav>
-      <div className="mt-auto pt-5"><QuickRoleSwitch current={role} appearance="sidebar"/><p className="mt-3 text-center text-xs leading-relaxed text-[var(--desktop-sidebar-muted)]">{simulated ? 'Simulated payments' : 'PayPal Sandbox'}<br/>Demo data · No real money moves.</p></div>
+      <div className="mt-auto pt-5"><QuickRoleSwitch current={role} appearance="sidebar"/><p className="mt-3 text-center text-xs leading-relaxed text-[var(--desktop-sidebar-muted)]">{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'}<br/>Demo data · No real money moves.</p></div>
     </aside>
     <header className="desktop-topbar border-b border-line bg-bg">
       <div className="desktop-topbar-inner mx-auto flex min-w-0 items-center justify-between gap-5">

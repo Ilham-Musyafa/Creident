@@ -44,7 +44,7 @@ export default function FairnessPage() {
   const replay = results.mode === 'replay';
 
   return (
-    <InfoPageShell title="Fairness results" subtitle={`${m.total} synthetic cases · ${replay ? 'recorded test run' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
+    <InfoPageShell title="Fairness results" subtitle={`${m.total} synthetic cases · ${replay ? 'Recorded AI answer' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
       <div className="info-content info-fairness space-y-5">
         {/* One summary; the replay caveat stays visible, details open on demand. */}
         <Notice className="info-notice" tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>

@@ -6,13 +6,13 @@ import { InfoPageShell } from '../../components/InfoPageShell';
 
 const LIMITATIONS = [
   'PayPal Sandbox only. No real money. USD only.',
-  'A dispute-mediation prototype, not an escrow service. A real launch needs an appropriately authorized payment partner, regulatory review and PayPal approval where required.',
-  'Courier tracking is simulated. Seller payout is not implemented: completing a payment charges it into the platform’s Sandbox test account. Demo deals use simulated PayPal payments.',
+  "A demo that helps settle problems between a buyer and a seller, not an escrow service. A real launch needs an appropriately authorized payment partner, regulatory review and PayPal approval where required.",
+  "Tracking uses demo examples. Seller payout is not implemented: completing a payment charges it into the platform’s Sandbox test account. Demo deals use Demo mode (no real money).",
   'Demo roles replace real sign-in.',
   'Evidence is text, including descriptions labelled as photos; camera capture and file upload are not built. Photo authenticity is not verified.',
-  'On a full refund the fee is covered by the platform; the buyer is refunded in full. For a partial refund, the reviewer decides the amount.',
+  "On a full refund the fee is covered by the platform; the buyer is refunded in full. For a part of the money back, the reviewer decides the amount.",
   'A refund waits for the item to be returned to the seller, unless the reviewer waives it (for example the item never arrived).',
-  'The operator still runs the server. Records and signed copies make actions checkable; they cannot stop misuse.',
+  "The operator still runs the server. Deal history and signed copies make actions checkable; they cannot stop misuse.",
 ];
 function Chevron() {
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6"/></svg>;
@@ -20,7 +20,7 @@ function Chevron() {
 
 export default function AboutPage() {
   return (
-    <InfoPageShell title="About Creident" subtitle="A dispute-mediation prototype for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
+    <InfoPageShell title="About Creident" subtitle="A demo that helps settle problems between a buyer and a seller for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
       <div className="info-content mx-auto max-w-3xl space-y-6 text-sm leading-relaxed">
         <section id="decisions" aria-labelledby="decisions-title">
           <h2 id="decisions-title" className="mb-3 text-xl font-bold text-heading">How decisions are made</h2>
@@ -35,12 +35,12 @@ export default function AboutPage() {
         </section>
 
         <section id="audit" aria-labelledby="audit-title">
-          <h2 id="audit-title" className="mb-3 text-xl font-bold text-heading">Records & verification</h2>
+          <h2 id="audit-title" className="mb-3 text-xl font-bold text-heading">Deal history & verification</h2>
           <Card className="info-card space-y-3">
             <p>Every action is saved in a record for that deal. Checks compare the saved steps and their order.</p>
             <p>The server owner could replace its data. Someone who keeps a trusted copy published elsewhere can compare it to spot later changes. Publishing those copies is manual.</p>
             <TechnicalDetails><p>Each record uses a hash chain. Signed checkpoints help reveal later rewriting to someone holding a published checkpoint and its trusted public key; they cannot prevent rewriting.</p></TechnicalDetails>
-            <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Explore the deal records</Link>
+            <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Explore the deal deal history</Link>
           </Card>
         </section>
 
@@ -53,7 +53,7 @@ export default function AboutPage() {
               <div className="space-y-3 pt-2">
                 <p>A reviewer can check for PayPal cases. The deadline check can also do this when it is run; there is no continuously running checker. Confirmed updates from PayPal can put matching deals on hold. The seller or reviewer can send a text PDF of agreed terms, recorded evidence, tracking, the decision and record details when PayPal allows it. An early-stage case may only allow a short message. Asking PayPal to step in needs confirmation and PayPal permission.</p>
                 <TechnicalDetails><p>PayPal checks use polling and verified dispute/reversal webhooks. The evidence PDF includes the audit head. The separate client probe was tested; the integrated Sandbox flow and webhook delivery remain pending.</p></TechnicalDetails>
-                <p>In simulated mode, a completed labelled demo deal lets the buyer open a simulated PayPal case and try the bridge without keys. The owner tested the PayPal connection separately in the Sandbox. The complete app flow has been checked with test clients and local simulation. Its real Sandbox run and delivery of PayPal’s automatic updates still need testing.</p>
+                <p>In demo mode, a completed labelled demo deal lets the buyer open a demo PayPal case and try the bridge without keys. The owner tested the PayPal connection separately in the Sandbox. The complete app flow has been checked with test clients and local simulation. Its real Sandbox run and delivery of PayPal’s automatic updates still need testing.</p>
               </div>
             </details>
           </Card>
@@ -62,7 +62,7 @@ export default function AboutPage() {
         <section aria-labelledby="evaluation-title">
           <h2 id="evaluation-title" className="mb-3 text-xl font-bold text-heading">Evaluation status</h2>
           <Card className="info-card space-y-3">
-            <p>The synthetic-case report lists its sample sizes, label-review status and measured results. Replay uses recorded AI summaries authored from draft labels: it checks the harness and rules, not a live model.</p>
+            <p>The synthetic-case report lists its sample sizes, label-review status and measured results. Recorded AI answers come from draft labels: it checks the harness and rules, not a live model.</p>
             <Link href="/fairness" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Read the results and caveats</Link>
           </Card>
         </section>

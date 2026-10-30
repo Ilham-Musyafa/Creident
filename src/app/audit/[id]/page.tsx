@@ -28,14 +28,14 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
   const sealed = published.available && published.result.valid ? published.result : null;
   const sealedState = sealed?.transactions.find(t => t.txId === id)?.state;
   const where = sealed && (sealedState === 'unchanged' || sealedState === 'extended')
-    ? `Verified on this server and against the sealed copy from ${shortDate(sealed.createdAt)}`
+    ? `Verified on this server and against the saved copy from ${shortDate(sealed.createdAt)}`
     : 'Verified on this server';
 
   return (
     <RecordsShell role={role} title="Deal record" back="/audit" desktopBack={`/deals/${id}`} subtitle={tx.item} right={<RecordMenu txId={id} role={role}/>}>
       <div className="mx-auto max-w-2xl space-y-4">
         <ChainStatus revealAfterMs={Math.min(events.length, 24) * 70 + 300} verifiedSteps={verifiedSteps} count={events.length} where={where}/>
-        {sealedState === 'rewritten' && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ This record differs from the sealed copy.</p>}
+        {sealedState === 'rewritten' && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>⚠ This record differs from the saved copy.</p>}
         <Card className="records-timeline px-4 py-1">
           <ol aria-label="Record steps">
             {[...events].reverse().map((e, index) => (

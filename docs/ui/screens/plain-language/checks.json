@@ -1,0 +1,198 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/deals",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/deals/9421ba9d-f2c7-4675-a12d-41a49d52bb60",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/audit",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/menu",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/about",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "path": "/how-it-works",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/deals",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/deals/9421ba9d-f2c7-4675-a12d-41a49d52bb60",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/audit",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/menu",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/about",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "path": "/how-it-works",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/deals",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/deals/9421ba9d-f2c7-4675-a12d-41a49d52bb60",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/audit",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/menu",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/about",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "path": "/how-it-works",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/deals",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/deals/9421ba9d-f2c7-4675-a12d-41a49d52bb60",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/audit",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/menu",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/about",
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "path": "/how-it-works",
+    "errors": [],
+    "overflow": false
+  }
+]

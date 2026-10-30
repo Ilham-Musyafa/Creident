@@ -7,7 +7,7 @@ import type { Role } from './view';
 const roles: { value: Role; label: string; detail: string }[] = [
   { value: 'buyer', label: 'Buyer', detail: 'Buy and inspect items' },
   { value: 'seller', label: 'Seller', detail: 'Create deals and ship items' },
-  { value: 'reviewer', label: 'Reviewer', detail: 'Review disputes' },
+  { value: 'reviewer', label: 'Reviewer', detail: 'Reviewer (a person who decides the problem)' },
 ];
 // Restore focus when a role-keyed view replaces the trigger after a client refresh.
 // Assigned only by a browser interaction; no server-side user state is stored here.

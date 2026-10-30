@@ -35,9 +35,9 @@ export function ReviewDecision({ txId, pendingSplit, returnByDefault = true, dea
   // What each decision does to the money, shown before the reviewer confirms (docs/UI.md).
   const usd = (v: string) => `$${Number(v).toFixed(2)}`;
   const confirmFor = (outcome: Outcome): ConfirmDetails => ({
-    RELEASE: { title: 'Charge the buyer (capture)', amount: usd(dealAmount), rows: [{ label: 'PayPal', value: 'Charge the approved payment' }, { label: 'Buyer', value: 'No refund' }], confirmLabel: 'Confirm charge' },
+    RELEASE: { title: "Charge the approved payment", amount: usd(dealAmount), rows: [{ label: 'PayPal', value: 'Charge the approved payment' }, { label: 'Buyer', value: 'No refund' }], confirmLabel: 'Confirm charge' },
     REFUND: { title: 'Refund the buyer', amount: usd(dealAmount), tone: 'strong' as const, rows: [{ label: 'When', value: requireReturn ? 'After the item is returned' : 'Now' }, { label: 'PayPal', value: 'Cancel the payment, or refund if already charged' }, { label: 'Fee', value: 'fee covered by the platform' }], confirmLabel: 'Confirm refund' },
-    PARTIAL_REFUND: { title: 'Partial refund to the buyer', amount: validPartialAmount(partialAmount, dealAmount) ? usd(partialAmount) : '', amountCaption: `of ${usd(dealAmount)}`, rows: [{ label: 'Amount not refunded', value: validPartialAmount(partialAmount, dealAmount) ? usd(String(Number(dealAmount) - Number(partialAmount))) : '—' }, { label: 'When', value: partialRequireReturn ? 'After the item is returned' : 'Now' }, { label: 'PayPal', value: 'Charge, then refund this amount' }], confirmLabel: 'Confirm partial refund' },
+    PARTIAL_REFUND: { title: "Part of the money back to the buyer", amount: validPartialAmount(partialAmount, dealAmount) ? usd(partialAmount) : '', amountCaption: `of ${usd(dealAmount)}`, rows: [{ label: 'Amount not refunded', value: validPartialAmount(partialAmount, dealAmount) ? usd(String(Number(dealAmount) - Number(partialAmount))) : '—' }, { label: 'When', value: partialRequireReturn ? 'After the item is returned' : 'Now' }, { label: 'PayPal', value: 'Charge, then refund this amount' }], confirmLabel: "Confirm part of the money back" },
     SPLIT: { title: 'Record a split decision', rows: [{ label: 'Money', value: 'Does not move yet' }], note: 'A split is recorded as pending until split payments are defined.', confirmLabel: 'Record split' },
   } satisfies Record<Outcome, ConfirmDetails>)[outcome];
   const disabled = busy || reason.trim().length < 2;
@@ -57,18 +57,18 @@ export function ReviewDecision({ txId, pendingSplit, returnByDefault = true, dea
       </label>
       {pendingSplit && <p className="text-sm text-muted">A split is recorded as pending: it moves no money until split payments are defined.</p>}
       <div className="grid grid-cols-3 gap-2">
-        <Button variant="ghost" disabled={disabled || pendingSplit} className="px-2!" onClick={() => setPending('RELEASE')}>Charge the buyer (capture)</Button>
+        <Button variant="ghost" disabled={disabled || pendingSplit} className="px-2!" onClick={() => setPending('RELEASE')}>Charge the approved payment</Button>
         <Button variant="ghost" disabled={disabled || pendingSplit} onClick={() => setPending('SPLIT')}>Split</Button>
         <Button variant="strong" disabled={disabled || pendingSplit} onClick={() => setPending('REFUND')}>Refund</Button>
       </div>
-      <section aria-label="Partial refund decision" className="space-y-3 rounded-[18px] border border-line p-3">
-        <h3 className="text-sm font-bold text-heading">Partial refund</h3>
+      <section aria-label="Part of the money back decision" className="space-y-3 rounded-[18px] border border-line p-3">
+        <h3 className="text-sm font-bold text-heading">Part of the money back</h3>
         <p className="text-sm text-muted">Charge the full payment, then refund the amount you enter. Any AI range is advice only. The fee is covered by the platform. Seller payout is not part of this demo.</p>
-        <div><Label htmlFor="partial-amount">Partial refund amount (USD)</Label><input id="partial-amount" disabled={busy} className={fieldClass} inputMode="decimal" value={partialAmount} maxLength={10} placeholder="e.g. 10.00" onChange={e => setPartialAmount(e.target.value)}/></div>
+        <div><Label htmlFor="partial-amount">Part of the money back amount (USD)</Label><input id="partial-amount" disabled={busy} className={fieldClass} inputMode="decimal" value={partialAmount} maxLength={10} placeholder="e.g. 10.00" onChange={e => setPartialAmount(e.target.value)}/></div>
         <p className="text-sm text-muted">Enter two decimals, above zero and below {dealAmount} USD. The amount is never filled from an AI draft.</p>
-        <label htmlFor="partial-return" className="flex min-h-11 items-start gap-3 text-sm"><input id="partial-return" disabled={busy} type="checkbox" className="mt-1 size-4" checked={partialRequireReturn} onChange={e => setPartialRequireReturn(e.target.checked)}/><span>Require the item returned before this partial refund</span></label>
-        <Button variant="ghost" fullWidth disabled={disabled || pendingSplit || !validPartialAmount(partialAmount, dealAmount)} onClick={() => setPending('PARTIAL_REFUND')}>Partial refund</Button>
-        <p className="text-sm text-muted">Partial refund executes the typed amount. Split only records a pending decision and moves no money.</p>
+        <label htmlFor="partial-return" className="flex min-h-11 items-start gap-3 text-sm"><input id="partial-return" disabled={busy} type="checkbox" className="mt-1 size-4" checked={partialRequireReturn} onChange={e => setPartialRequireReturn(e.target.checked)}/><span>Require the item returned before this part of the money back</span></label>
+        <Button variant="ghost" fullWidth disabled={disabled || pendingSplit || !validPartialAmount(partialAmount, dealAmount)} onClick={() => setPending('PARTIAL_REFUND')}>Part of the money back</Button>
+        <p className="text-sm text-muted">Part of the money back executes the typed amount. Split only deal history a pending decision and moves no money.</p>
       </section>
       {pending && <ConfirmSheet open details={{ ...confirmFor(pending), note: <>{confirmFor(pending).note ? <>{confirmFor(pending).note} </> : null}Reason: “{reason.trim().slice(0, 140)}{reason.trim().length > 140 ? '…' : ''}”</> }} busy={busy} onConfirm={() => { const outcome = pending; setPending(null); void decide(outcome); }} onCancel={() => setPending(null)}/>}
       <ErrorNote error={error}/>
