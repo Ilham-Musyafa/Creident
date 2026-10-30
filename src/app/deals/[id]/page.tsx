@@ -3,7 +3,7 @@ import { displayItemName } from '../../../components/displayItemName';
 import { TechnicalDetails } from '../../../components/TechnicalDetails';
 import { PartialRefundNotice } from '../../../components/PartialRefundNotice';
 import { SuccessBurst } from '../../../components/motion';
-import { recentSuccess, activityFeed } from '../../../components/view';
+import { celebrates, recentSuccess, activityFeed } from '../../../components/view';
 import { PayPalDisputePanel } from '../../../components/PayPalDisputePanel';
 import { CourierClaimPack } from '../../../components/OutboundDrafts';
 import { ActivityFeed } from '../../../components/ActivityFeed';
@@ -62,7 +62,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   return (
     <AppShell active="Deals">
       <div className="deal-story">
-      {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label}/> : null; })()}
+      {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label} confetti={celebrates(tx.status)}/> : null; })()}
       <PageHeader title={displayItemName(tx.item)} subtitle={subtitle} back="/deals"/>
       <div className="mb-4"><CategoryChip category={JSON.parse(tx.termsJson).category} subcategory={JSON.parse(tx.termsJson).subcategory} full/></div>
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
