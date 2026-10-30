@@ -210,6 +210,16 @@ Still open:
   tile rows and Browse button, three filter controls on Transactions); owner dry run
   Seller -> Buyer -> Reviewer; UI freeze; C32 final screenshots and README links
   (Render, YouTube); demo script; video (< 3 min) on YouTube; Devpost.
+- Owner idea 2026-10-30 (planned after the hackathon, not built): buyer joins a deal by a
+  short code from the seller, besides the link, for a future mobile app. Rules if built: the
+  code only opens the same deal page as the link, expires, limits wrong attempts, no new
+  access. Needs a data and API change, so it is outside the feature freeze. Recorded in the
+  README production-path list.
+- Later merges and fixes today: C35 sidebar highlight (#100), C36 QA report (#99), C37 no
+  placeholders (#101), C38 polish pack 1 (#102), C39 Deal history out of the main
+  navigation (#103), and fix #104: payment return URLs now use the public origin
+  (RENDER_EXTERNAL_URL, then forwarded host) because behind Render the pay handler built
+  http://localhost:10000 links and the PayPal step opened a dead page.
 - Open items for the owner: confirm the Render deploy is live (the agent proxy cannot
   reach it); live-model evaluation needs approval of the AI provider and must never run
   on the public server; Sandbox end-to-end bridge run.

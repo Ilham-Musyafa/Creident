@@ -515,6 +515,10 @@ SPLIT and does not implement a split payout or seller payout.
 - Notifications are in-app only. A platform integration could expose outgoing event
   webhooks (for example "shipping deadline in 12 hours") that a marketplace connects to its
   own email, chat or automation tools.
+- Joining a deal by short code. Today a seller shares a link. In a mobile app the buyer
+  could also type a short deal code. The code would only open the same deal page as the link
+  (no extra access), would expire, and would limit wrong attempts. Not built in the hackathon
+  version.
 
 ## 8. Tech stack and AI tools
 
