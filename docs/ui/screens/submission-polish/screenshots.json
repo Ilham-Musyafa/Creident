@@ -1,0 +1,294 @@
+[
+  {
+    "name": "home-buyer",
+    "path": "/",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "home-dark",
+    "path": "/",
+    "width": 1440,
+    "theme": "dark",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "deals",
+    "path": "/deals",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "new-phone",
+    "path": "/deals/new",
+    "width": 390,
+    "theme": "light",
+    "role": "seller",
+    "messages": []
+  },
+  {
+    "name": "deal-completed",
+    "path": "/deals/6d7ac01c-b4c6-45f2-8215-523a82edac66",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "evidence-damaged",
+    "path": "/deals/cc242d4f-2abf-41e7-a808-36eab6086ea8/evidence",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "dispute-review",
+    "path": "/deals/0251692d-1792-4991-b253-c1e1cd88b912/review",
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "messages": []
+  },
+  {
+    "name": "review-dark",
+    "path": "/deals/0251692d-1792-4991-b253-c1e1cd88b912/review",
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "messages": []
+  },
+  {
+    "name": "decision-receipt",
+    "path": "/deals/bbe8097a-ac68-48c1-9ec1-5cbfba3f6e85/decision",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "audit-detail",
+    "path": "/audit/6d7ac01c-b4c6-45f2-8215-523a82edac66",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "fairness",
+    "path": "/fairness",
+    "width": 390,
+    "theme": "light",
+    "role": "buyer",
+    "messages": []
+  },
+  {
+    "name": "oversight-390-light",
+    "path": "/reviewer/oversight",
+    "width": 390,
+    "theme": "light",
+    "role": "reviewer",
+    "messages": [
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      }
+    ]
+  },
+  {
+    "name": "oversight-390-dark",
+    "path": "/reviewer/oversight",
+    "width": 390,
+    "theme": "dark",
+    "role": "reviewer",
+    "messages": [
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      }
+    ]
+  },
+  {
+    "name": "oversight-1440-light",
+    "path": "/reviewer/oversight",
+    "width": 1440,
+    "theme": "light",
+    "role": "reviewer",
+    "messages": [
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      }
+    ]
+  },
+  {
+    "name": "oversight-1440-dark",
+    "path": "/reviewer/oversight",
+    "width": 1440,
+    "theme": "dark",
+    "role": "reviewer",
+    "messages": [
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** AG Studio Core License **************************************************"
+      },
+      {
+        "type": "error",
+        "text": "************************************************** License Key Not Found ***************************************************"
+      },
+      {
+        "type": "error",
+        "text": "* All AG Studio Core features are unlocked for trial.                                                                      *"
+      },
+      {
+        "type": "error",
+        "text": "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      },
+      {
+        "type": "error",
+        "text": "****************************************************************************************************************************"
+      }
+    ]
+  }
+]

@@ -1,11 +1,15 @@
 # Creident
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="public/brand/symbol-dark.png">
-  <img src="public/brand/symbol-light.png" alt="Creident two-node C symbol" width="64" height="64">
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/v3/wordmark-dark.png">
+  <img src="public/brand/v3/wordmark-light.png" alt="Creident" width="200">
 </picture>
 
 **Every deal, on record.**
+
+**Live demo:** `<RENDER_URL>`
+
+**Demo video:** `<YOUTUBE_URL>`
 
 **A dispute-mediation prototype for peer-to-peer sales of physical goods.**
 Rules first, AI summarises evidence, a human confirms every dispute outcome, and every
@@ -16,28 +20,26 @@ on the **PayPal Sandbox**.
 > anyone's money, and it does not handle real payments. PayPal authorizes the payment;
 > the platform calls capture, void or refund according to the rules.
 
-![Creident Sapphire Flow home, light theme](docs/ui/screens/brand/home-390-light.png)
+![Creident home, light theme](docs/ui/screens/submission-polish/home-buyer.png)
 
 **Screens**
 
 Captured from the running app with a fresh SQLite database, simulated PayPal,
-and synthetic demo data. Mobile: 390 × 844, light. Desktop: 1440 × 900, dark.
-The lead image uses the current Sapphire Flow brand kit. The older gallery below contains
-illustrative captures from before the brand/R5 label updates; the fairness image
-contains older replay results. Current label counts and metrics are in section 5 and
-[`eval/report.md`](eval/report.md); neither is a live-model measurement.
+and synthetic demo data (13 seeded examples plus local walkthrough deals). Mobile: 390 × 844, light. Desktop: 1440 × 900, dark.
+All images below are regenerated from the current UI with labelled synthetic deals.
+Fairness results describe the recorded replay, not a live-model measurement.
 
 | Screen | Mobile, light | Desktop, dark |
 | --- | --- | --- |
-| Buyer home | [View](docs/ui/screens/home-buyer.png) | [View](docs/ui/screens/home-dark.png) |
-| Deals list | [View](docs/ui/screens/deals.png) | — |
-| New deal, Phone checklist selected | [View](docs/ui/screens/new-phone.png) | — |
-| Completed deal | [View](docs/ui/screens/deal-completed.png) | — |
-| Evidence and damaged-dispute guidance | [View](docs/ui/screens/evidence-damaged.png) | — |
-| Dispute review, reviewer | [View](docs/ui/screens/dispute-review.png) | [View](docs/ui/screens/review-dark.png) |
-| Decision receipt | [View](docs/ui/screens/decision-receipt.png) | — |
-| Audit detail | [View](docs/ui/screens/audit-detail.png) | — |
-| Fairness results | [View](docs/ui/screens/fairness.png) | — |
+| Buyer home | [View](docs/ui/screens/submission-polish/home-buyer.png) | [View](docs/ui/screens/submission-polish/home-dark.png) |
+| Transactions | [View](docs/ui/screens/submission-polish/deals.png) | — |
+| New deal, Phone checklist selected | [View](docs/ui/screens/submission-polish/new-phone.png) | — |
+| Completed deal | [View](docs/ui/screens/submission-polish/deal-completed.png) | — |
+| Evidence and damaged-dispute guidance | [View](docs/ui/screens/submission-polish/evidence-damaged.png) | — |
+| Dispute review, reviewer | [View](docs/ui/screens/submission-polish/dispute-review.png) | [View](docs/ui/screens/submission-polish/review-dark.png) |
+| Decision receipt | [View](docs/ui/screens/submission-polish/decision-receipt.png) | — |
+| Record detail | [View](docs/ui/screens/submission-polish/audit-detail.png) | — |
+| Fairness results | [View](docs/ui/screens/submission-polish/fairness.png) | — |
 
 ## 1. The problem
 
@@ -465,7 +467,8 @@ further money actions on that deal instead of guessing. A safe reconciliation de
 **Why can only the buyer open a dispute?** The seller is protected by the rules instead: if
 the buyer stays silent and tracking shows delivery to the agreed address, the payment is
 captured when the inspection window ends; the seller adds evidence in any dispute; and if a
-refund requires a return that never arrives, the payment goes to the seller.
+refund requires a return that never arrives, the approved payment is charged.
+Seller payout is not part of this prototype.
 
 **How would the platform make money, if it also bears the PayPal fee on refunds?** The
 intended model is a 1.5% service fee paid by the seller, deducted from the amount released
@@ -476,6 +479,13 @@ is not built.
 money; its execution was deferred by the owner. The separate **Partial refund** decision
 now captures the payment and refunds the reviewer-entered USD amount. It is distinct from
 SPLIT and does not implement a split payout or seller payout.
+
+## Production path / not built yet
+
+- Integrated real PayPal Sandbox bridge run (the separate client probe was tested).
+- Live-model evaluation; current replay results test the harness/rules only.
+- Real seller payouts.
+- Multi-level appeals.
 
 ## 7. Limitations and production path
 
@@ -534,9 +544,9 @@ SPLIT and does not implement a split payout or seller payout.
     `AgStudioProvider`. The [PayPal/AG Studio boilerplate](https://github.com/paypaldev/hackathon-paypal-ag-grid-boilerplate)
     was used only as an API reference. Creident supplies its own data, widgets,
     responsive layout and token-based light/dark theme.
-- Sapphire Flow identity: Georgia/Arial for the signature; Plus Jakarta Sans headings and DM Sans
-  interface (local variable fonts, no external font service). Original source-derived logo variants,
-  favicon and app icons: [`docs/brand/README.md`](docs/brand/README.md).
+- Approved raster Check-C artwork cropped from the owner's brand board; Plus Jakarta Sans
+  headings and DM Sans interface (self-hosted). Current assets and quality limits:
+  [`docs/brand/BRAND.md`](docs/brand/BRAND.md).
 - Built by one developer with AI coding assistants (Claude Code and OpenAI Codex).
   Agent rules are in [`AGENTS.md`](AGENTS.md); working notes in
   [`docs/HANDOFF.md`](docs/HANDOFF.md).
@@ -548,9 +558,9 @@ Labelled demo data, local evaluation without a key. Full-page captures at the st
 
 | Width | Light | Dark |
 | --- | --- | --- |
-| 390 px | [Mobile light](docs/ui/screens/oversight-390-light.png) | [Mobile dark](docs/ui/screens/oversight-390-dark.png) |
-| 1440 px | [Desktop light](docs/ui/screens/oversight-1440-light.png) | [Desktop dark](docs/ui/screens/oversight-1440-dark.png) |
+| 390 px | [Mobile light](docs/ui/screens/submission-polish/oversight-390-light.png) | [Mobile dark](docs/ui/screens/submission-polish/oversight-390-dark.png) |
+| 1440 px | [Desktop light](docs/ui/screens/submission-polish/oversight-1440-light.png) | [Desktop dark](docs/ui/screens/submission-polish/oversight-1440-dark.png) |
 
 ## 9. License
 
-[MIT](LICENSE).
+[MIT](LICENSE). Copyright (c) 2026 Ilham Musyafa.

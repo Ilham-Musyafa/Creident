@@ -173,6 +173,27 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — C26 submission polish / feature freeze
+
+- Created chore/submission-polish from latest origin/main 5e597fc. LICENSE unchanged
+  (MIT, exact Copyright (c) 2026 Ilham Musyafa); added missing root package/lock MIT
+  metadata. No NOTICE, dependencies, features, pages, runtime refactor or source fix.
+- README: demo/video placeholders, short production-not-built list, actual v3
+  branding and regenerated screenshot links; corrected payout-implying FAQ to charge
+  approved payment and explicitly exclude seller payout. Full changes/claim scan:
+  docs/reports/C26-submission-polish.md.
+- All 15 README screenshots regenerated with existing Playwright. Simulated
+  buyer/seller/reviewer flow through create/pay/ship/dispute/evidence/decision/Records
+  passes, including separate actual form creation. No P0 found. Core browser flow
+  has zero console errors/warnings. Oversight has existing AG Studio evaluation
+  license errors; not hidden or refactored under freeze. Owner licensing remains.
+- Read-only secrets scan: 1,800 historical blobs/all refs plus working files/env
+  examples/local ignored env. No actual secret/token found by signature checks;
+  PEM marker test assertions classified false positives. .env ignored and never
+  tracked in fetched history. No secret contents emitted or changed; limits in report.
+- Node 22.23.4: 522 tests/50 files, typecheck, build, diff check pass. No merge or
+  deployment. PR requested; publication result will be recorded after push.
+
 ### 2026-10-30 — BK2 approved raster artwork applied
 
 - Owner identified PR #89 source. Fetched and fast-forwarded ui/creident-mockup
