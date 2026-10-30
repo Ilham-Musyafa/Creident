@@ -3,8 +3,8 @@ import Image from 'next/image';
 /** Approved raster artwork, cropped without redrawing the letterforms. */
 export function BrandWordmark({ inverse = false, className = '' }: { inverse?: boolean; className?: string }) {
   return <span className={`inline-block shrink-0 ${className}`}>
-    {!inverse && <Image className="brand-symbol-light h-full w-auto" src="/brand/v3/wordmark-light.png" width={992} height={200} alt="Creident" unoptimized/>}
-    <Image className={`${inverse ? '' : 'brand-symbol-dark '}h-full w-auto`} src="/brand/v3/wordmark-dark.png" width={960} height={188} alt="Creident" unoptimized/>
+    {!inverse && <Image className="brand-symbol-light h-full w-auto" src="/brand/v3/wordmark-light.png" width={992} height={200} alt="Creident" loading="eager" unoptimized/>}
+    <Image className={`${inverse ? '' : 'brand-symbol-dark '}h-full w-auto`} src="/brand/v3/wordmark-dark.png" width={960} height={188} alt="Creident" loading="eager" unoptimized/>
   </span>;
 }
 

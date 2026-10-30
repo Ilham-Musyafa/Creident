@@ -87,9 +87,8 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
       <nav aria-label="Learn" className="mb-6 mt-8 space-y-1"><h2 className="mb-3 px-4 text-xs font-semibold uppercase tracking-widest text-[var(--desktop-sidebar-muted)]">Learn</h2>{learnLinks.map(link => <Link key={link.href} href={link.href} onClick={() => setHash(new URL(link.href, window.location.origin).hash)} aria-current={learnCurrent === link.href ? 'page' : undefined} className="desktop-sidebar-link flex min-h-11 items-center gap-3 rounded-full px-4 py-2 text-sm"><SettingsIcon name={link.icon}/><span>{link.title}</span></Link>)}</nav>
       <div className="mt-auto pt-5"><QuickRoleSwitch current={role} appearance="sidebar"/><p className="mt-3 text-center text-xs leading-relaxed text-[var(--desktop-sidebar-muted)]">{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'}<br/>Demo data · No real money moves.</p></div>
     </aside>
-    <header className="desktop-topbar border-b border-line bg-bg">
-      <div className="desktop-topbar-inner mx-auto flex min-w-0 items-center justify-between gap-5">
-        <div className="min-w-0 flex-1"><h2 className="text-2xl leading-tight text-heading">{info.title}</h2><p className="mt-1 text-sm text-muted">{info.subtitle} <span className="capitalize">{role}</span> view.</p></div>
+    <header className="desktop-topbar border-b border-line bg-bg" aria-label="Page tools">
+      <div className="desktop-topbar-inner mx-auto flex min-w-0 items-center justify-end gap-5">
         <div className="flex shrink-0 items-center gap-3">{pathname === '/deals' && <div id="desktop-transaction-search" className="desktop-transaction-search"/>}<AppearanceMenu/></div>
       </div>
     </header>
