@@ -173,6 +173,27 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK1 Check-C brand kit (no app wiring)
+
+- Continued ui/creident-mockup from clean 600c55b. Rebuilt attached visual direction
+  with outlined Outfit 700, attached Sapphire C-check and inward curled d stem with
+  rounded lower-right notch. Standard remaining glyphs. No attached JPG committed.
+- Added public/brand/v2 exports: wordmarks (light/dark/mono), marks, three rounded
+  app icons, SVG/16/32 favicons, 180 Apple icon, 192/512 icons, full-bleed maskable
+  export, 1200x630 OG image. SVG rebuild script and OG source under docs/brand.
+  Existing source, logo files and favicon wiring untouched. No dependencies.
+- Dark check is Sky (8.88:1 on Navy vs Sapphire 4.35:1); Sapphire app tile uses
+  white mono mark. BRAND.md covers versions, clear space, minima, WCAG ratios,
+  typography and misuse. Board shows all requested assets, fonts and size examples.
+- Preinstalled /usr/bin/python3 FontTools/Brotli outlines original local WOFF2;
+  no SVG text font dependency. Chromium canvas produces PNG sizes; DM Sans OG
+  uses local font. 37 board images loaded with no overflow. Managed browser blocks
+  file://; used temporary localhost static server, no external font/image service.
+- Node 22.23.4: 522 tests/50 files, typecheck/build/diff check pass. Changes limited
+  to docs/brand, public/brand/v2 and this handoff. No BK2 wiring, merge or deployment.
+- Push target origin/ui/creident-mockup. No PR claimed. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — L3 Check-C wordmark study
 
 - Continued ui/creident-mockup from clean c363d67. check-c.png reference absent;
