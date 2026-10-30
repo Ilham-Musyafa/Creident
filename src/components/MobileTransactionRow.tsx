@@ -2,7 +2,7 @@ import { CategoryChip } from './CategoryChip';
 import Link from 'next/link';
 import { TransactionIcon } from './TransactionIcon';
 import { StatusPill } from './ui';
-import type { TransactionRow } from './transactionsView';
+import { shortDate, type TransactionRow } from './transactionsView';
 
 /** Keep the full deadline available while the compact surface shows its largest time unit. */
 export function shortDeadline(label: string): string {
@@ -22,7 +22,8 @@ export function MobileTransactionRow({ row, compact = false }: { row: Transactio
     <span className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-[14px] bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span>
     <span className="min-w-0 flex-1">
       <span className="flex items-start justify-between gap-2"><span className="min-w-0 break-words text-sm font-semibold text-heading">{row.title}</span><strong className="shrink-0 font-display text-sm tabular-nums text-heading">{row.amount}</strong></span>
-      <span className="mt-2 flex flex-wrap items-center gap-1.5"><CategoryChip category={row.category} subcategory={row.subcategory}/><StatusPill status={row.status}/></span>
+      <span className="mt-2 flex flex-wrap items-center gap-1.5"><CategoryChip category={row.category} subcategory={row.subcategory}/><StatusPill status={row.status} short/></span>
+      {shortDate(row.createdAt) && <span className="mt-1 block text-xs text-muted">{shortDate(row.createdAt)}</span>}
       {((!compact && row.needsAction) || row.nextStep === 'Refund pending verification') && <span className="mt-2 block text-sm font-medium text-heading">{row.nextStep}</span>}
       {row.deadlineLabel && <span title={row.deadlineLabel} className="mt-1 block text-xs text-muted">{compact ? shortDeadline(row.deadlineLabel) : row.deadlineLabel}</span>}
     </span>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { StoredTx } from '../lib/repository';
-import { itemIcon, transactionRow, sortTransactionRows, matchesTransactionFilter, searchTransactionRows, readTransactionFilter, transactionQuery } from './transactionsView';
+import { itemIcon, transactionRow, sortTransactionRows, matchesTransactionFilter, searchTransactionRows, readTransactionFilter, transactionQuery, shortDate } from './transactionsView';
 
 const now = '2026-10-24T12:00:00Z';
 const tx = (overrides: Partial<StoredTx> = {}): StoredTx => ({ id: 'test', status: 'DRAFT', captured: false, buyerId: 'buyer', sellerId: 'seller', item: 'Phone', amount: '120.00', currency: 'USD', termsJson: '{}', ...overrides });
@@ -58,5 +58,16 @@ describe('transaction list presentation', () => {
   });
   it('describes a pending refund without offering a retry or new money action', () => {
     expect(transactionRow(tx({ status: 'COMPLETED', captured: true, partialRefundState: 'pending' }), 'reviewer', now)).toMatchObject({ nextStep: 'Refund pending verification', needsAction: false, href: '/deals/test' });
+  });
+});
+
+describe('shortDate', () => {
+  it('formats ISO and SQLite timestamps as a short UTC date', () => {
+    expect(shortDate('2026-10-30T12:34:56.000Z')).toBe('30 Oct 2026');
+    expect(shortDate('2026-10-30 12:34:56')).toBe('30 Oct 2026');
+  });
+  it('returns null when there is no usable date', () => {
+    expect(shortDate(null)).toBeNull();
+    expect(shortDate('not a date')).toBeNull();
   });
 });
