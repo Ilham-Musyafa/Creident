@@ -13,7 +13,7 @@ const steps = [
 
 export default async function HowItWorksPage() {
   return <InfoPageShell title="How it works" subtitle="From agreeing on an item to checking what happened.">
-    <ol className="mx-auto max-w-3xl">{steps.map(([title, text, actor, path], i) => <li key={title} className="relative flex gap-4 pb-7 last:pb-0">
+    <ol className="mx-auto max-w-5xl">{steps.map(([title, text, actor, path], i) => <li key={title} className="relative flex gap-4 pb-7 last:pb-0">
       {i < steps.length - 1 && <span aria-hidden="true" className="absolute bottom-0 left-5 top-10 w-px bg-line"/>}
       <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full bg-strong text-base font-bold text-on-strong">{i + 1}</span>
       <div className="min-w-0 flex-1 rounded-[24px] border border-line bg-surface p-4">
@@ -22,7 +22,7 @@ export default async function HowItWorksPage() {
         <span className="mt-3 inline-block rounded-full bg-surface-2 px-3 py-2 text-xs font-semibold text-heading">Who acts: {actor}</span>
       </div>
     </li>)}</ol>
-    <section className="mx-auto mt-8 max-w-3xl"><p className="text-sm font-semibold text-heading">Demo only: no real money</p>
+    <section className="mx-auto mt-8 max-w-5xl"><p className="text-sm font-semibold text-heading">Demo only: no real money</p>
       <div className="mt-4 flex flex-wrap gap-3"><ButtonLink href="/deals/new">Try a deal</ButtonLink><ButtonLink href="/audit" variant="ghost">See the deal history</ButtonLink></div>
       <details className="mt-6 rounded-[24px] border border-line bg-surface p-4"><summary className="flex min-h-11 cursor-pointer items-center text-base font-bold text-heading">All the rules</summary>
         <ul className="mt-3 space-y-4">{RULE_COPY.map(rule => <li key={rule.id}><h3 className="text-sm font-bold text-heading">{rule.title} <span className="ml-2 inline-block rounded-full bg-surface-2 px-2 py-1 text-xs">{rule.id}</span></h3><p className="mt-2 text-sm leading-relaxed">{rule.text}</p></li>)}</ul>
