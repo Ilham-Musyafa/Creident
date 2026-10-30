@@ -23,18 +23,15 @@ export default async function HomePage() {
   const chains = deals.map((d) => verifyChain(ctx.repo.readEvents(d.id)));
   const verified = chains.filter((c) => c.ok).length;
 
-  const rows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? []));
+  const rows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? [], ctx.repo.readEvents(tx.id).find(event => event.type === 'TRANSACTION_CREATED')?.ts ?? null));
   const actionCount = rows.filter(row => row.needsAction).length;
   const actions = sortTransactionRows(rows.filter(row => row.needsAction)).slice(0, 6);
-  const recent = shown.map(tx => rows.find(row => row.id === tx.id)!);
+  const recent = sortTransactionRows(role === 'reviewer' && reviewQueue.length ? shown.map(tx => rows.find(row => row.id === tx.id)!) : rows).slice(0, 5);
   // Demo party IDs match the seed/create flow; reviewers use their actual review queue.
-  // Keep repository recency order within each action/active priority, without changing desktop.
   const mobileDealIds = new Set(deals.filter(tx => role === 'reviewer'
     ? tx.status === 'UNDER_REVIEW'
     : role === 'buyer' ? tx.buyerId === 'buyer' : tx.sellerId === 'seller').map(tx => tx.id));
-  const mobileRecent = rows.filter(row => mobileDealIds.has(row.id))
-    .sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active))
-    .slice(0, 3);
+  const mobileRecent = sortTransactionRows(rows.filter(row => mobileDealIds.has(row.id))).slice(0, 3);
 
   const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Closed', 'closed', 'Closed, including cancelled/refunded']] as const)
     .map(([label, filter, detail]) => ({ label, detail, href: `/deals?filter=${filter}`, count: rows.filter(row => matchesTransactionFilter(row, filter)).length }));

@@ -62,8 +62,10 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
     nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, createdAt };
 }
+/** Newest deal first (by created time), so a deal made just now sits at the top; deals without a created time go last. */
 export function sortTransactionRows(rows: readonly TransactionRow[]): TransactionRow[] {
-  return [...rows].sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active) || (a.deadline ?? Infinity) - (b.deadline ?? Infinity));
+  const created = (row: TransactionRow) => (row.createdAt ? Date.parse(row.createdAt) || 0 : 0);
+  return [...rows].sort((a, b) => created(b) - created(a) || b.id.localeCompare(a.id));
 }
 export function matchesTransactionFilter(row: TransactionRow, filter: TransactionFilter): boolean {
   return filter === 'action' ? row.needsAction : filter === 'active' ? row.active : filter === 'review' ? row.status === 'UNDER_REVIEW' : filter === 'closed' ? !row.active : true;
