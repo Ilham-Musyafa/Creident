@@ -173,6 +173,26 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — L3 Check-C wordmark study
+
+- Continued ui/creident-mockup from clean c363d67. check-c.png reference absent;
+  followed the written direction and explicitly documented that limitation.
+- Created twelve wordmark variants, twelve dark versions and standalone marks
+  with dark versions (48 SVGs total), static gallery, 1440px preview and comparison
+  table in round-3-check-c only. All Outfit glyphs outlined with preinstalled
+  system FontTools (500/600/700); no dependencies or SVG font loading required.
+  Custom check terminals, echo dot and tracking changes are presentation artwork.
+- Recommendations: 12 Gentle rise, 01 Baseline, 04 Rounded check. 07 lowercase is
+  the explicitly requested exception to initial capitalization, not misspelling.
+  Tiny echo dot is intentionally subtle; no final selection or app integration.
+- Browser: 12 cards, 180 images loaded, no external requests or overflow; inspected
+  light/dark and small sizes. file:// blocked by managed Chromium policy, so preview
+  uses temporary localhost static server; relative-only HTML has no build/CDN.
+  Node 22.23.4: 522 tests/50 files, typecheck, build and diff check pass.
+  Source/public/app untouched; only round-3-check-c and this handoff changed.
+- Push target origin/ui/creident-mockup only. No PR created or deployment.
+  Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — L2 rounded logo exploration
 
 - Continued ui/creident-mockup from clean aaf6dc4. Owner rejected round 1;
