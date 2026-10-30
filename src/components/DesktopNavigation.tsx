@@ -18,7 +18,6 @@ const mainLinks: { key: Active; title: string; href: string }[] = [
 const learnLinks = [
   { title: 'How it works', href: '/how-it-works', icon: 'rules' },
   { title: 'Fairness', href: '/fairness', icon: 'fairness' },
-  { title: 'Limitations', href: '/about#limitations', icon: 'limits' },
   { title: 'About', href: '/about', icon: 'about' },
 ] as const;
 
@@ -76,7 +75,7 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
   }, [pathname]);
   const info = pageInfo(pathname);
   const selected = info.selected ?? (pathname === '/about' || pathname === '/fairness' ? null : active);
-  const learnCurrent = pathname === '/how-it-works' ? '/how-it-works' : pathname === '/fairness' ? '/fairness' : pathname === '/about' ? hash === '#decisions' ? '/how-it-works' : hash === '#limitations' ? '/about#limitations' : '/about' : null;
+  const learnCurrent = pathname === '/how-it-works' ? '/how-it-works' : pathname === '/fairness' ? '/fairness' : pathname === '/about' ? hash === '#decisions' ? '/how-it-works' : '/about' : null;
   return <div className="desktop-shell hidden print:hidden lg:block">
     <a href="#main-content" className="desktop-skip rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent">Skip to content</a>
     <aside className="desktop-sidebar fixed inset-y-0 left-0 z-30 flex flex-col overflow-y-auto border-r p-5" aria-label="Desktop sidebar">
