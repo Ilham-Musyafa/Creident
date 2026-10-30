@@ -3,8 +3,8 @@
 import { useRef } from 'react';
 
 /** Edits the existing newline-delimited fields without changing the API payload. */
-export function TermsListEditor({ id, label, value, onChange, maxLength, placeholder }: {
-  id: string; label: string; value: string; onChange: (value: string) => void; maxLength: number; placeholder: string;
+export function TermsListEditor({ id, label, value, onChange, maxLength }: {
+  id: string; label: string; value: string; onChange: (value: string) => void; maxLength: number;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const rows = value.split('\n');
@@ -12,7 +12,7 @@ export function TermsListEditor({ id, label, value, onChange, maxLength, placeho
   return <div ref={container} className="space-y-2">
     {rows.map((row, index) => <div key={index} className="flex items-center gap-2">
       <label htmlFor={`${id}-${index}`} className="sr-only">{label} {index + 1}</label>
-      <input id={`${id}-${index}`} value={row} placeholder={placeholder}
+      <input id={`${id}-${index}`} value={row}
         maxLength={Math.max(0, maxLength - (value.length - row.length))}
         className="min-h-11 min-w-0 flex-1 rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted"
         onChange={event => onChange(rows.map((line, i) => i === index ? event.target.value : line).join('\n'))}/>
