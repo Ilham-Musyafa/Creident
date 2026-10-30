@@ -83,4 +83,7 @@ browser console error. Screenshots.json preserves actual browser findings.
 
 Node 22.23.4: npm test **522 passed / 50 files**, npm run typecheck **pass**,
 npm run build **pass**, git diff --check **pass**. Existing tests unchanged.
-PR publication status: latest docs/HANDOFF.md entry. No merge/deployment.
+Implementation d4a8e2b pushed to origin/chore/submission-polish. PR creation via
+GraphQL and REST both returned Forbidden; no PR created. Manual link:
+https://github.com/Ilham-Musyafa/Creident/compare/main...chore/submission-polish
+No merge/deployment.

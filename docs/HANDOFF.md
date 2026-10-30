@@ -192,7 +192,10 @@ Still open:
   PEM marker test assertions classified false positives. .env ignored and never
   tracked in fetched history. No secret contents emitted or changed; limits in report.
 - Node 22.23.4: 522 tests/50 files, typecheck, build, diff check pass. No merge or
-  deployment. PR requested; publication result will be recorded after push.
+  deployment. Implementation d4a8e2b pushed to origin/chore/submission-polish.
+  PR creation attempted through gh (GraphQL) and REST; both returned Forbidden.
+  No PR created. Manual link:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...chore/submission-polish
 
 ### 2026-10-30 — BK2 approved raster artwork applied
 
