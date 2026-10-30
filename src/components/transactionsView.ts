@@ -7,6 +7,7 @@ export const TRANSACTION_FILTERS = { all: 'All', action: 'Needs your action', ac
 export type TransactionFilter = keyof typeof TRANSACTION_FILTERS;
 export type ItemIconName = 'phone' | 'laptop' | 'camera' | 'audio' | 'console' | 'watch' | 'game' | 'lamp' | 'helmet' | 'keyboard' | 'drone' | 'stove' | 'package';
 export interface TransactionRow {
+  category?: unknown; subcategory?: unknown;
   id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
   href: string; deadline: number | null; deadlineLabel: string | null;
@@ -51,7 +52,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   else if (action === 'add-evidence') href += '/evidence';
   else if (action === 'pay' || (action === 'accept-terms' && role === 'buyer')) href += '/checkout';
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
-  return { id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
+  return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
     nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel };
 }

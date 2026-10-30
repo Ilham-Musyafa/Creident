@@ -173,6 +173,33 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — C30 existing category field extended
+
+- Verified C28 merged in main 0eeb2f1 (PR #93); created ui/new-deal-categories.
+  One typed taxonomy: 18 requested categories, stable literal prefixed subcategory
+  IDs, final Other except top-level Other. Browser Category required; dependent
+  Subcategory optional/reset on change. Price validation/decimal keyboard unchanged.
+- Removed old Item type select; five subcategories reuse original ready-made
+  templates/mergeCriteria. Custom lines survive changes, duplicate merge avoided,
+  editable checklist note shown. Condition quick-picks omitted (optional).
+- Category/subcategory stored inside existing terms JSON only. Legacy values mapped
+  read-only to current labels; empty/unknown Other. Category chips on Home/Transactions,
+  full category/subcategory beside deal heading. Old locked terms are not rewritten.
+- Fresh 13 demo examples have sensible classification. Added a second exact recorded
+  Smartwatch copilot snapshot with category metadata, retaining the old fixture;
+  necessary to keep strict replay match working, no AI/API algorithm changed.
+- 536 tests/52 files, typecheck/build/diff check pass on Node 22.23.4. Existing
+  audit/state/financial assertions intact. Browser 390/1440 light/dark: eight real
+  form submissions across phone/checklist and furniture/no-checklist pass; saved IDs,
+  reset, own checks, duplicate prevention, deal/list/Home chips verified. No console
+  errors/warnings/overflow. New-deal before/after screenshots and JSON evidence:
+  docs/ui/screens/new-deal-categories/. Full choices/report: docs/reports/C30-new-deal-categories.md.
+- No schema, production API, state/rule, payment, audit or dependency change.
+  Implementation 5fa2127 pushed to origin/ui/new-deal-categories. PR creation via
+  GraphQL and REST returned Forbidden; no PR created by this agent. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/new-deal-categories
+  English PR body: /tmp/c30-pr.md. No merge/deployment.
+
 ### 2026-10-30 — C28 Home polish (UI only)
 
 - Verified C27 merged in main 4db39e3 (PR #92); created ui/home-polish there.

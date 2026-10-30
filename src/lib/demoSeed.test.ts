@@ -1,3 +1,4 @@
+import { resolveDealCategory } from './dealCategories';
 import { describe, expect, it } from 'vitest';
 import { verifyChain } from './audit/chain';
 import { openDatabase } from './db';
@@ -30,6 +31,10 @@ describe('demo seed', () => {
     for (const tx of all) {
       expect(tx.item.startsWith('[Demo]')).toBe(true);
       expect(JSON.parse(tx.termsJson).demo).toBe(true);
+      const terms = JSON.parse(tx.termsJson);
+      const category = resolveDealCategory(terms.category, terms.subcategory);
+      expect(category.category.id).toBe(terms.category);
+      expect(category.subcategory?.id).toBe(terms.subcategory);
       const events = repo.readEvents(tx.id);
       expect(verifyChain(events).ok).toBe(true);
       const dispute = events.find(e => e.type === 'OPEN_DISPUTE');
