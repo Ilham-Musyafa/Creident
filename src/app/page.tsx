@@ -36,11 +36,11 @@ export default async function HomePage() {
     .sort((a, b) => Number(b.needsAction) - Number(a.needsAction) || Number(b.active) - Number(a.active))
     .slice(0, 3);
 
-  const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Completed', 'closed', 'Closed, including cancelled/refunded']] as const)
+  const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Closed', 'closed', 'Closed, including cancelled/refunded']] as const)
     .map(([label, filter, detail]) => ({ label, detail, href: `/deals?filter=${filter}`, count: rows.filter(row => matchesTransactionFilter(row, filter)).length }));
   const homeData = { role, statusTiles,
     active, inDispute, completed, actionCount, actionTitle, actions, recent,
     recentTitle: role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent deals',
     verified, total: chains.length, simulated: simulatedPayPal() };
-  return <AppShell active="Home" mobileFullBleed><DesktopHome key={role} {...homeData}/><MobileHome key={role} {...homeData} recent={mobileRecent}/></AppShell>;
+  return <AppShell active="Home" mobileFullBleed><DesktopHome {...homeData}/><MobileHome {...homeData} recent={mobileRecent}/></AppShell>;
 }

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 export function PageHeader({ title, back, subtitle, right }: { title: string; back?: string; subtitle?: string; right?: ReactNode }) {
   return (
-    <header className="mb-5 flex items-start justify-between gap-3">
+    <header className="mb-5 flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
         {/* Round icon-only back button (owner choice); the accessible name stays "Back". */}
         {back && <Link href={back} aria-label="Back" title="Back"
@@ -15,7 +15,7 @@ export function PageHeader({ title, back, subtitle, right }: { title: string; ba
           {subtitle && <p className="mt-0.5 text-sm text-muted">{subtitle}</p>}
         </div>
       </div>
-      {right && <div className="shrink-0">{right}</div>}
+      {right && <div className="min-w-0 max-w-full sm:shrink-0">{right}</div>}
     </header>
   );
 }
