@@ -1,4 +1,5 @@
 'use client';
+import { BrandWordmark } from './BrandLogo';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -79,7 +80,7 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
     <a href="#main-content" className="desktop-skip rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent">Skip to content</a>
     <aside className="desktop-sidebar fixed inset-y-0 left-0 z-30 flex flex-col overflow-y-auto border-r p-5" aria-label="Desktop sidebar">
       <Link href="/" aria-label="Creident home" className="rounded-xl px-1 py-3">
-        <span className="flex items-center gap-3"><span className="brand-wordmark text-[30px] leading-none">Creident</span><span className="desktop-demo-badge rounded-full border px-2 py-1 text-xs font-medium">Demo</span></span>
+        <span className="flex items-center gap-3"><BrandWordmark inverse className="h-[28px]"/><span className="desktop-demo-badge rounded-full border px-2 py-1 text-xs font-medium">Demo</span></span>
         <span className="mt-3 block text-sm text-[var(--desktop-sidebar-muted)]">Every deal, on record.</span>
       </Link>
       <nav aria-label="Main navigation" className="mt-6 space-y-2">{mainLinks.map(link => <Link key={link.key} href={link.href} aria-current={selected === link.key ? 'page' : undefined} className="desktop-sidebar-link flex min-h-12 items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold"><NavIcon name={link.key}/><span>{link.title}</span></Link>)}</nav>

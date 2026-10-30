@@ -1,0 +1,34 @@
+[
+  {
+    "width": 360,
+    "theme": "light",
+    "overflow": false,
+    "pageErrors": [],
+    "logoLoaded": true,
+    "metadataChecked": true
+  },
+  {
+    "width": 360,
+    "theme": "dark",
+    "overflow": false,
+    "pageErrors": [],
+    "logoLoaded": true,
+    "metadataChecked": true
+  },
+  {
+    "width": 1280,
+    "theme": "light",
+    "overflow": false,
+    "pageErrors": [],
+    "logoLoaded": true,
+    "metadataChecked": true
+  },
+  {
+    "width": 1280,
+    "theme": "dark",
+    "overflow": false,
+    "pageErrors": [],
+    "logoLoaded": true,
+    "metadataChecked": true
+  }
+]

@@ -173,6 +173,31 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK2 approved raster artwork applied
+
+- Owner identified PR #89 source. Fetched and fast-forwarded ui/creident-mockup
+  from bd496ba to 8d342de, which adds docs/Creident Brand Kit.jpg. Main now contains
+  merge 9907b72; owner explicitly requested continuation on same UI branch.
+  JPG is owner-committed (actual 1280x720), not newly added/changed by BK2.
+- Installed Pillow crop script produces v3 light/dark wordmarks, three app tiles,
+  mark (+dark standalone for existing symbolOnly API), background-matte alpha
+  recovery, edge unmixing and 2x Lanczos enlargement. No vector redraw/sharpening.
+  ICO 16/32, favicon PNG, Apple 180, 192/512 and OG image generated from crops.
+- BrandLogo keeps API, uses next/image and theme assets; header/sidebar use approved
+  image wordmark on Navy. Old symbol PNGs untouched/unused. Existing Next icon.svg
+  embeds new crop and apple-icon.png replaced; metadata icon/OG/Twitter references
+  v3. OG absolute URLs derive from current request host/protocol, not invented URL.
+  No manifest existed. Tokens already correct; no color changes. No src/lib/API,
+  payment/dispute/deadline/audit/dependency/test-logic changes.
+- Node 22.23.4: 522 tests/50 files, typecheck/build/diff check pass. Production QA:
+  360/1280, light/dark, image loading, no overflow/page errors, metadata links pass.
+  Screens: docs/ui/screens/brand-v3/. Actual browser tab chrome cannot be captured
+  headlessly; served favicon screenshot + DOM links verified instead, stated plainly.
+  Raster JPEG softness remains in large icons/share image; 2x adds no source detail.
+- Short BRAND.md, crop script, local-font OG source and checks included. No merge or
+  deployment. Push target origin/ui/creident-mockup. No PR claimed; manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — BK1d four logo corrections
 
 - Continued ui/creident-mockup from clean d3d8e3e. Removed diagonal d handle;

@@ -1,11 +1,14 @@
-/** Source-derived Sapphire Flow signature; the supplied PDF's pixels are preserved. */
-export function BrandLogo({ symbolOnly = false }: { symbolOnly?: boolean }) {
-  return <span className={`inline-flex shrink-0 items-center gap-3 p-3 ${symbolOnly ? '' : 'min-w-[200px]'}`}>
-    <span aria-hidden="true" className="relative block size-12 shrink-0">
-      <img className="brand-symbol-light" src="/brand/symbol-light.png" width="48" height="48" alt=""/>
-      <img className="brand-symbol-dark" src="/brand/symbol-dark.png" width="48" height="48" alt=""/>
-    </span>
-    {!symbolOnly && <span className="text-heading"><span className="brand-wordmark block text-[30px] leading-9">Creident</span><span className="brand-tagline block whitespace-nowrap text-xs leading-5">Every deal, on record.</span></span>}
-    {symbolOnly && <span className="sr-only">Creident</span>}
+import Image from 'next/image';
+
+/** Approved raster artwork, cropped without redrawing the letterforms. */
+export function BrandWordmark({ inverse = false, className = '' }: { inverse?: boolean; className?: string }) {
+  return <span className={`inline-block shrink-0 ${className}`}>
+    {!inverse && <Image className="brand-symbol-light h-full w-auto" src="/brand/v3/wordmark-light.png" width={992} height={200} alt="Creident" unoptimized/>}
+    <Image className={`${inverse ? '' : 'brand-symbol-dark '}h-full w-auto`} src="/brand/v3/wordmark-dark.png" width={960} height={188} alt="Creident" unoptimized/>
   </span>;
+}
+
+export function BrandLogo({ symbolOnly = false }: { symbolOnly?: boolean }) {
+  if (symbolOnly) return <span className="inline-block shrink-0 p-3"><Image className="brand-symbol-light h-12 w-auto" src="/brand/v3/mark.png" width={102} height={110} alt="Creident" unoptimized/><Image className="brand-symbol-dark h-12 w-auto" src="/brand/v3/mark-dark.png" width={168} height={188} alt="Creident" unoptimized/></span>;
+  return <span className="inline-flex shrink-0 flex-col gap-1 p-3"><BrandWordmark className="h-[30px]"/><span className="brand-tagline text-xs leading-5 text-heading">Every deal, on record.</span></span>;
 }
