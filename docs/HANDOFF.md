@@ -173,6 +173,27 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — BK1c board-match rebuild
+
+- Continued ui/creident-mockup from clean fe95649. Read attached BRAND.md and ZIP
+  as reference data only. Reused file list/guide structure, not rejected glyphs.
+  Original full-board JPG was inline only, not a local file; ZIP's top reference
+  wordmark panel supports side-by-side match-check.png. No JPG/ZIP committed.
+- Outfit 700 re-outlined; compact inner check with thin 17-unit (13%) separation,
+  mark 24-unit optical gap, visible down-right curled d tail/notch. White dark
+  wordmark check; Navy app tile Sky check, Sapphire tile white check.
+- Regenerated vectors/PNGs, added transparent wordmark @2x exports (1562px wide),
+  recreated five-card 1280x720 board and added 3x C/d comparison. No app wiring.
+- Not claimed identical: standard Outfit r/t differ from AI letters; exact image
+  softness/hues differ; C/check caps and d join need owner review. BRAND.md states
+  these limits instead of claiming exact acceptance. Full JPG comparison is limited
+  by missing original board file. All required assets exist and board images load.
+- 522 tests/50 files, typecheck/build/diff check pass on Node 22.23.4. Browser
+  localhost preview only (managed policy blocks file://). Only docs/brand,
+  public/brand/v2 and handoff changed. No dependency, merge or deployment.
+- Push target origin/ui/creident-mockup. Manual compare (no PR claimed):
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — BK1b C/check spacing and d refinement
 
 - Continued ui/creident-mockup from aefa16e. Trimmed C lower terminal and used an

@@ -1,115 +1,141 @@
-# Creident — Check-C brand kit v2
+# Creident — Brand Guidelines
 
-Status: owner-selected direction rebuilt as vector artwork; not yet wired into the
-application. Existing brand files remain unchanged. This guide governs the new
-`public/brand/v2/` kit; the older PDF documents the previous identity.
+**Tagline:** *Every deal, on record.*
 
-## Meaning and construction
+## 1. Meaning
+The mark is a **C** for Creident with a **checkmark** in its opening. Together they stand for an agreed deal, on record: two parties settle terms, and Creident keeps a clear record of what was agreed. The check sits *inside* the C but never touches it, because the record is separate from the parties. Describe the brand only as a way to agree on and record deals. Do not describe it as trustless, tamper-proof, secure escrow, guaranteed, or production-ready.
 
-Creident records the terms, steps and decisions of a buyer–seller deal. The C's
-lower terminal becomes an separated check: agreement goes on record. A soft inward
-hook at the bottom of the d stem meets its bowl, leaving a small rounded notch at
-the lower right. Other letters are standard Outfit. Spelling: **Creident**.
+## 2. Logo versions (`public/brand/v2/`)
+All files are pure vector paths (no live text or embedded images) with tight viewBoxes.
 
-Outfit **700** best matches the attached bold geometric reference. Glyphs are
-outlined from the repository's existing variable WOFF2 using preinstalled system
-Python FontTools/Brotli. Custom C and d details are clean vector geometry, not
-pixel tracing. Rebuild SVGs from repository root:
+| File | Use |
+|---|---|
+| `wordmark-light.svg` | **Primary.** Navy letters with a Sapphire check, for white or Ice backgrounds. |
+| `wordmark-dark.svg` | White letters with a **white** check, for Navy or other dark backgrounds. |
+| `wordmark-mono-navy.svg` | Single colour (Navy), for one-colour print, stamps, embossing and fax/PDF. |
+| `wordmark-mono-white.svg` | Single colour (White), for photos, Sapphire, or any colour where the check colour would clash. |
+| `mark.svg` | Standalone C + check (48×48), for light backgrounds, avatars and in-app small branding. |
+| `mark-dark.svg` | Standalone mark with a white C and Sky check, for dark backgrounds. |
+| `app-icon-navy.svg` | **Default app icon.** Navy tile, white C, Sky check, corner radius 22%. |
+| `app-icon-white.svg` | White tile, Navy C, Sapphire check. Use it on dark home screens or marketing next to the Navy icon. |
+| `app-icon-sapphire.svg` | Sapphire tile with an all-white mark, for promotional and seasonal use. |
+| `favicon.svg` | Transparent Navy C with Sapphire check, tuned for 16–32px. |
 
-```sh
-/usr/bin/python3 docs/brand/build-v2.py
+**Dark wordmark:** white letters and white check, matching the approved board.
+The Navy app tile retains a Sky check as requested; the Sapphire tile uses white.
+
+**Optical tuning:** the wordmark uses a thin 17-unit exclusion gap against an
+approximately 130-unit reference stroke (13%). Mark gap is 24 units to retain
+separation at small sizes. The check is compact and inside the lower-right opening.
+
+### Raster exports (`public/brand/v2/`)
+| File | Notes |
+|---|---|
+| `favicon-16.png`, `favicon-32.png` | Exported from `favicon.svg`. |
+| `apple-touch-icon-180.png` | Navy rounded tile, matching the requested exported app-icon style. |
+| `icon-192.png`, `icon-512.png` | Navy app icon with rounded corners, for the web app manifest (`"purpose": "any"`). |
+| `maskable-512.png` | Full-bleed Navy. The mark sits inside the central 80% safe circle (`"purpose": "maskable"`). |
+| `og-image-1200x630.png` | Navy background, white wordmark, and the tagline in DM Sans. |
+| `wordmark-light@2x.png`, `wordmark-dark@2x.png` | Transparent PNGs, 1562px wide. |
+
+Suggested HTML:
+```html
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon-180.png">
+<meta property="og:image" content="/og-image-1200x630.png">
 ```
 
-No package.json change, installation or remote font request. Font license:
-`src/fonts/Outfit-OFL.txt`. PNGs were rasterized from these SVGs using Chromium
-canvas at their named sizes; the OG image uses `docs/brand/og-v2.html`, local DM
-Sans and the outlined dark wordmark. No attached reference image is committed.
+## 3. Clear space
+The minimum clear space on every side is **x = the height of the checkmark**. That is about 0.38× the wordmark height, or about 0.34× the 48-unit mark box. No text, edges or other graphics may enter this zone.
 
-## Versions
+## 4. Minimum sizes
+- **Wordmark:** at least **18px tall** on screen, or 6mm in print. Below that, use the mark.
+- **Mark:** at least **16px**. At 16–32px, use `favicon.svg` or the PNG favicons, which have the widened gap.
 
-| Asset | Use |
-|---|---|
-| wordmark-light.svg | Navy letters, Sapphire check on white/light backgrounds |
-| wordmark-dark.svg | White letters, Sky check on Navy |
-| wordmark-mono-navy.svg | Single Navy ink on light backgrounds |
-| wordmark-mono-white.svg | Single white ink on dark backgrounds |
-| mark.svg / mark-dark.svg | C-check alone, optically positioned in a 48×48 canvas |
-| app-icon-navy/white/sapphire.svg | Centered mark on rounded square, radius 22% |
-| favicon.svg / favicon-16.png / favicon-32.png | Light-background favicon exports, not wired yet |
-| apple-touch-icon-180.png | Apple-touch export |
-| icon-192.png / icon-512.png | Standard application icons |
-| maskable-512.png | Full-bleed Navy square, no transparent corners |
-| og-image-1200x630.png | Navy social card, white wordmark and exact tagline |
+## 5. Colour
+| Name | HEX | RGB | Role |
+|---|---|---|---|
+| Navy | `#0B1F4B` | 11, 31, 75 | Primary: wordmark, text, dark surfaces |
+| Sapphire | `#3B82F6` | 59, 130, 246 | Accent: check on light backgrounds, primary buttons, links |
+| Sky | `#93C5FD` | 147, 197, 253 | Check on dark backgrounds, highlights on Navy |
+| Ice | `#DBEAFE` | 219, 234, 254 | Tinted surfaces, borders, chips |
+| White | `#FFFFFF` | 255, 255, 255 | Backgrounds, reversed logo |
 
-Dark check uses Sky for stronger contrast against Navy (8.88:1 vs Sapphire 4.35:1).
-The Sapphire app icon uses a white monochrome mark to avoid blue-on-blue contrast.
-Maskable artwork stays inside the central 70% square: its farthest mark points fit
-inside the standard center circle of radius 40%, protecting it under common masks.
-`maskable-source.svg` is the reproducible full-bleed source.
+### WCAG 2.x contrast ratios (computed)
+| Pair | Ratio | Text AA (4.5) | Large text / UI (3.0) |
+|---|---|---|---|
+| Navy / White | **16.01:1** | ✅ | ✅ |
+| Navy / Ice | **13.12:1** | ✅ | ✅ |
+| Navy / Sky | **8.88:1** | ✅ | ✅ |
+| Navy / Sapphire | **4.35:1** | ❌ (just under) | ✅ |
+| Sapphire / White | **3.68:1** | ❌ | ✅ |
+| Sapphire / Ice | **3.01:1** | ❌ | ✅ (borderline) |
+| Sapphire / Sky | 2.04:1 | ❌ | ❌ |
+| Sky / White | 1.80:1 | ❌ | ❌ |
+| Sky / Ice | 1.48:1 | ❌ | ❌ |
+| Ice / White | 1.22:1 | ❌ | ❌ (decorative only) |
 
-## Spacing and size
+What this means in practice:
+- Body text should be Navy on White or Ice.
+- Sapphire on White is fine for large text (24px and up, or 18.66px bold), icons, and the check. For small link text, use Navy or a darker blue.
+- White text on a Sapphire button passes AA only for large or bold text. Make button labels at least 18.66px bold, or use a Navy button.
+- Never put Sky text on White or Ice.
 
-Clear space on every side equals **one check height** (approximately 20 units in
-the 48-unit wordmark canvas). Scale that allowance with the artwork. Never place
-another icon, text or boundary inside it. The board's dashed box illustrates this.
-Minimum wordmark canvas height: **18px**. Minimum mark canvas: **16px**. At 16px,
-the check is a compact shape, not fine detail; prefer the 32px export when possible.
-Do not crop away the optical padding or the attached check.
+## 6. Typography
+| Role | Typeface | Weights |
+|---|---|---|
+| Brand / logo | **Outfit** | The logo is outlined Outfit **700** with custom C, check and d glyphs. Never retype the logo; always use the SVG files. |
+| Headings | **Plus Jakarta Sans** | 600–800 |
+| Body / UI | **DM Sans** | 400 for body, 500–600 for UI labels |
 
-## Color and accessibility
+**Tagline:** set *Every deal, on record.* in DM Sans 400, in sentence case and ending with a full stop. Use Ice or White on Navy, or Navy on light backgrounds.
 
-Ratios below are sRGB WCAG contrast calculations, rounded to two decimals.
-Normal text needs 4.5:1 for AA; large text needs 3:1. Logo artwork itself is exempt
-from the text contrast requirement; this does not exempt surrounding UI labels.
+## 7. Do / Don't
+**Do**
+- Use the supplied SVGs at their original proportions.
+- Use `wordmark-light` on light backgrounds and `wordmark-dark` on Navy.
+- Respect the clear space and the minimum sizes.
+- Use the mono versions when only one colour is available.
 
-| Color | Hex | On White | On Navy | Text guidance |
-|---|---|---:|---:|---|
-| Navy | #0B1F4B | 16.01 | 1.00 | Primary text on light surfaces |
-| Sapphire | #3B82F6 | 3.68 | 4.35 | Large text/accent; not normal AA text on white or Navy |
-| Sky | #93C5FD | 1.80 | 8.88 | Text/accent on Navy; not text on white |
-| Ice | #DBEAFE | 1.22 | 13.12 | Light surface; text on Navy |
-| White | #FFFFFF | 1.00 | 16.01 | Text on Navy; white on Sapphire is 3.68, large text only |
+**Don't**
+- Retype "Creident" in Outfit or any other font.
+- Stretch, skew, rotate, outline or add shadows or gradients to the logo.
+- Recolour the check outside the palette, or let it touch the C.
+- Move, resize or swap the check, or substitute a colored check for the white dark wordmark.
+- Place the logo on busy photos without a solid panel.
+- Pair the brand with claims such as "trustless", "tamper-proof", "secure escrow" or "production-ready".
 
-## Typography and tagline
+## 8. Construction notes (BK1c)
 
-- Brand: Outfit 700, outlined custom wordmark; do not retype the custom C or d.
-- Headings: Plus Jakarta Sans.
-- Body and tagline: DM Sans.
-- Exact tagline: **Every deal, on record.** Include the comma and full stop.
-- Fonts are already self-hosted in src/fonts; the board loads only those files.
+- Outfit 700, outlined from the existing WOFF2 with preinstalled system FontTools
+  and Brotli. No dependencies, package changes, font requests or kit glyph reuse.
+- All letters except C and d keep the original Outfit outlines, with tight -0.01em
+  inter-letter adjustment. C terminal trimmed, rounded 95-unit compact check and
+  17-unit thin separation. The check vertex is close to the baseline.
+- Custom d: lower stem cut back, rounded tail extends diagonally down-right across
+  the bowl's lower-right edge, leaving a visible notch above the tail.
+- Rebuild vectors: `/usr/bin/python3 docs/brand/build-v2.py`. Existing source font
+  license remains in src/fonts/Outfit-OFL.txt. SVGs have outlined paths, no live text
+  or embedded raster images. PNGs are rasterized from these new vectors.
+- Five-card board: docs/brand/index.html; OG source: docs/brand/og-v2.html.
+  Maskable source keeps the mark inside the central safe circle. No app wiring.
 
-## Do / don't
+## 9. Match review and limits
 
-Do use the background-appropriate version, preserve proportions and clear space,
-and use monochrome exports when one ink is required. Use supplied favicon/icon
-exports instead of shrinking the entire wordmark into an app tile.
+The inline approved board guided the layout and shapes. Its original JPG was not
+available as a local attachment. The supplied ZIP contains preview-vs-reference.png,
+whose upper panel is the approved reference wordmark; that panel is used in
+match-check.png, along with the rebuilt board and enlarged details. The rejected
+kit's lower-panel glyphs were not reused. Attached JPG/ZIP files are not committed.
 
-Do not stretch, rotate, recolor the check outside the supplied variants, add shadows
-or gradients, place on busy photographs, change the specified C/check spacing, edit the d
-hook, change spelling, or imply guaranteed outcomes. Do not replace app wiring in
-this asset-preparation step.
+The result is not claimed pixel-identical: the original reference's r shoulder and
+t foot differ from plain Outfit, while this request requires other letters to remain
+plain Outfit. Exact raster softness, apparent blue hues and font-sample artwork also
+differ; specified hex values and local fonts take precedence. C/check is rounder
+than the reference's compact angled ends. d tail is now visible but its join still
+needs owner visual approval. These differences are shown openly in match-check.png.
 
-## Review and verification
-
-[Brand board](index.html) displays every requested asset on white and Navy, including
-opposite-background samples to make incorrect usage obvious. [Screenshot](brand-board.png)
-is 1440px wide. Managed Chromium blocks file:// navigation; a temporary local static
-server was used for preview/export. The board has only relative local references,
-no scripts or CDN; direct-file behavior cannot be verified in this managed browser.
-All 37 images load without overflow. Sanity gate results are recorded in HANDOFF.md.
-
-
-## BK1b spacing refinement
-
-Option B uses a 52-unit separation (40% of the 130-unit reference letter stroke).
-Check stroke is 108 units (83%), round caps/joins. A geometric exclusion mask
-keeps letter and check separate even in monochrome exports. C lower terminal is
-trimmed around five o'clock; the check is repositioned inside the opening.
-The d stem bends inward to meet its bowl; the lower-right contour is hooked.
-Other glyph outlines are unchanged.
-
-At 16px, the mathematical 40% gap could close visually through antialiasing.
-Standalone marks therefore use an 85-unit optical exclusion floor, propagated to
-app icons/favicons. This is a small-size exception, not a different wordmark option.
-See fix/compare.html (A 30%, B 40%, C 50%) and fix/before-after.png. The check stays
-part of the fixed composition, but must never touch the C. Use the supplied exports.
+Managed Chromium blocks file://; screenshots use a temporary localhost static
+server. HTML uses local relative files with no CDN/build. Test/typecheck/build
+results and publication status are in docs/HANDOFF.md.
