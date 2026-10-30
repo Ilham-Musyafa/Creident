@@ -13,7 +13,7 @@ import type { Role } from './view';
 type Active = 'Home' | 'Deals' | 'Audit' | 'Menu';
 const mainLinks: { key: Active; title: string; href: string }[] = [
   { key: 'Home', title: 'Home', href: '/' }, { key: 'Deals', title: 'Transactions', href: '/deals' },
-  { key: 'Audit', title: "Deal history", href: '/audit' }, { key: 'Menu', title: 'Settings', href: '/menu' },
+  { key: 'Menu', title: 'Settings', href: '/menu' },
 ];
 const learnLinks = [
   { title: 'How it works', href: '/how-it-works', icon: 'rules' },
@@ -36,10 +36,10 @@ function pageInfo(path: string): { title: string; subtitle: string; selected: Ac
     const [title, subtitle] = pages[tail] ?? ['Deal', 'Terms, progress and the next step.'];
     return { title, subtitle, selected: 'Deals' };
   }
-  if (path === '/audit') return { title: "Deal history", subtitle: 'Check the recorded steps for each deal.', selected: 'Audit' };
+  if (path === '/audit') return { title: "Deal history", subtitle: 'Check the recorded steps for each deal.', selected: null };
   if (path === '/how-it-works') return { title: 'How it works', subtitle: 'Agree, pay, ship, and check your order.', selected: null };
-  if (path === '/audit/how-it-works') return { title: 'How verification works', subtitle: 'What record checks cover and their limits.', selected: 'Audit' };
-  if (path.startsWith('/audit/')) return { title: 'Deal history', subtitle: 'Inspect the steps and their verification.', selected: 'Audit' };
+  if (path === '/audit/how-it-works') return { title: 'How verification works', subtitle: 'What record checks cover and their limits.', selected: null };
+  if (path.startsWith('/audit/')) return { title: 'Deal history', subtitle: 'Inspect the steps and their verification.', selected: null };
   if (path === '/menu') return { title: 'Settings', subtitle: 'Demo role, appearance and useful links.', selected: 'Menu' };
   if (path === '/fairness') return { title: 'Fairness results', subtitle: 'Recorded evaluation results and their limits.', selected: null };
   if (path === '/about') return { title: 'About Creident', subtitle: 'Clear terms, evidence and human review.', selected: null };
