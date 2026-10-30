@@ -194,7 +194,10 @@ Still open:
   390/1440, both themes: no warnings/errors/overflow; filter counts, dock state,
   target sizes, bottom clearance pass. Tracking/title/contrast checks also pass.
 - 24 before/after screenshots and JSON evidence: docs/ui/screens/home-polish/.
-  No merge/deployment. Publication result follows push/PR attempt.
+  Implementation 10ec6d1 pushed to origin/ui/home-polish. PR creation through
+  GraphQL and REST returned Forbidden; no PR created by this agent. Manual compare:
+  https://github.com/Ilham-Musyafa/Creident/compare/main...ui/home-polish
+  English PR body: /tmp/c28-pr.md. No merge/deployment.
 
 ### 2026-10-30 — C27 plain language and visual How it works
 

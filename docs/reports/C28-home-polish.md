@@ -67,4 +67,7 @@ Screens: docs/ui/screens/home-polish/ — 12 before and 12 after, captured from
 isolated baseline/final builds. after-checks.json, before-checks.json and
 tracking-contrast.json record checks. No production API/domain source diff.
 
-PR publication status: latest HANDOFF entry. No merge/deployment.
+Implementation 10ec6d1 pushed to origin/ui/home-polish. GraphQL and REST PR
+creation both returned Forbidden; no PR created by this agent. Manual compare:
+https://github.com/Ilham-Musyafa/Creident/compare/main...ui/home-polish
+English summary prepared at /tmp/c28-pr.md. No merge/deployment.
