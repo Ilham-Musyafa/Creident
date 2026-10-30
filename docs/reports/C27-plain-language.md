@@ -84,4 +84,7 @@ Only this route was photographed, both themes and widths. checks.json records QA
 
 Owner decision 2026-10-30: license stays MIT; UI language stays English for the hackathon, Indonesian later.
 
-Publication status: latest docs/HANDOFF.md entry. No merge or deployment.
+Implementation 0ebc257 pushed to origin/ui/plain-language. GraphQL and REST PR
+creation both returned Forbidden; no PR created by this agent. Manual compare:
+https://github.com/Ilham-Musyafa/Creident/compare/main...ui/plain-language
+English summary/term list above can be used in the PR. No merge or deployment.

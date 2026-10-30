@@ -191,7 +191,11 @@ Still open:
   zero console warnings/errors, no overflow. Keyboard accordion, links and old
   anchor verified. Screenshots only new route; baseline shows its former 404.
 - Owner decision 2026-10-30: license stays MIT; UI language stays English for the hackathon, Indonesian later.
-- No merge/deployment. PR publication status will follow push.
+- Implementation 0ebc257 pushed to origin/ui/plain-language. PR creation attempted
+  through GraphQL and REST; both returned Forbidden. No PR created by this agent.
+  Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/plain-language
+  English PR body prepared at /tmp/c27-pr.md; term list is in the report.
+  No merge or deployment.
 
 ### 2026-10-30 — C26 submission polish / feature freeze
 
