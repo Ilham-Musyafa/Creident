@@ -173,6 +173,23 @@ Still open:
 
 ## Log
 
+### 2026-10-30 — L2 rounded logo exploration
+
+- Continued ui/creident-mockup from clean aaf6dc4. Owner rejected round 1;
+  reviewed its gallery and made six soft curved concepts in round-2 only.
+  Mood sheets were absent. Eighteen SVGs (symbol/dark/app icon), static local
+  Outfit gallery, 1440px full-page preview and strengths/24px weaknesses table.
+- Top directions: 01 Hug check (friendly embracing gesture), 03 Dot C (small-size
+  clarity). No logo selected or installed; source/public assets unchanged.
+- Browser via temporary localhost static server: six cards, sixty images loaded,
+  local Outfit loaded, no external requests or horizontal overflow. Visually
+  inspected both themes and 24px comparison. Managed Chromium blocks file://;
+  direct-file rendering cannot be verified here, but HTML uses relative assets
+  and no scripts/CDN/build step. Node 22.23.4: 522 tests/50 files, typecheck,
+  build and diff check pass. Only round-2 docs and this handoff changed.
+- Push targets origin/ui/creident-mockup only. No PR created or deployment.
+  Manual compare: https://github.com/Ilham-Musyafa/Creident/compare/main...ui/creident-mockup
+
 ### 2026-10-30 — L1 ten logo concepts (docs only)
 
 - Continued ui/creident-mockup from clean edb862b. Reviewed current brand assets,
