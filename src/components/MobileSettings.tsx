@@ -47,7 +47,6 @@ export function MobileSettings({ role, codeRequired, unlocked, simulated }: { si
         {role === 'reviewer' && <SettingsDestination href="/reviewer/oversight" title="Review desk" icon="oversight"/>}
         <SettingsDestination href="/how-it-works" title="How it works" icon="rules"/>
         <SettingsDestination href="/fairness" title="Fairness results" icon="fairness"/>
-        <SettingsDestination href="/about#limitations" title="Limitations" icon="limits"/>
         <SettingsDestination href="/about" title="About Creident" icon="about"/>
       </ul>
       <footer className="mt-6 border-t border-line pt-4 text-sm leading-relaxed text-muted"><p>{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p></footer>

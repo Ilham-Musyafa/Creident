@@ -7,7 +7,6 @@ const paths = {
   rules: <><path d="M9 3h6l2 3h3v15H4V6h3l2-3ZM9 3v5h6V3M8 12h8M8 16h5"/></>,
   records: <><path d="M5 3h10l4 4v14H5V3ZM14 3v5h5M8 12h8M8 16h6"/></>,
   fairness: <><path d="M4 20h16M7 16v-5M12 16V5M17 16V8"/></>,
-  limits: <><path d="m12 3 10 18H2L12 3ZM12 9v5M12 17v.5"/></>,
   about: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.5"/></>,
   oversight: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
 } satisfies Record<string, ReactNode>;
