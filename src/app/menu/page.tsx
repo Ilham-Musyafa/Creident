@@ -12,7 +12,6 @@ const LINKS: { href: string; title: string; detail: string; icon: SettingsIconNa
   { href: '/how-it-works', title: 'How it works', detail: 'Rules, evidence and human dispute review', icon: 'rules' },
   { href: '/audit', title: "Deal history", detail: 'Read each step and check the history', icon: 'records' },
   { href: '/fairness', title: 'Fairness results', detail: 'Recorded AI answers, sample sizes and limits', icon: 'fairness' },
-  { href: '/about#limitations', title: 'Limitations', detail: 'What this demo does and does not do', icon: 'limits' },
   { href: '/about', title: 'About Creident', detail: 'The prototype and its approach', icon: 'about' },
 ];
 const SECTIONS: { href: string; title: string; icon: SettingsIconName }[] = [
