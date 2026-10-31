@@ -1,3 +1,6 @@
+import { recentHomeActivity } from '../components/homeActivity';
+import { assistMode } from '../lib/ai/assist';
+import { isPublicDemo } from '../lib/publicDemo';
 import { DesktopHome } from '../components/DesktopHome';
 import { matchesTransactionFilter, sortTransactionRows, transactionRow } from '../components/transactionsView';
 import { MobileHome } from '../components/MobileHome';
@@ -35,9 +38,11 @@ export default async function HomePage() {
 
   const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Closed', 'closed', 'Closed, including cancelled/refunded']] as const)
     .map(([label, filter, detail]) => ({ label, detail, href: `/deals?filter=${filter}`, count: rows.filter(row => matchesTransactionFilter(row, filter)).length }));
+  const activity = recentHomeActivity(deals, role, id => ctx.repo.readEvents(id));
+  const recordedAi = assistMode(ctx.aiEnv ?? process.env) === 'replay';
   const homeData = { role, statusTiles,
     active, inDispute, completed, actionCount, actionTitle, actions, recent,
     recentTitle: role === 'reviewer' && reviewQueue.length ? 'Review queue' : 'Recent deals',
     verified, total: chains.length, simulated: simulatedPayPal() };
-  return <AppShell active="Home" mobileFullBleed><DesktopHome {...homeData}/><MobileHome {...homeData} recent={mobileRecent}/></AppShell>;
+  return <AppShell active="Home" mobileFullBleed><DesktopHome {...homeData} activity={activity} now={now} showDemo={isPublicDemo() || homeData.simulated} recordedAi={recordedAi}/><MobileHome {...homeData} recent={mobileRecent}/></AppShell>;
 }
