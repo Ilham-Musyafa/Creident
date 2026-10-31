@@ -76,25 +76,37 @@ export function RuleNotice({ rule, reason }: { rule: `R${1|2|3|4|5|6|7}`; reason
 }
 /** ok: verified. failed: the first step that does not match. after: later steps, which cannot be verified once the chain is broken. */
 export type StepCheck = 'ok' | 'failed' | 'after';
-export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, index, fullPrevHash, hash, check = 'ok' }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; index?: number; fullPrevHash?: string; hash?: string; check?: StepCheck }) {
+export function AuditEvent({ seq, title, actor, time, prevHash, rawType, simulated = false, timeline = false, paypalSource = false, index, fullPrevHash, hash, check = 'ok' }: { seq: number; title: string; actor: string; time: string; prevHash: string; rawType?: string; simulated?: boolean; timeline?: boolean; paypalSource?: boolean; index?: number; fullPrevHash?: string; hash?: string; check?: StepCheck }) {
   // A row shows only what happened and when. A normal step gets no badge (the summary above
   // already says how many steps are verified); only a step that failed verification is flagged.
   // Step number, actor, source and fingerprints open on tap.
-  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}</span><span className="block text-sm text-muted">{time}</span>{simulated && <span className="block text-sm text-muted">Demo (not from PayPal)</span>}
+  const row = <span className="flex items-center gap-3"><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading [overflow-wrap:anywhere]">{title}{timeline && actor && <span className="font-normal capitalize text-muted"> · {actor}</span>}</span><span className="block text-sm text-muted">{time}</span>{timeline && paypalSource && <span className="block text-sm font-semibold text-heading">From PayPal</span>}{!timeline && simulated && <span className="block text-sm text-muted">Demo (not from PayPal)</span>}
     {check === 'failed' && <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-sm font-bold" style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}>⚠ Verification failed here</span>}
     {check === 'after' && <span className="mt-0.5 block text-sm text-muted">Cannot verify after the failed step</span>}</span>
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>;
   const details = <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-[12px] bg-surface-2 p-3 text-sm">
+    {timeline && <><dt className="text-muted">Check</dt><dd className="text-heading">{check === 'ok' ? 'Verified on this server' : check === 'failed' ? 'Does not match' : 'Cannot verify after the failed step'}</dd></>}
     <dt className="text-muted">Step</dt><dd className="font-mono text-heading">#{seq}</dd>
-    <dt className="text-muted">By</dt><dd className="capitalize text-heading">{actor}</dd>
-    {simulated && <><dt className="text-muted">Source</dt><dd className="text-heading">Demo (not from PayPal)</dd></>}
+    {actor && <><dt className="text-muted">By</dt><dd className="capitalize text-heading">{actor}</dd></>}
+    {!timeline && simulated && <><dt className="text-muted">Source</dt><dd className="text-heading">Demo (not from PayPal)</dd></>}
     {hash && <><dt className="text-muted">Fingerprint</dt><dd className="break-all font-mono text-sm text-muted">{hash}</dd></>}
     <dt className="text-muted">Previous step</dt><dd className="break-all font-mono text-sm text-muted">{fullPrevHash ?? prevHash}</dd>
     {rawType && <><dt className="text-muted">Technical name</dt><dd className="break-all font-mono text-sm text-muted">{rawType}</dd></>}
   </dl>;
-  return <li id={`step-${seq}`} style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`scroll-mt-24 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'} ${check === 'after' ? 'opacity-60' : ''}`}>
-    <details className="group"><summary className="min-h-11 cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary><TechnicalDetails>{details}</TechnicalDetails></details>
+  return <li id={`step-${seq}`} style={index === undefined ? undefined : { '--i': index } as CSSProperties} className={`${timeline ? 'deal-history-step' : ''} scroll-mt-24 border-b border-line py-3 last:border-0 ${index === undefined ? '' : 'hv-chain-item'} ${check === 'after' ? 'opacity-60' : ''}`}>
+    {timeline && <span className="deal-history-dot" aria-hidden="true" style={check !== 'ok' ? { color: 'var(--warning-text)', background: 'var(--warning-bg)' } : undefined}><HistoryStepIcon type={rawType ?? ''}/></span>}
+    <details className="group"><summary className="min-h-11 cursor-pointer list-none [&::-webkit-details-marker]:hidden">{row}</summary>{timeline ? <div className="deal-history-values"><h3 className="mt-2 text-sm font-semibold text-heading">Technical details</h3>{details}</div> : <TechnicalDetails>{details}</TechnicalDetails>}</details>
   </li>;
+}
+/** Small timeline symbols describe milestones; the adjacent title carries their meaning. */
+function HistoryStepIcon({ type }: { type: string }) {
+  const path = /PAYMENT|APPROV|CAPTUR|REFUND|PAYPAL/.test(type) ? 'M3 7h18v12H3z M3 11h18 M7 15h3'
+    : /DELIVER/.test(type) ? 'm7 12 3 3 7-7 M4 4h16v16H4z'
+    : /TRACKING|SHIP|RETURN/.test(type) ? 'M3 6h12v12H3z M15 10h3l3 4v4h-6 M7 18v2 M18 18v2'
+    : /EVIDENCE/.test(type) ? 'M5 3h10l4 4v14H5z M9 12h6 M9 16h6'
+    : /DECISION|REVIEW/.test(type) ? 'M12 3v17 M5 20h14 M4 7h16 M7 7l-4 7h8L7 7 M17 7l-4 7h8l-4-7'
+    : 'M8 12h8 M12 8v8';
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d={path}/></svg>;
 }
 /** "15 of 15 steps verified". `where` says what the check covers (this server, or also a sealed copy). */
 export function ChainStatus({ verifiedSteps, count, where, revealAfterMs }: { verifiedSteps: number; count: number; where: string; revealAfterMs?: number }) {
