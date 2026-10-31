@@ -403,3 +403,10 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .deal-history-step { margin-left: 14px; padding-left: 26px; }
   .deal-history-values dl { grid-template-columns: minmax(0, 75px) minmax(0, 1fr); column-gap: 8px; }
 }
+
+/* Fairness results: balanced panels and one compact disclosure per differing case. */
+.info-fairness .fairness-technical { border-radius: 24px; }
+.info-fairness .fairness-technical > .technical-details { margin-top: 0; }
+.info-fairness .fairness-case summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+.info-fairness .fairness-case summary::marker { content: ''; }
+.info-fairness .fairness-case summary::-webkit-details-marker { display: none; }

@@ -173,6 +173,13 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Fairness results consistency tidy
+- Started `ui/fairness-tidy` from origin/main `894b4ae` (PR #131 merged). All six metric rows now put counts first, percentages second, with measured-value bar fills and uniform Lower/Higher is better cues. Best-value ticks remain neutral in recorded-answer mode; they do not imply a live-model pass. The error-gap note uses the same cue. Desktop panel headers reserve equal height so the first metrics align.
+- Moved answer-key agreement into Steady answers; Safety contains only hidden tricks. All UI references use answer key. Differing cases have readable shipping/return titles, stored expected/actual outcomes in two short lines, and raw IDs/results in an inline Technical details section within the single case disclosure—no empty nested disclosure.
+- The orange label-status note is three lines (10 checked, 40 accepted without checking individually, 12 drafts), retaining What this means. The blue scope note has four bullets, preserving builder-written key, no outside checking, made-up cases, limited sample, test coverage and mandatory human review for damage/missing parts. Bottom Technical details now has a matching bordered card. No evaluation results, helpers, API, business logic, dependencies or other pages changed.
+- Typecheck, 625 tests / 57 files (four new presentation tests), production build and diff whitespace checks passed. Production Playwright: 18 views, 390/1280/2560px × Seller/Buyer/Reviewer × light/dark. Checked panel/first-metric alignment, grouping/cues, keyboard case expansion, two outcome lines, non-nested compact details, >=44px case targets, and no horizontal overflow or console errors/warnings. Screenshots: `docs/ui/screens/fairness-tidy/`. QA used simulated payments/replay AI with a temporary database; committed evaluation data and Render configuration are untouched.
+
+
 ### 2026-10-31 — Per-deal history timeline tidy
 - Started `ui/deal-history-tidy` from origin/main `ec9923b` (PR #130 merged). The per-deal history now fills the shell for its header, verification banner and summary, with a centred 900px timeline and 16px mobile gutters. Newest-first order and all verification/checkpoint calculations are unchanged.
 - One demo-record note replaces repeated row labels. Stored actors distinguish acceptance steps; provider-origin events (actor `paypal`, not marked simulated) retain a visible From PayPal label. The summary counts stored human roles, not people: role identifiers do not establish the number of individuals. Key milestones have calm blue icons/dots and a connecting line, without list/banner reveal animations.

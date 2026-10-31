@@ -1,3 +1,4 @@
+import { PAYMENT_ACTION_LABELS } from '../../components/presentationCopy';
 import { TechnicalDetails } from '../../components/TechnicalDetails';
 import { RuleLabel } from '../../components/RuleLabel';
 import { Card, Notice } from '../../components/layout';
@@ -24,17 +25,21 @@ function Icon({ name, className = 'size-5' }: { name: IconName; className?: stri
   return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>{ICONS[name]}</svg>;
 }
 
-/** One result row: label, "n of N" and a bar showing the share. Colour stays neutral for recorded (replay) runs. */
-function Stat({ label, r, detail, good: goodIn }: { label: string; r: Rate; detail: string; good?: boolean }) {
-  const good = coloured ? goodIn : undefined;
-  const tone = good === undefined ? 'var(--accent)' : good ? 'var(--completed-text)' : 'var(--awaiting-text)';
+/** Recorded-answer metrics use neutral cues, not a live-model pass/fail claim. */
+function MetricCue({ direction, best }: { direction: 'lower' | 'higher'; best: boolean }) {
+  return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted"><span aria-hidden="true">{best ? '✓' : '○'}</span>{direction === 'lower' ? 'Lower is better' : 'Higher is better'}{best && <span className="sr-only"> · At best value</span>}</span>;
+}
+
+/** Counts come first; every bar fills with the measured percentage, regardless of direction. */
+function Stat({ label, r, detail, direction }: { label: string; r: Rate; detail: string; direction: 'lower' | 'higher' }) {
+  const best = r.denominator > 0 && (direction === 'lower' ? r.numerator === 0 : r.numerator === r.denominator);
+  const tone = !coloured ? 'var(--accent)' : best ? 'var(--completed-text)' : 'var(--awaiting-text)';
   return (
-    <div className="min-w-0">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-semibold text-heading">{label}</p>
-        <p className="text-xl font-extrabold tabular-nums text-heading">{formatRate(r)}</p>
-      </div>
-      <div role="img" aria-label={`${label}: ${formatRate(r)}`} className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full" style={{ width: `${Math.min(100, r.percent ?? 0)}%`, background: tone }}/></div>
+    <div className="fairness-stat min-w-0">
+      <p className="text-sm font-semibold text-heading">{label}</p>
+      <MetricCue direction={direction} best={best}/>
+      <p className="mt-1 text-xl font-extrabold tabular-nums text-heading">{r.numerator} of {r.denominator}<span className="ml-2 text-sm font-medium text-muted">({formatRate(r)})</span></p>
+      <div role="img" aria-label={`${label}: ${r.numerator} of ${r.denominator}, ${formatRate(r)}`} className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full" style={{ width: `${Math.min(100, r.percent ?? 0)}%`, background: tone }}/></div>
       <p className="mt-1.5 text-sm text-muted">{detail}</p>
     </div>
   );
@@ -43,7 +48,7 @@ function Stat({ label, r, detail, good: goodIn }: { label: string; r: Rate; deta
 function Panel({ icon, title, hint, children }: { icon: IconName; title: string; hint: string; children: ReactNode }) {
   return (
     <section className="min-w-0 rounded-[24px] border border-line bg-surface p-5">
-      <header className="mb-4 flex items-start gap-3">
+      <header className="mb-4 flex items-start gap-3 lg:min-h-16">
         <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-heading"><Icon name={icon}/></span>
         <div><h2 className="text-base font-bold text-heading">{title}</h2><p className="text-sm text-muted">{hint}</p></div>
       </header>
@@ -71,12 +76,19 @@ function Donut({ parts, centre, caption }: { parts: { label: string; value: numb
   );
 }
 
-function labelLine(total: number, reviewed: number, accepted: number): string {
-  if (!reviewed && !accepted) return 'The answer key for these cases is still a draft that needs review.';
-  const draft = total - reviewed - accepted;
-  return `${reviewed} of ${total} answers in the key were checked one by one by the owner`
-    + (accepted ? `; ${accepted} drafts were accepted by the owner without checking each one` : '')
-    + (draft ? `; ${draft} are still drafts` : '') + '.';
+function LabelStatus({ total, reviewed, accepted }: { total: number; reviewed: number; accepted: number }) {
+  if (!reviewed && !accepted) return <p>The answer key for these cases is still a draft that needs review.</p>;
+  return <ul className="mt-2 space-y-1">
+    <li>{reviewed} answers in the answer key checked one by one by the owner.</li>
+    <li>{accepted} drafts accepted by the owner without checking each one.</li>
+    <li>{total - reviewed - accepted} answers still drafts.</li>
+  </ul>;
+}
+
+function caseTitle(id: string): string {
+  return id.replace(/^shipping_/, 'Shipping · ').replace(/^return_/, 'Return · ')
+    .replace('unknown_destination_unclear', 'destination unclear')
+    .replace('wrong_destination_unclear', 'wrong destination, unclear').replaceAll('_', ' ');
 }
 
 export default function FairnessPage() {
@@ -104,43 +116,58 @@ export default function FairnessPage() {
           <section aria-label="Where the cases ended up" className="rounded-[24px] border border-[var(--accent)] bg-[var(--brand-navy)] p-6 text-hero-text lg:col-span-6">
             <h2 className="mb-4 text-lg font-bold">Where the cases ended up</h2>
             <Donut centre={String(m.total)} caption={`Out of ${m.total} made-up cases`}
-              parts={[{ label: 'Passed to a person', value: m.escalation, colour: 'var(--brand-sky)' }, { label: 'Agrees with our key', value: m.correctNonEscalated, colour: 'var(--brand-sapphire)' }, { label: 'Differs from our key', value: m.nonEscalated - m.correctNonEscalated, colour: 'var(--brand-ice)' }]}/>
+              parts={[{ label: 'Passed to a person', value: m.escalation, colour: 'var(--brand-sky)' }, { label: 'Agrees with our answer key', value: m.correctNonEscalated, colour: 'var(--brand-sapphire)' }, { label: 'Differs from our answer key', value: m.nonEscalated - m.correctNonEscalated, colour: 'var(--brand-ice)' }]}/>
           </section>
         </div>
 
         {/* One summary; the replay caveat stays visible, details open on demand. */}
         <Notice className="info-notice" tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>
           <strong className="block">{replay ? 'Recorded answers, not a live AI model.' : 'Live-model results for these made-up cases only.'}</strong>
-          <span className="mt-1 block">{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</span>
-          {replay && <details className="mt-2"><summary className="cursor-pointer font-semibold">What this means</summary>
-            <p className="mt-1">The AI answers were recorded earlier from the first draft of each answer key. These runs check our rules and our test setup, so agreement with the key here does not measure a live model.</p></details>}
+          <LabelStatus total={m.total} reviewed={results.labelsReviewed ?? 0} accepted={results.labelsAccepted ?? 0}/>
+          {replay && <details className="mt-2"><summary className="flex min-h-11 cursor-pointer items-center font-semibold">What this means</summary>
+            <p className="mt-1">The AI answers were recorded earlier from the first draft of each answer key. These runs check our rules and our test setup, so agreement with the answer key here does not measure a live model.</p></details>}
         </Notice>
 
         <div className="grid gap-5 lg:grid-cols-3">
           <Panel icon="scale" title="Buyers and sellers" hint="Does it lean to one side?">
-            <Stat label="Wrongly sided with the seller" r={falseRelease} good={falseRelease.numerator === 0} detail={`${m.falseRelease} of ${m.buyerRight} cases where the buyer was right got a recommendation to charge the buyer`}/>
-            <Stat label="Wrongly sided with the buyer" r={falseRefund} good={falseRefund.numerator === 0} detail={`${m.falseRefund} of ${m.sellerRight} cases where the seller was right got a recommendation to refund`}/>
-            <p className="rounded-xl bg-surface-2 px-3 py-2 text-sm text-heading">Difference between the two: <strong className="tabular-nums">{gap === null ? 'n/a' : `${gap.toFixed(1)} percentage points`}</strong></p>
+            <Stat label="Wrongly sided with the seller" r={falseRelease} direction="lower" detail={`${m.falseRelease} of ${m.buyerRight} cases where the buyer was right got a recommendation to charge the buyer`}/>
+            <Stat label="Wrongly sided with the buyer" r={falseRefund} direction="lower" detail={`${m.falseRefund} of ${m.sellerRight} cases where the seller was right got a recommendation to refund`}/>
+            <p className="rounded-xl bg-surface-2 px-3 py-2 text-sm text-heading">Difference between the two: <strong className="tabular-nums">{gap === null ? 'n/a' : `${gap.toFixed(1)} percentage points`}</strong><span className="mt-1 block"><MetricCue direction="lower" best={gap === 0}/></span></p>
           </Panel>
           <Panel icon="repeat" title="Steady answers" hint="Does it change for the wrong reasons?">
-            <Stat label="Changed across case variations" r={flips} good={flips.numerator === 0} detail={`${m.variantFlips} of ${m.variantCount} cases changed their answer when names, evidence order or wording changed`}/>
-            <Stat label="Same answer every time" r={consistency} detail={`${m.repeatMatches} of ${m.repeatComparisons} repeated runs gave the same answer as the first run`}/>
+            <Stat label="Changed across case variations" r={flips} direction="lower" detail={`${m.variantFlips} of ${m.variantCount} cases changed their answer when names, evidence order or wording changed`}/>
+            <Stat label="Same answer every time" r={consistency} direction="higher" detail={`${m.repeatMatches} of ${m.repeatComparisons} repeated runs gave the same answer as the first run`}/>
+            <Stat label="Agrees with our answer key" r={accuracy} direction="higher" detail={`${m.correctNonEscalated} of ${m.nonEscalated} cases not passed to a person`}/>
           </Panel>
           <Panel icon="shield" title="Safety" hint="Can hidden text steer it?">
-            <Stat label="Hidden tricks that worked" r={injection} good={injection.numerator === 0} detail={`${m.injectionSuccess} of ${m.injections} cases with hidden tricks in the evidence skipped a person`}/>
-            <Stat label="Agrees with our answer key" r={accuracy} detail={`${m.correctNonEscalated} of ${m.nonEscalated} cases not passed to a person`}/>
+            <Stat label="Hidden tricks that worked" r={injection} direction="lower" detail={`${m.injectionSuccess} of ${m.injections} cases with hidden tricks in the evidence skipped a person`}/>
           </Panel>
         </div>
 
         {results.differing.length > 0 && (
           <Card className="info-card">
             <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from our answer key</h2>
-            <p className="mb-3 text-sm text-muted">{results.differing.length} of {m.total} made-up cases differed from the key.</p>
-            <ul className="space-y-3">{results.differing.map((d) => <li key={d.id} className="rounded-xl border border-line p-4 text-sm"><p className="font-semibold text-heading">{d.id.replaceAll('_', ' ')}</p><TechnicalDetails><p>Case ID: {d.id}</p><p>Expected: {d.expected}; recorded result: {d.actual}</p></TechnicalDetails></li>)}</ul>
+            <p className="mb-3 text-sm text-muted">{results.differing.length} of {m.total} made-up cases differed from the answer key.</p>
+            <ul className="space-y-3">{results.differing.map(d => <li key={d.id}>
+              <details className="fairness-case rounded-xl border border-line px-4 text-sm">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 py-3 font-semibold text-heading">{caseTitle(d.id)}<span aria-hidden="true">▾</span></summary>
+                <div className="space-y-2 border-t border-line py-3">
+                  <p>Our answer key said {PAYMENT_ACTION_LABELS[d.expected] ?? d.expected.toLowerCase().replaceAll('_', ' ')}.</p>
+                  <p>The recorded answer said {PAYMENT_ACTION_LABELS[d.actual] ?? d.actual.toLowerCase().replaceAll('_', ' ')}.</p>
+                  <div className="rounded-lg bg-surface-2 p-3 text-muted"><h3 className="font-semibold">Technical details</h3><p className="mt-1 break-all">Case ID: {d.id}</p><p>Expected: {d.expected}; recorded result: {d.actual}</p></div>
+                </div>
+              </details>
+            </li>)}</ul>
           </Card>
         )}
 
-        <Notice className="info-notice">The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them. These cases cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests. Damage and missing-parts problems always need a person, whatever the AI says. All cases are made up; no real people or personal data. {m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a limited snapshot. Open Technical details for the rules tested and how to reproduce the report.</Notice>
+        <Notice className="info-notice"><ul className="list-disc space-y-3 pl-5">
+          <li>The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them.</li>
+          <li>All cases are made up; no real people or personal data. They cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests.</li>
+          <li>{m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a limited snapshot.</li>
+          <li>Damage and missing-parts problems always need a person, whatever the AI says.</li>
+        </ul><p className="mt-3">Open Technical details for the rules tested and how to reproduce the report.</p></Notice>
+        <Card className="info-card fairness-technical">
         <TechnicalDetails>
           <p>Jargon used above:</p>
           <ul className="space-y-1">
@@ -149,6 +176,7 @@ export default function FairnessPage() {
           </ul>
           <p>Rules tested:</p><ul className="space-y-2">{['R3', 'R4', 'R5', 'R7'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Shipping and return rules tested:</p><ul className="space-y-2">{['R1', 'R2', 'R3'].map(rule => <li key={rule}><RuleLabel rule={rule}/></li>)}</ul><p>Run <code>npm run eval</code> to reproduce the report; the full table is in eval/report.md.</p>
         </TechnicalDetails>
+        </Card>
       </div>
     </InfoPageShell>
   );
