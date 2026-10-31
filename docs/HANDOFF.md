@@ -173,6 +173,13 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Equal-width mobile status pills
+- Started `ui/mobile-status-equal` from origin/main `c2ea8f1`. The existing equal StatusPill variant now uses one shared `--status-pill-width: 160px` variable at all widths. Default non-equal pills, labels, tones/colours and the dock are untouched; full labels remain in the existing title and screen-reader text.
+- Home compact and Transactions mobile rows now show title/amount, category, own-line left-aligned status, created date, applicable next step, then deadline/Due soon. The responsive card markup in TransactionsBrowser follows the same order; desktop-only contents/date presentation preserves the existing table. No business logic, API, data, category-chip component or dependencies changed.
+- Typecheck, 617 tests / 55 files and production build passed. Production Playwright: Home and Transactions, Seller/Buyer, 360/390/1280px, light/dark (24 views), no console errors/warnings or horizontal overflow. Every visible row pill is 160px; mobile status/category left edges and vertical order checked, all row targets >=44px, and the final row scrolls above the dock. All short Transactions labels, including Waiting for payment at 360px, fit without truncation. Longer existing full compact labels use the requested ellipsis with complete accessible text retained.
+- Eight desktop comparisons matched baseline pill positions, dimensions, alignment, colours and text exactly. Screenshots (including desktop before/after and mobile bottom clearance): `docs/ui/screens/mobile-status-equal/`. QA used a separate /tmp database with demo data; Render seed/config was not changed.
+
+
 ### 2026-10-31 — Calm deadline cue ("Due soon")
 - Branch `ui/deadline-cue` (Lead, owner-approved small change). `deadlineUrgency()` in view.ts: under 24h = soon, under 6h = urgent (amber / orange tokens, no red, no animation, no timer). Shown only when the current role must act. New `DueSoon` chip appears beside the time-left text on Home (desktop and mobile), Transactions (desktop and mobile) and the deal page; the Home "Your next step" card gets an amber border while the cue is active. The words "Due soon" carry the meaning; screen readers also get the time left.
 - Verified: tsc, vitest 617 passed (4 new), build, Playwright 390/1280 Buyer/Seller light/dark with demo deals set to 20h and 4h left (local DB only; Render seed unchanged, so the cue appears there only when a deadline is under 24h).
