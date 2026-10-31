@@ -173,6 +173,10 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Calm deadline cue ("Due soon")
+- Branch `ui/deadline-cue` (Lead, owner-approved small change). `deadlineUrgency()` in view.ts: under 24h = soon, under 6h = urgent (amber / orange tokens, no red, no animation, no timer). Shown only when the current role must act. New `DueSoon` chip appears beside the time-left text on Home (desktop and mobile), Transactions (desktop and mobile) and the deal page; the Home "Your next step" card gets an amber border while the cue is active. The words "Due soon" carry the meaning; screen readers also get the time left.
+- Verified: tsc, vitest 617 passed (4 new), build, Playwright 390/1280 Buyer/Seller light/dark with demo deals set to 20h and 4h left (local DB only; Render seed unchanged, so the cue appears there only when a deadline is under 24h).
+
 ### 2026-10-31 — Final polish 1: rules, history, Home and QA fixes
 - Started `ui/final-polish-1` from origin/main `7c8f2c8` (PR #126). All the rules remains collapsible, with Shipping R1/R2/R3, Disputes R4/R5/R7 and PayPal R6 cards. RULE_COPY titles/text and all domain/rule/payment/audit logic are unchanged. Activity's Deal history link is now a 44px bordered button to the existing deal record. Settings/About history links still resolve to /audit; the missing mobile Settings Limitations link was added in its footer, without adding a menu row.
 - Home success-history/footer links and duplicated demo lines removed; failure alerts retained. Desktop sidebar and mobile Home footer show exactly "Demo mode · No real money moves" once. Full deal PayPal-hold status now has a native keyboard/tap popover explaining that Creident pauses payment actions; a person decides using the rules, AI only summarises. Past-checkout Buyer visits redirect to the deal; Review desk Settings links are at least 44px.

@@ -7,6 +7,7 @@ import { MobilePanel } from './MobilePanel';
 import { SeedButton } from './client';
 import { MobileTransactionRow, shortDeadline } from './MobileTransactionRow';
 import { TransactionIcon } from './TransactionIcon';
+import { DueSoon } from './DueSoon';
 import type { HomeData } from './homeTypes';
 
 function HomeIcon({ name }: { name: 'actions' | 'transactions' | 'records' | 'about' | 'eye' | 'hidden' | 'back' }) {
@@ -62,10 +63,10 @@ export function MobileHome(props: HomeData) {
         </section>
       </> : <>
         <h2 className="mt-5 text-base text-heading">Your next step</h2>
-        <Link href={next?.href ?? '/deals'} className={`mt-2 flex min-h-16 items-center gap-3 rounded-[20px] border border-line border-l-4 bg-surface p-3 hover:bg-surface-2 ${next ? accent : 'border-l-[var(--completed-text)]'}`}>
+        <Link href={next?.href ?? '/deals'} className={`mt-2 flex min-h-16 items-center gap-3 rounded-[20px] border border-line border-l-4 bg-surface p-3 hover:bg-surface-2 ${next ? accent : 'border-l-[var(--completed-text)]'} ${next?.urgency ? 'border-[var(--awaiting-text)]' : ''}`}>
           <span aria-hidden="true" className="mobile-quick-icon grid size-10 shrink-0 place-items-center rounded-full">{next ? <TransactionIcon name={next.icon}/> : <HomeIcon name="actions"/>}</span>
           <span className="min-w-0 flex-1"><span className="block break-words text-sm font-semibold leading-snug text-heading">{next ? next.title : 'You’re all caught up'}</span>
-            <span className="mt-0.5 block text-sm text-muted">{next ? `${next.nextStep}${next.deadlineLabel ? ` · ${shortDeadline(next.deadlineLabel)}` : ''}` : 'No actions waiting'}</span></span>
+            <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-sm text-muted">{next ? `${next.nextStep}${next.deadlineLabel ? ` · ${shortDeadline(next.deadlineLabel)}` : ''}` : 'No actions waiting'}{next && <DueSoon urgency={next.urgency} label={next.deadlineLabel}/>}</span></span>
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0 text-muted"><path d="m9 6 6 6-6 6"/></svg>
         </Link>
 
