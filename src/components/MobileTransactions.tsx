@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { MobileBrandHeader } from './MobileBrandHeader';
 import { MobileTransactionRow } from './MobileTransactionRow';
 import { SeedButton } from './client';
-import { TRANSACTION_FILTERS, matchesTransactionFilter, type TransactionRow, type TransactionFilter } from './transactionsView';
+import { TRANSACTION_FILTERS, matchesTransactionFilter, sortHomeRows, type TransactionRow, type TransactionFilter } from './transactionsView';
 import type { Role } from './view';
 
 export function MobileTransactions({ role, rows, searched, visible, query, filter, update }: {
@@ -20,9 +20,9 @@ export function MobileTransactions({ role, rows, searched, visible, query, filte
     if (!searchOpen) requestAnimationFrame(() => document.getElementById('mobile-transaction-search')?.focus({ preventScroll: true }));
   };
   const groups = [
-    { title: 'Needs your action', rows: visible.filter(row => row.needsAction) },
-    { title: 'In progress', rows: visible.filter(row => !row.needsAction && row.active) },
-    { title: 'Closed', rows: visible.filter(row => !row.needsAction && !row.active) },
+    { title: 'Needs your action', rows: sortHomeRows(visible).filter(row => row.needsAction) },
+    { title: 'In progress', rows: sortHomeRows(visible).filter(row => !row.needsAction && row.active) },
+    { title: 'Closed', rows: sortHomeRows(visible).filter(row => !row.needsAction && !row.active) },
   ];
   const count = (key: TransactionFilter) => searched.filter(row => matchesTransactionFilter(row, key)).length;
   const actionCount = count('action');

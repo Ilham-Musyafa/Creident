@@ -451,3 +451,8 @@ button, a, input, textarea, select { outline-offset: 3px; }
 @media (width >= 1024px) {
   .evidence-page [data-ui="card"] { padding: 28px; }
 }
+
+/* Keep the recorded-answer caveat compact while retaining its complete disclosure. */
+.info-fairness > .fairness-recorded-note { padding: 16px 20px; line-height: 1.5; }
+.info-fairness .fairness-recorded-note .fairness-label-status { gap: 6px; margin-top: 8px; }
+.info-fairness > .fairness-recorded-note > details { margin-top: 8px; }

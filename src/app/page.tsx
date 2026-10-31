@@ -2,7 +2,7 @@ import { recentHomeActivity } from '../components/homeActivity';
 import { assistMode } from '../lib/ai/assist';
 import { isPublicDemo } from '../lib/publicDemo';
 import { DesktopHome } from '../components/DesktopHome';
-import { matchesTransactionFilter, sortTransactionRows, transactionRow } from '../components/transactionsView';
+import { matchesTransactionFilter, sortTransactionRows, sortHomeRows, transactionRow } from '../components/transactionsView';
 import { MobileHome } from '../components/MobileHome';
 import { verifyChain } from '../lib/audit/chain';
 import { AppShell } from '../components/layout';
@@ -29,12 +29,12 @@ export default async function HomePage() {
   const rows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? [], ctx.repo.readEvents(tx.id).find(event => event.type === 'TRANSACTION_CREATED')?.ts ?? null));
   const actionCount = rows.filter(row => row.needsAction).length;
   const actions = sortTransactionRows(rows.filter(row => row.needsAction)).slice(0, 6);
-  const recent = sortTransactionRows(role === 'reviewer' && reviewQueue.length ? shown.map(tx => rows.find(row => row.id === tx.id)!) : rows).slice(0, 5);
+  const recent = sortHomeRows(role === 'reviewer' && reviewQueue.length ? shown.map(tx => rows.find(row => row.id === tx.id)!) : rows).slice(0, 5);
   // Demo party IDs match the seed/create flow; reviewers use their actual review queue.
   const mobileDealIds = new Set(deals.filter(tx => role === 'reviewer'
     ? tx.status === 'UNDER_REVIEW'
     : role === 'buyer' ? tx.buyerId === 'buyer' : tx.sellerId === 'seller').map(tx => tx.id));
-  const mobileRecent = sortTransactionRows(rows.filter(row => mobileDealIds.has(row.id))).slice(0, 3);
+  const mobileRecent = sortHomeRows(rows.filter(row => mobileDealIds.has(row.id))).slice(0, 3);
 
   const statusTiles = ([['Waiting for you', 'action', 'Your actions'], ['In progress', 'active', 'Active deals'], ['Problem', 'review', 'Under review'], ['Closed', 'closed', 'Closed, including cancelled/refunded']] as const)
     .map(([label, filter, detail]) => ({ label, detail, href: `/deals?filter=${filter}`, count: rows.filter(row => matchesTransactionFilter(row, filter)).length }));

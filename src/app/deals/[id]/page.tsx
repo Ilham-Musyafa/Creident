@@ -69,7 +69,6 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-4">
           <Card className="deal-summary space-y-2">
-            <p className="text-sm font-semibold text-heading">{displayItemName(tx.item)}</p>
             <p className="font-display text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <div className="flex flex-wrap items-center gap-1"><StatusPill status={tx.status}/>{tx.status === 'FROZEN_EXTERNAL' && <PayPalHoldInfo/>}</div>
             {view.deadlineLabel && <p className="flex flex-wrap items-center gap-2 text-sm text-muted"><DueSoon urgency={view.urgency} label={view.deadlineLabel}/>Time left: {view.deadlineLabel}</p>}

@@ -74,3 +74,11 @@ export function searchTransactionRows(rows: readonly TransactionRow[], query: st
   const needle = transactionQuery(query).trim().toLowerCase();
   return rows.filter(row => row.title.toLowerCase().includes(needle));
 }
+
+/** Home has no date groups: role actions, then active deals, then closed deals. */
+export function sortHomeRows(rows: readonly TransactionRow[]): TransactionRow[] {
+  const priority = (row: TransactionRow) => row.needsAction ? 0 : row.active ? 1 : 2;
+  return [...rows].sort((a, b) => priority(a) - priority(b)
+    || (Date.parse(b.createdAt ?? '') || 0) - (Date.parse(a.createdAt ?? '') || 0)
+    || b.id.localeCompare(a.id));
+}
