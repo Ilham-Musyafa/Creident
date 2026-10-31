@@ -1,3 +1,4 @@
+import { DeadlineCue } from './DeadlineCue';
 import { JoinDeal } from './JoinDeal';
 import { resolveDealCategory } from '../lib/dealCategories';
 import { HomeStatusRow } from './HomeStatusRow';
@@ -23,7 +24,7 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
         <Link href={row.href} className="font-semibold text-heading after:absolute after:inset-0 after:content-['']">{row.title}</Link></span></td>
       <td className="py-3 pr-3 text-muted">{resolveDealCategory(row.category, row.subcategory).category.label}</td>
       <td className="py-3 pr-3"><StatusPill status={row.status} short equal/></td>
-      <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="block text-xs text-muted">{row.deadlineLabel}</span>}</td>
+      <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="block text-xs text-muted">{row.deadlineLabel}<DeadlineCue cue={row.deadlineCue}/></span>}</td>
       <td className="py-3 text-right font-semibold tabular-nums text-heading">{row.amount}</td>
     </tr>)}</tbody>
   </table>;
@@ -49,7 +50,7 @@ export function DesktopHome(props: HomeData) {
         {next ? <>
           <p className="mt-4 break-words text-xl font-bold">{next.title}</p>
           <p className="mt-1 text-sm text-hero-sub">{next.nextStep}</p>
-          {next.deadlineLabel && <p className="mt-1 text-sm text-hero-text">{next.deadlineLabel}</p>}
+          {next.deadlineLabel && <p className="mt-1 text-sm text-hero-text">{next.deadlineLabel}<DeadlineCue cue={next.deadlineCue}/></p>}
           <Link href={next.href} className={`${button} mt-auto self-start bg-white text-[#0B1F4B] hover:opacity-90`}>Open deal</Link>
         </> : <>
           <p className="mt-4 text-xl font-bold">You’re all caught up</p>

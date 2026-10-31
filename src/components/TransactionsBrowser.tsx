@@ -1,4 +1,5 @@
 'use client';
+import { DeadlineCue } from './DeadlineCue';
 import { CategoryChip } from './CategoryChip';
 
 
@@ -56,7 +57,7 @@ export function TransactionsBrowser({ role, rows, initialFilter, initialQuery }:
           <span className="col-start-1 row-start-1 flex min-w-0 items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span><span className="min-w-0"><span className="block break-words text-sm font-bold text-heading">{row.title}</span><CategoryChip category={row.category} subcategory={row.subcategory}/>{shortDate(row.createdAt) && <span className="mt-1 block text-xs text-muted">{shortDate(row.createdAt)}</span>}</span></span>
           <strong className="col-start-2 row-start-1 self-start text-right text-sm tabular-nums text-heading lg:col-start-4 lg:self-center">{row.amount}</strong>
           <span className="col-span-2 col-start-1 row-start-2 min-w-0 overflow-hidden lg:col-span-1 lg:col-start-2 lg:row-start-1"><span className="sr-only">Status: </span><StatusPill status={row.status} short equal className="max-w-full [overflow-wrap:anywhere]"/></span>
-          <span className="col-span-2 col-start-1 row-start-3 min-w-0 border-t border-line pt-3 lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:border-0 lg:pt-0"><span className="sr-only">Next step: </span><span className={`block break-words text-sm ${row.needsAction ? 'font-semibold text-heading' : 'text-muted'}`}>{row.nextStep}</span>{row.deadlineLabel && <span className="mt-1 block text-sm text-muted">{row.deadlineLabel}</span>}</span>
+          <span className="col-span-2 col-start-1 row-start-3 min-w-0 border-t border-line pt-3 lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:border-0 lg:pt-0"><span className="sr-only">Next step: </span><span className={`block break-words text-sm ${row.needsAction ? 'font-semibold text-heading' : 'text-muted'}`}>{row.nextStep}</span>{row.deadlineLabel && <span className="mt-1 block text-sm text-muted">{row.deadlineLabel}<DeadlineCue cue={row.deadlineCue}/></span>}</span>
         </Link>
       </li>)}</ul>
     </div>}

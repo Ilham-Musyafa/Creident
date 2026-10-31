@@ -1,3 +1,4 @@
+import { DeadlineCue } from '../../../components/DeadlineCue';
 import { PayPalHoldInfo } from '../../../components/PayPalHoldInfo';
 import { CategoryChip } from '../../../components/CategoryChip';
 import { displayItemName } from '../../../components/displayItemName';
@@ -72,7 +73,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             <p className="text-sm font-semibold text-heading">{displayItemName(tx.item)}</p>
             <p className="font-display text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <div className="flex flex-wrap items-center gap-1"><StatusPill status={tx.status}/>{tx.status === 'FROZEN_EXTERNAL' && <PayPalHoldInfo/>}</div>
-            {view.deadlineLabel && <p className="text-sm text-muted">Time left: {view.deadlineLabel}</p>}
+            {view.deadlineLabel && <p className="text-sm text-muted">Time left: {view.deadlineLabel}<DeadlineCue cue={view.deadlineCue}/></p>}
             {(simulated || view.demo || simulatedPayPal()) && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
             <TechnicalDetails><KeyValue items={[
               { label: 'Deal ID', value: <span className="break-all font-mono">{id}</span> },

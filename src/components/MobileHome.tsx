@@ -1,3 +1,4 @@
+import { DeadlineCue } from './DeadlineCue';
 import { JoinDeal } from './JoinDeal';
 import { demoName } from './presentationCopy';
 import Link from 'next/link';
@@ -65,7 +66,7 @@ export function MobileHome(props: HomeData) {
         <Link href={next?.href ?? '/deals'} className={`mt-2 flex min-h-16 items-center gap-3 rounded-[20px] border border-line border-l-4 bg-surface p-3 hover:bg-surface-2 ${next ? accent : 'border-l-[var(--completed-text)]'}`}>
           <span aria-hidden="true" className="mobile-quick-icon grid size-10 shrink-0 place-items-center rounded-full">{next ? <TransactionIcon name={next.icon}/> : <HomeIcon name="actions"/>}</span>
           <span className="min-w-0 flex-1"><span className="block break-words text-sm font-semibold leading-snug text-heading">{next ? next.title : 'You’re all caught up'}</span>
-            <span className="mt-0.5 block text-sm text-muted">{next ? `${next.nextStep}${next.deadlineLabel ? ` · ${shortDeadline(next.deadlineLabel)}` : ''}` : 'No actions waiting'}</span></span>
+            <span className="mt-0.5 block text-sm text-muted">{next ? <>{next.nextStep}{next.deadlineLabel ? ` · ${shortDeadline(next.deadlineLabel)}` : ''}<DeadlineCue cue={next.deadlineCue}/></> : 'No actions waiting'}</span></span>
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0 text-muted"><path d="m9 6 6 6-6 6"/></svg>
         </Link>
 
