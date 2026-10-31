@@ -1,3 +1,4 @@
+import { DesktopHomeExtras, type DesktopHomeExtrasProps } from './DesktopHomeExtras';
 import { JoinDeal } from './JoinDeal';
 import { resolveDealCategory } from '../lib/dealCategories';
 import { HomeStatusRow } from './HomeStatusRow';
@@ -31,7 +32,7 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
 }
 
 /** Desktop Home: greeting + stats, one dark next-step card, then the deals table. Counts and rows come from stored facts. */
-export function DesktopHome(props: HomeData) {
+export function DesktopHome(props: HomeData & DesktopHomeExtrasProps) {
   const next = props.actions[0];
   const headline = props.role === 'seller' ? { href: '/deals/new', text: '+ New deal' } : props.role === 'reviewer' ? { href: '/deals?filter=review', text: 'Review queue' } : null;
   return <div className="hidden flex-1 lg:flex lg:flex-col">
@@ -63,6 +64,7 @@ export function DesktopHome(props: HomeData) {
         {props.recent.length ? <DealsTable rows={props.recent.slice(0, 5)}/> : <p className="py-6 text-sm text-muted">No deals to show yet.</p>}
         {props.total === 0 && <div className="mt-4"><SeedButton role={props.role}/></div>}
       </section>
+      <DesktopHomeExtras activity={props.activity} now={props.now} showDemo={props.showDemo} recordedAi={props.recordedAi}/>
     </div>
 
   </div>;
