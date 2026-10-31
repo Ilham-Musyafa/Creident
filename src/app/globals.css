@@ -188,6 +188,24 @@ button, a, input, textarea, select { outline-offset: 3px; }
     border-color: var(--desktop-sidebar-line); background: var(--desktop-role-bg); color: var(--hero-text);
   }
   .desktop-role-avatar { background: var(--action-blue); color: var(--on-accent); }
+  .desktop-role-popup {
+    overflow: visible; padding: 6px; border-radius: 20px;
+    border-color: var(--desktop-sidebar-line); background: var(--surface);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--brand-navy) 18%, transparent);
+  }
+  .desktop-role-popup > p { padding: 8px 6px; }
+  .desktop-role-popup .desktop-role-option {
+    position: relative; height: 64px; min-height: 64px; padding: 8px 4px; gap: 4px; border-radius: 14px;
+  }
+  .desktop-role-option-icon {
+    display: grid; place-items: center; width: 20px; height: 20px; flex-shrink: 0;
+    border-radius: 50%; background: var(--surface-2); color: var(--heading);
+  }
+  .desktop-role-option > .min-w-0 > span:first-child { padding-right: 18px; }
+  .desktop-role-option > .min-w-0 > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .desktop-role-option > svg { position: absolute; right: 8px; top: 12px; width: 14px; height: 14px; }
+  .desktop-role-option:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
   .desktop-sidebar :is(a,button):focus-visible { outline: 3px solid var(--brand-sky); outline-offset: 3px; }
   .desktop-main-area, .desktop-topbar { margin-left: var(--desktop-sidebar-width); }
   /* Fill the viewport height so footers sit at the bottom instead of leaving an empty band. */

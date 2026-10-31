@@ -173,6 +173,11 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — R1: Desktop sidebar role popup tidy
+- Started `ui/role-switcher-tidy` from origin/main `e97b687` after PR #120. Sidebar popup follows its 207px trigger width, opens 8px above it, uses content height without an inner scrollbar, and shares its 20px radius/border. Three equal 64px rows have round icons, single-line descriptions and the existing selected check. Only the sidebar Reviewer description changes to "Decide disputes". Mobile presentation and role/cookie/routing/keyboard handlers are preserved.
+- Typecheck, 558 tests / 53 files and build passed. Production Chromium at 1280/1920 light/dark: matching popup/trigger edges, 8px gap, no scrolling/overflow; all descriptions fit. Buyer/Seller/Reviewer switching, arrow wrapping, End, Escape and focus restoration checked at 390/1280/1920 in both themes, with URL query preserved and no console errors/warnings. Mobile geometry and copy match before; screenshot differences, when present, are limited to the animated trigger chevron. Screenshots: `docs/ui/screens/role-switcher-tidy/`.
+
+
 ### 2026-10-31 — W1: Full-width desktop info and Settings pages
 - Started `ui/full-width-pages` from origin/main `5e255f2` (About PR #119 merged). Removed desktop inner width caps on How it works, About, Fairness and Settings, retaining the shell's 1560px cap. Headers and content now share both edges.
 - How it works uses two numbered card columns on narrower desktops and three from 1600px. About uses four link-card columns on wide desktops; Settings keeps its aligned sticky 240px sidebar and uses two content columns on wide desktops. Existing copy, links, rules and mobile layout are unchanged; Home/Transactions source and shared shell/header were not edited.
