@@ -4,6 +4,7 @@
   --brand-navy: #0B1F4B; --brand-sapphire: #3B82F6;
   --brand-sky: #93C5FD; --brand-ice: #DBEAFE;
   --font-display: var(--font-heading-loaded), Arial, sans-serif;
+  --status-pill-width: 160px;
   --mobile-header-start: var(--brand-navy);
   --mobile-header-end: color-mix(in srgb, var(--brand-sapphire) 70%, var(--brand-navy));
   --mobile-header-muted: var(--brand-ice);
@@ -162,10 +163,11 @@ button, a, input, textarea, select { outline-offset: 3px; }
 /* The new shell wrapper contributes no box to the unchanged mobile layout. */
 @media (width < 1024px) { .desktop-main-area { display: contents; } }
 /* Desktop shell only: mobile keeps its existing AppShell/nav geometry. */
+/* The existing equal variant now shares one width across mobile rows and desktop tables. */
+.desktop-status-equal { width: var(--status-pill-width); min-width: var(--status-pill-width); max-width: var(--status-pill-width); flex-shrink: 0; justify-content: center; }
+.desktop-status-equal > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 @media (width >= 1024px) {
-  /* Longest short label: 120px at 12px/700 DM Sans + 6px dot + 6px gap + 20px padding. */
-  .desktop-status-equal { width: 160px; min-width: 160px; max-width: 160px; flex-shrink: 0; justify-content: center; }
-  .desktop-status-equal > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* Inner pages share the shell width and header edges. Mobile rules stay unchanged. */
   .how-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
