@@ -173,6 +173,13 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Alphabetical category pickers
+- Started `ui/category-alpha` from origin/main `2ba2811` (PR #134 merged). NewDealForm now uses the small presentation-only `alphabeticalOptions` helper for both native selects: English locale-aware, case-insensitive label ordering, Other last, placeholders untouched. It sorts a copy and preserves entry identities. DEAL_CATEGORIES source order, ids, labels, hints, templates, stored terms and lookup/legacy helpers are unchanged. Source usage scan found no other category picker/filter requiring an ordering change.
+- Typecheck, 636 tests / 60 files (four new helper tests), production build and whitespace checks passed. Tests cover A–Z, Other last, case/accents, empty/fallback lists, source immutability and ids/object identity across the complete taxonomy.
+- Production Playwright checked Seller at 390/1280px, light/dark, including all 18 category lists and 17 nonempty subcategory lists per view, placeholders, category-change reset, checklist attachment, the Physical items only hint and decimal keyboard attribute. Eight screenshots show genuinely open native dropdowns, captured with existing Playwright/Chromium, Xorg dummy display and ImageMagick (no installed/new application dependency, no replacement picker or UI modification). Screenshots: `docs/ui/screens/category-alpha/`.
+- Created one deal through the UI with Video Games & Consoles / Consoles, then verified the unchanged category/subcategory ids and attached checklist in the isolated SQLite terms JSON. Home, Transactions and the deal page show the saved labels correctly at 390/1280px. No horizontal overflow or browser console errors/warnings. QA data lives only in /tmp; Render data/configuration is untouched.
+
+
 ### 2026-10-31 — Desktop Home activity and demo guide
 - Started `ui/home-activity-demo` from origin/main `e5524b5` (PR #133 merged). Added Recent activity and Try the demo directly below Your deals: 32px block separation, 28px card padding, equal columns from 1440px and stacked at narrower desktop widths. Existing Home cards and MobileHome are unchanged; no animations, new dependencies, routes, API or business-logic changes.
 - `recentHomeActivity` uses existing server-side repository events and the deal Activity `activityFeed` labels/omissions. It sorts by stored timestamps before limiting to five and uses the existing relative-time formatter. Buyer/Seller use their existing demo party IDs; Reviewer can read all deal pages under the current prototype's read visibility. Hidden-party events are not read by this helper. No new access is granted, and only plain event labels/item names/timestamps are displayed. Empty state: No activity yet.
