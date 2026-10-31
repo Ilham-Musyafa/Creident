@@ -415,3 +415,7 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - Added a "Review desk" item (shield icon, same as the mobile dock) to the desktop sidebar for the reviewer role only. Active state on `/reviewer/oversight`.
 - Checked: tsc, 710 vitest tests, build, Playwright (reviewer sees the link and it opens the desk with the item highlighted; seller and buyer sidebars unchanged; 0 console errors).
 - Pending: none. UI stays frozen otherwise.
+
+## 2026-10-31 — README screenshots refreshed
+- Re-captured the 11 images linked in the README "Screens" table (home-buyer, home-dark, deals, new-phone, deal-completed, evidence-damaged, dispute-review, review-dark, decision-receipt, audit-detail, fairness) from the frozen UI (main at e59c05a): fresh public-demo database, simulated PayPal, recorded AI. Same filenames, so README links are unchanged. 0 console errors during capture.
+- Not refreshed: the four `oversight-*` images in the appendix. They were taken without an AG Studio licence key (trial watermark), and the README already says so. Replace them with captures of the licensed live Review desk if wanted.
