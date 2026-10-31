@@ -8,6 +8,7 @@ import { TechnicalDetails } from './TechnicalDetails';
 import { SegmentedControl } from './SegmentedControl';
 import type { Role } from './view';
 import { ConfirmSheet, type ConfirmDetails } from './ConfirmSheet';
+import { SettingsIcon } from './SettingsIcon';
 
 export class ApiError extends Error {
   constructor(readonly code: string, message: string, readonly debugId?: string) {
@@ -85,15 +86,27 @@ export function ActionButton({ path, role, body = {}, label, busyLabel = 'Workin
   );
 }
 
-export function RoleSwitch({ current }: { current: Role }) {
+export function RoleSwitch({ current, cards = false }: { current: Role; cards?: boolean }) {
   const router = useRouter();
   const labels = { Buyer: 'buyer', Seller: 'seller', Reviewer: 'reviewer' } as const;
   const options = ['Buyer', 'Seller', 'Reviewer'] as const;
   const value = options.find((o) => labels[o] === current) ?? 'Seller';
-  return <SegmentedControl label="Act as (demo)" options={options} value={value} onChange={(next) => {
+  const choose = (next: typeof options[number]) => {
     document.cookie = `hv-role=${labels[next]}; path=/; max-age=31536000; samesite=lax`;
     router.refresh();
-  }}/>;
+  };
+  if (cards) {
+    const details = { Buyer: 'Check items', Seller: 'Create deals', Reviewer: 'Decide cases' } as const;
+    const icons = { Buyer: 'role', Seller: 'data', Reviewer: 'oversight' } as const;
+    return <div role="group" aria-label="Act as (demo)" className="grid grid-cols-3 gap-3">
+      {options.map(option => <button key={option} type="button" aria-pressed={value === option} onClick={() => choose(option)}
+        className={`hv-press flex min-h-28 min-w-0 flex-col items-start gap-2 rounded-[16px] border p-4 text-left hover:bg-surface-2 ${value === option ? 'border-heading bg-surface-2' : 'border-line bg-bg'}`}>
+        <span className="grid size-9 place-items-center rounded-xl bg-surface-2 text-heading"><SettingsIcon name={icons[option]}/></span>
+        <span className="text-sm font-semibold text-heading">{option}</span><span className="text-sm leading-snug text-muted">{details[option]}</span>
+      </button>)}
+    </div>;
+  }
+  return <SegmentedControl label="Act as (demo)" options={options} value={value} onChange={choose}/>;
 }
 
 export function ReviewerCodeForm({ unlocked, id = 'reviewer-code' }: { unlocked: boolean; id?: string }) {
@@ -207,8 +220,8 @@ export function ReturnForm({ txId }: { txId: string }) {
   );
 }
 
-export function SeedButton({ role, label = 'Load demo deals' }: { role: Role; label?: string }) {
-  return <ActionButton path="/api/demo/seed" role={role} label={label} busyLabel="Loading demo deals…" variant="ghost" fullWidth/>;
+export function SeedButton({ role, label = 'Load demo deals', fullWidth = true }: { role: Role; label?: string; fullWidth?: boolean }) {
+  return <ActionButton path="/api/demo/seed" role={role} label={label} busyLabel="Loading demo deals…" variant="ghost" fullWidth={fullWidth}/>;
 }
 
 export function CopyLinkButton({ path }: { path: string }) {
