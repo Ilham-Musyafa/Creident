@@ -7,7 +7,7 @@
 
 **Every deal, on record.**
 
-**Live demo:** `<RENDER_URL>`
+**Live demo:** https://creident.onrender.com (labelled simulation: no real money, recorded AI answers)
 
 **Demo video:** `<YOUTUBE_URL>`
 
@@ -40,6 +40,33 @@ Fairness results describe the recorded replay, not a live-model measurement.
 | Decision receipt | [View](docs/ui/screens/submission-polish/decision-receipt.png) | — |
 | Record detail | [View](docs/ui/screens/submission-polish/audit-detail.png) | — |
 | Fairness results | [View](docs/ui/screens/submission-polish/fairness.png) | — |
+
+## At a glance
+
+```mermaid
+flowchart LR
+  U["Buyer / Seller<br/>(terms, tracking, text evidence)"] --> UI["Creident web app<br/>Next.js"]
+  UI --> RULES["Rules R1-R7<br/>deterministic, decide the path"]
+  UI --> AI["AI evidence summary<br/>reads quoted text only"]
+  AI -->|"summary, no tools, cannot move money"| RULES
+  RULES -->|"recommendation"| REV["Human reviewer<br/>decides, writes a reason"]
+  REV -->|"release / refund / void"| PP["PayPal Sandbox API<br/>authorize, capture, void, refund"]
+  PP -->|"webhooks, dispute polling"| UI
+  UI --> DB[("SQLite<br/>hash-chained audit log")]
+  RULES --> DB
+  REV --> DB
+```
+
+**Where AI is used, and where it is not**
+
+| Used for | Not used for |
+| --- | --- |
+| Summarising each side's text evidence against the agreed checks, for the reviewer | Deciding who is right: the rules recommend, a person decides |
+| Optional "what may still be missing" check on a user's own evidence text | Moving money, calling PayPal, or changing a deal |
+| Drafting terms and translating evidence text on request | Inspecting photos or detecting forged images |
+
+AI output is validated as strict JSON; invalid output means "no summary" and the case goes to a person.
+Evidence is passed as quoted data, so instructions hidden in it do not change the outcome (rule R7 flags them).
 
 ## 1. The problem
 
@@ -324,29 +351,30 @@ The PayPal **Disputes API** was also exercised on a real Sandbox dispute (`npm r
 dispute-probe`): reading the case, messaging the buyer, escalating as the seller, and
 submitting a Creident evidence PDF, which PayPal accepted.
 
-**Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 50 synthetic
-cases (40 disputes, 10 prompt-injection attempts), each also run with six counterfactual
+**Fairness and robustness harness** ([`eval/report.md`](eval/report.md)): 62 synthetic
+cases (28 buyer-right, 28 seller-right, 6 unclear; 10 prompt-injection attempts are included), each also run with six counterfactual
 variants (swapped names, reversed evidence order, longer and shorter stories, formal and
 informal wording). It measures false-release and false-refund rates and the gap between
 them, how often a variant changes the outcome, consistency over repeated runs,
 escalation rate, and injection success.
 
-The committed report runs in **replay mode**, with **k = 3**. Of 50 expected labels,
+The committed report runs in **replay mode**, with **k = 3**. Of 62 expected labels,
 **10 were reviewed individually by the owner; 40 drafts were accepted without individual
 review**. The R5 follow-up review is recorded in
 [`eval/owner-label-review-2026-10-21-r5.json`](eval/owner-label-review-2026-10-21-r5.json).
 
 | Replay metric | Recorded result |
 | --- | --- |
-| False release / false refund | 0/23 (0.0%) / 0/23 (0.0%); gap 0.0 percentage points |
-| Counterfactual flips | 0/300 (0.0%) |
-| Repeat consistency | 100/100 (100.0%) comparisons |
-| Human escalation | 23/50 (46.0%) |
-| Matches labels on non-escalated cases | 27/27 (100.0%) |
+| False release / false refund | 0/28 (0.0%) / 0/28 (0.0%); gap 0.0 percentage points |
+| Counterfactual flips | 0/372 (0.0%) |
+| Repeat consistency | 124/124 (100.0%) comparisons |
+| Human escalation | 25/62 (40.3%) |
+| Matches labels on non-escalated cases | 35/37 (94.6%) |
 | Injection cases avoiding escalation | 0/10 (0.0%) |
 
-There are 23 buyer-right, 23 seller-right and 4 unclear cases; the 10 injection cases
-are included in the 50. No base case differs from its expected label in this run.
+There are 28 buyer-right, 28 seller-right and 6 unclear cases; the 10 injection cases
+are included in the 62. Two base cases differ from their expected label in this run
+(each expected human review but got WAIT); they are listed in the report.
 Recorded summaries were authored from the original draft labels and reused for variants.
 These numbers check the harness, rules and injection flag, **not a live model**. They are
 indicative results from a small synthetic set, not proof of model fairness or accuracy.
@@ -358,6 +386,20 @@ The same numbers are shown in the app on the **Fairness results** page (`/fairne
 ## 6. Threat model and FAQ
 
 Questions we expect, with the honest answer and what the prototype does about each.
+
+**How is this different from PayPal Goods & Services?** PayPal handles the payment and has
+its own dispute process; Creident does not replace it. It is a mediation layer on top: terms are
+locked before payment, written rules (R1-R7) choose the path, AI only summarises evidence for a
+human reviewer, and every step is recorded in an auditable log. PayPal authorizes, and our platform
+calls capture, void or refund. What we add is visible reasoning (which rule applied and why) and
+published bias and injection test results. We make no claim about which dispute process
+gives better outcomes; this prototype has not been tested with real users.
+
+**Why only physical goods? Why not freelance work or digital products?** A deliberate scope
+choice. Physical sales produce objective signals (carrier tracking, delivery date, photos with a
+one-time code) that rules can decide on. Digital delivery and service quality are hard to prove
+neutrally and are easy to fake, so a rules-first design would need a verifiable hand-over event
+or agreed milestones first. See the production path below.
 
 **If the reviewer refunds the buyer, is a return required?** A full refund normally waits
 for the item to come back: the deal moves to `RETURN_REQUESTED`, the buyer submits return
@@ -507,6 +549,9 @@ SPLIT and does not implement a split payout or seller payout.
   where required (its Acceptable Use Policy lists escrow services and marketplaces as
   needing pre-approval), and local regulatory review in Indonesia. The prototype does
   not establish permission to launch.
+- Later, the same pattern could extend to digital assets with a verifiable hand-over event
+  (for example a domain transfer confirmed by the registrar) and to services with agreed
+  milestones. Each needs new rules and a fresh bias test; none is built or promised.
 - Later, the same rules-first pattern could extend to milestone-based services, such as
   home renovation paid per stage, with one PayPal order per milestone.
 - After the hackathon, a customer-support agent could answer how-it-works questions, read

@@ -173,6 +173,9 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — README final pass (docs only)
+- Branch `docs/readme-final`. Live demo URL filled (https://creident.onrender.com); `<YOUTUBE_URL>` still to fill after upload. Added an "At a glance" Mermaid architecture diagram and a "Where AI is used / not used" table. Test results section brought in line with `eval/results.json` (62 cases; 0/28, 0/372, 124/124, 25/62, 35/37; two cases differ from labels). FAQ: difference from PayPal Goods & Services (no claim of better outcomes) and why physical goods only. Production path: digital assets with verifiable hand-over and milestone services, none built or promised.
+
 ### 2026-10-31 — Clarity phase 1: evidence flow and small fixes
 - Started `ui/clarity-1` from origin/main `7c61ec1` (PR #135 merged). Phase 1 only; phase 2 has not started and must wait for the phase-1 PR handoff/owner review.
 - Seller share card now depends only on DRAFT / TERMS_LOCKED / AWAITING_APPROVAL; created=1 no longer overrides the status. Reviewer outcome buttons stack on mobile and use a weighted row on desktop, with equal measured heights (56px / 64.5px), readable 14px text and at most two lines. Local important utilities override the existing shared min-height/font cascade without changing other buttons or decision behaviour.
