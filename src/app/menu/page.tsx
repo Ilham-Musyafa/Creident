@@ -39,9 +39,9 @@ export default async function MenuPage() {
   return (
     <AppShell active="Menu" mobileFullBleed>
       <MobileSettings simulated={simulated} role={role} codeRequired={codeRequired} unlocked={unlocked}/>
-      <div className="hidden lg:block"><div className="mx-auto w-full max-w-[1080px]">
+      <div className="hidden lg:block"><div className="w-full">
       <PageHeader title="Settings" subtitle="Your demo workspace, appearance and useful links."/>
-      <div className="grid items-start gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
+      <div className="settings-layout grid items-start gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside aria-label="Demo workspace" className="min-w-0 self-start space-y-5 lg:sticky lg:top-6">
           <Card className="p-5">
             <div className="flex items-start gap-3">
@@ -56,7 +56,7 @@ export default async function MenuPage() {
           </nav>
         </aside>
 
-        <div className="min-w-0 space-y-5">
+        <div className="settings-sections min-w-0 space-y-5">
           <section id="demo-role" tabIndex={-1} aria-labelledby="demo-role-title" className="scroll-mt-6">
             <Card className="p-5 sm:p-6">
               <SectionHeading id="demo-role-title" title="Demo role" detail="Choose which side of a deal you want to explore." icon="role"/>

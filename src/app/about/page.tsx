@@ -29,7 +29,7 @@ function Arrow() { return <span aria-hidden="true" className="about-arrow">→</
 export default function AboutPage() {
   return (
     <InfoPageShell title="About Creident" subtitle="A demo of the dispute step for peer-to-peer sales, built for the PayPal AI Hackathon 2026.">
-      <div className="info-content about-page mx-auto max-w-5xl space-y-6 text-sm leading-relaxed">
+      <div className="info-content about-page mx-auto max-w-5xl lg:mx-0 lg:max-w-none space-y-6 text-sm leading-relaxed">
         <section className="about-intro" aria-labelledby="intro-title">
           <h2 id="intro-title" className="lg:hidden mb-3 text-xl font-bold text-heading">What is Creident?</h2>
           <Card className="info-card lg:hidden space-y-3">

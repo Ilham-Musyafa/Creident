@@ -93,7 +93,7 @@ export default function FairnessPage() {
 
   return (
     <InfoPageShell title="Fairness results" subtitle={`${m.total} made-up test cases · ${replay ? 'Recorded AI answer' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
-      <div className="info-content info-fairness mx-auto max-w-[1120px] space-y-5">
+      <div className="info-content info-fairness mx-auto max-w-[1120px] lg:mx-0 lg:max-w-none space-y-5">
         <div className="grid gap-5 lg:grid-cols-12">
           <section aria-label="Summary" className="fairness-summary rounded-[24px] border border-line p-6 lg:col-span-6">
             <p className="inline-flex rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold text-heading">{replay ? 'Recorded AI answers' : 'Live model'}</p>
