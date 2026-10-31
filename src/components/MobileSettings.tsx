@@ -50,7 +50,7 @@ export function MobileSettings({ role, codeRequired, unlocked, simulated }: { si
         <SettingsDestination href="/fairness" title="Fairness results" icon="fairness"/>
         <SettingsDestination href="/about" title="About Creident" icon="about"/>
       </ul>
-      <footer className="mt-6 border-t border-line pt-4 text-sm leading-relaxed text-muted"><p>{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p></footer>
+      <footer className="mt-6 border-t border-line pt-4 text-sm leading-relaxed text-muted"><p>{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · No real sign-in.</p><p>Roles are for exploring this demo. No real money moves.</p><Link href="/about#limitations" className="inline-flex min-h-11 items-center font-semibold text-heading underline">Limitations</Link></footer>
     </MobilePanel>
   </div>;
 }
