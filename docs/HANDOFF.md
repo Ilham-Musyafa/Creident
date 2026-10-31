@@ -173,6 +173,9 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — README final pass (docs only)
+- Branch `docs/readme-final`. Live demo URL filled (https://creident.onrender.com); `<YOUTUBE_URL>` still to fill after upload. Added an "At a glance" Mermaid architecture diagram and a "Where AI is used / not used" table. Test results section brought in line with `eval/results.json` (62 cases; 0/28, 0/372, 124/124, 25/62, 35/37; two cases differ from labels). FAQ: difference from PayPal Goods & Services (no claim of better outcomes) and why physical goods only. Production path: digital assets with verifiable hand-over and milestone services, none built or promised.
+
 ### 2026-10-31 — Alphabetical category pickers
 - Started `ui/category-alpha` from origin/main `2ba2811` (PR #134 merged). NewDealForm now uses the small presentation-only `alphabeticalOptions` helper for both native selects: English locale-aware, case-insensitive label ordering, Other last, placeholders untouched. It sorts a copy and preserves entry identities. DEAL_CATEGORIES source order, ids, labels, hints, templates, stored terms and lookup/legacy helpers are unchanged. Source usage scan found no other category picker/filter requiring an ordering change.
 - Typecheck, 636 tests / 60 files (four new helper tests), production build and whitespace checks passed. Tests cover A–Z, Other last, case/accents, empty/fallback lists, source immutability and ids/object identity across the complete taxonomy.
