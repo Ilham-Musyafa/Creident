@@ -31,10 +31,11 @@ export function Button({ variant = 'accent', fullWidth = false, className = '', 
   const colors = { accent: 'bg-accent text-on-accent', ghost: 'border border-line bg-surface text-heading', strong: 'bg-strong text-on-strong' };
   return <button className={`min-h-[46px] rounded-full px-5 text-sm font-bold hv-press hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${colors[variant]} ${fullWidth ? 'w-full' : ''} ${className}`} {...props} />;
 }
-export function StatusPill({ status, suffix, compact = false, short = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; short?: boolean; className?: string }) {
+export function StatusPill({ status, suffix, compact = false, short = false, equal = false, className = '' }: { status: TxStatus; suffix?: string; compact?: boolean; short?: boolean; equal?: boolean; className?: string }) {
   const { label, tone } = statusMap[status];
   const shownLabel = short ? shortLabels[status] ?? label : compact && status === 'AUTHORIZED' ? "Payment approved — not charged yet" : label;
-  return <span title={compact || short ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span></span>;
+  const fullLabel = `${label}${suffix ? ` · ${suffix}` : ''}`;
+  return <span title={equal ? fullLabel : compact || short ? label : undefined} data-mobile-tone={mobileTone[tone]} className={`${equal ? 'desktop-status-equal ' : ''}mobile-status inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${className}`} style={toneStyle(tone)}><span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full bg-current ${tone === 'disputed' || tone === 'awaiting' ? 'hv-dot' : ''}`}/><span aria-hidden={equal || undefined} className="min-w-0 break-words">{shownLabel}{suffix ? ` · ${suffix}` : ''}</span>{equal && <span className="sr-only">{fullLabel}</span>}</span>;
 }
 export function AmountCard({ amount, label = "Payment approved — not charged yet", stats, onAction, actionHref, actionLabel = 'New deal' }: { amount: string; label?: string; stats: { label: string; value: string }[]; onAction?: () => void; actionHref?: string; actionLabel?: string }) {
   return (
