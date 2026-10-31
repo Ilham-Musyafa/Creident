@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — P1: Equal-width desktop table status pills
+- Started `ui/status-pill-width` from origin/main `b2760a9` (PR #124). Added an opt-in `equal` StatusPill variant only to desktop Transactions and Home tables. Desktop-only CSS centers dot + label at 160px; default/mobile styles, labels, tones and colours stay unchanged. Future long labels ellipsize visually while the full status remains in the title and screen-reader text.
+- Measured all 15 short labels with loaded DM Sans 12px/700: longest was "Waiting for payment" at 120.002px, plus 6px dot, 6px gap and 20px padding = 152.002px; chose 160px for breathing room.
+- Typecheck, 558 tests / 53 files and build passed. Seeded demo deals through Settings; Chromium Seller Home/Transactions at 390/1280/1920px, light/dark: all visible desktop pills exactly 160px, no current labels truncated, no console issues/overflow. Built-in seed shows 11 distinct labels; all 15 short labels were additionally checked in a temporary browser sizing probe, including future-label ellipsis. Mobile visible pills retain their individual content widths. Screenshots: `docs/ui/screens/status-pill-width/`. No data/API/logic or dependency changes.
+
+
 ### 2026-10-31 — B1: Desktop Buyer join hint
 - Started `ui/buyer-hint` from origin/main `d25ebc1` after PR #123. Added the exact muted line "Open the link your seller shared to join a deal." below the desktop Buyer greeting only. Seller and Reviewer markup is unchanged; mobile was left unchanged to preserve its summary layout. No buttons, routes, dependencies or data/logic changes.
 - Typecheck, 558 tests / 53 files and build passed. Production Chromium at 1280/1920px, light/dark, all three roles (12 views): hint shown only to Buyer, one line (20px) at both widths, four status tiles aligned, no overflow or console errors/warnings. Screenshot: `docs/ui/screens/buyer-hint/buyer-1280-light.png`.

@@ -21,7 +21,7 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
       <td className="py-3 pr-3"><span className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span>
         <Link href={row.href} className="font-semibold text-heading after:absolute after:inset-0 after:content-['']">{row.title}</Link></span></td>
       <td className="py-3 pr-3 text-muted">{resolveDealCategory(row.category, row.subcategory).category.label}</td>
-      <td className="py-3 pr-3"><StatusPill status={row.status} short/></td>
+      <td className="py-3 pr-3"><StatusPill status={row.status} short equal/></td>
       <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="block text-xs text-muted">{row.deadlineLabel}</span>}</td>
       <td className="py-3 text-right font-semibold tabular-nums text-heading">{row.amount}</td>
     </tr>)}</tbody>
