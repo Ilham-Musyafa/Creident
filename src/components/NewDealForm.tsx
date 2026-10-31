@@ -6,6 +6,7 @@ import { Card, Notice } from './layoutPrimitives';
 import { TermsListEditor } from './TermsListEditor';
 import { callApi, ErrorNote } from './client';
 import { TermsAssistant } from './TermsAssistant';
+import { alphabeticalOptions } from './categoryOptions';
 import { DEAL_CATEGORIES, categoryChecklist, categoryTerms } from '../lib/dealCategories';
 import { CONDITION_OPTIONS, categorySummary, conditionFromDraft, priceHelper } from './newDealPresentation';
 
@@ -74,13 +75,13 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
         <div><Label htmlFor="condition">Condition</Label><select id="condition" required className={fieldClass} value={form.condition} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }}><option value="" disabled>Choose a condition</option>{CONDITION_OPTIONS.map(option => <option key={option} value={option}>{option}</option>)}</select>{draftConditionText && <p className="mt-2 break-words text-sm text-muted">The AI draft said: {draftConditionText}</p>}</div>
       </div>
       <div><Label htmlFor="category">Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
-        <option value="" disabled>Choose a category</option>{DEAL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+        <option value="" disabled>Choose a category</option>{alphabeticalOptions(DEAL_CATEGORIES).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
       </select>{selectedCategory?.hint && <p className="mt-2 text-sm text-muted">{selectedCategory.hint}</p>}</div>
       {Boolean(selectedCategory?.subcategories.length) && <div><Label htmlFor="subcategory" hint="optional">Subcategory</Label><select id="subcategory" className={fieldClass} value={form.subcategory} onChange={e => {
         const subcategory = e.target.value;
         setForm(current => { const result = categoryChecklist(current.category, subcategory, current.criteria); return { ...current, subcategory, criteria: result.criteria }; });
         setChecklistAdded(categoryChecklist(form.category, subcategory, form.criteria).added);
-      }}><option value="">Choose a subcategory</option>{selectedCategory!.subcategories.map(sub => <option key={sub.id} value={sub.id}>{sub.label}</option>)}</select>
+      }}><option value="">Choose a subcategory</option>{alphabeticalOptions(selectedCategory!.subcategories).map(sub => <option key={sub.id} value={sub.id}>{sub.label}</option>)}</select>
       {checklistAdded && <p role="status" className="mt-2 text-sm text-muted">Checklist added. You can edit it.</p>}</div>}
       <div><Label htmlFor="description">Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} value={form.description} onChange={set('description')}/></div>
       </fieldset>
