@@ -366,3 +366,15 @@ Still open:
 
 Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) are in
 `docs/archive/HANDOFF-log-until-2026-10-30.md`. Read them only when a task needs that history.
+
+
+### 2026-10-31 — UI audit fixes and calm polish (ui/audit-polish)
+
+- Completed the three requested UI phases. Started at `da61f89` with owner approval; merged documentation-only main `032aeac` via `26909b8` after #136 landed. README and prior HANDOFF entries were preserved; this entry is appended as requested.
+- Phase 1 (`9e91d76`): neutral review-desk snapshot wording, readable recommendation label, display-only deadline names, Settings shortcut-list removal. Share-card visibility was already correct in #137; regression tests cover seller/status gates and created=1 without changing behavior.
+- Phase 2 (`010773c`): header Demo pills, full-width checkout, item title once, one review Technical details with original/translation hashes, compact Fairness notice and mobile deal rows with visible demo labels.
+- Phase 3: Transactions pins actions by nearest deadline, then groups other rows by latest recorded step into Today / This week / Earlier (UTC, Monday week). Home stays ungrouped: actions, active, closed/cancelled; newest within each. Existing filters apply first; no duplicates or new Drafts behavior.
+- Added status icons/full accessible labels, neutral CSS-animated Home counts, role-specific round shortcuts, responsive deal hero/progress/action aside, four required condition radio chips, USD prefix and required markers. Hero/sticky links target the single existing action form; the mobile dock and action requests are unchanged. Reduced motion is respected.
+- Verification: typecheck passed; 662 tests / 66 files passed; production build passed. Playwright: 180 page/role/width/theme views (390/1280/2560, Buyer/Seller/Reviewer, light/dark), no console warnings/errors or horizontal overflow in the completed run. Filter/query state, duplicate prevention, 160px desktop pills, one action UI, dock spacing, Join dialog, replay draft, real condition/category creation, real evidence translation and reduced motion checked.
+- Evidence and before/after table: `docs/ui/screens/audit-polish/REPORT.md`. Baselines cover representative light views at 390/1280; after screenshots cover the full matrix. Testing used an isolated local database with simulated PayPal/replay AI, not the Render seed or real payments. No domain/API/schema/rules/payment/AI/deadline/hash code or dependency changed; no deployment.
+- Three phase commits plus the owner-requested main merge. Push/PR outcome is recorded in the final task report; the owner merges. No additional owner decision required. Short join codes remain outside this task.

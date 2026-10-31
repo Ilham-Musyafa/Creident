@@ -2,7 +2,7 @@ import { recentHomeActivity } from '../components/homeActivity';
 import { assistMode } from '../lib/ai/assist';
 import { isPublicDemo } from '../lib/publicDemo';
 import { DesktopHome } from '../components/DesktopHome';
-import { matchesTransactionFilter, sortTransactionRows, sortHomeRows, transactionRow } from '../components/transactionsView';
+import { matchesTransactionFilter, sortTransactionRows, sortHomeRows, sortActionRows, transactionRow } from '../components/transactionsView';
 import { MobileHome } from '../components/MobileHome';
 import { verifyChain } from '../lib/audit/chain';
 import { AppShell } from '../components/layout';
@@ -26,9 +26,9 @@ export default async function HomePage() {
   const chains = deals.map((d) => verifyChain(ctx.repo.readEvents(d.id)));
   const verified = chains.filter((c) => c.ok).length;
 
-  const rows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? [], ctx.repo.readEvents(tx.id).find(event => event.type === 'TRANSACTION_CREATED')?.ts ?? null));
+  const rows = deals.map(tx => transactionRow(tx, role, now, accepted.get(tx.id) ?? [], ctx.repo.readEvents(tx.id).find(event => event.type === 'TRANSACTION_CREATED')?.ts ?? null, ctx.repo.readEvents(tx.id).at(-1)?.ts ?? null));
   const actionCount = rows.filter(row => row.needsAction).length;
-  const actions = sortTransactionRows(rows.filter(row => row.needsAction)).slice(0, 6);
+  const actions = sortActionRows(rows.filter(row => row.needsAction)).slice(0, 6);
   const recent = sortHomeRows(role === 'reviewer' && reviewQueue.length ? shown.map(tx => rows.find(row => row.id === tx.id)!) : rows).slice(0, 5);
   // Demo party IDs match the seed/create flow; reviewers use their actual review queue.
   const mobileDealIds = new Set(deals.filter(tx => role === 'reviewer'

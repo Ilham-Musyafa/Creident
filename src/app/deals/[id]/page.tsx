@@ -66,18 +66,33 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
       {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst inline storageKey={`${id}:${tx.status}`} label={label} confetti={celebrates(tx.status)}/> : null; })()}
       <PageHeader title={displayItemName(tx.item)} subtitle={subtitle} back="/deals"/>
       <div className="mb-4"><CategoryChip category={JSON.parse(tx.termsJson).category} subcategory={JSON.parse(tx.termsJson).subcategory} full/></div>
-      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="min-w-0 space-y-4">
+      <div className="deal-story-layout grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="deal-story-main min-w-0 space-y-4">
           <Card className="deal-summary space-y-2">
             <p className="font-display text-[32px] font-extrabold tracking-tight text-heading tabular-nums">{money(tx.amount, tx.currency)}</p>
             <div className="flex flex-wrap items-center gap-1"><StatusPill status={tx.status}/>{tx.status === 'FROZEN_EXTERNAL' && <PayPalHoldInfo/>}</div>
             {view.deadlineLabel && <p className="flex flex-wrap items-center gap-2 text-sm text-muted"><DueSoon urgency={view.urgency} label={view.deadlineLabel}/>Time left: {view.deadlineLabel}</p>}
             {(simulated || view.demo || simulatedPayPal()) && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
+            <div className="deal-hero-actions flex justify-center gap-5 py-3 lg:hidden">
+              {action !== 'none' && <a href="#next-step" className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true">+</span><span>{view.nextStep}</span></a>}
+              <a href={`/audit/${id}`} className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5"><path d="M5 3h10l4 4v14H5V3Zm3 8h8m-8 4h6"/></svg></span><span>Deal history</span></a>
+            </div>
             <TechnicalDetails><KeyValue items={[
               { label: 'Deal ID', value: <span className="break-all font-mono">{id}</span> },
               { label: 'Terms fingerprint', value: <span className="break-all font-mono">{tx.termsHash ?? 'Not recorded'}</span> },
             ]}/></TechnicalDetails>
           </Card>
+          {role === 'seller' && (tx.status === 'DRAFT' || tx.status === 'TERMS_LOCKED' || tx.status === 'AWAITING_APPROVAL') && <Card className="deal-share space-y-3">
+            <h2 className="text-lg text-heading">Share with the buyer</h2>
+            <Notice>Share this deal link with the buyer. You can copy it again here until the buyer approves the payment.</Notice>
+            <CopyLinkButton path={`/deals/${id}/checkout`}/>
+          </Card>}
+          {decision && <DealDecisionSummary tx={tx} decision={decision} recommendation={recommendation} events={allEvents}/>}
+          <Card><h2 className="mb-4 text-lg text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)} showCurrentLabel responsive/></Card>
+          <ActivityFeed txId={id} items={activityFeed(allEvents)} now={now}/>
+        </div>
+
+        <DealSecondary>
           <section id="next-step" aria-labelledby="next-step-title" data-next-action={action} className="deal-card scroll-mt-6 space-y-3">
             <h2 id="next-step-title" className="text-lg text-heading">Your next step</h2>
           {action === 'accept-terms' && (role === 'buyer'
@@ -110,19 +125,9 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
             {captureFailed && <Notice tone="warning">PayPal couldn't charge the approved payment. The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.<TechnicalDetails><p>PayPal code: {String(lastEvent!.payload.code ?? 'error')}</p>{lastEvent!.payload.issue ? <p>PayPal issue: {String(lastEvent!.payload.issue)}</p> : null}</TechnicalDetails></Notice>}
             <PartialRefundNotice tx={tx} events={allEvents}/>
           </section>
-          {role === 'seller' && (tx.status === 'DRAFT' || tx.status === 'TERMS_LOCKED' || tx.status === 'AWAITING_APPROVAL') && <Card className="deal-share space-y-3">
-            <h2 className="text-lg text-heading">Share with the buyer</h2>
-            <Notice>Share this deal link with the buyer. You can copy it again here until the buyer approves the payment.</Notice>
-            <CopyLinkButton path={`/deals/${id}/checkout`}/>
-          </Card>}
-          {decision && <DealDecisionSummary tx={tx} decision={decision} recommendation={recommendation} events={allEvents}/>}
-          <Card><h2 className="mb-4 text-lg text-heading">Progress</h2><Timeline steps={timelineFor(tx.status, tx.frozenFrom)} showCurrentLabel/></Card>
-          <ActivityFeed txId={id} items={activityFeed(allEvents)} now={now}/>
-        </div>
-
-        <DealSecondary>
+          <div className="deal-supporting space-y-4">
           <DealDisclosure title="Locked terms">
-          <KeyValue items={[
+          <KeyValue icons items={[
             ...(typeof terms.category === 'string' && TERMS_TEMPLATES.some((t) => t.id === terms.category) ? [{ label: 'Item type', value: TERMS_TEMPLATES.find((t) => t.id === terms.category)!.label }] : []),
             { label: 'Condition', value: String(terms.condition ?? '—') },
             ...(Array.isArray(terms.includedItems) ? [{ label: 'Included items', value: terms.includedItems.filter((item): item is string => typeof item === 'string').join(', ') }] : []),
@@ -147,8 +152,10 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
             <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Deal history</ButtonLink>
             <p className="text-center text-sm text-muted">Every step is saved in the deal history. Open it to read and check each step.</p>
           </Card>
+          </div>
         </DealSecondary>
       </div>
+      {action !== 'none' && <a href="#next-step" className="deal-sticky-action lg:hidden">{view.nextStep}</a>}
       </div>
     </AppShell>
   );

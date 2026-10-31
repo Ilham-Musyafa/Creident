@@ -1,3 +1,4 @@
+import { CalmNumber } from './CalmNumber';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 export type HomeStatusTile = { label: string; count: number; href: string; detail: string };
@@ -16,7 +17,7 @@ export function HomeStatusRow({ tiles }: { tiles: HomeStatusTile[] }) {
     const look = TILE[tile.label];
     return <Link key={tile.label} href={tile.href} title={tile.detail} className="hv-press flex min-h-28 min-w-0 flex-col rounded-2xl border border-line bg-surface p-4 text-heading hover:bg-surface-2">
       <span className="flex items-start justify-between gap-2">
-        <span className="text-3xl font-bold tabular-nums">{tile.count}</span>
+        <span className="text-3xl font-bold tabular-nums"><CalmNumber value={tile.count}/></span>
         {look && <span aria-hidden="true" className={`grid size-8 shrink-0 place-items-center rounded-full ${look.tone}`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">{look.icon}</svg></span>}
       </span>
       <span className="mt-auto whitespace-nowrap pt-2 text-sm font-semibold">{tile.label}</span>

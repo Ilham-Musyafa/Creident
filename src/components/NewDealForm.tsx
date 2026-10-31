@@ -13,8 +13,8 @@ import { CONDITION_OPTIONS, categorySummary, conditionFromDraft, priceHelper } f
 import { descriptionForDraft } from '../lib/ai/termsFields';
 
 const fieldClass = 'min-h-11 w-full rounded-[14px] border border-line bg-surface px-4 text-sm text-text placeholder:text-muted';
-function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNode; hint?: string }) {
-  return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
+function Label({ htmlFor, children, hint, required = false }: { htmlFor: string; children: ReactNode; hint?: string; required?: boolean }) {
+  return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{required && <><span aria-hidden="true"> *</span><span className="sr-only"> required</span></>}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
 export function NewDealForm({ time, simulated }: { simulated: boolean; time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
@@ -69,12 +69,21 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
-      <div><Label htmlFor="item">Item name</Label><input id="item" required maxLength={200} className={fieldClass} value={form.item} onChange={set('item')}/></div>
+      <div><Label htmlFor="item" required>Item name</Label><input id="item" required maxLength={200} className={fieldClass} value={form.item} onChange={set('item')}/></div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div><Label htmlFor="amount">Price (USD)</Label><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={fieldClass} value={form.amount} onChange={set('amount')}/><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
-        <div><Label htmlFor="condition">Condition</Label><select id="condition" required className={fieldClass} value={form.condition} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }}><option value="" disabled>Choose a condition</option>{CONDITION_OPTIONS.map(option => <option key={option} value={option}>{option}</option>)}</select>{draftConditionText && <p className="mt-2 break-words text-sm text-muted">The AI draft said: {draftConditionText}</p>}</div>
+        <div className="sm:col-span-2"><Label htmlFor="amount" required>Price (USD)</Label><div className="relative"><span aria-hidden="true" className="pointer-events-none absolute left-4 top-3 text-sm font-medium text-muted">USD $</span><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={`${fieldClass} pl-20!`} value={form.amount} onChange={set('amount')}/></div><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
+        <fieldset className="min-w-0 sm:col-span-2">
+          <legend className="mb-2 text-sm font-medium text-muted">Condition<span aria-hidden="true"> *</span><span className="sr-only"> required</span></legend>
+          <div className="grid grid-cols-2 items-stretch gap-2 lg:grid-cols-4">
+            {CONDITION_OPTIONS.map((option, index) => <label key={option} className="condition-choice relative block min-w-0 cursor-pointer">
+              <input id={`condition-${index}`} type="radio" name="condition" aria-label={option} required value={option} checked={form.condition === option} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }} className="peer sr-only"/>
+              <span className="flex h-full min-h-14 items-center justify-center rounded-2xl border border-line bg-surface px-3 py-3 text-center text-sm font-medium text-heading peer-checked:border-accent peer-checked:bg-surface-2 peer-focus-visible:outline-2 peer-focus-visible:outline-accent">{option}</span>
+            </label>)}
+          </div>
+          {draftConditionText && <p className="mt-2 break-words text-sm text-muted">The AI draft said: {draftConditionText}</p>}
+        </fieldset>
       </div>
-      <div><Label htmlFor="category">Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
+      <div><Label htmlFor="category" required>Category</Label><select id="category" required className={fieldClass} value={form.category} onChange={e => { setForm(current => ({ ...current, category: e.target.value, subcategory: '' })); setChecklistAdded(false); }}>
         <option value="" disabled>Choose a category</option>{alphabeticalOptions(DEAL_CATEGORIES).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
       </select>{selectedCategory?.hint && <p className="mt-2 text-sm text-muted">{selectedCategory.hint}</p>}</div>
       {Boolean(selectedCategory?.subcategories.length) && <div><Label htmlFor="subcategory" hint="optional">Subcategory</Label><select id="subcategory" className={fieldClass} value={form.subcategory} onChange={e => {
@@ -83,7 +92,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
         setChecklistAdded(categoryChecklist(form.category, subcategory, form.criteria).added);
       }}><option value="">Choose a subcategory</option>{alphabeticalOptions(selectedCategory!.subcategories).map(sub => <option key={sub.id} value={sub.id}>{sub.label}</option>)}</select>
       {checklistAdded && <p role="status" className="mt-2 text-sm text-muted">Checklist added. You can edit it.</p>}</div>}
-      <div><Label htmlFor="description">Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} value={form.description} onChange={set('description')}/></div>
+      <div><Label htmlFor="description" required>Description</Label><textarea id="description" required maxLength={1000} rows={3} className={`${fieldClass} py-3`} value={form.description} onChange={set('description')}/></div>
       </fieldset>
       <fieldset className="min-w-0 space-y-3 border-t border-line pt-5">
         <legend className="pr-2 text-base font-bold text-heading">What’s included</legend>

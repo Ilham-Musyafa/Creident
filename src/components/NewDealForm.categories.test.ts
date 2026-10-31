@@ -12,9 +12,12 @@ describe('New-deal category form contract', () => {
     expect(html).toContain('Choose a category'); expect(html).toContain('Item name');
     expect(html).not.toContain('id="subcategory"'); expect(html).not.toContain('Item type');
     expect(html).toContain('inputMode="decimal"'); expect(html).toContain('pattern="\\d{1,6}(\\.\\d{1,2})?"');
-    expect(html).toMatch(/<select id="condition" required=""/);
+    const choices = (html.match(/<input\b[^>]*>/g) ?? []).filter(tag => tag.includes('type="radio"'));
+    expect(choices).toHaveLength(4);
+    for (const choice of choices) { expect(choice).toContain('name="condition"'); expect(choice).toContain('required=""'); }
     expect(html).not.toContain('<input id="condition"');
-    expect(html).toContain('Choose a condition');
+    for (const label of ['New', 'Used - Like New', 'Used - Good', 'Used - Good Enough']) expect(html).toContain(`value="${label}"`);
+    expect(html).toContain('USD $');
     expect(html).toContain('Test price in USD. No real money moves.');
     expect(html).toContain('Not specified');
     expect(html).toContain('Not chosen');
