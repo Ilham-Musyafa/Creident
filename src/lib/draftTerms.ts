@@ -19,7 +19,7 @@ export function changedDraftFields(before: Pick<StoredTx, 'item' | 'amount' | 't
   const oldTerms = JSON.parse(before.termsJson), newTerms = JSON.parse(after.termsJson);
   const known = ['condition', 'category', 'subcategory', 'description', 'includedItems', 'criteria'];
   for (const key of new Set([...Object.keys(oldTerms), ...Object.keys(newTerms)])) {
-    if (canonicalJson(oldTerms[key] ?? null) !== canonicalJson(newTerms[key] ?? null)) fields.push(known.includes(key) ? `terms.${key}` : 'terms.other');
+    if (Object.hasOwn(oldTerms, key) !== Object.hasOwn(newTerms, key) || canonicalJson(oldTerms[key] ?? null) !== canonicalJson(newTerms[key] ?? null)) fields.push(known.includes(key) ? `terms.${key}` : 'terms.other');
   }
   return [...new Set(fields)].sort();
 }

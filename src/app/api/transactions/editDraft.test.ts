@@ -20,7 +20,7 @@ const params = (id: string) => ({ params: Promise.resolve({ id }) });
 function request(body: unknown, role = 'seller', method = 'PATCH') { return new Request('http://localhost/api/transactions/edit', { method, headers: { 'x-demo-role': role, 'content-type': 'application/json' }, body: JSON.stringify(body) }); }
 async function draft() { const res = await create(request(input, 'seller', 'POST')); expect(res.status).toBe(201); return (await res.json()).transaction as StoredTx; }
 async function save(tx: StoredTx, change: Record<string, unknown> = {}, role = 'seller') { return edit(request({ ...input, amount: '70.00', revision: draftRevision(tx), ...change }, role), params(tx.id)); }
-beforeEach(() => { db = openDatabase(':memory:'); seedDemoUsers(db); repo = new TransactionRepository(db); setApiContextForTests({ db, repo, now: () => now, time: getTimeConfig({}) }); });
+beforeEach(() => { db = openDatabase(':memory:'); seedDemoUsers(db); repo = new TransactionRepository(db); setApiContextForTests({ db, repo, now: () => now, time: getTimeConfig({ NODE_ENV: 'test' }) }); });
 afterEach(() => { setApiContextForTests(null); db.close(); });
 
 describe('Draft edit server boundary', () => {

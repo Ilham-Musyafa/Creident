@@ -1,3 +1,4 @@
+import { draftRevision } from '../../../../lib/draftTerms';
 import { displayItemName } from '../../../../components/displayItemName';
 import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { TermsChecklist } from '../../../../components/TermsChecklist';
@@ -56,7 +57,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
 
         {role !== 'buyer' ? <Notice>Only the buyer pays. Switch to Buyer in Settings.</Notice>
           : tx.status === 'DRAFT' && accepted.includes('buyer') ? <Notice>You accepted the terms. Waiting for the seller to accept.</Notice>
-          : tx.status === 'DRAFT' ? <ActionButton path={`/api/transactions/${id}/accept`} role="buyer" label="Accept terms & continue" fullWidth/>
+          : tx.status === 'DRAFT' ? <ActionButton path={`/api/transactions/${id}/accept`} role="buyer" body={{ revision: draftRevision(tx) }} label="Accept terms & continue" fullWidth/>
           : tx.status === 'TERMS_LOCKED' ? <><PayButton txId={id} simulated={simulated} amount={money(tx.amount, tx.currency)} item={displayItemName(tx.item)}/><p className="text-center text-sm text-muted">You will approve the payment on PayPal and come back here.</p></>
           : <Notice>Payment is already past this step. Open the deal to see its status.</Notice>}
       </div>

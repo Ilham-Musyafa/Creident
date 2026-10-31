@@ -14,7 +14,7 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
   return (
     <AppShell active="Deals" mobileFullBleed>
       <div className="hidden lg:block"><PageHeader title="Transactions" subtitle={`Viewing as demo ${role} · Open a row for its next step or details.`}/></div>
-      <TransactionsBrowser now={now} key={role} role={role} rows={rows} initialFilter={readTransactionFilter(params.filter)} initialQuery={transactionQuery(params.q)}/>
+      <TransactionsBrowser now={now} key={role} role={role} rows={rows} initialFilter={readTransactionFilter(params.filter, role)} initialQuery={transactionQuery(params.q)}/>
     </AppShell>
   );
 }
