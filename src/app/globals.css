@@ -451,3 +451,54 @@ button, a, input, textarea, select { outline-offset: 3px; }
 @media (width >= 1024px) {
   .evidence-page [data-ui="card"] { padding: 28px; }
 }
+
+/* Keep the recorded-answer caveat compact while retaining its complete disclosure. */
+.info-fairness > .fairness-recorded-note { padding: 16px 20px; line-height: 1.5; }
+.info-fairness .fairness-recorded-note .fairness-label-status { gap: 6px; margin-top: 8px; }
+.info-fairness > .fairness-recorded-note > details { margin-top: 8px; }
+
+/* Calm polish: presentation only, with the existing mobile dock left intact. */
+.mobile-round-action { display: flex; min-height: 76px; min-width: 0; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; border-radius: 16px; font-size: 14px; line-height: 1.4; color: var(--heading); }
+.mobile-round-icon { display: grid; width: 48px; height: 48px; flex-shrink: 0; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface-2); color: var(--heading); }
+.mobile-round-action:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.transaction-segments > button { min-width: max-content; }
+.condition-choice input:checked + span::after { content: '✓'; position: absolute; top: 3px; right: 7px; font-size: 12px; }
+.deal-progress-timeline .hv-step-current, .deal-progress-timeline .hv-step-done { animation: none; }
+@media (width < 1024px) {
+  .deal-story { padding-bottom: 76px; }
+  .deal-story-layout > .deal-story-main, .deal-story-layout > .deal-secondary { display: contents; }
+  .deal-story-main > * { order: 2; margin-block: 0; }
+  .deal-story-main > .deal-summary { order: 0; text-align: center; }
+  .deal-summary > .flex, .deal-summary > p.flex { justify-content: center; }
+  .deal-summary > .technical-details { text-align: left; }
+  .deal-secondary > #next-step { order: 1; }
+  .deal-secondary > .deal-supporting { order: 3; }
+  .deal-sticky-action { position: fixed; z-index: 21; left: 20px; right: 20px; bottom: calc(104px + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; background: var(--action-blue); color: var(--on-accent); font-size: 14px; font-weight: 600; box-shadow: 0 6px 20px color-mix(in srgb, var(--brand-navy) 18%, transparent); }
+  .deal-story #next-step { scroll-margin-block: 24px 180px; }
+}
+@media (width >= 1024px) {
+  .deal-story #next-step { background: var(--warning-bg); border-color: var(--warning-line); }
+  .deal-progress-timeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+  .deal-progress-timeline > li { min-width: 0; flex-direction: column; gap: 8px; }
+  .deal-progress-timeline > li > div:first-child { width: 100%; flex-direction: row; }
+  .deal-progress-timeline > li > div:first-child > span + span { width: 100%; height: 1px; margin-left: 8px; }
+  .deal-progress-timeline > li > div:last-child { padding-bottom: 0; }
+}
+@property --number-display { syntax: '<integer>'; initial-value: 0; inherits: false; }
+.calm-number { --number-display: var(--number-target); display: inline-block; min-width: 1ch; counter-reset: home-number var(--number-display); animation: calm-count .6s ease-out both; }
+.calm-number > .number-value { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.calm-number > .number-animation::after { content: counter(home-number); }
+@keyframes calm-count { from { --number-display: 0; } to { --number-display: var(--number-target); } }
+@media (prefers-reduced-motion: no-preference) {
+  main [data-ui="card"], .desktop-home-extras > section, .mobile-home section { animation: hv-in .22s ease-out backwards; }
+  .hv-page { animation-duration: .22s; }
+  .hv-stagger > * { animation-duration: .22s; animation-delay: 0s; }
+  .hv-press:active:not(:disabled), .mobile-deal-row:active, .mobile-round-action:active, .condition-choice:active, .transaction-segments > button:active { transform: scale(.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .calm-number { animation: none !important; --number-display: var(--number-target); }
+  .hv-press:active, .mobile-deal-row:active, .mobile-round-action:active, .condition-choice:active, .transaction-segments > button:active { transform: none !important; }
+}
+/* The page container only fades so it never becomes a containing block for sticky action links. */
+@keyframes calm-page-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { .hv-page { animation-name: calm-page-fade; } }

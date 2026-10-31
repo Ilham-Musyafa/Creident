@@ -1,4 +1,5 @@
 'use client';
+import { TransactionFilters } from './TransactionFilters';
 
 import { MobilePanel } from './MobilePanel';
 
@@ -6,11 +7,11 @@ import { useEffect, useState } from 'react';
 import { MobileBrandHeader } from './MobileBrandHeader';
 import { MobileTransactionRow } from './MobileTransactionRow';
 import { SeedButton } from './client';
-import { TRANSACTION_FILTERS, matchesTransactionFilter, type TransactionRow, type TransactionFilter } from './transactionsView';
+import { TRANSACTION_FILTERS, matchesTransactionFilter, groupTransactionRows, type TransactionRow, type TransactionFilter } from './transactionsView';
 import type { Role } from './view';
 
-export function MobileTransactions({ role, rows, searched, visible, query, filter, update }: {
-  role: Role; rows: TransactionRow[]; searched: TransactionRow[]; visible: TransactionRow[]; query: string;
+export function MobileTransactions({ role, rows, searched, visible, query, filter, update, now }: {
+  now: string; role: Role; rows: TransactionRow[]; searched: TransactionRow[]; visible: TransactionRow[]; query: string;
   filter: TransactionFilter; update: (filter: TransactionFilter, query: string) => void;
 }) {
   const [searchOpen, setSearchOpen] = useState(Boolean(query));
@@ -19,11 +20,7 @@ export function MobileTransactions({ role, rows, searched, visible, query, filte
     setSearchOpen(!searchOpen);
     if (!searchOpen) requestAnimationFrame(() => document.getElementById('mobile-transaction-search')?.focus({ preventScroll: true }));
   };
-  const groups = [
-    { title: 'Needs your action', rows: visible.filter(row => row.needsAction) },
-    { title: 'In progress', rows: visible.filter(row => !row.needsAction && row.active) },
-    { title: 'Closed', rows: visible.filter(row => !row.needsAction && !row.active) },
-  ];
+  const groups = groupTransactionRows(visible, now);
   const count = (key: TransactionFilter) => searched.filter(row => matchesTransactionFilter(row, key)).length;
   const actionCount = count('action');
   return <div className="lg:hidden">
@@ -34,12 +31,7 @@ export function MobileTransactions({ role, rows, searched, visible, query, filte
       <label htmlFor="mobile-transaction-search" className="sr-only">Find a deal</label>
       <div className="relative"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="absolute left-4 top-3.5 size-5 text-muted"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg><input id="mobile-transaction-search" type="search" maxLength={200} value={query} onChange={event => update(filter, event.target.value)} placeholder="Search transactions" className="min-h-12 w-full rounded-full border border-line bg-bg pl-11 pr-4 text-sm! text-text placeholder:text-muted"/></div>
       </div>
-      <div className={`relative ${searchOpen ? 'mt-3' : ''}`}>
-        <label htmlFor="mobile-transaction-view" className="sr-only">Transaction view</label>
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="pointer-events-none absolute left-4 top-3.5 size-5 text-[var(--inspection-text)]"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        <select id="mobile-transaction-view" value={filter} onChange={event => update(event.target.value as TransactionFilter, query)} className="min-h-12 w-full appearance-none rounded-full border border-line bg-bg pl-12 pr-10 text-sm! font-medium text-heading">{(Object.keys(TRANSACTION_FILTERS) as TransactionFilter[]).map(key => <option key={key} value={key}>{TRANSACTION_FILTERS[key]} ({count(key)})</option>)}</select>
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute right-4 top-4 size-4 text-muted"><path d="m6 9 6 6 6-6"/></svg>
-      </div>
+      <TransactionFilters selected={filter} count={count} onChange={key => update(key, query)}/>
 
       <section aria-label="Transaction summary" className="mt-3 rounded-[18px] border border-line bg-bg px-4 py-3">
         <p className="flex items-baseline justify-between gap-3 text-sm text-heading"><span>{filter === 'all' ? 'All transactions' : TRANSACTION_FILTERS[filter]}</span><strong className="shrink-0 tabular-nums">{visible.length} deals</strong></p>

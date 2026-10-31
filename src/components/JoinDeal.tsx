@@ -1,11 +1,11 @@
 'use client';
 
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { parseDealRef } from '../lib/parseDealRef';
 import { Button } from './ui';
 
-export function JoinDeal({ className = '' }: { className?: string }) {
+export function JoinDeal({ className = '', icon }: { className?: string; icon?: ReactNode }) {
   const router = useRouter();
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -24,7 +24,7 @@ export function JoinDeal({ className = '' }: { className?: string }) {
 
   return <>
     <button ref={trigger} type="button" aria-haspopup="dialog" aria-controls={id} className={className}
-      onClick={() => { setValue(''); setError(false); dialog.current?.showModal(); input.current?.focus(); }}>Join a deal</button>
+      onClick={() => { setValue(''); setError(false); dialog.current?.showModal(); input.current?.focus(); }}>{icon}<span>Join a deal</span></button>
     <dialog ref={dialog} id={id} aria-labelledby={`${id}-title`} onClose={() => trigger.current?.focus()}
       className="fixed m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] max-w-md overflow-y-auto rounded-[24px] border border-line bg-surface p-5 text-text shadow-xl backdrop:bg-black/45">
       <h2 id={`${id}-title`} className="text-xl font-bold text-heading">Join a deal</h2>

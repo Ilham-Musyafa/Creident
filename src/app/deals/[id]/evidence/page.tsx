@@ -37,8 +37,8 @@ export default async function EvidencePage({ params }: { params: Promise<{ id: s
 
   return <AppShell active="Deals">
     <div className="evidence-page">
-      <PageHeader title="Add evidence" back={`/deals/${id}`} subtitle={displayItemName(tx.item)} right={<div className="flex flex-wrap items-center gap-2"><StatusPill status={tx.status} suffix={open ? left! : undefined}/><DueSoon urgency={urgency} label={left}/></div>}/>
-      {/^\[Demo\]/i.test(tx.item) && <p className="mb-3 text-xs font-semibold text-muted">Demo</p>}
+      <PageHeader title="Add evidence" back={`/deals/${id}`} subtitle={displayItemName(tx.item)} right={<div className="flex flex-wrap items-center gap-2">{/^\[Demo\]/i.test(tx.item) && <span className="inline-flex rounded-full border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-heading">Demo</span>}<StatusPill status={tx.status} suffix={open ? left! : undefined}/><DueSoon urgency={urgency} label={left}/></div>}/>
+
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]">
         <div className="min-w-0 space-y-6">
           <Card>

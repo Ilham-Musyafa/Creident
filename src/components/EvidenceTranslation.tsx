@@ -1,4 +1,5 @@
 'use client';
+import { useReviewTechnical } from './ReviewTechnical';
 import { TechnicalDetails } from './TechnicalDetails';
 import { useState } from 'react';
 import { Button } from './ui';
@@ -7,13 +8,14 @@ import { callApi } from './client';
 import type { TranslationResult } from '../lib/ai/translateStore';
 
 export function EvidenceTranslation({ txId, evidenceId, sourceHash }: { txId: string; evidenceId: string; sourceHash: string }) {
+  const reviewTechnical = useReviewTechnical();
   const [target, setTarget] = useState<'en' | 'id'>('id');
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [busy, setBusy] = useState(false); const [unavailable, setUnavailable] = useState(false);
   const controlId = `translation-target-${evidenceId}`;
   return <section aria-label="Evidence translation" className="mt-3 min-w-0 space-y-2 border-t border-line pt-3 [overflow-wrap:anywhere]">
     <p className="text-sm text-muted">The original above is what counts; this is a reading aid.</p>
-    <TechnicalDetails><p className="break-all font-mono text-sm">Original SHA-256: {sourceHash}</p></TechnicalDetails>
+    {!reviewTechnical && <TechnicalDetails><p className="break-all font-mono text-sm">Original SHA-256: {sourceHash}</p></TechnicalDetails>}
     <label htmlFor={controlId} className="block text-sm font-medium text-muted">Translate to</label>
     <div className="flex flex-wrap gap-2">
       <select id={controlId} value={target} disabled={busy} onChange={e => { setTarget(e.target.value as 'en' | 'id'); setResult(null); setUnavailable(false); }}
@@ -26,6 +28,7 @@ export function EvidenceTranslation({ txId, evidenceId, sourceHash }: { txId: st
           const response = await callApi<TranslationResult>(`/api/transactions/${txId}/ai/translate`, 'reviewer', { evidenceId, target });
           if (response.sourceHash !== sourceHash) { setUnavailable(true); return; }
           setResult(response); setUnavailable(!response.output);
+          reviewTechnical?.(evidenceId, { translationHash: response.translationHash });
         } catch { setUnavailable(true); } finally { setBusy(false); }
       }}>{busy ? 'Translating…' : 'Translate'}</Button>
     </div>
@@ -35,7 +38,7 @@ export function EvidenceTranslation({ txId, evidenceId, sourceHash }: { txId: st
       <h3 className="text-sm font-bold text-heading">AI translation – check the original</h3>
       <p className="text-sm text-muted">{result.meta.mode === 'replay' ? 'Recorded replay' : 'Live AI'}{result.cacheHit ? ' · cached' : ''} · detected {result.output.detectedLanguage} → {result.target}</p>
       <p lang={result.target} className="whitespace-pre-wrap text-sm">{result.output.translation}</p>
-      <TechnicalDetails><p className="break-all font-mono text-sm">Translation SHA-256: {result.translationHash}</p></TechnicalDetails>
+      {!reviewTechnical && <TechnicalDetails><p className="break-all font-mono text-sm">Translation SHA-256: {result.translationHash}</p></TechnicalDetails>}
       <p className="text-sm text-muted">Reading aid only. It is not used by the rules or the stored recommendation.</p>
     </div>}
   </section>;

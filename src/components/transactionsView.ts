@@ -10,7 +10,7 @@ export interface TransactionRow {
   category?: unknown; subcategory?: unknown;
   id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
-  href: string; deadline: number | null; deadlineLabel: string | null; urgency: Urgency | null; createdAt: string | null;
+  href: string; deadline: number | null; deadlineLabel: string | null; urgency: Urgency | null; createdAt: string | null; updatedAt?: string | null;
 }
 /** Short fixed-zone date for lists, e.g. "30 Oct 2026". */
 export function shortDate(value: string | null | undefined): string | null {
@@ -43,7 +43,7 @@ const WAITING: Record<TxStatus, string> = {
   FROZEN_EXTERNAL: 'Waiting for PayPal case update', COMPLETED: 'No action needed', REFUNDED: 'No action needed',
   PARTIALLY_REFUNDED: 'No action needed', VOIDED: 'No action needed', CANCELLED: 'No action needed',
 };
-export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: readonly string[] = [], createdAt: string | null = null): TransactionRow {
+export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: readonly string[] = [], createdAt: string | null = null, updatedAt: string | null = createdAt): TransactionRow {
   const metadata = terms(tx.termsJson);
   const demo = metadata.demo === true || /^\[Demo\]\s*/i.test(tx.item);
   const title = demo ? tx.item.replace(/^\[Demo\]\s*/i, '') || tx.item : tx.item;
@@ -60,7 +60,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
   return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
-    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, urgency: action !== 'none' ? deadlineUrgency(rawDeadline, now) : null, createdAt };
+    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, urgency: action !== 'none' ? deadlineUrgency(rawDeadline, now) : null, createdAt, updatedAt };
 }
 /** Newest deal first (by created time), so a deal made just now sits at the top; deals without a created time go last. */
 export function sortTransactionRows(rows: readonly TransactionRow[]): TransactionRow[] {
@@ -73,4 +73,37 @@ export function matchesTransactionFilter(row: TransactionRow, filter: Transactio
 export function searchTransactionRows(rows: readonly TransactionRow[], query: string): TransactionRow[] {
   const needle = transactionQuery(query).trim().toLowerCase();
   return rows.filter(row => row.title.toLowerCase().includes(needle));
+}
+
+/** Home has no date groups: role actions, then active deals, then closed deals. */
+export function sortHomeRows(rows: readonly TransactionRow[]): TransactionRow[] {
+  const priority = (row: TransactionRow) => row.needsAction ? 0 : row.active ? 1 : 2;
+  return [...rows].sort((a, b) => priority(a) - priority(b)
+    || (Date.parse(b.updatedAt ?? b.createdAt ?? '') || 0) - (Date.parse(a.updatedAt ?? a.createdAt ?? '') || 0)
+    || b.id.localeCompare(a.id));
+}
+
+
+export function sortActionRows(rows: readonly TransactionRow[]): TransactionRow[] {
+  return [...rows].sort((a, b) => (a.deadline ?? Infinity) - (b.deadline ?? Infinity)
+    || (Date.parse(b.updatedAt ?? b.createdAt ?? '') || 0) - (Date.parse(a.updatedAt ?? a.createdAt ?? '') || 0)
+    || b.id.localeCompare(a.id));
+}
+export interface TransactionGroup { key: 'action' | 'today' | 'week' | 'earlier'; title: string; rows: TransactionRow[] }
+/** UTC day/week boundaries match the existing list date formatter. Pinned actions never repeat below. */
+export function groupTransactionRows(rows: readonly TransactionRow[], now: string): TransactionGroup[] {
+  const date = new Date(now);
+  const day = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  const week = day - ((date.getUTCDay() + 6) % 7) * 86400000;
+  const groups: TransactionGroup[] = [
+    { key: 'action', title: 'Needs your action', rows: sortActionRows(rows.filter(r => r.needsAction)) },
+    { key: 'today', title: 'Today', rows: [] }, { key: 'week', title: 'This week', rows: [] }, { key: 'earlier', title: 'Earlier', rows: [] },
+  ];
+  for (const row of rows.filter(r => !r.needsAction)) {
+    const time = Date.parse(row.updatedAt ?? row.createdAt ?? '');
+    const group = time >= day && time < day + 86400000 ? groups[1]! : time >= week && time < day ? groups[2]! : groups[3]!;
+    group.rows.push(row);
+  }
+  for (const group of groups.slice(1)) group.rows.sort((a, b) => (Date.parse(b.updatedAt ?? b.createdAt ?? '') || 0) - (Date.parse(a.updatedAt ?? a.createdAt ?? '') || 0) || b.id.localeCompare(a.id));
+  return groups.filter(g => g.rows.length > 0);
 }

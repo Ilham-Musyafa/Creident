@@ -1,3 +1,4 @@
+import { CalmNumber } from './CalmNumber';
 import { JoinDeal } from './JoinDeal';
 import { demoName } from './presentationCopy';
 import Link from 'next/link';
@@ -44,16 +45,18 @@ export function MobileHome(props: HomeData) {
 
     <MobilePanel className="pt-3!">
       {props.verified < props.total && <p role="alert" className="mb-5 rounded-xl border border-[var(--warning-line)] bg-[var(--warning-bg)] p-4 text-sm text-[var(--warning-text)]">Some record checks failed. <Link href="/audit" className="inline-flex min-h-11 items-center font-semibold underline">Inspect deal history.</Link></p>}
-      <section aria-label="Overview" className="rounded-3xl bg-gradient-to-br from-[#0B1F4B] to-[#3B82F6] p-5 text-white shadow-lg">
-        <p className="text-sm font-medium text-[#DBEAFE]">Needs your action</p>
-        <Link href="/deals?filter=action" aria-label={`${props.actionCount} deals need your action`} className="mt-1 block text-5xl font-bold tabular-nums">{props.actionCount}</Link>
-        <p className="mt-2 text-sm text-[#DBEAFE]">{inProgress?.count ?? 0} in progress · {problem?.count ?? 0} problem · {closed?.count ?? 0} closed</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {props.role === 'seller' && <Link href="/deals/new" className={`${pill} bg-white text-[#0B1F4B]`}><span aria-hidden="true">+</span> New deal</Link>}
-          <Link href="/deals" className={`${pill} border border-white/40 text-white`}>Transactions</Link>
-          {props.role === 'buyer' && <JoinDeal className={`${pill} bg-white text-[#0B1F4B]`}/>}
-        </div>
+      <section aria-label="Overview" className="rounded-3xl border border-line bg-surface p-5 text-heading">
+        <p className="text-sm font-medium text-muted">Needs your action</p>
+        <Link href="/deals?filter=action" aria-label={`${props.actionCount} deals need your action`} className="mt-1 block text-5xl font-bold tabular-nums"><CalmNumber value={props.actionCount}/></Link>
+        <p className="mt-2 text-sm text-muted">{inProgress?.count ?? 0} in progress · {problem?.count ?? 0} problem · {closed?.count ?? 0} closed</p>
       </section>
+      <nav aria-label="Quick actions" className="my-5 grid grid-cols-3 gap-3 text-center">
+        {props.role === 'buyer' ? <JoinDeal className="mobile-round-action" icon={<span className="mobile-round-icon"><HomeIcon name="actions"/></span>}/>
+          : props.role === 'seller' ? <Link href="/deals/new" className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true">+</span><span>New deal</span></Link> : null}
+        <Link href="/deals" className="mobile-round-action"><span className="mobile-round-icon"><HomeIcon name="transactions"/></span><span>Transactions</span></Link>
+        {props.role === 'reviewer' && <Link href="/reviewer/oversight" className="mobile-round-action"><span className="mobile-round-icon"><HomeIcon name="actions"/></span><span>Review desk</span></Link>}
+        <Link href="/audit" className="mobile-round-action"><span className="mobile-round-icon"><HomeIcon name="records"/></span><span>Deal history</span></Link>
+      </nav>
 
       {props.total === 0 ? <>
         <section className="mt-4 rounded-[24px] border border-line bg-surface p-5"><h2 className="text-base text-heading">Explore your first transaction</h2><p className="mb-4 mt-2 text-sm leading-relaxed text-muted">Load labelled examples to try payments, delivery and dispute review.</p><SeedButton role={props.role}/></section>

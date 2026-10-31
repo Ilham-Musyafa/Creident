@@ -31,9 +31,9 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
 
   return (
     <AppShell active="Deals">
-      <PageHeader title="Review & pay" back={`/deals/${id}`}/>
-      {/^\[Demo\]/i.test(tx.item) && <p className="mb-3 text-xs font-semibold text-muted">Demo</p>}
-      <div className="mx-auto max-w-xl space-y-4">
+      <PageHeader title="Review & pay" back={`/deals/${id}`} right={<>{/^\[Demo\]/i.test(tx.item) && <span className="inline-flex rounded-full border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-heading">Demo</span>}</>}/>
+
+      <div className="w-full space-y-4">
         <Card>
           <div className="flex items-start justify-between gap-3">
             <div><p className="text-sm font-bold text-heading">{displayItemName(tx.item)}</p><p className="text-sm text-muted">Condition: {String(terms.condition ?? '—')}</p></div>

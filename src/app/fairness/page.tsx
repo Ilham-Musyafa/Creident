@@ -121,7 +121,7 @@ export default function FairnessPage() {
         </div>
 
         {/* One summary; the replay caveat stays visible, details open on demand. */}
-        <Notice className="info-notice" tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>
+        <Notice className="info-notice fairness-recorded-note" tone={replay || results.labelStatus === 'draft' ? 'warning' : 'info'}>
           <strong className="block">{replay ? 'Recorded answers, not a live AI model.' : 'Live-model results for these made-up cases only.'}</strong>
           <LabelStatus total={m.total} reviewed={results.labelsReviewed ?? 0} accepted={results.labelsAccepted ?? 0}/>
           {replay && <details className="mt-2"><summary className="flex min-h-11 cursor-pointer items-center font-semibold">What this means</summary>

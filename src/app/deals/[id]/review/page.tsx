@@ -1,6 +1,6 @@
 import { displayItemName } from '../../../../components/displayItemName';
 import { RuleLabel } from '../../../../components/RuleLabel';
-import { TechnicalDetails } from '../../../../components/TechnicalDetails';
+import { ReviewTechnical } from '../../../../components/ReviewTechnical';
 import { PAYMENT_ACTION_LABELS, AI_REVIEW_NOTE, evidenceLabel } from '../../../../components/presentationCopy';
 import { EvidenceTranslation } from '../../../../components/EvidenceTranslation';
 import { SuccessBurst } from '../../../../components/motion';
@@ -38,8 +38,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
   return (
     <AppShell active="Deals">
       {(() => { const label = recentSuccess(tx.status, ctx.repo.readEvents(id).at(-1)?.ts, ctx.now()); return label ? <SuccessBurst storageKey={`${id}:${tx.status}`} label={label} confetti={celebrates(tx.status)}/> : null; })()}
-      <PageHeader title="Problem review" back={`/deals/${id}`} subtitle={`${displayItemName(tx.item)} · ${money(tx.amount, tx.currency)} · Reviewer (a person who decides the problem)`} right={<StatusPill status={tx.status}/>}/>
-      {/^\[Demo\]/i.test(tx.item) && <p className="mb-3 text-xs font-semibold text-muted">Demo</p>}
+      <PageHeader title="Problem review" back={`/deals/${id}`} subtitle={`${displayItemName(tx.item)} · ${money(tx.amount, tx.currency)} · Reviewer (a person who decides the problem)`} right={<div className="flex flex-wrap items-center gap-2">{/^\[Demo\]/i.test(tx.item) && <span className="inline-flex rounded-full border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-heading">Demo</span>}<StatusPill status={tx.status}/></div>}/>
+
+      <ReviewTechnical evidence={evidence.map(e => ({ id: e.id, label: label.get(e.id)!, sourceHash: sha256(e.content) }))} recommendation={rec?.action ?? 'None'} references={rec?.aiSummary?.findings.map(f => f.evidenceIds.join(', ')) ?? []}>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0">
           <SectionTitle>AI evidence summary</SectionTitle>
@@ -68,9 +69,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             : <Card><ReviewDecision dealAmount={tx.amount} txId={id} pendingSplit={pendingSplit} returnByDefault={dtype?.id !== 'not_received'}/></Card>}
           <Notice>{AI_REVIEW_NOTE}</Notice>
           <p className="text-sm text-muted">Payment is charged only when PayPal confirms success. Seller payouts are not built in this demo.</p>
-          <TechnicalDetails><p>Recorded recommendation: {rec?.action ?? 'None'}</p>{rec?.aiSummary?.findings.map((finding, i) => <p key={i}>Evidence references: {finding.evidenceIds.join(', ')}</p>)}</TechnicalDetails>
         </aside>
       </div>
+      </ReviewTechnical>
     </AppShell>
   );
 }

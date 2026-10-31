@@ -1,3 +1,4 @@
+import { displayItemName } from '../displayItemName';
 'use client';
 
 // This is the only runtime import site for AG Studio. OversightClient loads it on demand.
@@ -60,7 +61,7 @@ function studioData(snapshot: OversightSnapshot): AgDataSourcesDefinition<Oversi
     ...(['status', 'type'] as const).map(id => ({ id, data: countDisputes(id), fields: [field('name', 'Dispute ' + id), field('count', 'Deals', true)] })),
     { id: 'escalation', data: [{ rate: snapshot.escalation.rate === null ? null : Math.round(snapshot.escalation.rate * 1000) / 10 }],
       fields: [{ id: 'rate', name: 'Percent escalated', format: 'decimalFormat' }] },
-    { id: 'deadlines', data: snapshot.deadlines.map(d => ({ item: d.item,
+    { id: 'deadlines', data: snapshot.deadlines.map(d => ({ item: displayItemName(d.item),
       deadline: `${d.kind}: ${timeLeft(d.remainingMinutes)}${d.frozen ? ' · on hold' : ''}`, due: shortDate(d.dueAt) })),
       fields: [field('item', 'Deal'), field('deadline', 'Deadline / time left'), field('due', 'Due (UTC)')] },
     { id: 'assists', data: snapshot.assists.map(a => ({ ...a,
