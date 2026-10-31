@@ -1,14 +1,15 @@
 // Presentation only: existing role actions and stored deadlines drive the list.
+import { canEditDraft } from '../lib/draftEligibility';
 import type { StoredTx } from '../lib/repository';
 import type { TxStatus } from '../lib/domain/types';
 import { deadlineUrgency, isActive, money, nextAction, timeLeft, type Role, type Urgency } from './view';
 
-export const TRANSACTION_FILTERS = { all: 'All', action: 'Needs your action', active: 'Active', review: 'Under review', closed: 'Closed' } as const;
+export const TRANSACTION_FILTERS = { all: 'All', draft: 'Drafts', action: 'Needs your action', active: 'Active', review: 'Under review', closed: 'Closed' } as const;
 export type TransactionFilter = keyof typeof TRANSACTION_FILTERS;
 export type ItemIconName = 'phone' | 'laptop' | 'camera' | 'audio' | 'console' | 'watch' | 'game' | 'lamp' | 'helmet' | 'keyboard' | 'drone' | 'stove' | 'package';
 export interface TransactionRow {
   category?: unknown; subcategory?: unknown;
-  id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
+  id: string; title: string; demo: boolean; editable?: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
   href: string; deadline: number | null; deadlineLabel: string | null; urgency: Urgency | null; createdAt: string | null; updatedAt?: string | null;
 }
@@ -18,7 +19,8 @@ export function shortDate(value: string | null | undefined): string | null {
   const time = Date.parse(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
   return Number.isFinite(time) ? new Date(time).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : null;
 }
-export function readTransactionFilter(value: unknown): TransactionFilter {
+export function readTransactionFilter(value: unknown, role?: Role): TransactionFilter {
+  if (value === 'draft' && role !== 'seller') return 'all';
   return typeof value === 'string' && Object.hasOwn(TRANSACTION_FILTERS, value) ? value as TransactionFilter : 'all';
 }
 export function transactionQuery(value: unknown): string { return typeof value === 'string' ? value.slice(0, 200) : ''; }
@@ -59,7 +61,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   else if (action === 'pay' || (action === 'accept-terms' && role === 'buyer')) href += '/checkout';
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
   return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
-    amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
+    editable: role === 'seller' && canEditDraft(tx.status, accepted), amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
     nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, urgency: action !== 'none' ? deadlineUrgency(rawDeadline, now) : null, createdAt, updatedAt };
 }
 /** Newest deal first (by created time), so a deal made just now sits at the top; deals without a created time go last. */
@@ -67,7 +69,8 @@ export function sortTransactionRows(rows: readonly TransactionRow[]): Transactio
   const created = (row: TransactionRow) => (row.createdAt ? Date.parse(row.createdAt) || 0 : 0);
   return [...rows].sort((a, b) => created(b) - created(a) || b.id.localeCompare(a.id));
 }
-export function matchesTransactionFilter(row: TransactionRow, filter: TransactionFilter): boolean {
+export function matchesTransactionFilter(row: TransactionRow, filter: TransactionFilter, role?: Role): boolean {
+  if (filter === 'draft') return role === 'seller' && row.status === 'DRAFT';
   return filter === 'action' ? row.needsAction : filter === 'active' ? row.active : filter === 'review' ? row.status === 'UNDER_REVIEW' : filter === 'closed' ? !row.active : true;
 }
 export function searchTransactionRows(rows: readonly TransactionRow[], query: string): TransactionRow[] {
@@ -106,4 +109,8 @@ export function groupTransactionRows(rows: readonly TransactionRow[], now: strin
   }
   for (const group of groups.slice(1)) group.rows.sort((a, b) => (Date.parse(b.updatedAt ?? b.createdAt ?? '') || 0) - (Date.parse(a.updatedAt ?? a.createdAt ?? '') || 0) || b.id.localeCompare(a.id));
   return groups.filter(g => g.rows.length > 0);
+}
+
+export function transactionFilterKeys(role: Role | undefined, draftCount: number): TransactionFilter[] {
+  return (Object.keys(TRANSACTION_FILTERS) as TransactionFilter[]).filter(key => key !== 'draft' || (role === 'seller' && draftCount > 0));
 }

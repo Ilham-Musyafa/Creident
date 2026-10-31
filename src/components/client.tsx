@@ -17,6 +17,9 @@ export class ApiError extends Error {
 }
 
 const FRIENDLY: Record<string, string> = {
+  BUYER_ACCEPTED: 'Terms are locked because the buyer accepted',
+  TERMS_LOCKED: 'Terms are locked once the buyer accepts',
+  TERMS_CHANGED: 'The terms changed. Refresh the page and check them again.',
   REVIEWER_CODE_REQUIRED: 'This demo needs the reviewer access code. Enter it in Settings.',
   SANDBOX_CONFIG_MISSING: 'Payments are not configured on this server. Ask the demo owner to check the setup, or explore the labelled demo deals.',
   ROLE_FORBIDDEN: 'This demo role cannot do that. Switch role in Settings.',

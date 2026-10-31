@@ -1,10 +1,11 @@
 'use client';
+import { emptyDealForm, type DealFormValues } from './draftForm';
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui';
 import { Card, Notice } from './layoutPrimitives';
 import { TermsListEditor } from './TermsListEditor';
-import { callApi, ErrorNote } from './client';
+import { ApiError, callApi, ErrorNote } from './client';
 import { TermsAssistant } from './TermsAssistant';
 import { alphabeticalOptions } from './categoryOptions';
 import { DEAL_CATEGORIES, categoryChecklist, categoryTerms } from '../lib/dealCategories';
@@ -17,12 +18,12 @@ function Label({ htmlFor, children, hint, required = false }: { htmlFor: string;
   return <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-muted">{children}{required && <><span aria-hidden="true"> *</span><span className="sr-only"> required</span></>}{hint && <span className="ml-1 font-normal">({hint})</span>}</label>;
 }
 
-export function NewDealForm({ time, simulated }: { simulated: boolean; time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
+export function NewDealForm({ time, simulated, draft }: { draft?: { id: string; revision: string; values: DealFormValues; terms: Record<string, unknown> }; simulated: boolean; time: { shipByDays: number; inspectionDays: number; evidenceDays: number } }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [receipt, setReceipt] = useState<string | null>(null);
-  const [form, setForm] = useState({ item: '', amount: '', condition: '', description: '', criteria: '', category: '', subcategory: '', includedItems: '' });
+  const [form, setForm] = useState<DealFormValues>(draft?.values ?? emptyDealForm);
   const [checklistAdded, setChecklistAdded] = useState(false);
   const [draftConditionText, setDraftConditionText] = useState<string | null>(null);
   const selectedCategory = DEAL_CATEGORIES.find(c => c.id === form.category);
@@ -36,19 +37,30 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       const criteria = form.criteria.split('\n').map((c) => c.trim()).filter(Boolean);
       const amount = Number(form.amount).toFixed(2);
       const includedItems = form.includedItems.split('\n').map(item => item.trim()).filter(Boolean);
-      const created = await callApi<{ transaction: { id: string } }>('/api/transactions', 'seller', {
+      const payload = {
         item: form.item, amount, ...(receipt ? { termsDraftReceipt: receipt } : {}),
-        terms: { condition: form.condition, description: form.description, ...(includedItems.length ? { includedItems } : {}), ...categoryTerms(form.category, form.subcategory), ...(criteria.length ? { criteria } : {}) },
-      });
+        terms: { ...(draft?.terms ?? {}), condition: form.condition, description: form.description, ...(draft || includedItems.length ? { includedItems } : {}), ...categoryTerms(form.category, form.subcategory), ...(draft && !form.subcategory ? { subcategory: undefined } : {}), ...(draft || criteria.length ? { criteria } : {}) },
+      };
+      if (draft) {
+        // Saving changed terms clears seller acceptance; do not accept them again implicitly.
+        await callApi(`/api/transactions/${draft.id}/edit`, 'seller', { ...payload, revision: draft.revision }, 'PATCH');
+        router.push(`/deals/${draft.id}`);
+        router.refresh();
+        return;
+      }
+      const created = await callApi<{ transaction: { id: string } }>('/api/transactions', 'seller', payload);
       // The seller accepts their own terms right away; the buyer accepts on the checkout screen.
       await callApi(`/api/transactions/${created.transaction.id}/accept`, 'seller', {});
       router.push(`/deals/${created.transaction.id}?created=1`);
     } catch (error) { setError(error as Error); } finally { setBusy(false); }
   }
 
+  const conditionOptions: readonly string[] = draft?.values.condition && !CONDITION_OPTIONS.includes(draft.values.condition as typeof CONDITION_OPTIONS[number]) ? [...CONDITION_OPTIONS, draft.values.condition] : CONDITION_OPTIONS;
   const includedCount = form.includedItems.split('\n').filter(line => line.trim()).length;
   const criteriaCount = form.criteria.split('\n').filter(line => line.trim()).length;
   const amountPreview = /^\d{1,6}(\.\d{1,2})?$/.test(form.amount) ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(form.amount)) : '—';
+
+  if (draft && error instanceof ApiError && ['BUYER_ACCEPTED', 'TERMS_LOCKED'].includes(error.code)) return <Notice>{error.message}</Notice>;
 
   return (
     <form onSubmit={submit} className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -76,7 +88,7 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
         <fieldset className="min-w-0 sm:col-span-2">
           <legend className="mb-2 text-sm font-medium text-muted">Condition<span aria-hidden="true"> *</span><span className="sr-only"> required</span></legend>
           <div className="grid grid-cols-2 items-stretch gap-2 lg:grid-cols-4">
-            {CONDITION_OPTIONS.map((option, index) => <label key={option} className="condition-choice relative block min-w-0 cursor-pointer">
+            {conditionOptions.map((option, index) => <label key={option} className="condition-choice relative block min-w-0 cursor-pointer">
               <input id={`condition-${index}`} type="radio" name="condition" aria-label={option} required value={option} checked={form.condition === option} onChange={e => { setForm(current => ({ ...current, condition: e.target.value })); setDraftConditionText(null); }} className="peer sr-only"/>
               <span className="flex h-full min-h-14 items-center justify-center rounded-2xl border border-line bg-surface px-3 py-3 text-center text-sm font-medium text-heading peer-checked:border-accent peer-checked:bg-surface-2 peer-focus-visible:outline-2 peer-focus-visible:outline-accent">{option}</span>
             </label>)}
@@ -134,8 +146,8 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       </aside>
 
       <div className="min-w-0 space-y-3 lg:col-start-1 lg:row-start-2">
-        <Button type="submit" fullWidth disabled={busy}>{busy ? 'Creating…' : 'Create deal'}</Button>
-        <p className="text-center text-sm leading-relaxed text-muted">Creates a draft to share with the buyer. Terms lock after both parties accept.</p>
+        <Button type="submit" fullWidth disabled={busy}>{busy ? (draft ? 'Saving…' : 'Creating…') : draft ? 'Save changes' : 'Create deal'}</Button>
+        <p className="text-center text-sm leading-relaxed text-muted">{draft ? 'The deal link stays the same. Accept the updated terms before the buyer continues.' : 'Creates a draft to share with the buyer. Terms lock after both parties accept.'}</p>
         <ErrorNote error={error}/>
       </div>
     </form>

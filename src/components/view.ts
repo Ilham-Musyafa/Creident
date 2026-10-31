@@ -98,6 +98,7 @@ export function timelineFor(status: TxStatus, frozenFrom?: TxStatus): Step[] {
 }
 
 const EVENT_TITLES: Record<string, string> = {
+  TERMS_EDITED: 'Seller edited the terms',
   TRANSACTION_CREATED: 'Deal created',
   TERMS_ACCEPTED: 'Terms accepted',
   ACCEPT_TERMS: 'Terms agreed by both sides',

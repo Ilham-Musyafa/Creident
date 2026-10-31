@@ -1,3 +1,4 @@
+import { canEditDraft, draftRevision } from '../../../lib/draftTerms';
 import { DueSoon } from '../../../components/DueSoon';
 import { PayPalHoldInfo } from '../../../components/PayPalHoldInfo';
 import { CategoryChip } from '../../../components/CategoryChip';
@@ -64,7 +65,7 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
     <AppShell active="Deals">
       <div className="deal-story">
       {(() => { const label = recentSuccess(tx.status, allEvents.at(-1)?.ts, ctx.now()); return label ? <SuccessBurst inline storageKey={`${id}:${tx.status}`} label={label} confetti={celebrates(tx.status)}/> : null; })()}
-      <PageHeader title={displayItemName(tx.item)} subtitle={subtitle} back="/deals"/>
+      <PageHeader title={displayItemName(tx.item)} subtitle={subtitle} back="/deals" right={role === 'seller' && canEditDraft(tx.status, accepted) ? <ButtonLink href={`/deals/${id}/edit`} variant="ghost">Edit deal</ButtonLink> : undefined}/>
       <div className="mb-4"><CategoryChip category={JSON.parse(tx.termsJson).category} subcategory={JSON.parse(tx.termsJson).subcategory} full/></div>
       <div className="deal-story-layout grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="deal-story-main min-w-0 space-y-4">
@@ -98,7 +99,7 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
             {action !== 'none' && <div className="space-y-2 lg:hidden"><p className="text-sm text-muted">{view.nextStep}</p>{view.deadlineLabel && <p className="flex flex-wrap items-center gap-2 text-sm text-muted"><DueSoon urgency={view.urgency} label={view.deadlineLabel}/>{view.deadlineLabel}</p>}</div>}
           {action === 'accept-terms' && (role === 'buyer'
             ? <ButtonLink href={`/deals/${id}/checkout`} className="deal-primary-action" fullWidth>Review terms & pay</ButtonLink>
-            : <ActionButton path={`/api/transactions/${id}/accept`} role={role} label="Accept terms" className="deal-primary-action" fullWidth/>)}
+            : <ActionButton path={`/api/transactions/${id}/accept`} role={role} body={{ revision: draftRevision(tx) }} label="Accept terms" className="deal-primary-action" fullWidth/>)}
           {action === 'pay' && <ButtonLink href={`/deals/${id}/checkout`} className="deal-primary-action" fullWidth>Review & pay</ButtonLink>}
           {action === 'wait-approval' && <Notice>Waiting for your approval on PayPal (Sandbox). If you closed the PayPal window, start again from the checkout screen after it expires.</Notice>}
           {action === 'ship' && <ShipForm txId={id} submitClassName="deal-primary-action"/>}
