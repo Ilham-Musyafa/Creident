@@ -1,6 +1,6 @@
 import { TechnicalDetails } from '../../components/TechnicalDetails';
 import { RuleLabel } from '../../components/RuleLabel';
-import { Card, Notice, SectionTitle } from '../../components/layout';
+import { Card, Notice } from '../../components/layout';
 import { InfoPageShell } from '../../components/InfoPageShell';
 import type { ReactNode } from 'react';
 import { errorGap, formatRate, rate, type FairnessResults, type Rate } from '../../lib/fairness';
@@ -57,13 +57,13 @@ function Donut({ parts, centre, caption }: { parts: { label: string; value: numb
   const total = parts.reduce((sum, part) => sum + part.value, 0) || 1;
   const radius = 52; const circ = 2 * Math.PI * radius; let offset = 0;
   return (
-    <div className="flex items-center gap-5">
-      <svg viewBox="0 0 140 140" role="img" aria-label={parts.map(part => `${part.label}: ${part.value}`).join(', ')} className="size-36 shrink-0 -rotate-90">
-        <circle cx="70" cy="70" r={radius} fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="16"/>
-        {parts.map(part => { const length = (part.value / total) * circ; const el = <circle key={part.label} cx="70" cy="70" r={radius} fill="none" stroke={part.colour} strokeWidth="16" strokeDasharray={`${Math.max(length - 2, 0)} ${circ}`} strokeDashoffset={-offset}/>; offset += length; return el; })}
-        <g className="rotate-90 origin-center" style={{ transformBox: 'fill-box', transformOrigin: 'center' }}><text x="70" y="70" textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize="22" fontWeight="800">{centre}</text></g>
+    <div className="fairness-donut">
+      <svg viewBox="0 0 140 140" role="img" aria-label={parts.map(part => `${part.label}: ${part.value}`).join(', ')} className="size-40 shrink-0">
+        <circle cx="70" cy="70" r={radius} fill="none" stroke="var(--desktop-sidebar-line)" strokeWidth="16"/>
+        {parts.map(part => { const length = (part.value / total) * circ; const el = <circle key={part.label} cx="70" cy="70" r={radius} fill="none" stroke={part.colour} strokeWidth="16" strokeDasharray={`${Math.max(length - 2, 0)} ${circ}`} strokeDashoffset={-offset} transform="rotate(-90 70 70)"/>; offset += length; return el; })}
+        <g><text x="70" y="70" textAnchor="middle" dominantBaseline="central" fill="var(--hero-text)" fontSize="30" fontWeight="800">{centre}</text><text x="70" y="94" textAnchor="middle" fill="var(--hero-sub)" fontSize="12">cases</text></g>
       </svg>
-      <ul className="min-w-0 space-y-2 text-sm">
+      <ul className="min-w-0 w-full space-y-3 text-sm">
         <li className="mb-1 text-hero-sub">{caption}</li>
         {parts.map(part => <li key={part.label} className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 shrink-0 rounded-full" style={{ background: part.colour }}/><span className="text-hero-text">{part.label}</span><span className="ml-auto pl-2 font-bold tabular-nums text-hero-text">{part.value}</span></li>)}
       </ul>
@@ -85,7 +85,7 @@ export default function FairnessPage() {
   const falseRefund = rate(m.falseRefund, m.sellerRight);
   const flips = rate(m.variantFlips, m.variantCount);
   const consistency = rate(m.repeatMatches, m.repeatComparisons);
-  const escalation = rate(m.escalation, m.total);
+
   const accuracy = rate(m.correctNonEscalated, m.nonEscalated);
   const injection = rate(m.injectionSuccess, m.injections);
   const gap = errorGap(m);
@@ -93,17 +93,18 @@ export default function FairnessPage() {
 
   return (
     <InfoPageShell title="Fairness results" subtitle={`${m.total} made-up test cases · ${replay ? 'Recorded AI answer' : `live model${results.model ? ` (${results.model})` : ''}`} · ${shortDate(results.generatedAt)}`}>
-      <div className="info-content info-fairness space-y-5">
+      <div className="info-content info-fairness mx-auto max-w-[1120px] space-y-5">
         <div className="grid gap-5 lg:grid-cols-12">
-          <section aria-label="Summary" className="rounded-[24px] border border-line bg-gradient-to-br from-surface-2 to-surface p-6 lg:col-span-7">
-            <p className="text-sm text-muted">{replay ? 'Recorded AI answers' : 'Live model'} · made-up cases only</p>
+          <section aria-label="Summary" className="fairness-summary rounded-[24px] border border-line p-6 lg:col-span-6">
+            <p className="inline-flex rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold text-heading">{replay ? 'Recorded AI answers' : 'Live model'}</p>
             <p className="mt-2 text-[40px] font-extrabold leading-none tabular-nums text-heading">{m.total}</p>
             <p className="mt-1 text-lg font-semibold text-heading">test cases, including attempts to trick the AI</p>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">{replay ? 'These results use recorded AI answers, so they check our rules and test setup, not a live AI.' : 'These results come from a live AI model, so they check that model on these cases only.'} Every dispute outcome is still decided by a person.</p>
           </section>
-          <section aria-label="Where the cases ended up" className="rounded-[24px] border border-[var(--accent)] bg-hero p-6 text-hero-text lg:col-span-5">
-            <Donut centre={formatRate(escalation)} caption="Passed to a person"
-              parts={[{ label: 'Passed to a person', value: m.escalation, colour: '#93C5FD' }, { label: 'Agrees with our key', value: m.correctNonEscalated, colour: '#3B82F6' }, { label: 'Differs from our key', value: m.nonEscalated - m.correctNonEscalated, colour: '#FCD34D' }]}/>
+          <section aria-label="Where the cases ended up" className="rounded-[24px] border border-[var(--accent)] bg-[var(--brand-navy)] p-6 text-hero-text lg:col-span-6">
+            <h2 className="mb-4 text-lg font-bold">Where the cases ended up</h2>
+            <Donut centre={String(m.total)} caption={`Out of ${m.total} made-up cases`}
+              parts={[{ label: 'Passed to a person', value: m.escalation, colour: 'var(--brand-sky)' }, { label: 'Agrees with our key', value: m.correctNonEscalated, colour: 'var(--brand-sapphire)' }, { label: 'Differs from our key', value: m.nonEscalated - m.correctNonEscalated, colour: 'var(--brand-ice)' }]}/>
           </section>
         </div>
 
@@ -112,7 +113,7 @@ export default function FairnessPage() {
           <strong className="block">{replay ? 'Recorded answers, not a live AI model.' : 'Live-model results for these made-up cases only.'}</strong>
           <span className="mt-1 block">{labelLine(m.total, results.labelsReviewed ?? 0, results.labelsAccepted ?? 0)}</span>
           {replay && <details className="mt-2"><summary className="cursor-pointer font-semibold">What this means</summary>
-            <p className="mt-1">The AI answers were recorded earlier from the first draft of each answer key. These runs check our rules and our test setup, so a perfect score here does not show that an AI is fair.</p></details>}
+            <p className="mt-1">The AI answers were recorded earlier from the first draft of each answer key. These runs check our rules and our test setup, so agreement with the key here does not measure a live model.</p></details>}
         </Notice>
 
         <div className="grid gap-5 lg:grid-cols-3">
@@ -122,7 +123,7 @@ export default function FairnessPage() {
             <p className="rounded-xl bg-surface-2 px-3 py-2 text-sm text-heading">Difference between the two: <strong className="tabular-nums">{gap === null ? 'n/a' : `${gap.toFixed(1)} percentage points`}</strong></p>
           </Panel>
           <Panel icon="repeat" title="Steady answers" hint="Does it change for the wrong reasons?">
-            <Stat label="Changed when only the wording changed" r={flips} good={flips.numerator === 0} detail={`${m.variantFlips} of ${m.variantCount} cases changed their answer when only the wording of the case changed`}/>
+            <Stat label="Changed across case variations" r={flips} good={flips.numerator === 0} detail={`${m.variantFlips} of ${m.variantCount} cases changed their answer when names, evidence order or wording changed`}/>
             <Stat label="Same answer every time" r={consistency} detail={`${m.repeatMatches} of ${m.repeatComparisons} repeated runs gave the same answer as the first run`}/>
           </Panel>
           <Panel icon="shield" title="Safety" hint="Can hidden text steer it?">
@@ -134,11 +135,12 @@ export default function FairnessPage() {
         {results.differing.length > 0 && (
           <Card className="info-card">
             <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from our answer key</h2>
-            <TechnicalDetails><ul className="space-y-1 text-sm">{results.differing.map((d) => <li key={d.id} className="font-mono text-sm break-all">{d.id}: expected {d.expected}, got {d.actual}</li>)}</ul></TechnicalDetails>
+            <p className="mb-3 text-sm text-muted">{results.differing.length} of {m.total} made-up cases differed from the key.</p>
+            <ul className="space-y-3">{results.differing.map((d) => <li key={d.id} className="rounded-xl border border-line p-4 text-sm"><p className="font-semibold text-heading">{d.id.replaceAll('_', ' ')}</p><TechnicalDetails><p>Case ID: {d.id}</p><p>Expected: {d.expected}; recorded result: {d.actual}</p></TechnicalDetails></li>)}</ul>
           </Card>
         )}
 
-        <Notice className="info-notice">The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them. These cases cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests. Damage and missing-parts problems always need a person, whatever the AI says. All cases are made up; no real people or personal data. {m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a rough sign, not proof. Open Technical details for the rules tested and how to reproduce the report.</Notice>
+        <Notice className="info-notice">The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them. These cases cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests. Damage and missing-parts problems always need a person, whatever the AI says. All cases are made up; no real people or personal data. {m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a limited snapshot. Open Technical details for the rules tested and how to reproduce the report.</Notice>
         <TechnicalDetails>
           <p>Jargon used above:</p>
           <ul className="space-y-1">
