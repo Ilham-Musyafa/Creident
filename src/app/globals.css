@@ -187,6 +187,9 @@ button, a, input, textarea, select { outline-offset: 3px; }
     background: var(--desktop-sidebar-bg); color: var(--desktop-sidebar-text);
   }
   .desktop-sidebar-link:hover { background: var(--desktop-sidebar-hover); }
+  .desktop-sidebar-cta { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; background: var(--action-blue); color: #FFFFFF; font-size: 15px; font-weight: 700; }
+  .desktop-sidebar-cta:hover { filter: brightness(1.08); }
+  .desktop-sidebar-cta:focus-visible { outline: 2px solid var(--brand-sky); outline-offset: 2px; }
   .desktop-sidebar-link[aria-current="page"] { background: var(--action-blue); color: var(--on-accent); font-weight: 600; }
   .desktop-demo-badge { border-color: var(--desktop-sidebar-line); color: var(--desktop-sidebar-muted); }
   .desktop-sidebar .desktop-role-card {

@@ -7,6 +7,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { QuickRoleSwitch } from './QuickRoleSwitch';
 import { ThemeSelector } from './ThemeSelector';
 import { NavIcon } from './ui';
+import { JoinDeal } from './JoinDeal';
 import { SettingsIcon } from './SettingsIcon';
 import type { Role } from './view';
 
@@ -83,7 +84,9 @@ export function DesktopNavigation({ role, simulated, active }: { role: Role; sim
         <span className="flex items-center gap-3"><BrandWordmark inverse className="h-[28px]"/><span className="desktop-demo-badge rounded-full border px-2 py-1 text-xs font-medium">Demo</span></span>
         <span className="mt-3 block text-sm text-[var(--desktop-sidebar-muted)]">Every deal, on record.</span>
       </Link>
-      <nav aria-label="Main navigation" className="mt-6 space-y-2">{mainLinks.map(link => <Link key={link.key} href={link.href} aria-current={selected === link.key ? 'page' : undefined} className="desktop-sidebar-link flex min-h-12 items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold"><NavIcon name={link.key}/><span>{link.title}</span></Link>)}</nav>
+      {role === 'seller' && <Link href="/deals/new" className="desktop-sidebar-cta mt-5"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="size-5"><path d="M12 5v14M5 12h14"/></svg><span>New deal</span></Link>}
+      {role === 'buyer' && <JoinDeal className="desktop-sidebar-cta mt-5" icon={<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>}/>}
+      <nav aria-label="Main navigation" className="mt-5 space-y-2">{mainLinks.map(link => <Link key={link.key} href={link.href} aria-current={selected === link.key ? 'page' : undefined} className="desktop-sidebar-link flex min-h-12 items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold"><NavIcon name={link.key}/><span>{link.title}</span></Link>)}</nav>
       <nav aria-label="Learn" className="mb-6 mt-8 space-y-1"><h2 className="mb-3 px-4 text-xs font-semibold uppercase tracking-widest text-[var(--desktop-sidebar-muted)]">Learn</h2>{learnLinks.map(link => <Link key={link.href} href={link.href} onClick={() => setHash(new URL(link.href, window.location.origin).hash)} aria-current={learnCurrent === link.href ? 'page' : undefined} className="desktop-sidebar-link flex min-h-11 items-center gap-3 rounded-full px-4 py-2 text-sm"><SettingsIcon name={link.icon}/><span>{link.title}</span></Link>)}</nav>
       <div className="mt-auto pt-5"><QuickRoleSwitch current={role} appearance="sidebar"/><p className="mt-3 text-center text-xs leading-relaxed text-[var(--desktop-sidebar-muted)]">Demo mode · No real money moves</p></div>
     </aside>
