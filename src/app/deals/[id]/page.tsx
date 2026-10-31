@@ -150,10 +150,6 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
             <PayPalDisputePanel tx={tx} cases={paypalCases} role={role} simulatedMode={simulatedPayPal()} reviewerAllowed={role !== 'reviewer' || await reviewerUnlocked()}/>
           </div>
           {role === 'seller' && disputeType === 'damaged' && <Card><h2 className="mb-3 text-lg text-heading">Courier claim</h2><CourierClaimPack txId={id}/></Card>}
-          <Card className="space-y-2">
-            <ButtonLink href={`/audit/${id}`} variant="ghost" fullWidth>Deal history</ButtonLink>
-            <p className="text-center text-sm text-muted">Every step is saved in the deal history. Open it to read and check each step.</p>
-          </Card>
           </div>
         </DealSecondary>
       </div>
