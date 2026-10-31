@@ -31,7 +31,7 @@ describe('User-facing glossary', () => {
       expect(plain).not.toContain(raw);
       expect(html).toContain(raw);
     }
-    expect(html).toContain('Technical details</summary>');
+    expect(html).toMatch(/<summary[^>]*><span>Technical details<\/span><svg[^>]*aria-hidden="true"[\s\S]*?<\/svg><\/summary>/);
     expect(html).not.toContain('<details open');
   });
   it.each([true, false])('uses the actual new-deal mode when simulated=%s', simulated => {

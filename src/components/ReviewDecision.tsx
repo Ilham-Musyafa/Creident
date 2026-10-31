@@ -56,10 +56,10 @@ export function ReviewDecision({ txId, pendingSplit, returnByDefault = true, dea
         <span><span className="font-semibold text-heading">Refund only after the item is returned</span><span className="block text-sm text-muted">Untick only when there is nothing to return, for example the item never arrived.</span></span>
       </label>
       {pendingSplit && <p className="text-sm text-muted">A split is recorded as pending: it moves no money until split payments are defined.</p>}
-      <div className="grid grid-cols-3 gap-2">
-        <Button variant="ghost" disabled={disabled || pendingSplit} className="px-2!" onClick={() => setPending('RELEASE')}>Charge the approved payment</Button>
-        <Button variant="ghost" disabled={disabled || pendingSplit} onClick={() => setPending('SPLIT')}>Split</Button>
-        <Button variant="strong" disabled={disabled || pendingSplit} onClick={() => setPending('REFUND')}>Refund</Button>
+      <div className="review-outcomes grid grid-cols-1 items-stretch gap-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <Button variant="ghost" disabled={disabled || pendingSplit} className="min-h-14! min-w-0 px-2! py-3 text-sm! leading-snug!" onClick={() => setPending('RELEASE')}>Charge the approved payment</Button>
+        <Button variant="ghost" disabled={disabled || pendingSplit} className="min-h-14! min-w-0 px-2! py-3 text-sm! leading-snug!" onClick={() => setPending('SPLIT')}>Split</Button>
+        <Button variant="strong" disabled={disabled || pendingSplit} className="min-h-14! min-w-0 px-2! py-3 text-sm! leading-snug!" onClick={() => setPending('REFUND')}>Refund</Button>
       </div>
       <section aria-label="Part of the money back decision" className="space-y-3 rounded-[18px] border border-line p-3">
         <h3 className="text-sm font-bold text-heading">Part of the money back</h3>

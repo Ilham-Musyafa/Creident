@@ -7,7 +7,7 @@ describe('PayPal dispute code presentation', () => {
   it('shows the short label and retains the exact raw code inside closed Technical details', () => {
     const html = renderToStaticMarkup(createElement(PayPalDisputeCode, { kind: 'reason', code: 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED' }));
     expect(html).toContain('<code>MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED</code>');
-    expect(html).toContain('Technical details</summary>');
+    expect(html).toMatch(/<summary[^>]*><span>Technical details<\/span><svg[^>]*aria-hidden="true"[\s\S]*?<\/svg><\/summary>/);
     expect(html).not.toContain('<details open');
     expect(html.split('<details')[0]).not.toContain('MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED');
     expect(html).not.toContain('title=');
