@@ -419,3 +419,6 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 ## 2026-10-31 — README screenshots refreshed
 - Re-captured the 11 images linked in the README "Screens" table (home-buyer, home-dark, deals, new-phone, deal-completed, evidence-damaged, dispute-review, review-dark, decision-receipt, audit-detail, fairness) from the frozen UI (main at e59c05a): fresh public-demo database, simulated PayPal, recorded AI. Same filenames, so README links are unchanged. 0 console errors during capture.
 - Not refreshed: the four `oversight-*` images in the appendix. They were taken without an AG Studio licence key (trial watermark), and the README already says so. Replace them with captures of the licensed live Review desk if wanted.
+
+## 2026-10-31 — README: "Menu" renamed to "Settings"
+- The app's menu page is now called Settings (sidebar and dock); README still said "Menu" in 7 places. Updated the wording; Review desk now described as reachable from the sidebar or bottom bar. Docs only.
