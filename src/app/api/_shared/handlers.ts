@@ -1,3 +1,4 @@
+import { DraftTermsChangedError } from '../../../lib/draftTerms';
 import { loadCopilot, copilotAudit } from '../../../lib/ai/copilotStore';
 import { validPartialAmount } from '../../../lib/partialAmount';
 import { acceptedTermsAudit } from '../../../lib/ai/termsReceipt';
@@ -55,11 +56,7 @@ async function afterCapture(context: ApiContext, tx: StoredTx, actor: Role): Pro
   });
 }
 
-export function createTransaction(request: Request): Promise<Response> {
-  return route(async () => {
-    requireRole(request, ['seller']);
-    const body = await jsonBody(request);
-    noExtraFields(body, ['item', 'amount', 'currency', 'terms', 'termsDraftReceipt']);
+function dealInput(body: Record<string, unknown>) {
     const item = stringField(body, 'item', 200);
     const amount = stringField(body, 'amount', 16);
     if (!/^\d{1,6}\.\d{2}$/.test(amount) || Number(amount) <= 0) throw new HttpError(400, 'INVALID_AMOUNT', 'amount must be positive USD with two decimals');
@@ -70,6 +67,15 @@ export function createTransaction(request: Request): Promise<Response> {
     const aiAssist = body.termsDraftReceipt === undefined ? undefined
       : acceptedTermsAudit(body.termsDraftReceipt, item, body.terms as Record<string, unknown>);
     if (aiAssist === null) throw new HttpError(400, 'INVALID_TERMS_DRAFT', 'AI draft expired or invalid. Generate it again or continue with manual terms.');
+    return { item, amount, currency: 'USD', termsJson, aiAssist };
+}
+
+export function createTransaction(request: Request): Promise<Response> {
+  return route(async () => {
+    requireRole(request, ['seller']);
+    const body = await jsonBody(request);
+    noExtraFields(body, ['item', 'amount', 'currency', 'terms', 'termsDraftReceipt']);
+    const { item, amount, termsJson, aiAssist } = dealInput(body);
     const context = getApiContext();
     const id = randomUUID();
     const tx: StoredTx = {
@@ -84,16 +90,50 @@ export function createTransaction(request: Request): Promise<Response> {
   });
 }
 
+export function editDraft(request: Request, id: string): Promise<Response> {
+  return route(async () => {
+    requireRole(request, ['seller']);
+    const body = await jsonBody(request);
+    noExtraFields(body, ['item', 'amount', 'currency', 'terms', 'termsDraftReceipt', 'revision']);
+    const input = dealInput(body);
+    const revision = stringField(body, 'revision', 64);
+    if (!/^[a-f0-9]{64}$/.test(revision)) throw new HttpError(400, 'INVALID_INPUT', 'Invalid draft revision');
+    const context = getApiContext();
+    requireTx(context, id);
+    const result = context.repo.editDraft(id, input, revision, context.now(), input.aiAssist ?? {});
+    if (!result.ok) {
+      if (result.reason === 'buyer-accepted') throw new HttpError(409, 'BUYER_ACCEPTED', 'Terms are locked because the buyer accepted');
+      if (result.reason === 'stale') throw new HttpError(409, 'TERMS_CHANGED', 'The terms changed. Refresh the page and check them again.');
+      throw new HttpError(409, 'TERMS_LOCKED', 'Terms are locked once the buyer accepts');
+    }
+    return json({ transaction: result.transaction });
+  });
+}
+
 export function acceptTerms(request: Request, id: string): Promise<Response> {
   return route(async () => {
     const role = requireRole(request, ['buyer', 'seller']) as 'buyer' | 'seller';
-    await emptyBody(request);
+    const raw = await readBodyLimited(request, 16_384, 'JSON body exceeds 16 KB');
+    let revision: string | undefined;
+    if (raw) {
+      if (!request.headers.get('content-type')?.startsWith('application/json')) throw new HttpError(415, 'JSON_REQUIRED', 'Send application/json');
+      let body: Record<string, unknown>;
+      try { body = JSON.parse(raw); } catch { throw new HttpError(400, 'INVALID_JSON', 'Invalid JSON body'); }
+      if (!body || typeof body !== 'object' || Array.isArray(body)) throw new HttpError(400, 'INVALID_INPUT', 'Expected a JSON object');
+      noExtraFields(body, ['revision']);
+      if (body.revision !== undefined) {
+        revision = stringField(body, 'revision', 64);
+        if (!/^[a-f0-9]{64}$/.test(revision)) throw new HttpError(400, 'INVALID_INPUT', 'Invalid draft revision');
+      }
+    }
     const context = getApiContext();
     const tx = requireTx(context, id);
     if (tx.status === 'TERMS_LOCKED') return json({ transaction: tx });
     if (tx.status !== 'DRAFT') throw new HttpError(409, 'INVALID_STATE', 'Terms cannot be accepted in this state');
     const termsHash = hash(tx.termsJson);
-    const bothAccepted = context.repo.recordAcceptance(id, role, termsHash, context.now());
+    let bothAccepted: boolean;
+    try { bothAccepted = context.repo.recordAcceptance(id, role, termsHash, context.now(), revision); }
+    catch (error) { if (error instanceof DraftTermsChangedError) throw new HttpError(409, 'TERMS_CHANGED', error.message); throw error; }
     if (!bothAccepted) return json({ transaction: context.repo.loadTransaction(id), waitingForOtherParty: true });
     const result = unwrap(await applyTrigger(id, { type: 'ACCEPT_TERMS', bothAccepted: true },
       deps(context, role, false, { extras: { termsHash } })));

@@ -1,3 +1,5 @@
+import { canEditDraft, draftRevision, changedDraftFields, DraftTermsChangedError } from './draftTerms';
+import { createHash } from 'node:crypto';
 import type { DecisionBasis } from './decisionBasis';
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
@@ -326,16 +328,36 @@ export class TransactionRepository {
     });
   }
 
+  /** Serialize edit eligibility, data, acceptance reset and one new audit event. No status transition. */
+  editDraft(txId: string, input: Pick<StoredTx, 'item' | 'amount' | 'currency' | 'termsJson'>, revision: string, ts: string, metadata: Record<string, unknown> = {}) {
+    return transaction(this.db, () => {
+      const tx = this.loadTransaction(txId);
+      if (!tx) return { ok: false as const, reason: 'not-found' };
+      const accepted = this.listAcceptances(txId);
+      if (accepted.includes('buyer')) return { ok: false as const, reason: 'buyer-accepted' };
+      if (!canEditDraft(tx.status, accepted)) return { ok: false as const, reason: 'not-draft' };
+      if (draftRevision(tx) !== revision) return { ok: false as const, reason: 'stale' };
+      const changedFields = changedDraftFields(tx, input);
+      this.db.prepare(`UPDATE transactions SET item = ?, amount = ?, terms_json = ?, terms_hash = NULL, updated_at = ? WHERE id = ?`)
+        .run(input.item, input.amount, input.termsJson, ts, txId);
+      this.db.prepare("DELETE FROM term_acceptances WHERE tx_id = ? AND role = 'seller'").run(txId);
+      const updated = this.loadTransaction(txId)!;
+      this.appendInTransaction({ txId, ts, actor: 'seller', type: 'TERMS_EDITED', payload: { changedFields, previousRevision: revision, revision: draftRevision(updated), ...metadata } });
+      return { ok: true as const, transaction: updated };
+    });
+  }
+
   /** Which parties have accepted the terms of a DRAFT transaction. */
   listAcceptances(txId: string): Array<'buyer' | 'seller'> {
     return this.db.prepare('SELECT role FROM term_acceptances WHERE tx_id = ? ORDER BY role').all(txId)
       .map((row) => row.role as 'buyer' | 'seller');
   }
 
-  recordAcceptance(txId: string, role: 'buyer' | 'seller', termsHash: string, ts: string): boolean {
+  recordAcceptance(txId: string, role: 'buyer' | 'seller', termsHash: string, ts: string, revision?: string): boolean {
     return transaction(this.db, () => {
       const tx = this.loadTransaction(txId);
       if (!tx || tx.status !== 'DRAFT') throw new Error('Terms can only be accepted in DRAFT');
+      if (createHash('sha256').update(tx.termsJson).digest('hex') !== termsHash || (revision && draftRevision(tx) !== revision)) throw new DraftTermsChangedError();
       const inserted = this.db.prepare(`INSERT OR IGNORE INTO term_acceptances
         (tx_id, role, terms_hash, accepted_at) VALUES (?, ?, ?, ?)`).run(txId, role, termsHash, ts);
       if (inserted.changes) this.appendInTransaction({
