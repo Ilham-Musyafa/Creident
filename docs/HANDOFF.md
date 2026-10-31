@@ -173,6 +173,11 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — A2: Remove About card arrows
+- Started `ui/about-remove-arrows` from origin/main `25e77db`. Removed the four desktop About arrows, their unused helper/CSS and reserved right padding. Icons, titles, descriptions, links, PayPal disclosure and focus rings remain; hover outlines the cards with the existing accent token. Mobile layout and copy are unchanged.
+- Typecheck, 558 tests / 53 files and production build passed. Chromium at 390/1280/1920px, light/dark: no arrows, links and PayPal expansion worked, tab order/focus and hover verified, no console errors/warnings or overflow. Screenshot: `docs/ui/screens/about-tidy/a2-cards-no-arrows-1920-light.png`.
+
+
 ### 2026-10-31 — R1: Desktop sidebar role popup tidy
 - Started `ui/role-switcher-tidy` from origin/main `e97b687` after PR #120. Sidebar popup follows its 207px trigger width, opens 8px above it, uses content height without an inner scrollbar, and shares its 20px radius/border. Three equal 64px rows have round icons, single-line descriptions and the existing selected check. Only the sidebar Reviewer description changes to "Decide disputes". Mobile presentation and role/cookie/routing/keyboard handlers are preserved.
 - Typecheck, 558 tests / 53 files and build passed. Production Chromium at 1280/1920 light/dark: matching popup/trigger edges, 8px gap, no scrolling/overflow; all descriptions fit. Buyer/Seller/Reviewer switching, arrow wrapping, End, Escape and focus restoration checked at 390/1280/1920 in both themes, with URL query preserved and no console errors/warnings. Mobile geometry and copy match before; screenshot differences, when present, are limited to the animated trigger chevron. Screenshots: `docs/ui/screens/role-switcher-tidy/`.

@@ -371,9 +371,9 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .about-page .about-link { position: relative; display: grid; align-content: start; gap: 12px; }
   .about-page .about-link h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--heading); }
   .about-page .about-payment > summary { display: grid; gap: 12px; }
-  .about-page .about-link > p, .about-page .about-payment > summary > p { color: var(--muted); padding-right: 20px; }
+  .about-page .about-link > p, .about-page .about-payment > summary > p { color: var(--muted); }
   .about-page .about-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2); color: var(--heading); }
-  .about-page .about-arrow { position: absolute; top: 32px; right: 24px; color: var(--muted); }
+  .about-page .about-link:hover { border-color: var(--accent); }
   .about-page .about-link:focus-visible, .about-page summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
   .about-page .about-disclosure > summary { font-family: var(--font-display); font-size: 18px; }
   .about-page #limitations { background: var(--warning-bg); border-color: var(--warning-line); }

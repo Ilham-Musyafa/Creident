@@ -24,7 +24,6 @@ function AboutIcon({ kind }: { kind: 'steps' | 'history' | 'payment' | 'results'
   const paths = { steps: 'M5 6h14M5 12h10M5 18h6', history: 'M5 4h14v16H5zM9 8h6M9 12h6M9 16h4', payment: 'M3 6h18v12H3zM3 10h18M7 14h3', results: 'M5 20V10m7 10V4m7 16v-7' };
   return <span className="about-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5"><path d={paths[kind]}/></svg></span>;
 }
-function Arrow() { return <span aria-hidden="true" className="about-arrow">→</span>; }
 
 export default function AboutPage() {
   return (
@@ -50,16 +49,16 @@ export default function AboutPage() {
             <ButtonLink href="/how-it-works">See how it works</ButtonLink>
           </Card>
           <div className="hidden lg:grid grid-cols-2 gap-5 about-links">
-            <Link href="/how-it-works" className="about-link"><AboutIcon kind="steps"/><h2>How it works</h2><p>From agreeing on an item to checking what happened, in six simple steps.</p><Arrow/></Link>
-            <Link href="/audit" className="about-link"><AboutIcon kind="history"/><h2>Deal history</h2><p>Every step of a deal is saved, so you can check later whether anything was changed.</p><Arrow/></Link>
+            <Link href="/how-it-works" className="about-link"><AboutIcon kind="steps"/><h2>How it works</h2><p>From agreeing on an item to checking what happened, in six simple steps.</p></Link>
+            <Link href="/audit" className="about-link"><AboutIcon kind="history"/><h2>Deal history</h2><p>Every step of a deal is saved, so you can check later whether anything was changed.</p></Link>
             <details className="about-link about-payment group">
-              <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden"><AboutIcon kind="payment"/><h2>Works with PayPal</h2><p>If a buyer opens a PayPal dispute, the deal pauses. The seller or reviewer can send the saved evidence to PayPal.</p><Arrow/></summary>
+              <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden"><AboutIcon kind="payment"/><h2>Works with PayPal</h2><p>If a buyer opens a PayPal dispute, the deal pauses. The seller or reviewer can send the saved evidence to PayPal.</p></summary>
               <div className="space-y-3 pt-2">
                 <p>A reviewer can check for PayPal cases. The deadline check can also do this when it is run; there is no continuously running checker. Confirmed updates from PayPal can put matching deals on hold. The seller or reviewer can send a text PDF of agreed terms, recorded evidence, tracking, the decision and record details when PayPal allows it. An early-stage case may only allow a short message. Asking PayPal to step in needs confirmation and PayPal permission.</p>
                 <TechnicalDetails><p>PayPal checks use polling and verified dispute/reversal webhooks. The evidence PDF includes the audit head. The separate client probe was tested; the integrated Sandbox flow and webhook delivery remain pending.</p></TechnicalDetails>
                 <p>In demo mode, a completed labelled demo deal lets the buyer open a demo PayPal case and try the bridge without keys. The owner tested the PayPal connection separately in the Sandbox. The complete app flow has been checked with test clients and local simulation. Its real Sandbox run and delivery of PayPal’s automatic updates still need testing.</p>
               </div></details>
-            <Link href="/fairness" className="about-link"><AboutIcon kind="results"/><h2>AI test results</h2><p>These results use recorded AI answers, so they check our rules and test setup, not a live AI.</p><Arrow/></Link>
+            <Link href="/fairness" className="about-link"><AboutIcon kind="results"/><h2>AI test results</h2><p>These results use recorded AI answers, so they check our rules and test setup, not a live AI.</p></Link>
           </div>
         </section>
 
