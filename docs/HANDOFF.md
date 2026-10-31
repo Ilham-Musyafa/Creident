@@ -400,3 +400,8 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - Deal detail had two "Deal history" buttons (Activity header + a card at the bottom); the bottom card is removed. Desktop now shows one link, mobile two (round action in the hero when an action exists, plus Activity), by design.
 - The closed "Draft from a listing with AI" panel was checked for keyboard access: closed `<details>` content is not tabbable (focus goes from the summary to the Item name field), so nothing needed fixing there.
 - Checks: typecheck and build passed; 710 tests / 69 files passed. Link count verified over all seeded deals for seller, buyer and reviewer; no console errors. Presentation only; no behavior, data or dependency change.
+
+### 2026-10-31 — Buyer mobile dock gets Join a deal and How (ui/buyer-dock)
+- Buyer's mobile bottom bar had only Home, Transactions, Settings. It now mirrors the seller's five columns: Home, Deals, **Join** (centre button, opens the existing Join a deal dialog), How, Settings. Seller and reviewer docks are unchanged (reviewer keeps three items).
+- `JoinDeal` got an optional `label` prop (dock shows "Join"; accessible name stays "Join a deal"). No change to link parsing or routing.
+- Checks: typecheck and build passed; 710 tests / 69 files passed. Browser check at 390 px (touch): buyer dock shows the five items, centre button opens the dialog, invalid text shows the error, a valid deal link goes to its checkout, How highlights on /how-it-works; seller and reviewer docks unchanged; no console errors.

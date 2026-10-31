@@ -350,6 +350,7 @@ button, a, input, textarea, select { outline-offset: 3px; }
 /* White text on this action blue has 5.17:1 contrast; brand Sapphire stays unchanged. */
 :root { --action-blue: #2563EB; }
 .mobile-dock .seller-create { min-height: 52px; background: transparent !important; }
+.mobile-dock button.seller-create { color: var(--brand-ice); font-weight: 500; border-radius: 999px; }
 .mobile-dock .seller-create > span:first-child { width: 48px; height: 48px; margin-top: -20px; border-radius: 999px; background: var(--action-blue); color: #FFFFFF; border: 3px solid var(--surface); }
 .mobile-dock .seller-create[aria-current="page"] > span:first-child { outline: 2px solid var(--brand-sky); outline-offset: 2px; }
 
