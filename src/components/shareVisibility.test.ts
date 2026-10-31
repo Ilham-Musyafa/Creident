@@ -8,7 +8,7 @@ vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh() {}, push() {} 
 vi.mock('./layout', async () => ({ ...await import('./layoutPrimitives'), AppShell: ({ children }: { children: ReactNode }) => createElement('main', null, children) }));
 vi.mock('../app/_server', () => ({
   getRole: async () => fixture.role, isUuid: () => true, simulatedPayPal: () => true, reviewerUnlocked: async () => true,
-  data: () => ({ now: () => '2026-10-31T00:00:00Z', repo: {
+  data: () => ({ time: { evidenceDays: 2 }, now: () => '2026-10-31T00:00:00Z', repo: {
     loadTransaction: () => ({ id: '12345678-1234-4234-8234-123456789abc', item: '[Demo] Camera', amount: '50.00', currency: 'USD', captured: false, termsJson: '{}', status: fixture.status }),
     loadDecisions: () => [], loadRecommendation: () => null, listPayPalDisputes: () => [], readEvents: () => [], listAcceptances: () => [],
   } }),
@@ -24,5 +24,20 @@ describe('Seller share card visibility already fixed in #137', () => {
     fixture.role = role; fixture.status = 'DRAFT';
     const html = renderToStaticMarkup(await DealPage({ params: Promise.resolve({ id: '12345678-1234-4234-8234-123456789abc' }) }));
     expect(html).not.toContain('Share with the buyer');
+  });
+});
+
+describe('Deal primary action presentation', () => {
+  it.each([
+    ['seller', 'AUTHORIZED', true], ['buyer', 'IN_INSPECTION', true], ['reviewer', 'UNDER_REVIEW', true],
+    ['buyer', 'DISPUTED', true], ['seller', 'DISPUTED', true], ['buyer', 'RETURN_REQUESTED', true],
+    ['seller', 'IN_INSPECTION', false], ['buyer', 'AUTHORIZED', false], ['reviewer', 'COMPLETED', false],
+  ] as const)('%s / %s has one real primary control and no extra sticky copy', async (role, status, actionable) => {
+    fixture.role = role; fixture.status = status;
+    const html = renderToStaticMarkup(await DealPage({ params: Promise.resolve({ id: '12345678-1234-4234-8234-123456789abc' }) }));
+    expect((html.match(/class="[^"]*deal-primary-action/g) ?? []).length).toBe(actionable ? 1 : 0);
+    expect(html.includes('deal-hero-actions')).toBe(actionable);
+    expect(html).not.toContain('deal-sticky-action');
+    if (actionable) expect(html).toContain('lg:hidden');
   });
 });

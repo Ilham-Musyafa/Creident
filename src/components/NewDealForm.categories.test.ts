@@ -23,6 +23,14 @@ describe('New-deal category form contract', () => {
     expect(html).toContain('Not chosen');
     expect(html).toContain('>Category</dt>');
   });
+  it('keeps a readable required-fields hint and a separate decorative USD prefix box', () => {
+    const html = renderToStaticMarkup(createElement(NewDealForm,{simulated:true,time:{shipByDays:3,inspectionDays:2,evidenceDays:2}}));
+    expect(html).toContain('Fields marked * are required.');
+    expect(html).toMatch(/<span aria-hidden="true" class="[^"]*border-r[^"]*">USD \$<\/span><input id="amount"/);
+    expect(html).not.toContain('pl-20!');
+    expect(html).toContain('inputMode="decimal"');
+    expect(html).toContain('pattern="\\d{1,6}(\\.\\d{1,2})?"');
+  });
   it('shows the Sandbox price helper', () => {
     const html = renderToStaticMarkup(createElement(NewDealForm,{simulated:false,time:{shipByDays:3,inspectionDays:2,evidenceDays:2}}));
     expect(html).toContain('Sandbox test price in USD.');
