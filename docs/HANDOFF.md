@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Remove desktop Settings section shortcuts
+- Started `ui/settings-remove-onpage` from origin/main `1e49c48` (PR #132 merged). Removed only the desktop Settings section navigation and its unused SECTIONS constant in `src/app/menu/page.tsx` (10 lines deleted). The Demo workspace card, sticky aside, four sections, their IDs and all other copy/layout remain unchanged. No CSS, mobile component, dependencies or behaviour changes.
+- Typecheck, 625 tests / 57 files, production build and diff whitespace checks passed. No existing test covered the removed list, so no tests were changed. Source scan finds no remaining removed-list heading or aria-label.
+- Production Playwright checked Settings before/after at 390/1280/2560px, Seller/Buyer/Reviewer, light/dark (18 views each). All four section contents and geometry match baseline exactly; all six mobile screenshots match baseline pixel-for-pixel. Desktop sticky positioning remains correct and /menu#transparency resolves; all section IDs remain. No horizontal overflow or console errors/warnings. Screenshots: `docs/ui/screens/settings-remove-onpage/`.
+
+
 ### 2026-10-31 — Fairness results consistency tidy
 - Started `ui/fairness-tidy` from origin/main `894b4ae` (PR #131 merged). All six metric rows now put counts first, percentages second, with measured-value bar fills and uniform Lower/Higher is better cues. Best-value ticks remain neutral in recorded-answer mode; they do not imply a live-model pass. The error-gap note uses the same cue. Desktop panel headers reserve equal height so the first metrics align.
 - Moved answer-key agreement into Steady answers; Safety contains only hidden tricks. All UI references use answer key. Differing cases have readable shipping/return titles, stored expected/actual outcomes in two short lines, and raw IDs/results in an inline Technical details section within the single case disclosure—no empty nested disclosure.
