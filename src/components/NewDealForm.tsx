@@ -69,9 +69,10 @@ export function NewDealForm({ time, simulated }: { simulated: boolean; time: { s
       }}>Continue with manual terms</Button><p className="text-sm text-muted">Restores your fields from before the draft; your entered price is kept.</p></div>}
       <fieldset className="min-w-0 space-y-4">
         <legend className="mb-4 text-base font-bold text-heading">Item details</legend>
+        <p className="text-sm leading-relaxed text-muted">Fields marked * are required.</p>
       <div><Label htmlFor="item" required>Item name</Label><input id="item" required maxLength={200} className={fieldClass} value={form.item} onChange={set('item')}/></div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="sm:col-span-2"><Label htmlFor="amount" required>Price (USD)</Label><div className="relative"><span aria-hidden="true" className="pointer-events-none absolute left-4 top-3 text-sm font-medium text-muted">USD $</span><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={`${fieldClass} pl-20!`} value={form.amount} onChange={set('amount')}/></div><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
+        <div className="sm:col-span-2"><Label htmlFor="amount" required>Price (USD)</Label><div className="flex min-w-0 overflow-hidden rounded-[14px] border border-line bg-surface focus-within:outline-2 focus-within:outline-accent"><span aria-hidden="true" className="inline-flex min-h-11 shrink-0 items-center border-r border-line bg-surface-2 px-3 text-sm font-medium text-muted">USD $</span><input id="amount" required inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" className={`${fieldClass} min-w-0 flex-1 rounded-l-none! border-0!`} value={form.amount} onChange={set('amount')}/></div><p className="mt-2 text-sm text-muted">{priceHelper(simulated)}</p></div>
         <fieldset className="min-w-0 sm:col-span-2">
           <legend className="mb-2 text-sm font-medium text-muted">Condition<span aria-hidden="true"> *</span><span className="sr-only"> required</span></legend>
           <div className="grid grid-cols-2 items-stretch gap-2 lg:grid-cols-4">
