@@ -1,3 +1,4 @@
+import { displayItemName } from '../displayItemName';
 import Link from 'next/link';
 import type { OversightSnapshot } from '../../lib/oversight';
 import { shortDate } from '../view';
@@ -18,7 +19,7 @@ export function SnapshotFallback({ snapshot }: { snapshot: OversightSnapshot }) 
     </section>
     <section className="rounded-[24px] border border-line bg-surface p-5">
       <h2 className="mb-3 text-base font-bold text-heading">Deadline queue</h2>
-      {snapshot.deadlines.length ? <ul className="divide-y divide-line text-sm">{snapshot.deadlines.map(row => <li key={`${row.txId}:${row.kind}`} className="flex flex-wrap items-center justify-between gap-2 py-3"><span className="min-w-0 break-words">{row.item}</span><span className="text-muted">{row.kind} · {shortDate(row.dueAt)}{row.frozen ? ' · on hold' : ''}</span></li>)}</ul> : <p className="text-sm text-muted">No deadlines waiting.</p>}
+      {snapshot.deadlines.length ? <ul className="divide-y divide-line text-sm">{snapshot.deadlines.map(row => <li key={`${row.txId}:${row.kind}`} className="flex flex-wrap items-center justify-between gap-2 py-3"><span className="min-w-0 break-words">{displayItemName(row.item)}</span><span className="text-muted">{row.kind} · {shortDate(row.dueAt)}{row.frozen ? ' · on hold' : ''}</span></li>)}</ul> : <p className="text-sm text-muted">No deadlines waiting.</p>}
     </section>
     <Link href="/audit" className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-heading hover:bg-surface-2">Open deal history</Link>
   </section>;
