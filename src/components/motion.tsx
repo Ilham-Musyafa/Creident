@@ -64,7 +64,7 @@ function VerifiedMark() {
  * decision recorded). Shown at most once per browser for the given key; a decoration only,
  * the page text already states the outcome.
  */
-export function SuccessBurst({ storageKey, label, confetti = true }: { storageKey: string; label: string; confetti?: boolean }) {
+export function SuccessBurst({ storageKey, label, confetti = true, inline = false }: { storageKey: string; label: string; confetti?: boolean; inline?: boolean }) {
   const [show, setShow] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -84,6 +84,10 @@ export function SuccessBurst({ storageKey, label, confetti = true }: { storageKe
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, [storageKey]);
   if (!show) return null;
+  // Deal pages reserve a small inline notice instead of covering their action cards.
+  if (inline) return <p aria-hidden="true" data-success-notice className="mb-4 flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2 text-sm font-semibold text-heading">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="hv-step-done size-5 shrink-0 text-[var(--inspection-text)]"><path d="m5 12 4 4L19 6"/></svg>{label}
+  </p>;
   return createPortal(
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid place-items-center">
       <div className="relative grid place-items-center">
