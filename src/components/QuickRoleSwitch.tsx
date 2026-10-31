@@ -46,13 +46,20 @@ export function QuickRoleSwitch({ current, appearance = 'default' }: { current: 
   function positionMenu() {
     if (!trigger.current || !menu.current) return;
     const rect = trigger.current.getBoundingClientRect();
+    if (appearance === 'sidebar') {
+      // Measure at the trigger width before positioning the content-sized popup.
+      Object.assign(menu.current.style, { width: `${rect.width}px`, maxHeight: 'none' });
+      const height = menu.current.getBoundingClientRect().height || menu.current.scrollHeight || 280;
+      Object.assign(menu.current.style, {
+        left: `${rect.left}px`, top: `${Math.max(12, rect.top - height - 8)}px`,
+      });
+      return;
+    }
     const width = Math.min(292, window.innerWidth - 24);
-    const menuHeight = Math.min(menu.current.scrollHeight || 280, window.innerHeight - 24);
-    const above = appearance === 'sidebar' && window.innerHeight - rect.bottom - 20 < menuHeight;
-    const top = above ? Math.max(12, rect.top - menuHeight - 8) : rect.bottom + 8;
+    const top = rect.bottom + 8;
     Object.assign(menu.current.style, {
       width: `${width}px`, left: `${Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12))}px`,
-      top: `${top}px`, maxHeight: `${Math.max(0, above ? rect.top - top - 8 : window.innerHeight - top - 12)}px`,
+      top: `${top}px`, maxHeight: `${Math.max(0, window.innerHeight - top - 12)}px`,
     });
   }
   function closeAndFocus() {
@@ -101,11 +108,12 @@ export function QuickRoleSwitch({ current, appearance = 'default' }: { current: 
           items?.[index]?.focus({ preventScroll: true });
         });
       }}
-      style={{ position: 'fixed', inset: 'auto' }} className="m-0 overflow-y-auto rounded-[22px] border border-line bg-surface p-2 text-text shadow-xl">
+      style={{ position: 'fixed', inset: 'auto' }} className={`${appearance === 'sidebar' ? 'desktop-role-popup ' : ''}m-0 overflow-y-auto rounded-[22px] border border-line bg-surface p-2 text-text shadow-xl`}>
       <p role="presentation" className="px-3 pb-2 pt-2 text-xs font-medium text-muted">Demo role</p>
       {roles.map(role => <button key={role.value} type="button" role="menuitemradio" aria-checked={current === role.value} tabIndex={-1} disabled={pending}
-        onClick={() => select(role.value)} className={`flex min-h-16 w-full items-center gap-3 rounded-[16px] px-3 py-3 text-left hover:bg-surface-2 ${current === role.value ? 'bg-surface-2' : ''}`}>
-        <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading">{role.label}</span><span className="mt-1 block text-xs text-muted">{role.detail}</span></span>
+        onClick={() => select(role.value)} className={`${appearance === 'sidebar' ? 'desktop-role-option ' : ''}flex min-h-16 w-full items-center gap-3 rounded-[16px] px-3 py-3 text-left hover:bg-surface-2 ${current === role.value ? 'bg-surface-2' : ''}`}>
+        {appearance === 'sidebar' && <span aria-hidden="true" className="desktop-role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4">{role.value === 'buyer' ? <><path d="M4 9h16l-2 11H6zM8 9V7a4 4 0 0 1 8 0v2"/></> : role.value === 'seller' ? <><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 5 9-5M12 12v9"/></> : <><path d="M5 4h14v16H5zM8 9h8m-8 4 2 2 5-5"/></>}</svg></span>}
+        <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-heading">{role.label}</span><span className="mt-1 block text-xs text-muted">{appearance === 'sidebar' && role.value === 'reviewer' ? 'Decide disputes' : role.detail}</span></span>
         {current === role.value && <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0 text-heading"><path d="m5 12 4 4L19 6"/></svg>}
       </button>)}
     </div>
