@@ -68,3 +68,17 @@ describe('shortDate', () => {
     expect(shortDate('not a date')).toBeNull();
   });
 });
+
+describe('deadline urgency on rows', () => {
+  it('flags only deadlines under 24h that the role must act on', () => {
+    const soon = tx({ status: 'DISPUTED', evidenceUntil: '2026-10-25T09:00:00Z' });
+    expect(transactionRow(soon, 'buyer', now).urgency).toBe('soon');
+    expect(transactionRow(tx({ status: 'DISPUTED', evidenceUntil: '2026-10-24T15:00:00Z' }), 'buyer', now).urgency).toBe('urgent');
+    expect(transactionRow(tx({ status: 'DISPUTED', evidenceUntil: '2026-10-26T12:00:00Z' }), 'buyer', now).urgency).toBeNull();
+    expect(transactionRow(tx({ status: 'DISPUTED', evidenceUntil: '2026-10-24T11:00:00Z' }), 'buyer', now).urgency).toBeNull();
+  });
+  it('shows nothing when the role has no action to take', () => {
+    expect(transactionRow(tx({ status: 'AUTHORIZED', shipBy: '2026-10-24T20:00:00Z' }), 'buyer', now).urgency).toBeNull();
+    expect(transactionRow(tx({ status: 'AUTHORIZED', shipBy: '2026-10-24T20:00:00Z' }), 'seller', now).urgency).toBe('soon');
+  });
+});

@@ -5,6 +5,7 @@ import { demoName } from './presentationCopy';
 import Link from 'next/link';
 import { SeedButton } from './client';
 import { StatusPill } from './ui';
+import { DueSoon } from './DueSoon';
 import { TransactionIcon } from './TransactionIcon';
 import type { TransactionRow } from './transactionsView';
 import type { HomeData } from './homeTypes';
@@ -23,7 +24,7 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
         <Link href={row.href} className="font-semibold text-heading after:absolute after:inset-0 after:content-['']">{row.title}</Link></span></td>
       <td className="py-3 pr-3 text-muted">{resolveDealCategory(row.category, row.subcategory).category.label}</td>
       <td className="py-3 pr-3"><StatusPill status={row.status} short equal/></td>
-      <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="block text-xs text-muted">{row.deadlineLabel}</span>}</td>
+      <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted"><DueSoon urgency={row.urgency} label={row.deadlineLabel}/>{row.deadlineLabel}</span>}</td>
       <td className="py-3 text-right font-semibold tabular-nums text-heading">{row.amount}</td>
     </tr>)}</tbody>
   </table>;
@@ -44,12 +45,12 @@ export function DesktopHome(props: HomeData) {
         </div>
         <HomeStatusRow tiles={props.statusTiles}/>
       </section>
-      <section aria-label="Your next step" className="col-span-4 flex flex-col rounded-[24px] border border-[var(--accent)] bg-hero p-6 text-hero-text">
+      <section aria-label="Your next step" className={`col-span-4 flex flex-col rounded-[24px] border ${next?.urgency ? 'border-[var(--awaiting-text)]' : 'border-[var(--accent)]'} bg-hero p-6 text-hero-text`}>
         <h2 className="text-sm font-semibold uppercase tracking-wide text-hero-sub">Your next step</h2>
         {next ? <>
           <p className="mt-4 break-words text-xl font-bold">{next.title}</p>
           <p className="mt-1 text-sm text-hero-sub">{next.nextStep}</p>
-          {next.deadlineLabel && <p className="mt-1 text-sm text-hero-text">{next.deadlineLabel}</p>}
+          {next.deadlineLabel && <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-hero-text"><DueSoon urgency={next.urgency} label={next.deadlineLabel}/>{next.deadlineLabel}</p>}
           <Link href={next.href} className={`${button} mt-auto self-start bg-white text-[#0B1F4B] hover:opacity-90`}>Open deal</Link>
         </> : <>
           <p className="mt-4 text-xl font-bold">You’re all caught up</p>

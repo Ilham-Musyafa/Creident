@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorizationWindow, eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, timelineFor, recentSuccess, celebrates } from './view';
+import { authorizationWindow, eventTitle, evidenceCode, isReserved, isSimulatedDeal, money, nextAction, timeLeft, deadlineUrgency, timelineFor, recentSuccess, celebrates } from './view';
 
 describe('view helpers', () => {
   it('formats money and time left', () => {
@@ -72,5 +72,21 @@ describe('step completion animation', () => {
     expect(celebrates('COMPLETED')).toBe(true);
     expect(celebrates('DISPUTED')).toBe(false);
     expect(celebrates('SHIPPED')).toBe(false);
+  });
+});
+
+describe('deadlineUrgency', () => {
+  const now = '2026-10-21T09:00:00Z';
+  it('is null above 24 hours, once passed, or without a deadline', () => {
+    expect(deadlineUrgency('2026-10-22T09:00:01Z', now)).toBeNull();
+    expect(deadlineUrgency('2026-10-21T09:00:00Z', now)).toBeNull();
+    expect(deadlineUrgency('2026-10-20T09:00:00Z', now)).toBeNull();
+    expect(deadlineUrgency(undefined, now)).toBeNull();
+  });
+  it('is soon between 6 and 24 hours and urgent under 6 hours', () => {
+    expect(deadlineUrgency('2026-10-22T08:59:00Z', now)).toBe('soon');
+    expect(deadlineUrgency('2026-10-21T15:00:00Z', now)).toBe('soon');
+    expect(deadlineUrgency('2026-10-21T14:59:00Z', now)).toBe('urgent');
+    expect(deadlineUrgency('2026-10-21T09:01:00Z', now)).toBe('urgent');
   });
 });

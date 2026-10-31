@@ -27,6 +27,17 @@ export function timeLeft(until: string | undefined, now: string): string | null 
   return `${Math.max(1, minutes)}m left`;
 }
 
+/** How close a deadline is: 'urgent' under 6 hours, 'soon' under 24 hours, otherwise null (also null once passed). */
+export type Urgency = 'soon' | 'urgent';
+export const URGENT_WITHIN_MS = 6 * 3_600_000;
+export const SOON_WITHIN_MS = 24 * 3_600_000;
+export function deadlineUrgency(until: string | undefined, now: string): Urgency | null {
+  if (!until) return null;
+  const ms = Date.parse(until) - Date.parse(now);
+  if (!(ms > 0)) return null;
+  return ms < URGENT_WITHIN_MS ? 'urgent' : ms < SOON_WITHIN_MS ? 'soon' : null;
+}
+
 export function shortDate(iso: string): string {
   return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) + ' UTC';
 }

@@ -1,7 +1,7 @@
 // Presentation only: existing role actions and stored deadlines drive the list.
 import type { StoredTx } from '../lib/repository';
 import type { TxStatus } from '../lib/domain/types';
-import { isActive, money, nextAction, timeLeft, type Role } from './view';
+import { deadlineUrgency, isActive, money, nextAction, timeLeft, type Role, type Urgency } from './view';
 
 export const TRANSACTION_FILTERS = { all: 'All', action: 'Needs your action', active: 'Active', review: 'Under review', closed: 'Closed' } as const;
 export type TransactionFilter = keyof typeof TRANSACTION_FILTERS;
@@ -10,7 +10,7 @@ export interface TransactionRow {
   category?: unknown; subcategory?: unknown;
   id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
-  href: string; deadline: number | null; deadlineLabel: string | null; createdAt: string | null;
+  href: string; deadline: number | null; deadlineLabel: string | null; urgency: Urgency | null; createdAt: string | null;
 }
 /** Short fixed-zone date for lists, e.g. "30 Oct 2026". */
 export function shortDate(value: string | null | undefined): string | null {
@@ -60,7 +60,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
   return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
-    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, createdAt };
+    nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, urgency: action !== 'none' ? deadlineUrgency(rawDeadline, now) : null, createdAt };
 }
 /** Newest deal first (by created time), so a deal made just now sits at the top; deals without a created time go last. */
 export function sortTransactionRows(rows: readonly TransactionRow[]): TransactionRow[] {
