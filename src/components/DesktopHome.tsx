@@ -61,6 +61,6 @@ export function DesktopHome(props: HomeData) {
         {props.total === 0 && <div className="mt-4"><SeedButton role={props.role}/></div>}
       </section>
     </div>
-    <footer className="mt-auto flex items-center justify-between gap-5 border-t border-line pt-4 text-sm text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><span className="flex gap-5"><Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Deal history{props.total > 0 && props.verified === props.total ? ' ✓' : ''}</Link><Link href="/about#limitations" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Limitations</Link></span></footer>
+
   </div>;
 }

@@ -14,7 +14,7 @@ const ICON: Record<ActivityKind, { path: string; tone: string }> = {
 export function ActivityFeed({ txId, items, now }: { txId: string; items: ActivityItem[]; now: string }) {
   return <section data-ui="card" aria-label="Activity" className="rounded-[22px] border border-line bg-surface p-4">
     <div className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-bold text-heading">Activity</h2>
-      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-heading hover:underline">Deal history</Link></div>
+      <Link href={`/audit/${txId}`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2 px-4 text-sm font-semibold text-heading hover:bg-surface">Deal history</Link></div>
     {!items.length ? <p className="text-sm text-muted">No activity yet</p> : <ol className="hv-stagger">
       {items.map((item) => {
         const icon = ICON[item.kind];
