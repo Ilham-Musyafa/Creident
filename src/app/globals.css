@@ -410,3 +410,35 @@ button, a, input, textarea, select { outline-offset: 3px; }
 .info-fairness .fairness-case summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
 .info-fairness .fairness-case summary::marker { content: ''; }
 .info-fairness .fairness-case summary::-webkit-details-marker { display: none; }
+
+/* Fairness desktop spacing; mobile keeps its existing layout and spacing. */
+@media (width >= 1024px) {
+  .info-fairness {
+    --fairness-block-gap: 2rem;
+    --fairness-card-space: 1.75rem;
+    --fairness-panel-gap: 1.5rem;
+    --fairness-note-gap: 1rem;
+    --fairness-part-gap: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--fairness-block-gap);
+  }
+  .info-content.info-fairness > * { margin-block: 0; }
+  .info-fairness > .grid { gap: var(--fairness-panel-gap); }
+  .info-fairness > .grid > section,
+  .info-fairness > .info-card,
+  .info-fairness > .info-notice { padding: var(--fairness-card-space); }
+  .info-fairness .fairness-metric-panel > header { margin-bottom: var(--fairness-panel-gap); }
+  .info-fairness .fairness-metric-panel > div { display: flex; flex-direction: column; gap: var(--fairness-card-space); }
+  .info-fairness .fairness-metric-panel > div > * { margin-block: 0; }
+  .info-fairness .fairness-stat { display: grid; gap: var(--fairness-part-gap); }
+  .info-fairness .fairness-stat > * { margin-block: 0; }
+  .info-fairness .fairness-label-status,
+  .info-fairness .fairness-scope-note > ul { display: grid; gap: var(--fairness-note-gap); }
+  .info-fairness .fairness-label-status { margin-top: var(--fairness-note-gap); }
+  .info-fairness .fairness-label-status > li,
+  .info-fairness .fairness-scope-note > ul > li { margin-block: 0; }
+  .info-fairness > .info-notice > details { margin-top: var(--fairness-panel-gap); }
+  .info-fairness .fairness-scope-note > :is(ul, p) { max-width: 75ch; }
+  .info-fairness .fairness-scope-note > p { margin-top: var(--fairness-note-gap); }
+}
