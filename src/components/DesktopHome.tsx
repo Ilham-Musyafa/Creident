@@ -1,3 +1,4 @@
+import { JoinDeal } from './JoinDeal';
 import { resolveDealCategory } from '../lib/dealCategories';
 import { HomeStatusRow } from './HomeStatusRow';
 import { demoName } from './presentationCopy';
@@ -38,6 +39,7 @@ export function DesktopHome(props: HomeData) {
       <section aria-label="Overview" className="col-span-8 rounded-[24px] border border-line bg-gradient-to-br from-surface-2 to-surface p-6">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div><p className="text-sm text-muted">Demo workspace · {props.role[0]!.toUpperCase() + props.role.slice(1)} view</p><h1 className="mt-1 text-[28px] font-bold text-heading">Hi, {demoName(props.role)}</h1></div>
+          {props.role === 'buyer' && <JoinDeal className={`${button} shrink-0 bg-accent text-on-accent hover:opacity-90`}/>}
           {headline && <Link href={headline.href} className={`${button} shrink-0 bg-accent text-on-accent hover:opacity-90`}>{headline.text}</Link>}
         </div>
         <HomeStatusRow tiles={props.statusTiles}/>

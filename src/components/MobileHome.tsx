@@ -1,3 +1,4 @@
+import { JoinDeal } from './JoinDeal';
 import { demoName } from './presentationCopy';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -50,6 +51,7 @@ export function MobileHome(props: HomeData) {
         <div className="mt-4 flex flex-wrap gap-2">
           {props.role === 'seller' && <Link href="/deals/new" className={`${pill} bg-white text-[#0B1F4B]`}><span aria-hidden="true">+</span> New deal</Link>}
           <Link href="/deals" className={`${pill} border border-white/40 text-white`}>Transactions</Link>
+          {props.role === 'buyer' && <JoinDeal className={`${pill} bg-white text-[#0B1F4B]`}/>}
         </div>
       </section>
 
