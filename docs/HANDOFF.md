@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — W1: Full-width desktop info and Settings pages
+- Started `ui/full-width-pages` from origin/main `5e255f2` (About PR #119 merged). Removed desktop inner width caps on How it works, About, Fairness and Settings, retaining the shell's 1560px cap. Headers and content now share both edges.
+- How it works uses two numbered card columns on narrower desktops and three from 1600px. About uses four link-card columns on wide desktops; Settings keeps its aligned sticky 240px sidebar and uses two content columns on wide desktops. Existing copy, links, rules and mobile layout are unchanged; Home/Transactions source and shared shell/header were not edited.
+- Typecheck, 558 tests / 53 files and build passed. Production Chromium: all five pages including Transactions, Seller, 390/1280/1920/2560px, light/dark (40 combinations), no console errors/warnings or overflow. Header/content rectangles match; desktop content widths 976/1504/1504px. All ten 390px before/after screenshots are pixel-identical. Six steps, seven rules and Settings anchors checked. Screenshots: `docs/ui/screens/full-width-pages/`.
+
+
 ### 2026-10-31 — A1: About desktop tidy
 - Started `ui/about-tidy` from origin/main `55093ac` (Fairness PR #118 merged). Desktop About now centers the shared header and content at 1000px, with the Fairness-style 24px cards, a soft summary, four link/disclosure cards, collapsed history/testing sections and an amber limitations card. Existing copy, PayPal detail text, nine limitations and #decisions/#audit/#limitations remain available.
 - Mobile uses its original presentation; 390px light/dark before/after screenshots are pixel-identical. No other pages, data, dependencies or logic changed.
