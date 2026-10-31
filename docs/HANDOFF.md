@@ -395,3 +395,8 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - UI: "Edit deal" on Draft rows (desktop and mobile) and on the deal detail, using the existing deal form; seller-only "Drafts (n)" filter chip, hidden for other roles. History label: "Seller edited the terms".
 - Checks: typecheck and build passed; 710 tests / 69 files passed. Browser check (isolated local DB): chip shows, edit prefilled and saved, history shows the edit event, buyer accept then edit returns 409 and Edit disappears, no console errors.
 - Pending after merge: owner re-checks on Render; no extra decision needed.
+
+### 2026-10-31 — Remove duplicate "Deal history" button on deal detail (ui/fix-focus-dup)
+- Deal detail had two "Deal history" buttons (Activity header + a card at the bottom); the bottom card is removed. Desktop now shows one link, mobile two (round action in the hero when an action exists, plus Activity), by design.
+- The closed "Draft from a listing with AI" panel was checked for keyboard access: closed `<details>` content is not tabbable (focus goes from the summary to the Item name field), so nothing needed fixing there.
+- Checks: typecheck and build passed; 710 tests / 69 files passed. Link count verified over all seeded deals for seller, buyer and reviewer; no console errors. Presentation only; no behavior, data or dependency change.
