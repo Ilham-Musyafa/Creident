@@ -418,7 +418,11 @@ button, a, input, textarea, select { outline-offset: 3px; }
     --fairness-card-space: 1.75rem;
     --fairness-panel-gap: 1.5rem;
     --fairness-note-gap: 1rem;
-    --fairness-part-gap: .5rem;
+    --fairness-part-gap: .75rem;
+    --fairness-label-gap: .5rem;
+    --fairness-metric-gap: 2.5rem;
+    --fairness-description-gap: 1rem;
+    --fairness-bullet-gap: .875rem;
     display: flex;
     flex-direction: column;
     gap: var(--fairness-block-gap);
@@ -428,17 +432,30 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .info-fairness > .grid > section,
   .info-fairness > .info-card,
   .info-fairness > .info-notice { padding: var(--fairness-card-space); }
-  .info-fairness .fairness-metric-panel > header { margin-bottom: var(--fairness-panel-gap); }
-  .info-fairness .fairness-metric-panel > div { display: flex; flex-direction: column; gap: var(--fairness-card-space); }
+  .info-fairness .fairness-metric-panel > header { min-block-size: 4.5rem; margin-bottom: var(--fairness-block-gap); }
+  .info-fairness .fairness-metric-panel > header > div { display: grid; gap: var(--fairness-label-gap); }
+  .info-fairness .fairness-metric-panel > div { display: flex; flex-direction: column; gap: 0; }
   .info-fairness .fairness-metric-panel > div > * { margin-block: 0; }
+  .info-fairness .fairness-stat + .fairness-stat {
+    margin-top: calc(var(--fairness-metric-gap) / 2);
+    border-top: 1px solid var(--line);
+    padding-top: calc(var(--fairness-metric-gap) / 2 - 1px);
+  }
+  .info-fairness .fairness-metric-panel > div > p { margin-top: var(--fairness-panel-gap); }
   .info-fairness .fairness-stat { display: grid; gap: var(--fairness-part-gap); }
   .info-fairness .fairness-stat > * { margin-block: 0; }
-  .info-fairness .fairness-label-status,
-  .info-fairness .fairness-scope-note > ul { display: grid; gap: var(--fairness-note-gap); }
+  .info-fairness .fairness-stat > :last-child { margin-top: calc(var(--fairness-description-gap) - var(--fairness-part-gap)); }
+  .info-fairness .fairness-label-status { display: grid; gap: var(--fairness-note-gap); }
+  .info-fairness .fairness-scope-note > ul { display: grid; gap: var(--fairness-bullet-gap); }
   .info-fairness .fairness-label-status { margin-top: var(--fairness-note-gap); }
   .info-fairness .fairness-label-status > li,
   .info-fairness .fairness-scope-note > ul > li { margin-block: 0; }
   .info-fairness > .info-notice > details { margin-top: var(--fairness-panel-gap); }
   .info-fairness .fairness-scope-note > :is(ul, p) { max-width: 75ch; }
-  .info-fairness .fairness-scope-note > p { margin-top: var(--fairness-note-gap); }
+  .info-fairness .fairness-scope-note > p { margin-top: var(--fairness-panel-gap); padding-top: var(--fairness-note-gap); border-top: 1px solid var(--line); }
+  .info-fairness .fairness-differences > p { margin-bottom: var(--fairness-panel-gap); }
+  .info-fairness .fairness-differences > ul { display: grid; gap: var(--fairness-note-gap); }
+  .info-fairness .fairness-differences > ul > li { margin-block: 0; }
+  .info-fairness .fairness-donut > ul { display: flex; flex-direction: column; gap: var(--fairness-note-gap); }
+  .info-fairness .fairness-donut > ul > li { margin-block: 0; }
 }

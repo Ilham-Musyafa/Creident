@@ -12,12 +12,6 @@ const LINKS: { href: string; title: string; detail: string; icon: SettingsIconNa
   { href: '/audit', title: "Deal history", detail: 'Read each step and check the history', icon: 'records' },
   { href: '/about#limitations', title: 'Limitations', detail: 'See what this demo does not cover', icon: 'about' },
 ];
-const SECTIONS: { href: string; title: string; icon: SettingsIconName }[] = [
-  { href: '#demo-role', title: 'Demo role', icon: 'role' },
-  { href: '#appearance', title: 'Appearance', icon: 'appearance' },
-  { href: '#demo-data', title: 'Demo data', icon: 'data' },
-  { href: '#transparency', title: 'Learn & verify', icon: 'records' },
-];
 function SectionHeading({ id, title, detail, icon }: { id: string; title: string; detail: string; icon: SettingsIconName }) {
   return <div className="mb-5 flex items-start gap-3">
     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-heading"><SettingsIcon name={icon}/></span>
@@ -50,10 +44,6 @@ export default async function MenuPage() {
             </div>
             <div className="mt-4 border-t border-line pt-4"><span className="inline-flex rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-heading">{simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'}</span><p className="mt-3 text-sm leading-relaxed text-muted">No real sign-in. Roles are for exploring this demo.</p></div>
           </Card>
-          <nav aria-label="Settings sections" className="hidden lg:block">
-            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">On this page</p>
-            <ul className="space-y-1">{SECTIONS.map(item => <li key={item.href}><Link href={item.href} className="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-heading hover:bg-surface-2"><SettingsIcon name={item.icon}/>{item.title}</Link></li>)}</ul>
-          </nav>
         </aside>
 
         <div className="settings-sections min-w-0 space-y-5">

@@ -145,7 +145,7 @@ export default function FairnessPage() {
         </div>
 
         {results.differing.length > 0 && (
-          <Card className="info-card">
+          <Card className="info-card fairness-differences">
             <h2 className="mb-2 text-sm font-bold text-heading">Cases that differ from our answer key</h2>
             <p className="mb-3 text-sm text-muted">{results.differing.length} of {m.total} made-up cases differed from the answer key.</p>
             <ul className="space-y-3">{results.differing.map(d => <li key={d.id}>
