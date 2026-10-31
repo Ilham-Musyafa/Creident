@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import type { OversightSnapshot } from '../../lib/oversight';
 import { shortDate } from '../view';
+import { StatusPill } from '../ui';
+import type { TxStatus } from '../../lib/domain/types';
 
 /** Read-only saved data remains visible when the optional chart UI cannot run. */
 export function SnapshotFallback({ snapshot }: { snapshot: OversightSnapshot }) {
@@ -11,7 +13,7 @@ export function SnapshotFallback({ snapshot }: { snapshot: OversightSnapshot }) 
     ].map(([label, value]) => <div key={label} className="rounded-[24px] border border-line bg-surface p-5"><h2 className="text-sm font-semibold text-muted">{label}</h2><p className="mt-2 text-3xl font-bold tabular-nums text-heading">{value}</p></div>)}</div>
     <section className="rounded-[24px] border border-line bg-surface p-5">
       <h2 className="mb-3 text-base font-bold text-heading">Disputes</h2>
-      {snapshot.disputes.length ? <ul className="space-y-2 text-sm">{snapshot.disputes.map(row => <li key={`${row.status}:${row.type}`} className="flex flex-wrap justify-between gap-2"><span>{row.type} · {row.status.toLowerCase().replaceAll('_', ' ')}</span><strong>{row.count} deals</strong></li>)}</ul> : <p className="text-sm text-muted">No recorded disputes.</p>}
+      {snapshot.disputes.length ? <ul className="space-y-2 text-sm">{snapshot.disputes.map(row => <li key={`${row.status}:${row.type}`} className="flex flex-wrap justify-between gap-2"><span className="flex flex-wrap items-center gap-2"><span>{row.type}</span><StatusPill status={row.status as TxStatus} short/></span><strong>{row.count} {row.count === 1 ? 'deal' : 'deals'}</strong></li>)}</ul> : <p className="text-sm text-muted">No recorded disputes.</p>}
       <p className="mt-3 text-sm text-muted">{snapshot.escalation.escalated} of {snapshot.escalation.recommendations} stored recommendations passed to a person.</p>
     </section>
     <section className="rounded-[24px] border border-line bg-surface p-5">

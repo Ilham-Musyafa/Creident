@@ -10,6 +10,7 @@ import { SnapshotFallback } from './SnapshotFallback';
 function UnavailableStudio({ snapshot }: { snapshot: OversightSnapshot }) {
   return <><Notice tone="warning">AG Studio could not load. A saved snapshot summary is shown below.</Notice><SnapshotFallback snapshot={snapshot}/></>;
 }
+// Keep import failures finite; a missing licence uses our own snapshot view below.
 const StudioDashboard = dynamic(async () => {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -37,7 +38,7 @@ export function OversightClient({ licenseKey }: { licenseKey?: string }) {
       const value: OversightSnapshot = await response.json();
       if (!value || typeof value.totalDeals !== 'number' || !value.audit || !Array.isArray(value.deadlines) || !Array.isArray(value.disputes)) throw new Error('Review desk data could not be read. Try again.');
       if (!signal?.aborted) setSnapshot(value);
-    } catch (e) { if (!signal?.aborted) setError(e instanceof Error && e.name === 'TimeoutError' ? 'Review desk data took too long to load. Try again.' : e instanceof Error ? e.message : 'Review desk data could not load. Try again.'); }
+    } catch (e) { if (!signal?.aborted) setError(e instanceof Error && e.name === 'TimeoutError' ? 'Review desk data took too long to load. Try again.' : e instanceof Error && !(e instanceof TypeError) && !(e instanceof SyntaxError) ? e.message : 'Review desk data could not load. Try again.'); }
     finally { if (!signal?.aborted) setLoading(false); }
   }, []);
   useEffect(() => { const abort = new AbortController(); void load(abort.signal); return () => abort.abort(); }, [load]);
@@ -46,8 +47,8 @@ export function OversightClient({ licenseKey }: { licenseKey?: string }) {
       <p className="text-sm text-muted">{snapshot ? `Snapshot ${shortDate(snapshot.asOf)} · ${snapshot.totalDeals} deals · ${snapshot.demoDeals} labelled demo deals` : 'Read-only local data'}</p>
       <Button variant="ghost" disabled={loading} onClick={() => void load()}>{loading ? 'Refreshing…' : 'Refresh snapshot'}</Button>
     </div>
-    {!licenseKey && snapshot && <Notice>AG Studio licence is not configured. A saved snapshot summary is shown below.</Notice>}
-    {error && <Notice tone="warning">{error}</Notice>}
+    {!licenseKey && !error && snapshot && snapshot.totalDeals > 0 && <Notice>AG Studio licence is not configured. A saved snapshot summary is shown below.</Notice>}
+    {error && <div role="alert"><Notice tone="warning">{error}</Notice></div>}
     {loading && !snapshot && <p role="status" className="p-4 text-sm text-muted">Loading review desk data…</p>}
     {snapshot && !error && (snapshot.totalDeals === 0 ? <Notice>No deals yet. Load labelled demo deals in Settings to explore the dashboard.</Notice>
       : <StudioBoundary key={snapshot.asOf} snapshot={snapshot}>{licenseKey ? <StudioDashboard snapshot={snapshot} licenseKey={licenseKey}/> : <SnapshotFallback snapshot={snapshot}/>}</StudioBoundary>)}
