@@ -1,3 +1,4 @@
+import { GET as getOversight } from './reviewer/oversight/route';
 import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import DecisionReceiptPage from '../deals/[id]/decision/page';
@@ -537,5 +538,35 @@ describe('reviewer access code', () => {
     // Buyer and seller actions are not affected.
     const created = await create(post('/api/transactions', 'seller', { item: 'Sample', amount: '10.00', terms: {} }));
     expect(created.status).toBe(201);
+  });
+});
+
+
+describe('review desk read-only API', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('requires a reviewer role and returns an empty JSON snapshot without data', async () => {
+    vi.stubEnv('REVIEWER_ACCESS_CODE', undefined);
+    expect((await getOversight(request('/api/reviewer/oversight'))).status).toBe(400);
+    for (const role of ['buyer', 'seller']) expect((await getOversight(request('/api/reviewer/oversight', role))).status).toBe(403);
+    const response = await getOversight(request('/api/reviewer/oversight', 'reviewer'));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('application/json');
+    expect(await response.json()).toMatchObject({ totalDeals: 0, disputes: [], deadlines: [], audit: { verified: 0, failed: 0 } });
+  });
+
+  it('keeps the access-code gate and reads real saved deals without provider calls or writes', async () => {
+    vi.stubEnv('REVIEWER_ACCESS_CODE', 'test-review-desk');
+    const created = await create(post('/api/transactions', 'seller', { item: 'Review desk sample', amount: '12.00', terms: { condition: 'Good' } }));
+    const { transaction } = await created.json() as { transaction: StoredTx };
+    const before = repo.readEvents(transaction.id);
+    expect((await getOversight(request('/api/reviewer/oversight', 'reviewer'))).status).toBe(403);
+    const response = await getOversight(new Request('http://localhost:3000/api/reviewer/oversight', {
+      headers: { 'x-demo-role': 'reviewer', cookie: 'hv-reviewer-code=test-review-desk' },
+    }));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ totalDeals: 1, audit: { verified: 1, failed: 0, events: before.length } });
+    expect(repo.readEvents(transaction.id)).toEqual(before);
+    expect(calls).toEqual([]);
   });
 });

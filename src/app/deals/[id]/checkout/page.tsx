@@ -1,7 +1,7 @@
 import { displayItemName } from '../../../../components/displayItemName';
 import { TechnicalDetails } from '../../../../components/TechnicalDetails';
 import { TermsChecklist } from '../../../../components/TermsChecklist';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { StatusPill } from '../../../../components/ui';
 import { AppShell, Card, Notice, PageHeader, SectionTitle } from '../../../../components/layout';
 import { ActionButton, PayButton } from '../../../../components/client';
@@ -17,6 +17,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   const tx = ctx.repo.loadTransaction(id);
   if (!tx) notFound();
   const role = await getRole();
+  if (role === 'buyer' && tx.status !== 'DRAFT' && tx.status !== 'TERMS_LOCKED') redirect(`/deals/${id}`);
   const simulated = simulatedPayPal();
   const terms = JSON.parse(tx.termsJson) as Record<string, unknown>;
   const { shipByDays, inspectionDays } = ctx.time;

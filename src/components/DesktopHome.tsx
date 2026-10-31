@@ -22,7 +22,7 @@ function DealsTable({ rows }: { rows: TransactionRow[] }) {
       <td className="py-3 pr-3"><span className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-heading"><TransactionIcon name={row.icon}/></span>
         <Link href={row.href} className="font-semibold text-heading after:absolute after:inset-0 after:content-['']">{row.title}</Link></span></td>
       <td className="py-3 pr-3 text-muted">{resolveDealCategory(row.category, row.subcategory).category.label}</td>
-      <td className="py-3 pr-3"><StatusPill status={row.status} short/></td>
+      <td className="py-3 pr-3"><StatusPill status={row.status} short equal/></td>
       <td className="py-3 pr-3 text-heading">{row.nextStep}{row.deadlineLabel && <span className="block text-xs text-muted">{row.deadlineLabel}</span>}</td>
       <td className="py-3 text-right font-semibold tabular-nums text-heading">{row.amount}</td>
     </tr>)}</tbody>
@@ -38,7 +38,7 @@ export function DesktopHome(props: HomeData) {
     <div className="grid grid-cols-12 gap-6">
       <section aria-label="Overview" className="col-span-8 rounded-[24px] border border-line bg-gradient-to-br from-surface-2 to-surface p-6">
         <div className="mb-6 flex items-start justify-between gap-4">
-          <div><p className="text-sm text-muted">Demo workspace · {props.role[0]!.toUpperCase() + props.role.slice(1)} view</p><h1 className="mt-1 text-[28px] font-bold text-heading">Hi, {demoName(props.role)}</h1></div>
+          <div><p className="text-sm text-muted">Demo workspace · {props.role[0]!.toUpperCase() + props.role.slice(1)} view</p><h1 className="mt-1 text-[28px] font-bold text-heading">Hi, {demoName(props.role)}</h1>{props.role === 'buyer' && <p className="mt-2 text-sm text-muted">Open the link your seller shared to join a deal.</p>}</div>
           {props.role === 'buyer' && <JoinDeal className={`${button} shrink-0 bg-accent text-on-accent hover:opacity-90`}/>}
           {headline && <Link href={headline.href} className={`${button} shrink-0 bg-accent text-on-accent hover:opacity-90`}>{headline.text}</Link>}
         </div>
@@ -63,6 +63,6 @@ export function DesktopHome(props: HomeData) {
         {props.total === 0 && <div className="mt-4"><SeedButton role={props.role}/></div>}
       </section>
     </div>
-    <footer className="mt-auto flex items-center justify-between gap-5 border-t border-line pt-4 text-sm text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><span className="flex gap-5"><Link href="/audit" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Deal history{props.total > 0 && props.verified === props.total ? ' ✓' : ''}</Link><Link href="/about#limitations" className="inline-flex min-h-11 items-center font-semibold text-heading hover:underline">Limitations</Link></span></footer>
+
   </div>;
 }

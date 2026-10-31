@@ -31,7 +31,6 @@ const STEPS: { icon: 'transactions' | 'actions' | 'records'; title: string; text
 ];
 
 export function MobileHome(props: HomeData) {
-  const allVerified = props.total > 0 && props.verified === props.total;
   const next = props.actions[0];
   const recent = props.recent.slice(0, 3);
   const [, inProgress, problem, closed] = props.statusTiles;
@@ -75,9 +74,9 @@ export function MobileHome(props: HomeData) {
           <ul aria-label="Your deals" className="divide-y divide-line overflow-hidden rounded-[22px] bg-surface">{recent.map(row => <li key={row.id}><MobileTransactionRow row={row} compact/></li>)}</ul>
         </section>}
 
-        <Link href="/audit" className={`mt-3 flex min-h-11 items-center justify-center gap-2 rounded-xl px-2 py-2 text-center text-xs ${allVerified ? 'text-[var(--success-text)]' : 'bg-[var(--warning-bg)] text-[var(--warning-text)]'}`}><HomeIcon name="records"/><span>{allVerified ? `Deal history verified ✓ ${props.verified} of ${props.total}` : `Verification warning · ${props.verified} of ${props.total} deal history verified`}<span className="sr-only">. Checked on this server.</span></span></Link>
+
       </>}
-      <footer className="mt-3 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>{props.simulated ? "Demo mode (no real money)" : 'PayPal Sandbox'} · Demo data · No real money moves.</p><Link href="/about#limitations" className="inline-flex min-h-11 items-center text-sm font-semibold text-heading">View limitations</Link></footer>
+      <footer className="mt-3 border-t border-line pt-4 text-xs leading-relaxed text-muted"><p>Demo mode · No real money moves</p></footer>
     </MobilePanel>
   </div>;
 }
