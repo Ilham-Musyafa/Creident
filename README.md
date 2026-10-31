@@ -9,7 +9,7 @@
 
 **Live demo:** https://creident.onrender.com (labelled simulation: no real money, recorded AI answers)
 
-**Demo video:** `<YOUTUBE_URL>`
+**Demo video:** https://youtu.be/PoaCDbhpdo4
 
 **A dispute-mediation prototype for peer-to-peer sales of physical goods.**
 Rules first, AI summarises evidence, a human confirms every dispute outcome, and every

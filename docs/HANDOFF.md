@@ -422,3 +422,9 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 
 ## 2026-10-31 — README: "Menu" renamed to "Settings"
 - The app's menu page is now called Settings (sidebar and dock); README still said "Menu" in 7 places. Updated the wording; Review desk now described as reachable from the sidebar or bottom bar. Docs only.
+
+## 2026-11-01 — Demo video link added
+- Branch `docs/readme-demo-video`. README line 12 now points to the public demo video (https://youtu.be/PoaCDbhpdo4). Narration in the video is a text-to-speech voice.
+- `.env.example`: "Menu > Reviewer access code" corrected to "Settings > Reviewer access code" (stale name after the Settings rename).
+- Final scans on tracked files and git history: no secrets found (only a base64 icon and a test that generates a throwaway key at runtime); no forbidden claims in README or docs.
+- Still open for the owner: make the repo public, confirm the `ui-freeze` tag, paste the Devpost text and submit.
