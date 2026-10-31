@@ -410,3 +410,8 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - Desktop: a full-width action button sits under the logo on every page: **New deal** for the seller, **Join a deal** for the buyer (opens the existing dialog), none for the reviewer. Previously these existed only on Home.
 - Mobile reviewer dock now has five columns like the other roles: Home, Deals, **Desk** (Review desk, `/reviewer/oversight`), How, Settings. The centre item is plain (no raised button).
 - Checks: typecheck and build passed; 710 tests / 69 files passed. Browser check: sidebar button shows on Home, Transactions, Settings and Fairness for seller and buyer; seller button opens New deal; buyer button opens the dialog and a valid link goes to checkout; reviewer has no button; reviewer dock items and Desk/How navigation and current state work; no console errors. Presentation only.
+
+## 2026-10-31 — Reviewer sidebar: Review desk link (desktop)
+- Added a "Review desk" item (shield icon, same as the mobile dock) to the desktop sidebar for the reviewer role only. Active state on `/reviewer/oversight`.
+- Checked: tsc, 710 vitest tests, build, Playwright (reviewer sees the link and it opens the desk with the item highlighted; seller and buyer sidebars unchanged; 0 console errors).
+- Pending: none. UI stays frozen otherwise.
