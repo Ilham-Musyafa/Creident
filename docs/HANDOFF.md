@@ -173,6 +173,11 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — S1 desktop Settings tidy
+
+- Started `ui/settings-desktop-tidy` from `origin/main` at `cd98152`. Desktop `/menu` now has a centered 1080px layout, aligned 240px sticky sidebar, consistent cards, three role option cards, a compact demo-data action, and a two-column Learn grid with only Deal history and Limitations for Seller. Reviewer also keeps the Review desk link. Two live links fill one balanced row; no filler or duplicate sidebar links were added. Mobile Settings is pixel-identical before and after in light and dark.
+- Typecheck, 558 tests in 53 files, and build passed. Browser checks at 1280/1920 light/dark confirmed alignment, sticky sidebar, role switching, anchors, no console issues or overflow. Screenshots: `docs/ui/screens/settings-desktop-tidy/`. No data, API, rules, payments, dependencies, or mobile behavior changed.
+
 ### 2026-10-31 — Lead session: UI fixes after owner testing on Render (all UI/copy only)
 
 - Merged: #103 Deal history out of main nav, #104 public-origin fix (Render "localhost:10000"),
