@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — A1: About desktop tidy
+- Started `ui/about-tidy` from origin/main `55093ac` (Fairness PR #118 merged). Desktop About now centers the shared header and content at 1000px, with the Fairness-style 24px cards, a soft summary, four link/disclosure cards, collapsed history/testing sections and an amber limitations card. Existing copy, PayPal detail text, nine limitations and #decisions/#audit/#limitations remain available.
+- Mobile uses its original presentation; 390px light/dark before/after screenshots are pixel-identical. No other pages, data, dependencies or logic changed.
+- Typecheck, 558 tests / 53 files and production build passed. Browser at 390/1280/1920 in light/dark: links, disclosures and all three anchors worked, all nine limitations visible when opened, no overflow. Initial dev asset 404s during concurrent build were absent when repeating the complete walkthrough against the production build (no console errors/warnings). Screenshots: `docs/ui/screens/about-tidy/`.
+
+
 ### 2026-10-31 — F1: Fairness dashboard
 - Continued the existing unverified `ui/fairness-dashboard` draft (ea045b7), then merged current origin/main for compatibility. Changed only fairness presentation and page-scoped CSS.
 - Added a scoped summary, neutral navy donut (25 / 35 / 2 of 62 made-up cases), three metric panels, visible differing-case list and collapsed technical details. Recorded-answer caveat and label review status remain explicit; no evaluation data or helpers changed.

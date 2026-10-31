@@ -328,3 +328,23 @@ button, a, input, textarea, select { outline-offset: 3px; }
 @media (max-width: 1199px) {
   .info-fairness .fairness-donut { flex-direction: column; }
 }
+
+/* About desktop presentation; mobile retains the original info-page layout. */
+@media (width >= 1024px) {
+  .info-panel:has(.about-page) { max-width: 1000px; margin-inline: auto; }
+  .about-page { max-width: 1000px; }
+  .about-page > section { scroll-margin-top: 24px; }
+  .about-page .about-opening, .about-page .about-link, .about-page .about-disclosure,
+  .about-page #limitations { border: 1px solid var(--line); border-radius: 24px; padding: 24px; background: var(--surface); }
+  .about-page .about-opening { background: linear-gradient(135deg, var(--surface-2), var(--surface)); }
+  .about-page .about-link { position: relative; display: grid; align-content: start; gap: 12px; }
+  .about-page .about-link h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--heading); }
+  .about-page .about-payment > summary { display: grid; gap: 12px; }
+  .about-page .about-link > p, .about-page .about-payment > summary > p { color: var(--muted); padding-right: 20px; }
+  .about-page .about-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2); color: var(--heading); }
+  .about-page .about-arrow { position: absolute; top: 32px; right: 24px; color: var(--muted); }
+  .about-page .about-link:focus-visible, .about-page summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+  .about-page .about-disclosure > summary { font-family: var(--font-display); font-size: 18px; }
+  .about-page #limitations { background: var(--warning-bg); border-color: var(--warning-line); }
+  .about-page #limitations > .info-card { background: transparent; padding: 0; border: 0; border-radius: 0; }
+}
