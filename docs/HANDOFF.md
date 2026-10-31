@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Desktop Fairness breathing room
+- Started `ui/fairness-spacing` from origin/main `1e49c48` (PR #132 merged). Added three inert styling hooks on the Fairness page and a page-scoped desktop media query: shared spacing variables set major block gaps to 32px, card padding/inter-metric gaps to 28px, grid gaps to 24px, metric-part gaps to 8px and note-line/bullet gaps to 16px. The blue note text is capped at 75ch. Metric cards keep equal height with naturally top-aligned content, including Safety; shell width/margins are unchanged.
+- Desktop only (>=1024px). No copy, numbers, labels, colours, icons, calculations, dependencies or other pages changed. Mobile styling is untouched.
+- Typecheck, 625 tests / 57 files, production build and diff whitespace checks passed; no test changes needed. Production Playwright checked before/after at 390/1280/1920/2560px × Seller/Buyer/Reviewer × light/dark (24 views per stage). All six mobile image pairs match byte-for-byte; page text matches in all views. Verified 32px block gaps, 28px padding, 24px card gaps, 8px metric-part gaps and equal card heights. Expanded cases/notes/technical details remain readable, with no horizontal overflow or console errors/warnings. Screenshots: `docs/ui/screens/fairness-spacing/`. QA used a temporary database in simulated/replay mode; production data/configuration unchanged.
+
+
 ### 2026-10-31 — Fairness results consistency tidy
 - Started `ui/fairness-tidy` from origin/main `894b4ae` (PR #131 merged). All six metric rows now put counts first, percentages second, with measured-value bar fills and uniform Lower/Higher is better cues. Best-value ticks remain neutral in recorded-answer mode; they do not imply a live-model pass. The error-gap note uses the same cue. Desktop panel headers reserve equal height so the first metrics align.
 - Moved answer-key agreement into Steady answers; Safety contains only hidden tricks. All UI references use answer key. Differing cases have readable shipping/return titles, stored expected/actual outcomes in two short lines, and raw IDs/results in an inline Technical details section within the single case disclosure—no empty nested disclosure.
