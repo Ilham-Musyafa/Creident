@@ -508,3 +508,8 @@ button, a, input, textarea, select { outline-offset: 3px; }
   .deal-story .deal-primary-action { position: fixed; z-index: 21; left: 20px; right: 20px; bottom: calc(104px + env(safe-area-inset-bottom)); width: auto; min-height: 48px; box-shadow: 0 6px 20px color-mix(in srgb, var(--brand-navy) 18%, transparent); }
   .deal-story #next-step { padding-bottom: 20px; }
 }
+
+@media (width < 1024px) {
+  .transaction-segments { position: relative; flex-wrap: nowrap; overflow-x: auto; scroll-padding-inline: 8px; padding-right: 24px; }
+  .transaction-segments > button { flex: 0 0 auto; white-space: nowrap; }
+}
