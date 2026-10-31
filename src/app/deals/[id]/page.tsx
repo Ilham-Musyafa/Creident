@@ -24,7 +24,7 @@ import { TERMS_TEMPLATES } from '../../../lib/termsTemplates';
 
 export const dynamic = 'force-dynamic';
 
-export default async function DealPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
+export default async function DealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!isUuid(id)) notFound();
   const ctx = data();
@@ -32,7 +32,6 @@ export default async function DealPage({ params, searchParams }: { params: Promi
   if (!tx) notFound();
   const role = await getRole();
   const now = ctx.now();
-  const created = (await searchParams).created === '1';
   const simulated = isSimulatedDeal(tx);
   const decision = ctx.repo.loadDecisions(id).at(-1);
   const recommendation = decision ? ctx.repo.loadRecommendation(id) : null;
@@ -112,7 +111,7 @@ export default async function DealPage({ params, searchParams }: { params: Promi
             {captureFailed && <Notice tone="warning">PayPal couldn't charge the approved payment. The payment approval may be older than 3 days, so PayPal may decline a later charge. Nothing was charged and the deal status has not changed. This prototype does not renew payment approval automatically.<TechnicalDetails><p>PayPal code: {String(lastEvent!.payload.code ?? 'error')}</p>{lastEvent!.payload.issue ? <p>PayPal issue: {String(lastEvent!.payload.issue)}</p> : null}</TechnicalDetails></Notice>}
             <PartialRefundNotice tx={tx} events={allEvents}/>
           </section>
-          {role === 'seller' && (created || tx.status === 'DRAFT' || tx.status === 'TERMS_LOCKED' || tx.status === 'AWAITING_APPROVAL') && <Card className="deal-share space-y-3">
+          {role === 'seller' && (tx.status === 'DRAFT' || tx.status === 'TERMS_LOCKED' || tx.status === 'AWAITING_APPROVAL') && <Card className="deal-share space-y-3">
             <h2 className="text-lg text-heading">Share with the buyer</h2>
             <Notice>Share this deal link with the buyer. You can copy it again here until the buyer approves the payment.</Notice>
             <CopyLinkButton path={`/deals/${id}/checkout`}/>

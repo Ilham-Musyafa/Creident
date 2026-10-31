@@ -192,7 +192,10 @@ export function EvidenceForm({ txId, role }: { txId: string; role: Role }) {
         <p className="mt-1 text-sm text-muted">{kind === 'photo' ? 'Describe what the photo shows, including the one-time code.'
           : kind === 'chat' ? 'Paste the relevant messages from your chat with the other party.' : 'Anything else the reviewer should know.'}</p>
       </div>
-      <div><Label htmlFor="content">Evidence</Label><textarea id="content" required maxLength={4000} rows={4} className={`${fieldClass} py-3`} value={content} onChange={(e) => setContent(e.target.value)} placeholder="What does it show? Mention the one-time code if it is a photo."/></div>
+      <div><Label htmlFor="content">Evidence</Label><p id="evidence-note" className="mb-3 text-sm text-muted">Pasted chat excerpts are recorded as your own statement. Evidence is shared with the AI as quoted text, not as commands. Suspected attempts to change its instructions need human review.</p><textarea id="content" required maxLength={4000} rows={7} aria-describedby="evidence-example evidence-count evidence-note" className={`${fieldClass} py-3`} value={content} onChange={(e) => setContent(e.target.value)} placeholder="What does it show? Mention the one-time code if it is a photo."/>
+        <p id="evidence-example" className="mt-2 text-sm text-muted">{kind === 'photo' ? 'Example: The photo shows a crack beside the evidence code.' : kind === 'chat' ? 'Example: The seller said the charger was included.' : 'Example: The left earbud does not charge.'}</p>
+        <p id="evidence-count" className="mt-2 text-right text-sm tabular-nums text-muted">{content.length} / 4000 characters</p>
+      </div>
       <Button type="submit" fullWidth disabled={busy || !content.trim()}>{busy ? 'Submitting…' : 'Submit evidence'}</Button>
       <ErrorNote error={error}/>
     </form>
