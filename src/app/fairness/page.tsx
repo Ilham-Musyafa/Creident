@@ -47,7 +47,7 @@ function Stat({ label, r, detail, direction }: { label: string; r: Rate; detail:
 
 function Panel({ icon, title, hint, children }: { icon: IconName; title: string; hint: string; children: ReactNode }) {
   return (
-    <section className="min-w-0 rounded-[24px] border border-line bg-surface p-5">
+    <section className="fairness-metric-panel min-w-0 rounded-[24px] border border-line bg-surface p-5">
       <header className="mb-4 flex items-start gap-3 lg:min-h-16">
         <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-heading"><Icon name={icon}/></span>
         <div><h2 className="text-base font-bold text-heading">{title}</h2><p className="text-sm text-muted">{hint}</p></div>
@@ -78,7 +78,7 @@ function Donut({ parts, centre, caption }: { parts: { label: string; value: numb
 
 function LabelStatus({ total, reviewed, accepted }: { total: number; reviewed: number; accepted: number }) {
   if (!reviewed && !accepted) return <p>The answer key for these cases is still a draft that needs review.</p>;
-  return <ul className="mt-2 space-y-1">
+  return <ul className="fairness-label-status mt-2 space-y-1">
     <li>{reviewed} answers in the answer key checked one by one by the owner.</li>
     <li>{accepted} drafts accepted by the owner without checking each one.</li>
     <li>{total - reviewed - accepted} answers still drafts.</li>
@@ -161,7 +161,7 @@ export default function FairnessPage() {
           </Card>
         )}
 
-        <Notice className="info-notice"><ul className="list-disc space-y-3 pl-5">
+        <Notice className="info-notice fairness-scope-note"><ul className="list-disc space-y-3 pl-5">
           <li>The answer key was written by the builder. The counts above separate answers the owner checked one by one from drafts accepted without checking each one; nobody outside the project checked them.</li>
           <li>All cases are made up; no real people or personal data. They cover tracking problems, decisions from evidence, human review and hidden instructions. Shipping and return checks also have their own tests.</li>
           <li>{m.total} cases ({m.buyerRight} where the buyer was right, {m.sellerRight} where the seller was right, {m.unclear} unclear, {m.injections} with hidden tricks) is a small sample: treat these numbers as a limited snapshot.</li>
