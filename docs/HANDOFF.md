@@ -173,6 +173,11 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — B1: Desktop Buyer join hint
+- Started `ui/buyer-hint` from origin/main `d25ebc1` after PR #123. Added the exact muted line "Open the link your seller shared to join a deal." below the desktop Buyer greeting only. Seller and Reviewer markup is unchanged; mobile was left unchanged to preserve its summary layout. No buttons, routes, dependencies or data/logic changes.
+- Typecheck, 558 tests / 53 files and build passed. Production Chromium at 1280/1920px, light/dark, all three roles (12 views): hint shown only to Buyer, one line (20px) at both widths, four status tiles aligned, no overflow or console errors/warnings. Screenshot: `docs/ui/screens/buyer-hint/buyer-1280-light.png`.
+
+
 ### 2026-10-31 — A2: Remove About card arrows
 - Started `ui/about-remove-arrows` from origin/main `25e77db`. Removed the four desktop About arrows, their unused helper/CSS and reserved right padding. Icons, titles, descriptions, links, PayPal disclosure and focus rings remain; hover outlines the cards with the existing accent token. Mobile layout and copy are unchanged.
 - Typecheck, 558 tests / 53 files and production build passed. Chromium at 390/1280/1920px, light/dark: no arrows, links and PayPal expansion worked, tab order/focus and hover verified, no console errors/warnings or overflow. Screenshot: `docs/ui/screens/about-tidy/a2-cards-no-arrows-1920-light.png`.
