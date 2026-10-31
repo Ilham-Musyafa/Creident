@@ -1,3 +1,4 @@
+import { deadlineCue, type DeadlineCueData } from './deadlineCue';
 // Presentation only: existing role actions and stored deadlines drive the list.
 import type { StoredTx } from '../lib/repository';
 import type { TxStatus } from '../lib/domain/types';
@@ -10,6 +11,7 @@ export interface TransactionRow {
   category?: unknown; subcategory?: unknown;
   id: string; title: string; demo: boolean; icon: ItemIconName; status: TxStatus;
   amount: string; active: boolean; needsAction: boolean; nextStep: string;
+  deadlineCue?: DeadlineCueData | null;
   href: string; deadline: number | null; deadlineLabel: string | null; createdAt: string | null;
 }
 /** Short fixed-zone date for lists, e.g. "30 Oct 2026". */
@@ -59,6 +61,7 @@ export function transactionRow(tx: StoredTx, role: Role, now: string, accepted: 
   else if (action === 'pay' || (action === 'accept-terms' && role === 'buyer')) href += '/checkout';
   const refundPending = tx.partialRefundState === 'pending' || tx.partialRefundState === 'ready';
   return { category: metadata.category, subcategory: metadata.subcategory, id: tx.id, title, demo, icon: itemIcon(metadata.category, title), status: tx.status,
+    deadlineCue: deadlineCue({ deadline, now, status: tx.status, needsAction: action !== 'none', timeLeftLabel: deadlineLabel }),
     amount: money(tx.amount, tx.currency), active: isActive(tx.status), needsAction: action !== 'none',
     nextStep: action !== 'none' ? ACTION[action] : refundPending ? 'Refund pending verification' : WAITING[tx.status], href, deadline, deadlineLabel, createdAt };
 }
