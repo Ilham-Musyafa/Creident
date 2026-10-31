@@ -2,6 +2,7 @@
 
 Instructions for AI coding agents (Claude Code, Codex, others).
 At the start of every session read this file, `docs/DESIGN.md` and `docs/HANDOFF.md`.
+Working rules for saving AI quota and the task template: `docs/WORKFLOW.md`, `docs/templates/TASK.md`.
 
 ## What this project is
 
