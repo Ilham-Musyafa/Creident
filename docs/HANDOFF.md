@@ -173,6 +173,13 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — Per-deal history timeline tidy
+- Started `ui/deal-history-tidy` from origin/main `ec9923b` (PR #130 merged). The per-deal history now fills the shell for its header, verification banner and summary, with a centred 900px timeline and 16px mobile gutters. Newest-first order and all verification/checkpoint calculations are unchanged.
+- One demo-record note replaces repeated row labels. Stored actors distinguish acceptance steps; provider-origin events (actor `paypal`, not marked simulated) retain a visible From PayPal label. The summary counts stored human roles, not people: role identifiers do not establish the number of individuals. Key milestones have calm blue icons/dots and a connecting line, without list/banner reveal animations.
+- Each step has one keyboard-accessible disclosure. Opening it immediately shows compact sequence, actor, check result, fingerprints and event name; no nested disclosure or empty gap. The hint sits directly below the existing honest verification banner. Default AuditEvent presentation elsewhere remains available via an opt-in timeline variant.
+- Passed typecheck, 621 tests / 56 files (4 new presentation tests), production build and diff whitespace check. Production Playwright checked 36 views: 390/1280/2560px × Seller/Buyer/Reviewer × light/dark × completed (10 steps) / disputed (9 steps). Verified actor labels, ordering, demo note, expanded values, keyboard opening, >=44px targets, 900px cap, 16px gutters and no overflow/console errors/warnings. Screenshots: `docs/ui/screens/deal-history-tidy/`. QA used an isolated /tmp database; no seed, event, verification or Render data/config changes.
+
+
 ### 2026-10-31 — Equal-width mobile status pills
 - Started `ui/mobile-status-equal` from origin/main `c2ea8f1`. The existing equal StatusPill variant now uses one shared `--status-pill-width: 160px` variable at all widths. Default non-equal pills, labels, tones/colours and the dock are untouched; full labels remain in the existing title and screen-reader text.
 - Home compact and Transactions mobile rows now show title/amount, category, own-line left-aligned status, created date, applicable next step, then deadline/Due soon. The responsive card markup in TransactionsBrowser follows the same order; desktop-only contents/date presentation preserves the existing table. No business logic, API, data, category-chip component or dependencies changed.
