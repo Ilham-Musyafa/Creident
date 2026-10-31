@@ -173,6 +173,12 @@ Still open:
 
 ## Log
 
+### 2026-10-31 — F1: Fairness dashboard
+- Continued the existing unverified `ui/fairness-dashboard` draft (ea045b7), then merged current origin/main for compatibility. Changed only fairness presentation and page-scoped CSS.
+- Added a scoped summary, neutral navy donut (25 / 35 / 2 of 62 made-up cases), three metric panels, visible differing-case list and collapsed technical details. Recorded-answer caveat and label review status remain explicit; no evaluation data or helpers changed.
+- Verification: typecheck, 558 tests across 53 files, and production build passed. Chromium at 390, 1280 and 1920 px in light/dark: no horizontal overflow or browser errors/warnings. Screenshots: `docs/ui/screens/fairness-dashboard/`. No live-model run was performed; the committed results are replay data.
+
+
 ### 2026-10-31 — S1 desktop Settings tidy
 
 - Started `ui/settings-desktop-tidy` from `origin/main` at `cd98152`. Desktop `/menu` now has a centered 1080px layout, aligned 240px sticky sidebar, consistent cards, three role option cards, a compact demo-data action, and a two-column Learn grid with only Deal history and Limitations for Seller. Reviewer also keeps the Review desk link. Two live links fill one balanced row; no filler or duplicate sidebar links were added. Mobile Settings is pixel-identical before and after in light and dark.

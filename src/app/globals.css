@@ -319,3 +319,12 @@ button, a, input, textarea, select { outline-offset: 3px; }
 .bg-accent:hover { opacity: 1 !important; background-color: #1D4ED8; }
 
 @media (max-width: 1023px) { .seller-main { padding-bottom: calc(152px + env(safe-area-inset-bottom)); } }
+
+/* Fairness dashboard only: keep the chart and legend readable at narrow widths. */
+.info-fairness .fairness-summary { background: linear-gradient(135deg, var(--surface-2), var(--surface)); }
+.info-fairness .fairness-donut { display: flex; align-items: center; gap: 20px; }
+.info-fairness .fairness-donut svg { font-family: var(--font-display); }
+.info-fairness h2, .info-fairness .tabular-nums { font-family: var(--font-display); }
+@media (max-width: 1199px) {
+  .info-fairness .fairness-donut { flex-direction: column; }
+}
