@@ -405,3 +405,8 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - Buyer's mobile bottom bar had only Home, Transactions, Settings. It now mirrors the seller's five columns: Home, Deals, **Join** (centre button, opens the existing Join a deal dialog), How, Settings. Seller and reviewer docks are unchanged (reviewer keeps three items).
 - `JoinDeal` got an optional `label` prop (dock shows "Join"; accessible name stays "Join a deal"). No change to link parsing or routing.
 - Checks: typecheck and build passed; 710 tests / 69 files passed. Browser check at 390 px (touch): buyer dock shows the five items, centre button opens the dialog, invalid text shows the error, a valid deal link goes to its checkout, How highlights on /how-it-works; seller and reviewer docks unchanged; no console errors.
+
+### 2026-10-31 — Desktop sidebar main action + reviewer mobile dock (ui/desktop-cta)
+- Desktop: a full-width action button sits under the logo on every page: **New deal** for the seller, **Join a deal** for the buyer (opens the existing dialog), none for the reviewer. Previously these existed only on Home.
+- Mobile reviewer dock now has five columns like the other roles: Home, Deals, **Desk** (Review desk, `/reviewer/oversight`), How, Settings. The centre item is plain (no raised button).
+- Checks: typecheck and build passed; 710 tests / 69 files passed. Browser check: sidebar button shows on Home, Transactions, Settings and Fairness for seller and buyer; seller button opens New deal; buyer button opens the dialog and a valid link goes to checkout; reviewer has no button; reviewer dock items and Desk/How navigation and current state work; no console errors. Presentation only.
