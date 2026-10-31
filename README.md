@@ -244,11 +244,11 @@ not original photo uploads; interrupted submissions stay blocked for manual chec
 | --- | --- |
 | PayPal authorize, capture, void, refund | Real **Sandbox** API calls when Sandbox keys are set |
 | PayPal (optional) | `PAYPAL_MODE=simulated`: a clearly labelled local simulation, no PayPal calls, ids start with `SIM-` |
-| Demo deals (Menu > "Load demo deals") | Simulated PayPal stub, ids start with `DEMO-`, items start with `[Demo]`; audit chains are real |
+| Demo deals (Settings > "Load demo deals") | Simulated PayPal stub, ids start with `DEMO-`, items start with `[Demo]`; audit chains are real |
 | Courier tracking | Simulated (`DEMO-DELIVERED`, `DEMO-IN-TRANSIT`, `DEMO-WRONG-DESTINATION`); the number is still sent to the PayPal Sandbox after capture |
 | Seller payout | Not implemented. "Released" means captured to the platform's Sandbox merchant account |
 | Photo evidence | Described in text; in-app camera capture is not built |
-| Sign-in | Demo roles (buyer, seller, reviewer) chosen in Menu |
+| Sign-in | Demo roles (buyer, seller, reviewer) chosen in Settings |
 | AI summary | Replay of recorded outputs by default; live mode with any OpenAI-compatible API |
 | Currency | USD only (the Sandbox flow was tested in USD) |
 
@@ -273,9 +273,9 @@ PAYPAL_MODE=simulated
 EVAL_K=3
 ```
 
-Then `npm run dev` and open http://localhost:3000. Pick a role in Menu, create a deal as
+Then `npm run dev` and open http://localhost:3000. Pick a role in Settings, create a deal as
 the seller, switch to the buyer to accept and pay, back to the seller to add tracking
-`DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Menu > "Load demo deals"
+`DEMO-DELIVERED`, then confirm or open a dispute as the buyer. Settings > "Load demo deals"
 adds thirteen labelled sample deals across the main statuses, including a finished dispute
 with a decision receipt and a dispute ready for the reviewer.
 
@@ -291,7 +291,7 @@ Optional settings in `.env`:
 - `EVAL_K`: number of consistency runs for `npm run eval` (1–20); unset or empty defaults to `3`.
 - `SHIP_BY_DAYS`, `INSPECTION_DAYS`, `EVIDENCE_DAYS`, `RETURN_DAYS`: deadlines (defaults 3, 2, 2, 3).
 - `REVIEWER_ACCESS_CODE`: for a shared or hosted demo, reviewer actions need this code
-  (Menu > Reviewer access code).
+  (Settings > Reviewer access code).
 - `PP_WEBHOOK_ID`: needed for PayPal webhook signature verification.
 - `CREIDENT_DB_PATH`: SQLite file location (default `data/creident.sqlite`).
 - `PUBLIC_DEMO=1`: hosted-demo mode. The server refuses to start unless `PAYPAL_MODE=simulated`
@@ -450,7 +450,7 @@ applies, and if PayPal refuses a capture it says so plainly: nothing was charged
 does not move and the seller is not paid until it is resolved. Automatic reauthorization is
 not built.
 
-**Can anyone act as the reviewer?** In the local demo, yes: roles are picked in Menu and
+**Can anyone act as the reviewer?** In the local demo, yes: roles are picked in Settings and
 there is no sign-in. For a shared or hosted demo set `REVIEWER_ACCESS_CODE`; reviewer
 decisions and the deadline job then need that code. This is a demo gate, not
 authentication.
@@ -570,13 +570,13 @@ SPLIT and does not implement a split payout or seller payout.
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, SQLite through
   `node:sqlite`, Vitest.
 - **AG Studio 3 (React)** powers the read-only reviewer oversight dashboard at
-  `/reviewer/oversight` (Menu > Reviewer oversight after switching to Reviewer;
+  `/reviewer/oversight` (Review desk in the sidebar or bottom bar after switching to Reviewer;
   the reviewer access code applies when configured). It shows local dispute counts,
   stored-recommendation escalation rate, deadline queue, recorded AI assist activity,
   PayPal case states and a **custom audit-chain health widget** with the latest
   published checkpoint. Studio is loaded on demand only on this page; other pages
   do not import it. It has no payment/decision controls or configured Studio agent.
-  Load demo deals in Menu for 13 labelled examples, including a simulated PayPal case
+  Load demo deals in Settings for 13 labelled examples, including a simulated PayPal case
   and actual recorded AI replays. Counts are illustrative; missing audit events and
   ignored drafts cannot be inferred. No published checkpoint is invented for the demo.
   - Dependency reason: `ag-studio-react` embeds the official React component;
