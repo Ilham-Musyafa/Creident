@@ -73,10 +73,10 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
             <div className="flex flex-wrap items-center gap-1"><StatusPill status={tx.status}/>{tx.status === 'FROZEN_EXTERNAL' && <PayPalHoldInfo/>}</div>
             {view.deadlineLabel && <p className="flex flex-wrap items-center gap-2 text-sm text-muted"><DueSoon urgency={view.urgency} label={view.deadlineLabel}/>Time left: {view.deadlineLabel}</p>}
             {(simulated || view.demo || simulatedPayPal()) && <p className="text-sm font-semibold" style={{ color: 'var(--warning-text)' }}>Demo payment · no real money</p>}
-            <div className="deal-hero-actions flex justify-center gap-5 py-3 lg:hidden">
-              {action !== 'none' && <a href="#next-step" className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true">+</span><span>{view.nextStep}</span></a>}
+            {action !== 'none' && <div className="deal-hero-actions flex justify-center gap-5 py-3 lg:hidden">
+              <a href="#next-step" className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true">+</span><span>{view.nextStep}</span></a>
               <a href={`/audit/${id}`} className="mobile-round-action"><span className="mobile-round-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-5"><path d="M5 3h10l4 4v14H5V3Zm3 8h8m-8 4h6"/></svg></span><span>Deal history</span></a>
-            </div>
+            </div>}
             <TechnicalDetails><KeyValue items={[
               { label: 'Deal ID', value: <span className="break-all font-mono">{id}</span> },
               { label: 'Terms fingerprint', value: <span className="break-all font-mono">{tx.termsHash ?? 'Not recorded'}</span> },
@@ -95,15 +95,16 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
         <DealSecondary>
           <section id="next-step" aria-labelledby="next-step-title" data-next-action={action} className="deal-card scroll-mt-6 space-y-3">
             <h2 id="next-step-title" className="text-lg text-heading">Your next step</h2>
+            {action !== 'none' && <div className="space-y-2 lg:hidden"><p className="text-sm text-muted">{view.nextStep}</p>{view.deadlineLabel && <p className="flex flex-wrap items-center gap-2 text-sm text-muted"><DueSoon urgency={view.urgency} label={view.deadlineLabel}/>{view.deadlineLabel}</p>}</div>}
           {action === 'accept-terms' && (role === 'buyer'
-            ? <ButtonLink href={`/deals/${id}/checkout`} fullWidth>Review terms & pay</ButtonLink>
-            : <ActionButton path={`/api/transactions/${id}/accept`} role={role} label="Accept terms" fullWidth/>)}
-          {action === 'pay' && <ButtonLink href={`/deals/${id}/checkout`} fullWidth>Review & pay</ButtonLink>}
+            ? <ButtonLink href={`/deals/${id}/checkout`} className="deal-primary-action" fullWidth>Review terms & pay</ButtonLink>
+            : <ActionButton path={`/api/transactions/${id}/accept`} role={role} label="Accept terms" className="deal-primary-action" fullWidth/>)}
+          {action === 'pay' && <ButtonLink href={`/deals/${id}/checkout`} className="deal-primary-action" fullWidth>Review & pay</ButtonLink>}
           {action === 'wait-approval' && <Notice>Waiting for your approval on PayPal (Sandbox). If you closed the PayPal window, start again from the checkout screen after it expires.</Notice>}
-          {action === 'ship' && <ShipForm txId={id}/>}
+          {action === 'ship' && <ShipForm txId={id} submitClassName="deal-primary-action"/>}
           {action === 'confirm-or-dispute' && (
             <div className="space-y-3">
-              <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" fullWidth confirm={{
+              <ActionButton path={`/api/transactions/${id}/confirm`} role="buyer" label="Confirm receipt" className="deal-primary-action" fullWidth confirm={{
                 title: 'Confirm you received the item', amount: money(tx.amount, tx.currency), amountCaption: tx.item,
                 rows: [{ label: 'Payment', value: tx.captured ? 'Payment charged' : 'Payment approved — not charged yet' }, { label: 'Problems', value: 'Can no longer be reported here' }],
                 note: 'Only confirm after you checked the item against the locked terms. If it is damaged or not as described, close this and choose Report a problem instead.', confirmLabel: 'Confirm receipt',
@@ -111,10 +112,10 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
               <div className="border-t border-line pt-4"><DisputeSteps txId={id} evidenceWindow={`${ctx.time.evidenceDays} day${ctx.time.evidenceDays === 1 ? '' : 's'}`}/></div>
             </div>
           )}
-          {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} fullWidth>Add evidence</ButtonLink>}
-          {action === 'ship-return' && <ReturnForm txId={id}/>}
+          {action === 'add-evidence' && <ButtonLink href={`/deals/${id}/evidence`} className="deal-primary-action" fullWidth>Add evidence</ButtonLink>}
+          {action === 'ship-return' && <ReturnForm txId={id} submitClassName="deal-primary-action"/>}
           {tx.status === 'RETURN_REQUESTED' && <Notice>A reviewer decided to refund the buyer once the item is back with the seller. The buyer has until the deadline to ship it back; if no delivered return is recorded by then, the approved payment is charged. Seller payout is not part of this demo.</Notice>}
-          {action === 'review' && <ButtonLink href={`/deals/${id}/review`} fullWidth>Review dispute</ButtonLink>}
+          {action === 'review' && <ButtonLink href={`/deals/${id}/review`} className="deal-primary-action" fullWidth>Review dispute</ButtonLink>}
           {tx.status === 'DRAFT' && <Notice>Accepted so far: {accepted.length ? accepted.join(' and ') : 'nobody'}. Terms lock when both buyer and seller accept.</Notice>}
           {action === 'none' && <div className="space-y-2">
             <p className="text-sm">{tx.status === 'FROZEN_EXTERNAL' ? 'PayPal is reviewing a case on this payment. Nothing moves until PayPal closes it.'
@@ -155,7 +156,7 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
           </div>
         </DealSecondary>
       </div>
-      {action !== 'none' && <a href="#next-step" className="deal-sticky-action lg:hidden">{view.nextStep}</a>}
+      {action === 'wait-approval' && <a href="#next-step" className="deal-sticky-action lg:hidden">{view.nextStep}</a>}
       </div>
     </AppShell>
   );

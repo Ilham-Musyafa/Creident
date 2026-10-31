@@ -64,8 +64,8 @@ function useAction() {
 }
 
 /** A button that POSTs to the API, then refreshes the page or navigates. */
-export function ActionButton({ path, role, body = {}, label, busyLabel = 'Working…', variant = 'accent', fullWidth = false, redirectTo, confirm }: {
-  path: string; role: Role; body?: unknown; label: string; busyLabel?: string; variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean; redirectTo?: string;
+export function ActionButton({ path, role, body = {}, label, busyLabel = 'Working…', variant = 'accent', fullWidth = false, redirectTo, confirm, className = '' }: {
+  className?: string; path: string; role: Role; body?: unknown; label: string; busyLabel?: string; variant?: 'accent' | 'ghost' | 'strong'; fullWidth?: boolean; redirectTo?: string;
   /** Show a confirmation sheet first; used for actions that move money. */
   confirm?: ConfirmDetails;
 }) {
@@ -79,7 +79,7 @@ export function ActionButton({ path, role, body = {}, label, busyLabel = 'Workin
   }); };
   return (
     <div className={fullWidth ? 'w-full' : ''}>
-      <Button variant={variant} fullWidth={fullWidth} disabled={busy} onClick={() => confirm ? setAsking(true) : act()}>{busy ? busyLabel : label}</Button>
+      <Button className={className} variant={variant} fullWidth={fullWidth} disabled={busy} onClick={() => confirm ? setAsking(true) : act()}>{busy ? busyLabel : label}</Button>
       {confirm && <ConfirmSheet details={confirm} open={asking} busy={busy} onConfirm={act} onCancel={() => setAsking(false)}/>}
       <ErrorNote error={error}/>
     </div>
@@ -155,7 +155,7 @@ function Label({ htmlFor, children, hint }: { htmlFor: string; children: ReactNo
 }
 
 
-export function ShipForm({ txId }: { txId: string }) {
+export function ShipForm({ txId, submitClassName = '' }: { txId: string; submitClassName?: string }) {
   const { busy, error, run } = useAction();
   const router = useRouter();
   const [tracking, setTracking] = useState('DEMO-DELIVERED');
@@ -169,7 +169,7 @@ export function ShipForm({ txId }: { txId: string }) {
           <option value="DEMO-WRONG-DESTINATION">Delivered to another address</option>
         </select>
       </div>
-      <Button type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add tracking'}</Button>
+      <Button className={submitClassName} type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add tracking'}</Button>
       <ErrorNote error={error}/>
     </form>
   );
@@ -202,7 +202,7 @@ export function EvidenceForm({ txId, role }: { txId: string; role: Role }) {
   );
 }
 
-export function ReturnForm({ txId }: { txId: string }) {
+export function ReturnForm({ txId, submitClassName = '' }: { txId: string; submitClassName?: string }) {
   const { busy, error, run } = useAction();
   const router = useRouter();
   const [tracking, setTracking] = useState('DEMO-DELIVERED');
@@ -217,7 +217,7 @@ export function ReturnForm({ txId }: { txId: string }) {
           <option value="DEMO-WRONG-DESTINATION">Delivered to another address</option>
         </select>
       </div>
-      <Button type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add return tracking'}</Button>
+      <Button className={submitClassName} type="submit" fullWidth disabled={busy}>{busy ? 'Saving…' : 'Add return tracking'}</Button>
       <ErrorNote error={error}/>
     </form>
   );

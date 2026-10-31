@@ -502,3 +502,9 @@ button, a, input, textarea, select { outline-offset: 3px; }
 /* The page container only fades so it never becomes a containing block for sticky action links. */
 @keyframes calm-page-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) { .hv-page { animation-name: calm-page-fade; } }
+
+/* Mobile deal actions: the existing real control is sticky, never a third copy in the card. */
+@media (width < 1024px) {
+  .deal-story .deal-primary-action { position: fixed; z-index: 21; left: 20px; right: 20px; bottom: calc(104px + env(safe-area-inset-bottom)); width: auto; min-height: 48px; box-shadow: 0 6px 20px color-mix(in srgb, var(--brand-navy) 18%, transparent); }
+  .deal-story #next-step { padding-bottom: 20px; }
+}
