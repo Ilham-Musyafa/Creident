@@ -1,3 +1,6 @@
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { MobileTransactionRow } from './MobileTransactionRow';
 import { describe, expect, it } from 'vitest';
 import { deadlineCue } from './deadlineCue';
 import { transactionRow } from './transactionsView';
@@ -59,5 +62,17 @@ describe('deadline cues follow existing role actions', () => {
     expect(transactionRow(tx({ status: 'COMPLETED' }), 'buyer', now).deadlineCue).toBeNull();
     const row = transactionRow(tx({ shipBy: new Date(Date.parse(now) - hour).toISOString() }), 'seller', now);
     expect(row.deadlineLabel).toBe('Deadline passed'); expect(row.deadlineCue).toBeNull();
+  });
+});
+
+
+describe('deadline cue in mobile row variants', () => {
+  it.each([true, false])('keeps the cue and full accessible time in compact=%s rows', compact => {
+    const sellerRow = transactionRow(tx(), 'seller', now);
+    const html = renderToStaticMarkup(createElement(MobileTransactionRow, { row: sellerRow, compact }));
+    expect(html).toContain('data-deadline-cue="strong"');
+    expect(html).toContain('aria-label="Due soon, 5 hours 0 minutes left"');
+    const waiting = renderToStaticMarkup(createElement(MobileTransactionRow, { row: transactionRow(tx(), 'buyer', now), compact }));
+    expect(waiting).not.toContain('data-deadline-cue');
   });
 });
