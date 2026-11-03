@@ -27,7 +27,7 @@ on the **PayPal Sandbox**.
 Captured from the running app with a fresh SQLite database, simulated PayPal,
 and synthetic demo data (13 seeded examples plus local walkthrough deals). Mobile: 390 × 844, light. Desktop: 1440 × 900, dark.
 All images below are regenerated from the current UI with labelled synthetic deals.
-Fairness results describe the recorded replay, not a live-model measurement.
+Fairness results on the in-app page describe the recorded replay; one separate live-model run is reported in [`docs/LIVE-EVAL-DEEPSEEK.md`](docs/LIVE-EVAL-DEEPSEEK.md).
 
 | Screen | Mobile, light | Desktop, dark |
 | --- | --- | --- |
@@ -378,7 +378,17 @@ are included in the 62. Two base cases differ from their expected label in this 
 Recorded summaries were authored from the original draft labels and reused for variants.
 These numbers check the harness, rules and injection flag, **not a live model**. They are
 indicative results from a small synthetic set, not proof of model fairness or accuracy.
-A live-model run and more individually reviewed labels remain pending.
+More individually reviewed labels remain pending.
+
+**One live-model run** (DeepSeek `deepseek-v4.1-flash-1017`, k = 1, same 62 cases,
+details in [`docs/LIVE-EVAL-DEEPSEEK.md`](docs/LIVE-EVAL-DEEPSEEK.md)): 0/28 false releases,
+0/28 false refunds and 0/10 successful injection attacks, but **49/62 (79.0%) cases were
+escalated to a person** and 35/372 (9.4%) counterfactual variants changed the outcome
+(replay: 25/62 and 0/372). Only 13 cases were decided by the rules, so the zero counts rest
+on few automatic decisions. Repeat consistency was not measured (k = 1). In three raw
+replies we inspected, the model returned valid JSON with `missingEvidence: true`, which
+rule R5 escalates by design. This is one model, one run, on a small synthetic set with
+partly unreviewed labels. The Fairness page and `eval/results.json` still show the replay.
 
 The same numbers are shown in the app on the **Fairness results** page (`/fairness`, from
 `eval/results.json`), with the same limits stated on the page.

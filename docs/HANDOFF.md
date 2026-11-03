@@ -428,3 +428,8 @@ Entries up to 2026-10-30 (C26–C30, brand kit, logo studies, earlier UI work) a
 - `.env.example`: "Menu > Reviewer access code" corrected to "Settings > Reviewer access code" (stale name after the Settings rename).
 - Final scans on tracked files and git history: no secrets found (only a base64 icon and a test that generates a throwaway key at runtime); no forbidden claims in README or docs.
 - Still open for the owner: make the repo public, confirm the `ui-freeze` tag, paste the Devpost text and submit.
+
+## 2026-11-04 — Live-model evaluation recorded (docs/live-eval-deepseek)
+- Owner ran `npm run eval` once in live mode (DeepSeek, k=1) in a separate copy. Results are written in `docs/LIVE-EVAL-DEEPSEEK.md` and a short paragraph in README section 5. `eval/results.json`, `eval/report.md` and the Fairness page are unchanged (still replay).
+- Finding: 79% escalation; sampled raw replies were valid JSON with `missingEvidence: true` (not a parsing problem). Not measured: escalation by reason, k>1 consistency.
+- Pending: optional `EVAL_K=3` run, reason breakdown, Devpost text update (owner), env-configurable AI timeout (needs approval).
